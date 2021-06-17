@@ -1,0 +1,136 @@
+﻿@model FinancialReportViewModel
+@{
+    ViewData["Title"] = "Cash Flow Statement";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+        .vartical-table th {
+            width: 25%;
+        }
+        .vartical-table td {
+            width: 25%;
+        }
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+        table {
+            page-break-inside: auto
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+        thead {
+            display: table-header-group
+        }
+        tfoot {
+            display: table-footer-group
+        }
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+@{
+    int? i = 0;
+    int? n = 0;
+    decimal? total = @Model.cFSMasterViewModels.FirstOrDefault()?.Amount;
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-2"><img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" /></div>
+                    <div class="col-8">
+                        <div style="color:black;text-align:center;">                            
+                            <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                            <label>@Model.companies.FirstOrDefault().addressLine</label>
+                            <h5>CASH FLOW STATEMENT</h5>
+                            <h5>CASH FLOW STATEMENT AS ON @Model.cFSMasterViewModels.FirstOrDefault().Date?.ToString("dd/MM/yyyy")</h5>
+                            @*<h5>OPENING BALANCE OF CASH AT BEGINNING OF THE YEAR: @Model.cFSMasterViewModels.FirstOrDefault()?.Amount?.ToString("0,0.00")</h5>*@
+                            <br />
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <div class="container-fluid" style="color:black;">
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        @{
+                            decimal? totalsunone = 0;
+                            decimal? totalsuntwo = 0;
+                            decimal? totalsun = 0;
+                            @foreach (var data in Model.cFSMasterViewModels.FirstOrDefault().cFSDetailViewModels.Select(x => x.noteHead).Distinct())
+                            {
+                                <tr style="background-color:grey">
+                                    <td colspan="3">@data</td>
+                                </tr>
+                                @foreach (var d in Model.cFSMasterViewModels.FirstOrDefault().cFSDetailViewModels.Where(x => x.noteHead == data).Select(x => x.fsLineName).Distinct())
+                                {
+                                    i = 0;
+                                    <tr>
+                                        <td colspan="3" style="background-color:lightgray">@d</td>
+                                    </tr>
+                                    @foreach (var c in Model.cFSMasterViewModels.FirstOrDefault().cFSDetailViewModels.Where(x => x.fsLineName == d))
+                                    {
+                                        i++;
+                                        if (@Model.cFSMasterViewModels.FirstOrDefault().cFSDetailViewModels.Where(x => x.fsLineName == d).Count() == i)
+                                        {
+                                            n++;
+                                            if (n == 1)
+                                            {
+                                                totalsunone = @Model.cFSMasterViewModels.FirstOrDefault().cFSDetailViewModels.Where(x => x.fsLineName == d).Sum(x => x.Amount);
+                                            }
+                                            if (n > 1)
+                                            {
+                                                totalsuntwo = @Model.cFSMasterViewModels.FirstOrDefault().cFSDetailViewModels.Where(x => x.fsLineName == d).Sum(x => x.Amount);
+                                                totalsun = totalsunone - totalsuntwo;
+                                                total = total + totalsun;
+                                            }
+                                            <tr>
+                                                <td>@c.noteName</td>
+                                                <td style="text-align:right">@c.Amount?.ToString("0,0.00")</td>
+                                                <td style="text-align:right">@Model.cFSMasterViewModels.FirstOrDefault().cFSDetailViewModels.Where(x => x.fsLineName == d).Sum(x => x.Amount)?.ToString("0,0.00")</td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>@c.noteName</td>
+                                                <td style="text-align:right">@c.Amount?.ToString("0,0.00")</td>
+                                                <td style="background-color:grey"></td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                            <tr>
+                                                <td  style="background-color:lightgray;">TOTAL @data</td>
+                                                <td  style="background-color:lightgray;"></td>
+                                                <td style="background-color:lightgray;text-align:right">@totalsun?.ToString("0,0.00")</td>
+                                            </tr>
+                            }
+                            <tr>
+                                <td colspan="2" style="background-color:lightgray;">CLOSING BALANCE OF CASH AT THE END OF THE YEAR</td>
+                                <td  style="background-color:lightgray;text-align:right">@total?.ToString("0,0.00")</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts{
+}

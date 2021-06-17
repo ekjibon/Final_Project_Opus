@@ -1,0 +1,116 @@
+//function ajaxGetHrBudgetReportData(response) {
+        //    console.log(response);
+        //    $("#universecode").DataTable().destroy();
+        //    var dtTable = $("#universecode");
+        //    var tableBody = dtTable.find('tbody');
+        //    var debit = "";
+        //    var credit = "";
+
+        //    var i = 1;
+        //    $.each(response, function (key, value) {
+        //        var trHtml = "";
+        //        if (value.debit != 0) {
+        //            debit = value.debit;
+        //        }
+        //        if (value.credit != 0) {
+        //            credit = value.credit;
+        //        }
+        //        //if (i % 4 == 0) {
+        //            trHtml = '<tr style="border-bottom: 4px solid black !important">' +
+        //                '<td>' + value.NameEnglish + '</td>' +
+        //                '<td>' + value.Designation + '</td>' +
+        //                '<td>' + value.DateOfBirth + '</td>' +
+        //                '<td>' + value.PayScale + '</td>' +
+        //                '<td>' + value.PreviousBasic + '</td>' +
+        //                '<td>' + value.CurrentBasic + '</td>' +
+        //                '<td>' + value.BasicOfficer + '</td>' +
+        //                '<td>' + value.BasicClark + '</td>' +
+        //                '<td>' + value.HouseAllowance + '</td>' +
+        //                '<td>' + value.RecreationAllowance + '</td>' +
+        //                '<td>' + value.FestivalAllowance + '</td>' +
+        //                '<td>' + value.NewYearAllowance + '</td>' +
+        //                '<td>' + value.MedicalAllowance + '</td>' +
+        //                '<td>' + value.TifinAllowance + '</td>' +
+        //                '<td>' + value.TransportAllowance + '</td>' +
+        //                '<td>' + value.EducationAllowance + '</td>' +
+        //                '<td>' + value.MobileAllowance + '</td>' +
+        //                '</tr>';
+        //        //}
+        //        //else {
+        //        //    trHtml = '<tr>' +
+        //        //        '<td>' + value.date + '</td>' +
+        //        //        '<td>' + value.year + '</td>' +
+        //        //        '<td>' + value.salaryPeriodId + '</td>' +
+        //        //        '<td>' + value.documentDescription + '</td>' +
+        //        //        '<td>' + value.cc + '</td>' +
+        //        //        '<td>' + value.doc + '</td>' +
+        //        //        '<td>' + value.docnum + '</td>' +
+        //        //        '<td>' + value.line + '</td>' +
+        //        //        '<td>' + value.el1 + '</td>' +
+        //        //        '<td>' + value.el2 + '</td>' +
+        //        //        '<td>' + value.el3 + '</td>' +
+        //        //        '<td>' + value.el4 + '</td>' +
+        //        //        '<td>' + value.cur + '</td>' +
+        //        //        '<td>' + debit + '</td>' +
+        //        //        '<td>' + credit + '</td>' +
+        //        //        '<td>' + '' + '</td>' +
+        //        //        '<td>' + value.linedescription + '</td>' +
+        //        //        '</tr>';
+        //        //}
+
+
+        //        i++;
+        //        //var trHtml = '<tr><td>' + value.date + '</td><td>' + value.year + '</td><td>' + value.salaryPeriodId + '</td><td>' + value.documentDescription + '</td><td>' + value.cc + '</td><td>' + value.doc + '</td><td>' + value.docnum + '</td><td>' + value.line + '</td><td>' + value.el1 + '</td><td>' + value.el2 + '</td><td>' + value.el3 + '</td><td>' + value.el4 + '</td><td>' + value.cur + '</td><td>' + value.debit + '</td><td>' + value.credit + '</td><td>' + value.linedescription + '</td></tr > ';
+
+        //        tableBody.append(trHtml);
+        //    })
+        //    $("#universecode").DataTable({
+
+        //        stateSave: false,
+        //        dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+        //            "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+        //        buttons: [
+        //            {
+        //                extend: 'excelHtml5',
+        //                text: '<i class="fa fa-file-excel"></i> Excel',
+        //                titleAttr: 'Excel',
+        //                exportOptions: {
+        //                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        //                },
+        //                //title: 'IFRC',
+        //                //messageTop: 'List Of Employee'
+        //            },
+        //            {
+        //                extend: 'csvHtml5',
+        //                text: '<i class="fa fa-file-excel"></i> CSV',
+        //                titleAttr: 'CSV',
+        //                exportOptions: {
+        //                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        //                },
+        //                //title: 'IFRC',
+        //                //messageTop: 'List Of Employee'
+        //            },
+        //            {
+        //                extend: 'print',
+        //                text: '<i class="fa fa-print"></i> Print',
+        //                titleAttr: 'Print',
+        //                //title: 'IFRC',
+        //                //messageTop: 'List Of Employee',
+        //                exportOptions: {
+        //                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        //                },
+        //                customize: function (doc) {
+        //                    $(doc.document.body).find('h1').css('font-size', '20pt');
+        //                    $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+        //                    $(doc.document.body).find('h1').css('text-align', 'center');
+        //                }
+        //            }
+        //        ]
+        //    });
+        //}
+
+//$("#btnExcel").click(function (e) {
+            //    $('#divuniverse').show();
+            //    let fiscalYearId = $('#fiscalYearId').val();
+            //    Common.Ajax('GET', '/global/api/GetHrBudgetReportData/' + fiscalYearId, [], 'json', ajaxGetHrBudgetReportData);
+            //});

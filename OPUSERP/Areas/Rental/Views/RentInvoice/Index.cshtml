@@ -1,0 +1,664 @@
+﻿@model RentInvoiceViewModel
+@{
+    ViewData["Title"] = "Rental Agreement";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Rental Agreement</h5>
+            </div>
+            <div class="col-6">
+                <a href="/Rental/RentInvoice/InvoiceList" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Back To List</a>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Rental" asp-controller="RentInvoice" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="salesInvoiceNo" class="col-sm-2 col-form-label">Agreement Number</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="salesInvoiceNo" id="salesInvoiceNo" value="@ViewBag.SaleNo" readonly>
+                        <input type="hidden" name="masterId" id="masterId" value="0" />
+                    </div>
+                    <label for="invoiceDate" class="col-sm-2 col-form-label text-left">Agreement Date</label>
+                    <div class="col-sm-4 input-group">
+                        <input name="invoiceDate" id="invoiceDate" class="form-control input-group-sm" value="@Model.salesInvoiceMaster?.invoiceDate?.ToString("dd-MMM-yyyy")" readonly />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="customerName" class="col-sm-2 col-form-label">Customer Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="customerName" id="customerName" value="@Model.salesInvoiceMaster.relSupplierCustomerResourse?.Leads?.leadName">
+                        <input type="hidden" name="customerId" id="customerId" value="@Model.salesInvoiceMaster?.relSupplierCustomerResourseId" />
+                    </div>
+                    <label for="presentAddress" class="col-sm-2 col-form-label text-left">Present Address</label>
+                    <div class="col-sm-4 input-group">
+                        <input name="presentAddress" id="presentAddress" class="form-control input-group-sm" value="" />
+                        @*<div class="input-group-prepend">
+                    <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                </div>*@
+                    </div>
+                    <label for="paymentDate" class="col-sm-2 col-form-label text-left" hidden>Payment Date</label>
+                    <div class="col-sm-4 input-group" hidden>
+                        <input name="paymentDate" id="paymentDate" class="form-control input-group-sm" value="" />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="customerName" class="col-sm-2 col-form-label">Phone</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control input-group-sm" id="binNo" name="binNo" />
+                    </div>
+                    <label for="address" class="col-sm-2 col-form-label text-left">Address</label>
+                    <div class="col-sm-4 input-group">
+                        <textarea name="address" id="address" class="form-control input-group-sm" readonly></textarea>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group row">
+                    <label for="itemName" class="col-sm-2 col-form-label">Item Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="itemName" id="itemName">
+                        <input type="hidden" name="itemId" id="itemId" value="0" />
+                    </div>
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Item Specification<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="itemSpecification" id="itemSpecification">
+                        <input type="hidden" name="itemSpecificationId" id="itemSpecificationId" value="0" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="price" class="col-sm-2 col-form-label">Price (Taka)</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="price" id="price">
+                    </div>
+                    <label for="quantity" class="col-sm-1 col-form-label">Quantity </label>
+                    <div class="col-sm-2">
+                        <input type="number" min="1" class="form-control" name="quantity" id="quantity">
+                    </div>
+                    <label for="unit" class="col-sm-1 col-form-label">Unit </label>
+                    <div class="col-sm-1">
+                        <input type="text" class="form-control" name="unit" id="unit">
+                    </div>
+                    <label for="discount" class="col-sm-1 col-form-label">Disc.(%)</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="discount" id="discount">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="vat" class="col-sm-2 col-form-label">VAT (%) </label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="vat" id="vat">
+                    </div>
+                    <label for="vat" class="col-sm-1 col-form-label">AIT (%) </label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="AIT" id="AIT">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="startDate" class="col-sm-2 col-form-label text-left">Start Date</label>
+                    <div class="col-sm-2 input-group">
+                        <input name="TstartDate" id="startDate" class="form-control input-group-sm" value="" />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                    <label for="startDate" class="col-sm-1 col-form-label text-left">Days</label>
+                    <div class="col-sm-2 input-group">
+                        <input name="" id="tdays" class="form-control input-group-sm" value="" />
+                    </div>
+                    <label for="endDate" class="col-sm-2 col-form-label text-left">End Date</label>
+                    <div class="col-sm-3 input-group">
+                        <input name="TendDate" id="endDate" class="form-control input-group-sm" value="" />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="stTime" class="col-sm-2 col-form-label text-left">Start Time</label>
+                    <div class="col-sm-2 input-group">
+                        <input type="time" name="stTime" id="stTime" class="form-control input-group-sm" />                       
+                    </div>                   
+                    <label for="edTime" class="col-sm-1 col-form-label text-left">End Time</label>
+                    <div class="col-sm-2 input-group">
+                        <input type="time" name="edTime" id="edTime" class="form-control input-group-sm" />                       
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <button type="button" onclick="AdditemDetails()" value="Add" title="Add" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group row">
+                    <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped" id="tblitemDetails" data-parsley-required="true">
+                            <thead style="width:100%;background-color:lightgray;">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Item Spec.</th>
+                                    <th>Start date</th>
+                                    <th>End date</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>VAT</th>
+                                    <th>AIT</th>
+                                    <th>Discount</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-7">&nbsp;</div>
+                    <label for="grossTotal" class="col-sm-2 col-form-label" style="text-align:right;">Gross Total </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="grossTotal" id="grossTotal" value="@Model.salesInvoiceMaster.totalAmount?.ToString("0.00")" readonly style="text-align:right;">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-7">&nbsp;</div>
+                    <label for="grossVAT" class="col-sm-2 col-form-label" style="text-align:right;">VAT Amount </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" value="@Model.salesInvoiceMaster.VATOnTotal?.ToString("0.00")" name="grossVAT" id="grossVAT" style="text-align:right;" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-7">&nbsp;</div>
+                    <label for="grossVAT" class="col-sm-2 col-form-label" style="text-align:right;">TAX Amount </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" value="@Model.salesInvoiceMaster.TAXOnTotal?.ToString("0.00")" name="grossTAX" id="grossTAX" style="text-align:right;" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-7">&nbsp;</div>
+                    <label for="grossVAT" class="col-sm-2 col-form-label" style="text-align:right;">Discount Amount </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" value="@Model.salesInvoiceMaster.DiscountOnTotal?.ToString("0.00")" name="grossDiscount" id="grossDiscount" style="text-align:right;">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-7">&nbsp;</div>
+                    <label for="netTotal" class="col-sm-2 col-form-label" style="text-align:right;">Net Total </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="netTotal" id="netTotal" value="@Model.salesInvoiceMaster.NetTotal?.ToString("0.00")" readonly style="text-align:right;">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="conditext" class="col-sm-2 col-form-label">Terms &amp; Conditions</label>
+                    <div class="col-sm-9">
+                        <select name="conditext" id="conditext" class="form-control">
+                            <option value="">Select Terms & Conditions</option>
+                            @foreach (var data in Model.termsAndConditions)
+                            {
+                                <option value="@data.Id">@data.termName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-1">
+                        <a class="btn btn-block btn-success" onclick="AddGroup()" style="color:white;" title="Add Ledger"><i class="fas fa-plus"></i></a>
+                    </div>
+                </div>
+
+                <br />
+                <hr />
+                <div id="SubLedgerList" class="form-group row">
+
+                </div>
+
+
+                <hr>
+
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#invoiceDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#endDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date("setDate", new Date()));
+            $("#startDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date("setDate", new Date()));
+            $("#paymentDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            var dt1 = Date.parse($("#startDate").val());
+            var dt2 = Date.parse($("#endDate").val());
+            var days = (dt2 - dt1) / 86400000;
+
+            $("#tdays").val(days);
+            $("#startDate").change(function () {
+                var dt1 = Date.parse($("#startDate").val());
+                var dt2 = Date.parse($("#endDate").val());
+                var days = (dt2 - dt1) / 86400000;
+                $("#tdays").val(days);
+            });
+
+            $("#endDate").change(function () {
+                var dt1 = Date.parse($("#startDate").val());
+                var dt2 = Date.parse($("#endDate").val());
+                var days = (dt2 - dt1) / 86400000;
+                $("#tdays").val(days);
+            });
+
+            $("#tdays").change(function () {
+                var days = parseInt($("#tdays").val());
+                var tt = document.getElementById('startDate').value;
+                var date = new Date(tt);
+                var newdate = new Date(date);
+                newdate.setDate(newdate.getDate() + days);
+                $("#endDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", newdate);
+            });
+
+            if (@Model.masterId > 0 || @Model.masterId != null) {
+                $("#masterId").val('@Model.masterId');
+                Common.Ajax('GET', '/global/api/getAllRenttermsconditionr/' + @Model.masterId, [], 'json', ajaxLedgerRelation, false);
+            }
+
+            $("#invoiceDate").change(function () {
+                if ($("#masterId").val() == "") {
+                    getInvoiceNo();
+                }
+            });
+
+            Common.Ajax('GET', '/global/api/getAllORelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomer);
+            Common.Ajax('GET', '/global/api/getAllORelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomerM);
+            Common.Ajax('GET', '/global/api/getAllActiveRentalItem', [], 'json', ajaxAllActiveItem);
+            Common.Ajax('GET', '/global/api/getAllRentInvoiceDetailByMasterId/' + @Model.masterId, [], 'json', ajaxitemDetailsForEdit);
+
+            $("#grossDiscount").keyup(function () {
+                CalculationNetTotal();
+            });
+            $("#grossVAT").keyup(function () {
+                CalculationNetTotal();
+            });
+            if ('@ViewBag.storeId' > 0) {
+                $('#storeId').val(@ViewBag.storeId);
+            }
+        });
+
+        var TID = 1;
+        function AddGroup() {
+            //var id = $('#conditext').val();
+            var id = $('#conditext option:selected').text();
+            $('#SubLedgerList').append(' <div class="col-sm-2"></div ><div class="col-sm-10 row"><input type="hidden" name="context[]" id="Lg' + TID + '" value="' + id + '"><span class="spanClass" id="LgId' + TID + '" >' + id + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + TID + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+            TID = TID + 1;
+            //$('#conditext').val('')
+        }
+
+        function DeleteGroup(id) {
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+
+        var TEDITID = 1;
+        function ajaxLedgerRelation(response) {
+            $('#SubLedgerList').empty();
+            $.each(response, function (i, item) {
+                $('#SubLedgerList').append(' <div class="col-sm-2"></div ><div class="col-sm-10 row"><input type="hidden" name="context[]" id="Lg' + TEDITID + '" value="' + item.termtext + '"><span class="spanClass" id="LgId' + TEDITID + '" >' + item.termtext + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + TEDITID + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+                TEDITID = TEDITID + 1;
+            });
+        }        
+
+        function ajaxAllActiveItem(response) {
+            // console.log(response);
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#itemId").val(ui.item.key);
+                    Common.Ajax('GET', '/global/api/getAllPriceFixedItemSpacificationByItemId/' + ui.item.key, [], 'json', ajaxAllPriceFixedItemSpacification);
+                }
+            });
+        }
+
+        function GetItemHSCodebyCode(response) {
+            $("#hsCode").val(response.hsCode);          
+            $("#txtVatTable").val(response.vatTable.tableName);
+            $("#txtVatSchedule").val(response.vATSchedule.vatScheduleName);
+            $("#txtVatCat").val(response.vatCategory.vatCategoryName);
+        }      
+
+        function ajaxAllPriceFixedItemSpacification(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemSpecificationName;
+                obj.price = option.price;
+                obj.VAT = option.VAT;
+                obj.discountPersent = option.discountPersent;
+                obj.unitName = option.unitName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecification').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecificationId").val(ui.item.key);
+                    $("#price").val(ui.item.price);
+                    $("#discount").val(ui.item.discountPersent);
+                    $("#unit").val(ui.item.unitName);
+                }
+            });
+        }
+
+        function ajaxAllCustomer(response) {
+            console.log(response);
+            var GetInStockItemSpacificationList = [];           
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.relId;
+                obj.value = option.customerName;
+                obj.presentAddress = option.presentAddress;
+                obj.permanentAddress = option.permanentAddress;
+                obj.mobile = option.mobile;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $("#customerName").autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {                   
+                    $("#customerId").val(ui.item.key);
+                    $("#address").val(ui.item.permanentAddress);
+                    $("#presentAddress").val(ui.item.presentAddress);
+                    $("#binNo").val(ui.item.mobile);
+                }
+            });
+        }
+
+        function ajaxAllCustomerM(response) {
+            console.log(response);
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.relId;
+                obj.customerName = option.customerName;
+                obj.presentAddress = option.presentAddress;
+                obj.permanentAddress = option.permanentAddress;
+                obj.value = option.mobile;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $("#binNo").autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#customerName").val(ui.item.customerName);
+                    $("#address").val(ui.item.permanentAddress);
+                    $("#presentAddress").val(ui.item.presentAddress);
+                }
+            });
+        }
+
+        function ajaxAddress(response) {
+            $.each(response, function (key, rc) {
+                $("#address").val(rc.union + "," + rc.houseVillage + "," + rc.blockSector + "," + rc.postCode + "," + rc.postOffice + "," + rc.thana.thanaName + "," + rc.district.districtName + "," + rc.division.divisionName);
+            });
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/MasterData/Ledger/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+        var index = 1;
+        function AdditemDetails() {
+            if ($("#itemSpecificationId").val() == "" || $("#itemSpecificationId").val() == "0") {
+                alert("Plaese Select Valid Item Specification.");
+                return false
+            }
+            if ($("#quantity").val() == '' || parseFloat($("#quantity").val()) <= 0) {
+                alert("Plaese Enter Valid Quantity.");
+                return false
+            }
+
+            var itemName = $("#itemName").val();
+            var itemSpecification = $("#itemSpecification").val();
+            var itemSpecificationId = $("#itemSpecificationId").val();
+            var price = parseFloat($("#price").val());
+            var quantity = parseFloat($("#quantity").val());
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            var startTime = $("#stTime").val();
+            var endTime = $("#edTime").val();
+            var vat = $("#vat").val();
+            var ait = $("#AIT").val();
+            vat = price * quantity * vat / 100;
+            ait = price * quantity * ait / 100;
+            var discount = 0;
+            if ($("#discount").val() != "") {
+                discount = parseFloat($("#discount").val());
+            }
+            var discountAmount = (price * quantity) * discount / 100;
+            var totalAmount = (price * quantity + vat + ait) - ((price * quantity) * discount / 100)
+
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+
+            for (i = 1; i <= RowCount; i++) {
+                var _itemSpecificationId = $("#itemPriceFixingId" + i).val();
+                if (_itemSpecificationId == itemSpecificationId) {
+                    alert('You have already added this Item!');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + itemName + '</td>' +
+                '<td>' + itemSpecification + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + itemSpecificationId + '"/></td>' +
+                '<td>' + startDate + '<input type="hidden" id="startDate' + index + '" name="startDate[]" class="clsitemSpecificationId" value="' + startDate + '"/></td>' +
+                '<td>' + endDate + '<input type="hidden" id="endDate' + index + '" name="endDate[]" class="clsitemSpecificationId" value="' + endDate + '"/></td>' +
+                '<td>' + startTime + '<input type="hidden" id="startTime' + index + '" name="startTime[]" class="clsitemSpecificationId" value="' + startTime + '"/></td>' +
+                '<td>' + endTime + '<input type="hidden" id="endTime' + index + '" name="endTime[]" class="clsitemSpecificationId" value="' + endTime + '"/></td>' +
+                '<td>' + price.toFixed(2) + '<input type="hidden" id="price' + index +'" name="lineprice[]" class="clsprice" value="' + price + '"/></td>' +
+                '<td>' + quantity + '<input type="hidden" id="quantity' + index + '" name="tblQuantity[]" class="clsquantity" value="' + quantity + '"/></td>' +
+                '<td style="text-align:right;">' + vat + '<input class="clsvatAmount" type="hidden" id="vat' + index + '" name="vattotal[]"  value="' + vat + '"/></td>' +
+                '<td style="text-align:right;">' + ait + '<input class="clstaxAmount" type="hidden" id="tax' + index + '" name="taxtotal[]"  value="' + ait + '"/></td>' +
+                '<td style="text-align:right;">' + discountAmount + '<input class="clsdisAmount" type="hidden" id="dis' + index + '" name="distotal[]"  value="' + discountAmount + '"/></td>' +
+                '<td>' + totalAmount.toFixed(2) + '<input type="hidden" id="totalAmount' + index +'" name="lineTotal[]" class="clstotalAmount" value="' + totalAmount + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>'
+                '</tr>';
+            tableBody.append(trHtml);
+            index = index + 1;
+            $("#rowCount").val(index);
+            ClearLineItem();
+            CalculateGrossTotal();
+            CalculateGrossVAT();
+        }
+
+        function ajaxitemDetailsForEdit(response) {  
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            if (response != null) {
+                $.each(response, function (i, ite) {
+                    var totalAmount = (ite.price * ite.quantity) - ((ite.price * ite.quantity) * ite.discountPersent / 100)
+                    var trHtml = '<tr id=' + index + '>' +
+                        '<td>' + ite.itemSpecication.Item.itemName + '</td>' +
+                        '<td>' + ite.itemSpecication.specificationName + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + ite.itemSpecicationId + '"/></td>' +
+                        '<td>' + ite.StartDate + '<input type="hidden" id="startDate' + index + '" name="startDate[]" class="clsitemSpecificationId" value="' + ite.StartDate + '"/></td>' +
+                        '<td>' + ite.EndDate + '<input type="hidden" id="endDate' + index + '" name="endDate[]" class="clsitemSpecificationId" value="' + ite.EndDate + '"/></td>' +
+                        '<td>' + ite.StartTime + '<input type="hidden" id="startTime' + index + '" name="startTime[]" class="clsitemSpecificationId" value="' + ite.StartTime + '"/></td>' +
+                        '<td>' + ite.EndTime + '<input type="hidden" id="endTime' + index + '" name="endTime[]" class="clsitemSpecificationId" value="' + ite.EndTime + '"/></td>' +
+                        '<td>' + ite.rate?.toFixed(2) + '<input type="hidden" id="price' + index + '" name="lineprice[]" class="clsprice" value="' + ite.rate + '"/></td>' +
+                        '<td>' + ite.quantity + '<input type="hidden" id="quantity' + index + '" name="tblQuantity[]" class="clsquantity" value="' + ite.quantity + '"/></td>' +
+
+                        '<td style="text-align:right;">' + ite.vatAmount + '<input class="clsvatAmount" type="hidden" id="vat' + index + '" name="vattotal[]"  value="' + ite.vatAmount + '"/></td>' +
+                        '<td style="text-align:right;">' + ite.taxAmount + '<input class="clstaxAmount" type="hidden" id="tax' + index + '" name="taxtotal[]"  value="' + ite.taxAmount + '"/></td>' +
+                        '<td>' + ite.disAmount + '<input type="hidden" id="discount' + index + '" name="distotal[]" class="clsdiscount" value="' + ite.disAmount + '"/></td>' +
+                        '<td>' + ite.lineTotal.toFixed(2) + '<input type="hidden" id="totalAmount' + index + '" name="lineTotal[]" class="clstotalAmount" value="' + ite.lineTotal + '"/></td>' +
+                        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a></td>'
+                    '</tr>';
+                    tableBody.append(trHtml);
+                    index = index + 1;
+                    $("#rowCount").val(index);
+                })
+            }
+            //ClearLineItem();
+            //CalculateGrossTotal();
+        }
+
+        function Delete(indx) {
+            $("#tblitemDetails #" + indx).remove();
+            CalculateGrossTotal();
+            CalculateGrossVAT();
+            return false;
+        }
+
+        function ClearLineItem() {
+            $("#itemName").val('');
+            $("#itemId").val('0');
+            $("#itemSpecification").val('');
+            $("#itemSpecificationId").val('0');
+            $("#price").val('');
+            $("#quantity").val('');
+            $("#discount").val('');
+            $("#vat").val('');
+            $("#ait").val('');
+            $("#unit").val('');
+            $("#txtVatpercent").val('');
+            $("#txtTaxpercent").val('');
+            $("#txtDispercent").val('');
+        }
+
+        function CalculateGrossTotal() {
+            var grossTotal = 0;
+            var RowCount = parseInt($("#rowCount").val());
+            for (i = 1; i <= RowCount; i++) {
+                var _totalAmount = 0;
+                if (parseFloat($("#totalAmount" + i).val()) > 0 ) {
+                    _totalAmount = parseFloat($("#totalAmount" + i).val());
+                }
+                grossTotal = grossTotal + _totalAmount;
+            }
+            $("#grossTotal").val(grossTotal.toFixed(2));
+            CalculationNetTotal();
+        }
+
+        function CalculateGrossVAT() {
+            var grossVAT = 0;
+            var grossTAX = 0;
+            var grossDis = 0;
+            var RowCount = parseInt($("#rowCount").val());
+            for (i = 1; i <= RowCount; i++) {
+                var _grossVAT = 0;
+                var _grossTAX = 0;
+                var _grossDis = 0;
+                if (parseFloat($("#vat" + i).val()) > 0) {
+                    _grossVAT = parseFloat($("#vat" + i).val());
+                }
+                if (parseFloat($("#tax" + i).val()) > 0) {
+                    _grossTAX = parseFloat($("#tax" + i).val());
+                }
+                if (parseFloat($("#dis" + i).val()) > 0) {
+                    _grossDis = parseFloat($("#dis" + i).val());
+                }
+                grossTAX = grossTAX + _grossTAX;
+                grossVAT = grossVAT + _grossVAT;
+                grossDis = grossDis + _grossDis;
+            }
+            $("#grossVAT").val(grossVAT.toFixed(2));
+            $("#grossTAX").val(grossTAX.toFixed(2));
+            $("#grossDiscount").val(grossDis.toFixed(2));
+            CalculationNetTotal();
+        }
+
+        function CalculationNetTotal() {
+            var grossTotal = 0; var grossDiscount = 0; var grossVAT = 0;
+            var vatAmount = 0;
+            var taxAmount = 0;
+            var disAmount = 0;
+            if ($("#grossTotal").val() != "") {
+                grossTotal = parseFloat($("#grossTotal").val());
+                grossDiscount = parseFloat($("#grossDiscount").val());
+            }
+
+            $(".clsvatAmount").each(function () {
+                vatAmount += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+                $("#vatPercent").val(vatAmount);
+            });
+            $(".clstaxAmount").each(function () {
+                taxAmount += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+                $("#taxPercent").val(taxAmount);
+            });
+            $(".clsdisAmount").each(function () {
+                disAmount += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+                $("#disPercent").val(disAmount);
+            });
+
+            var netAfterDisc = (grossTotal - grossDiscount);
+            //var netWithVAT = (netAfterDisc + (netAfterDisc * grossVAT / 100));
+            var netWithVAT = (netAfterDisc);
+            $("#netTotal").val(netWithVAT.toFixed(2));
+        }
+
+        function getInvoiceNo() {
+            let invoiceDate = $('#invoiceDate').val();
+            Common.Ajax('GET', '/Rental/RentInvoice/GetAutoRentInvoiceNoBySp/?invoiceDate=' + invoiceDate, [], 'json', setAutoNumber);
+        }
+
+        function setAutoNumber(response) {
+            $('#salesInvoiceNo').val(response.leadNumber);
+        }
+
+    </script>
+}

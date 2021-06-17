@@ -1,0 +1,110 @@
+﻿@model DocumentCategoryViewModel
+@{
+    ViewData["TitleMD"] = "Document Category";
+    Layout = "~/Areas/DMS/Views/Shared/_DMSForm.cshtml";
+}
+
+@section StyleDMS{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Document Category Info</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="DMS" asp-controller="DocumentUpload" asp-action="DocumentCategory" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="documentCategoryId" id="documentCategoryId" value="0" />
+
+                    <label for="documentCategoryName" class="col-sm-3 col-form-label">Document Category Name <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="documentCategoryName" id="documentCategoryName">
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right;">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Document Category List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="documentCategoryTable">
+                    <thead>
+                        <tr>
+                            <th>Document Category Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.documentCategories)
+                        {
+                            <tr>
+                                <td>@data.categoryName</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.categoryName')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsDMS{
+    <script>
+        $(document).ready(function () {
+            $('#documentCategoryTable').DataTable();
+        });
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteDocumentCategoryById", "DocumentUpload")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/DMS/DocumentUpload/DocumentCategory";
+                    })
+                    .fail(function () {
+                        alert("Unable to Delete. Please Try Again");
+                    });
+            });
+        }
+
+        function Edit(Id, name) {
+            $("#documentCategoryId").val(Id);
+            $("#documentCategoryName").val(name);
+        }
+    </script>
+}
+
+
+

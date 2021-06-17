@@ -1,0 +1,161 @@
+﻿@model AssetAssignViewModel
+@{
+    ViewData["Title"] = "AssetAssign";
+    Layout = "~/Areas/FAMSAssetRegister/Views/Shared/_AssetRegisterForm.cshtml";
+}
+
+
+@section StyleAssetRegister{
+    <style>
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h4 class="m-0 font-weight-bold text-primary">Asset Assign</h4>
+        <a href="/FAMSAssetRegister/AssetAssign/AssetAssignList" class="btn btn-primary btn-sm pull-right">Back To List</a>
+        @*<a href="/FAMSAssetRegister/AssetAssign/AssetUnAssignedList?assetId=0" class="btn btn-success btn-sm pull-right">Add Asset Assign</a>*@
+    </div>
+    <div class="card-body">
+        <div class="container">
+            <form asp-area="FAMSAssetRegister" asp-controller="AssetAssign" asp-action="AssetAssign" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="PurchaseNo" class="col-sm-4 col-form-label">Purchase No</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="PurchaseNo" value="@ViewBag.PurchaseNo" name="PurchaseNo" readonly>
+                                <input type="hidden" name="assetAssignId" id="assetAssignId" value="@ViewBag.AssignId">
+                                <input type="hidden" name="assetRegistrationId" id="assetRegistrationId" value="@ViewBag.AssetId">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="AssetNo" class="col-sm-4 col-form-label">Asset No</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="AssetNo" name="AssetNo" readonly value="@ViewBag.AssetNo">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="itemName" class="col-sm-4 col-form-label">Item Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="itemName" name="itemName" readonly value="@ViewBag.ItemName">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="assignDate" class="col-sm-4 col-form-label">assignDate</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="assignDate" name="assignDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="departmentId" class="col-sm-4 col-form-label">Department Name</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="departmentId" name="departmentId">
+                                    <option value="">-Select-</option>
+                                    @foreach (var data in Model.departments)
+                                    {
+                                        <option value="@data.Id">@data.deptName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="deliveryLocationId" class="col-sm-4 col-form-label">Delivery Location</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="deliveryLocationId" name="deliveryLocationId">
+                                    <option value="">-Select-</option>
+                                    @foreach (var data in Model.deliveryLocations)
+                                    {
+                                        <option value="@data.Id">@data.locationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="empId" class="col-sm-4 col-form-label">Employee Name</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="empId" name="empId">
+                                    <option value="">-Select-</option>
+                                    @foreach (var data in Model.employeeInfoViewModels)
+                                    {
+                                        <option value="@data.ID">@data.EmpName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="coordinatorempId" class="col-sm-4 col-form-label">Co-ordinator Name</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="coordinatorempId" name="coordinatorempId">
+                                    <option value="">-Select-</option>
+                                    @foreach (var data in Model.employeeInfoViewModels)
+                                    {
+                                        <option value="@data.ID">@data.EmpName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
+                            <div class="col-sm-8">
+                                <textarea type="text" class="form-control" id="remarks" name="remarks"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsAssetRegister{
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#assignDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            Common.Ajax('GET', '/FAMSAssetRegister/AssetAssign/GetAssetAssignById/?id=' + @ViewBag.AssignId, [], 'json', ajaxGetAssetAssignById);
+        });
+
+
+
+        function ajaxGetAssetAssignById(response) {
+            console.log(response);
+            $("#assignDate").val(getPurchaseDate(response.assignDate.toString("dd-MMM-yyyy")));
+            $("#empId").val(response.empId);
+            $("#coordinatorempId").val(response.coordinatorempId);
+            $("#departmentId").val(response.departmentId);
+            $("#deliveryLocationId").val(response.deliveryLocationId);
+            $("#remarks").val(response.remarks);
+
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+
+    </script>
+}
+
+

@@ -1,0 +1,209 @@
+﻿@model BranchDetailsViewModel
+@{
+    ViewData["Title"] = "Bank Info";
+    Layout = "~/Areas/CRMMasterData/Views/Shared/_CRMMasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Bank Branch Info</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="CRMMasterData" asp-controller="Bank" asp-action="BankBranchInfo" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <input type="hidden" name="branchDetailsId" id="branchDetailsId" value="0" />
+                            <label for="employeeType" class="col-sm-4 col-form-label">Bank</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="bankId" name="bankId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.banks.OrderBy(x=>x.bankName))
+                                    {
+                                        <option value="@data.Id">@data.bankName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="accountNo" class="col-sm-4 col-form-label">Account No</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="accountNo" id="accountNo">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="employeeType" class="col-sm-4 col-form-label">Branch</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="branchId" name="branchId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.bankBranches.OrderBy(x=>x.branchName))
+                                    {
+                                        <option value="@data.Id">@data.branchName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="sbu" class="col-sm-4 col-form-label">Thana</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="thanaId" name="thanaId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.thanas)
+                                    {
+                                        <option value="@data.Id">@data.thanaName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="mailingAddress" class="col-sm-4 col-form-label">Mailing Address </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="mailingAddress" id="mailingAddress">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-4 col-form-label">Email</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="email" id="email">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="fax" class="col-sm-4 col-form-label">Fax</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="fax" id="fax">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="website" class="col-sm-4 col-form-label">Website</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="website" id="website">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="phone" class="col-sm-4 col-form-label">Phone</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="phone" id="phone">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="mobile" class="col-sm-4 col-form-label">Mobile</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="mobile" id="mobile">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="collectionType" class="col-sm-4 col-form-label">Collection Type</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="collectionType" id="collectionType">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+        <hr>
+        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+        </form>
+    </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">All Bank Branch List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="bankBranchTable">
+                    <thead>
+                        <tr>
+                            <th>Bank Name</th>
+                            <th>Branch Name</th>
+                            <th>Account No</th>
+                            <th>Address</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+</thead>
+                    <tbody>
+                        @foreach (var data in Model.bankBranchDetails)
+                        {
+                        <tr>
+                            <td>@data.bank?.bankName</td>
+                            <td>@data.bankBranch?.branchName</td>
+                            <td>@data.accountNo</td>
+                            <td>@data.maillingAddress</td>
+                            <td>@data.phone</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id, '@data.bankId','@data.bankBranchId', '@data.thanaId', '@data.accountNo', '@data.maillingAddress', '@data.email', '@data.fax', '@data.website', '@data.phone', '@data.mobile', '@data.collectionType')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                @*<a class="btn btn-danger" href="#"><i class="fa fa-trash-alt"></i></a>*@
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            //$("#HRPMSActivityType").addClass("active");
+            $('#bankBranchTable').DataTable();
+        });
+
+        function Edit(Id, bankId, bankBranchId, thanaId, accountNo, maillingAddress, email, fax, website, phone, mobile, collectionType) {
+            $("#branchDetailsId").val(Id);
+            $("#bankId").val(bankId);
+            $("#branchId").val(bankBranchId);
+            $("#thanaId").val(thanaId);
+            $("#accountNo").val(accountNo);
+            $("#mailingAddress").val(maillingAddress);
+            $("#email").val(email);
+            $("#fax").val(fax);
+            $("#website").val(website);
+            $("#phone").val(phone);
+            $("#mobile").val(mobile);
+            $("#collectionType").val(collectionType);
+        }
+    </script>
+}
+
+
+

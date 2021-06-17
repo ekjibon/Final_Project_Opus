@@ -1,0 +1,142 @@
+﻿@model ActivityStatusViewModel
+
+@{
+    ViewData["TitleMD"] = "HRM Dashboard";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="row bg-success" style="padding-top:10px;padding-bottom:10px;margin-bottom:20px;">
+    <div class="col-sm-12">
+        <h5 class="text-center" style="color:white;">HR & Payroll Dashboard </h5>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3 row bg-success" style="border:1px solid green;">
+        <div class="col-sm-6 text-center bg-success" style="margin-left:30px;">
+            <i style="color:white" class="fa fa-user fa-5x"></i>
+        </div>
+        <div class="col-sm-6 text-center bg-success" style="float:right;padding:20px;color:white">
+            <span >57</span><br />
+            <span >Active Employee</span><br />
+        </div>
+        <p style="padding-top:11px;padding-right:120px;padding-left:20px;color:black; background-color:white">View Details</p>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="relef_distribution" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-3 row" style="margin-top:20px;margin-left:5px;">
+        <div class="col-sm-6 text-center">
+            <img src="~/images/user-icon-female.png" height="100" width="100" class="img-responsive" /><br />
+            <p>Female</p>
+            <b>52%</b>
+        </div>
+        <div class="col-sm-6 text-center">
+            <img src="~/images/user-male-icon.png" height="100" width="100" class="img-responsive" /><br />
+            <p>Male</p>
+            <b>48%</b>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-sm-3">
+        <canvas id="year_wise_Employee" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-4">
+        <canvas id="department_wise_employee" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-5 row" style="margin-top:20px;margin-left:5px;">
+
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        $(document).ready(function () {
+            $("#activityStatus").addClass("active");
+            $('#departmentTable').DataTable();
+            chart1();
+            chart2();
+        });
+
+        function chart1() {
+            var ctx = document.getElementById('relef_distribution');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: [7, 7, 6, 8, 10],
+                        label: 'Male',
+                        // This binds the dataset to the left y axis
+                        yAxisID: 'left-y-axis',
+                        backgroundColor: 'rgba(255, 20, 100, 0.5)',
+                    }, {
+                        data: [6, 8, 8, 5, 4],
+                        label: 'FeMale',
+
+                        // This binds the dataset to the right y axis
+                        yAxisID: 'right-y-axis',
+                        backgroundColor: 'rgba(0,255,0, 0.5)',
+                    }],
+                    labels: ['IT', 'Marketing', 'HR', 'Development', 'Sales']
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            id: 'left-y-axis',
+                            type: 'linear',
+                            position: 'left'
+                        }, {
+                            id: 'right-y-axis',
+                            type: 'linear',
+                            position: 'right'
+                        }]
+                    }
+                }
+            });
+        }
+
+        function chart2() {
+            var ctx = document.getElementById('year_wise_Employee');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['2015', '2016', '2017', '2018', '2019', '2020'],
+                    datasets: [{
+                        label: 'Number of Employee by Year',
+                        data: [10, 20, 30, 40, 50, 60],
+                        backgroundColor: [
+                            'rgba(0,255,0, 0.3)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+    </script>
+}
+

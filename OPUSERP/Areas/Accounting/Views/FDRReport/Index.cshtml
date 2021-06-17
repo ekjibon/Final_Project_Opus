@@ -1,0 +1,171 @@
+﻿@model FDRInvestmentViewModel
+@{
+    ViewData["Title"] = "FDR Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">FDR Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label for="report" class="col-sm-3 col-form-label">Select Report Name <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="report" name="report" required>
+                                <option value="">Select One</option>
+                                <option value="1">Investment Schedule</option>
+                                <option value="2">Interest on Investment</option>
+                                <option value="3">Monthly Interest Income Statement</option>
+                                <option value="4">Interest Schedule</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="FdrSelect">
+                        <label for="fdrId" class="col-sm-3 col-form-label">Investment No<span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select id="fdrId" name="fdrId" class="form-control" data-parsley-required="true" data-parsley-trigger="keyup">
+                                <option value="">Please select</option>
+                                @foreach (var data in Model.fDRInvestmentDetails)
+                                {
+                                    <option value="@data.fDRInvesmentMasterId">@data?.RefNo</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" readonly />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <button id="SubmitButton" class="btn btn-success btn-xs" title="PDF"><i class="fa fa-file-pdf"></i> Print Pdf</button>
+                            &nbsp;&nbsp;
+                            <button id="ExcelButton" class="btn btn-info btn-xs" title="Excel"><i class="fa fa-file-excel"></i> Print Excel</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @*<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>*@
+    <script>
+        $(document).ready(function () {
+
+            $('#toDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+            $('#fromDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $('#DateRangeSelect').hide();
+            $('#FdrSelect').hide();
+
+            $('#report').change(function () {
+                let report = $('#report').val();
+                if (report == 1 || report == 2 || report == 3) {
+                    $('#DateRangeSelect').show();
+                    $('#FdrSelect').hide();
+                }
+                else if (report == 4) {
+                    $('#FdrSelect').show();
+                    $('#DateRangeSelect').hide();
+                }
+                else {
+                    $('#DateRangeSelect').hide();
+                    $('#FdrSelect').hide();
+                }
+            });
+
+            $("#SubmitButton").click(function (e) {
+                let report = $('#report').val();
+                if (report == '' || report == 0) {
+                    swal('Warning', 'Please Select Report', 'warning');
+                    return false;
+                }
+                if (report == 1 || report == 2 || report == 3) {
+                    let fromDate = $('#fromDate').val();
+                    let toDate = $('#toDate').val();
+
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+
+                    window.open('/Accounting/FDRReport/FdrInvestmentScheduleData?rptType=' + report + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (report == 4) {
+                    let fdrId = $('#fdrId').val();
+                    window.open('/Accounting/FDRReport/FdrInterestScheduleData?rptType=' + report + "&fdrId=" + fdrId, '_blank');
+                }
+               
+            });
+
+            $("#ExcelButton").click(function (e) {
+                let report = $('#report').val();
+                if (report == '' || report == 0) {
+                    swal('Warning', 'Please Select Report', 'warning');
+                    return false;
+                }
+                if (report == 1 || report == 2 || report == 3) {
+                    let fromDate = $('#fromDate').val();
+                    let toDate = $('#toDate').val();
+
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+
+                    Common.Ajax('GET', '/Accounting/FDRReport/FdrInvestmentScheduleExcelData?rptType=' + report + "&fromDate=" + fromDate + "&toDate=" + toDate, [], 'json', normalword);
+                }
+                else if (report == 4) {
+                    let fdrId = $('#fdrId').val();
+                    Common.Ajax('GET', '/Accounting/FDRReport/FdrInterestScheduleDataExcelData?rptType=' + report + "&fdrId=" + fdrId, [], 'json', normalword);
+                }
+            });
+        });
+
+        function normalword(response) {
+            console.log(response);
+            window.open('/pdf/' + response);
+        }
+
+    </script>
+}

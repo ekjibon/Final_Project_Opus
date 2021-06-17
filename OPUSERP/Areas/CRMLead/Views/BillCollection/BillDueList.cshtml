@@ -1,0 +1,621 @@
+﻿@model BillCollectionViewModel
+@{
+    ViewData["Title"] = "BillDueList";
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="card-title" style="color:black;text-align:center;">Due Informations</h5>
+            </div>
+            <div class="container">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-lg-8 row border" style="border:solid;">
+
+                            <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                                <div class="form-group row">
+                                    <div class="col-sm-1">
+                                        <input class="form-horizontal" type="checkbox" id="rdBdPerson" value="3" name="filterType" style="float:left;margin-top:3px" />
+                                    </div>
+                                    <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">BD Person</label>
+                                    </div>
+                                    <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="bdPerson" name="bdPerson" placeholder="BD Person" style="width:96%;" />
+                                        <input type="hidden" id="bdPersonasp" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                                <div class="form-group row">
+                                    <div class="col-sm-1">
+                                        <input class="form-horizontal" type="checkbox" id="rdTlName" value="1" name="filterType" style="float:left;margin-top:3px" />
+                                    </div>
+                                    <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">Bank Name</label>
+                                    </div>
+                                    <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="tlName" name="tlName" placeholder="Bank Name" style="width:96%;" />
+                                        <input type="hidden" id="tlasp" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-1">
+                                        <input class="form-horizontal" type="checkbox" id="rdFaName" value="2" name="filterType" style="float:left;margin-top:3px" />
+                                    </div>
+                                    <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">Branch Name</label>
+                                    </div>
+                                    <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="faName" name="faName" placeholder="Branch Name" style="width:96%;" />
+                                        <input type="hidden" id="faasp" />
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-lg-4 row">
+                            <div class="col-lg-12 col-sm-4 col-md-4">
+
+
+                                <img id="xxxx" class="loading-image" src="~/Upload/logo/load.gif" alt="loading.." style="display:none">
+                                <div class="form-group row">
+                                    <div class="col-sm-1">
+
+                                    </div>
+                                    <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">Account Name</label>
+                                    </div>
+                                    <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="accName1" name="accName1" placeholder="Account Name" style="width:96%;" />
+
+                                        <input type="hidden" id="accName1asp" />
+
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0"></label>
+                                    </div>
+                                    <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+
+                                        <input type="button" id="AllSearch" value="Search" class="btn-sm btn btn-info" />
+
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+            <br />
+            <br />
+            <hr />
+            <div class="container">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
+
+                        <div class="col-lg-12 row">
+                            <div class="col-lg-8">
+
+
+
+                                <div class="form-group row">
+                                    <div class="col-sm-1" style="overflow:hidden;padding:0;">
+                                    </div>
+                                    <div class="col-sm-2" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">From Date</label>
+                                    </div>
+                                    <div class="col-sm-3" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="fromDate" name="fromDate" placeholder="Report Print Date" style="width:96%;" />
+                                    </div>
+                                    <div class="col-sm-1" style="overflow:hidden;padding:0;">
+                                    </div>
+                                    <div class="col-sm-2" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">To Date</label>
+                                    </div>
+                                    <div class="col-sm-3" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="toDate" name="toDate" placeholder="Report Print Date" style="width:96%;" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+
+
+
+                                <div class="form-group row">
+
+                                    <div class="col-sm-6" style="overflow:hidden;padding:0;">
+
+                                    </div>
+                                    <div class="col-sm-6" style="overflow:hidden;padding:0;">
+                                        <input type="button" id="AllSearchDate" value="Search" class="btn-sm btn btn-success" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+            <br />
+            <hr>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-bordered table-responsive table-sm" id="InvoiceTable" style="width:100%;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/SweetAlert/sweetalert2.common.js"></script>
+    <script src="~/SweetAlert/sweetalert2.js"></script>
+    <script>
+        function ajaxGetFIById(response) {
+
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankName;
+
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#tlName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#tlName").val(ui.item.value);
+                    $("#tlasp").val(ui.item.value);
+                    Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + ui.item.key, [], 'json', ajaxGetBranchByBankId);
+                }
+            });
+        }
+        function ajaxGetBranchByBankId(response) {
+           
+            console.log(response);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankBranch.branchName;
+                //obj.designation = option.designation;
+                //obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#faName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#faName").val(ui.item.value);
+                    $("#faasp").val(ui.item.value);
+
+                }
+            });
+        }
+        function ajaxGetCRMEmployees(response) {
+            console.log();
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.nameEnglish;
+                obj.emailAddress = option.emailAddress;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#bdPerson').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#bdPerson").val(ui.item.value);
+                    $("#bdPersonasp").val(ui.item.employeeCode);
+
+                }
+            });
+        }
+        $(document).ready(function () {
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBankByFIId/?Id=' + 0, [], 'json', ajaxGetFIById, false);
+            Common.Ajax('GET', '/global/api/GetEmployeeInfoCRMAnalyst', [], 'json', ajaxGetCRMEmployees, false);
+            GetAllPendingData();
+            $("#accName1").keydown(function () {
+                // alert("bb");
+                $("#rdTlName").prop("checked", false);
+                $("#rdFaName").prop("checked", false);
+                $("#rdBdPerson").prop("checked", false);
+
+                $("#tlName").val('');
+                $("#tlasp").val('');
+                $("#faName").val('');
+                $("#faasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+
+            });
+            $("#rdTlName").change(function () {
+
+                if ($("input[Id='rdTlName']:checked").val() != 1) {
+                    $("#tlName").val('');
+                    $("#tlasp").val('');
+
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdFaName").change(function () {
+
+
+                if ($("input[Id='rdFaName']:checked").val() != 2) {
+                    $("#faasp").val('');
+                    $("#faName").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdBdPerson").change(function () {
+
+                if ($("input[Id='rdBdPerson']:checked").val() != 3) {
+                    $("#bdPerson").val('');
+                    $("#bdPersonasp").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+
+
+
+            $("#AllSearch").click(function () {
+
+                var TeamLeader = $("#tlasp").val();
+
+                if (TeamLeader == "") {
+                    TeamLeader = "NoData"
+                }
+                if ($("input[Id='rdTlName']:checked").val() == 1) {
+                    if (TeamLeader == "NoData") {
+                        swal("Please Enter Bank Name.");
+                        return false;
+                    }
+
+                }
+                var Fa = $("#faasp").val();
+                if (Fa == "") {
+                    Fa = "NoData"
+                }
+                if ($("input[Id='rdFaName']:checked").val() == 2) {
+                    if (Fa == "NoData") {
+                        swal("Please Enter Branch Name.");
+                        return false;
+                    }
+
+                }
+                var BD = $("#bdPersonasp").val();
+                if (BD == "") {
+                    BD = "NoData"
+                }
+                if ($("input[Id='rdBdPerson']:checked").val() == 3) {
+
+                    if (BD == "NoData") {
+                        swal("Please Enter BD Person.");
+                        return false;
+                    }
+
+                }
+                var LeadId = $("#accName1").val();
+
+
+                if (LeadId == "") {
+                    LeadId = "NoData"
+                }
+
+                //Common.Ajax('GET', '/global/api/GetAllClientListS/'  + TeamLeader + "/" + Fa + "/" + BD + "/" + LeadId , [], 'json', ajaxGetMaster);
+                GetAllPendingDataS(TeamLeader, Fa, BD, LeadId);
+
+
+            });
+            $("#AllSearchDate").click(function () {
+
+                var fromDate = $("#fromDate").val();
+                var toDate = $("#toDate").val();
+
+               
+                GetAllPendingDataDateS(fromDate,toDate);
+
+
+            });
+        });
+
+        function GetAllPendingDataDateS(fromDate,toDate) {
+            $('#InvoiceTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetBillCollectionPendingListSD", "BillCollection")',
+                    data: {
+                        fromDate: fromDate,
+                        toDate: toDate
+                      
+                    },
+                    dataSrc: ""
+                },
+                destroy: true,
+                columns: [
+                    { data: "leadName", title: "Account Name", width: "20%" },
+                    { data: "bankName", title: "Bank Name", width: "20%" },
+                    { data: "branchName", title: "Branch Name", width: "20%" },
+                    { data: "leadOwner", title: "Owner", width: "20%" },
+
+                    { data: "ratingDate", title: "Rating Date", width: "10%" },
+                    { data: "reportPrintDate", title: "Report Print Date", width: "10%" },
+                    { data: "Validtill", title: "Valid Till", width: "10%" },
+                    { data: "jobStatusName", title: "Job Status", width: "10%" },
+
+                    { data: "ratingTypeName", title: "Rating Nature", width: "5%" },
+                    { data: "billDate", title: "Bill Date", width: "14%" },
+                    { data: "totalAmount", title: "Bill Amount", width: "14%" },
+                    { data: "discount", title: "discount", width: "14%" },
+                    { data: "collectedAmount", title: "Collection", width: "14%" },
+                    { data: "dueAmount", title: "Dues", width: "14%" },
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        title: "DueList",
+                        messageTop: 'Due List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        title: "DueList",
+                        messageTop: 'Due List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "DueList",
+                        messageTop: 'Due List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+         function GetAllPendingDataS(TeamLeader, Fa, BD, LeadId) {
+            $('#InvoiceTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetBillCollectionPendingListS", "BillCollection")',
+                    data: {
+                        TeamLeader: TeamLeader,
+                        Fa: Fa,
+                        BD: BD,
+                        LeadId: LeadId
+                    },
+                    dataSrc: ""
+                },
+                destroy: true,
+                columns: [
+                    { data: "leadName", title: "Account Name", width: "20%" },
+                    { data: "bankName", title: "Bank Name", width: "20%" },
+                    { data: "branchName", title: "Branch Name", width: "20%" },
+                    { data: "leadOwner", title: "Owner", width: "20%" },
+
+                    { data: "ratingDate", title: "Rating Date", width: "10%" },
+                    { data: "reportPrintDate", title: "Report Print Date", width: "10%" },
+                    { data: "Validtill", title: "Valid Till", width: "10%" },
+                    { data: "jobStatusName", title: "Job Status", width: "10%" },
+
+                    { data: "ratingTypeName", title: "Rating Nature", width: "5%" },
+                    { data: "billDate", title: "Bill Date", width: "14%" },
+                    { data: "totalAmount", title: "Bill Amount", width: "14%" },
+                    { data: "discount", title: "discount", width: "14%" },
+                    { data: "collectedAmount", title: "Collection", width: "14%" },
+                    { data: "dueAmount", title: "Dues", width: "14%" },
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        title: "DueList",
+                        messageTop: 'Due List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        title: "DueList",
+                        messageTop: 'Due List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "DueList",
+                        messageTop: 'Due List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+          function GetAllPendingData() {
+            $('#InvoiceTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetBillCollectionPendingList", "BillCollection")',
+                    dataSrc: ""
+                },
+                destroy: true,
+                columns: [
+                    { data: "leadName", title: "Account Name", width: "20%" },
+                    { data: "bankName", title: "Bank Name", width: "20%" },
+                    { data: "branchName", title: "Branch Name", width: "20%" },
+                    { data: "leadOwner", title: "Owner", width: "20%" },
+
+                    { data: "ratingDate", title: "Rating Date", width: "10%" },
+                    { data: "reportPrintDate", title: "Report Print Date", width: "10%" },
+                    { data: "Validtill", title: "Valid Till", width: "10%" },
+                    { data: "jobStatusName", title: "Job Status", width: "10%" },
+
+                    { data: "ratingTypeName", title: "Rating Nature", width: "5%" },
+                    { data: "billDate", title: "Bill Date", width: "14%" },
+                    { data: "totalAmount", title: "Bill Amount", width: "14%" },
+                    { data: "discount", title: "discount", width: "14%" },
+                    { data: "collectedAmount", title: "Collection", width: "14%" },
+                    { data: "dueAmount", title: "Dues", width: "14%" },
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        title: "DueList",
+                        messageTop: 'Due List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        title: "DueList",
+                        messageTop: 'Due List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "DueList",
+                        messageTop: 'Due List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+
+
+
+    </script>
+}
+@section Style{
+
+    <style>
+        #clientTable tbody tr {
+            cursor: pointer;
+        }
+
+        .loading-image {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+        }
+
+        .loader {
+            display: none;
+            width: 200px;
+            height: 200px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            margin-left: -50px;
+            margin-top: -100px;
+            z-index: 2;
+            overflow: auto;
+        }
+    </style>
+}
+
+

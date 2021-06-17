@@ -1,0 +1,167 @@
+﻿@model EmployeePunchCardInfoViewModel
+@{
+    ViewData["Title"] = "Attendance Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    .print-card-body {
+        width: 100%;
+        padding-bottom: 10px;
+    }
+
+    .vartical-table th {
+        width: 25%;
+    }
+
+    .vartical-table td {
+        width: 25%;
+    }
+
+    .horizontal-table {
+        /*width: 100%;*/
+    }
+
+    .table td, .table th {
+        padding: .3rem;
+        font-size: 15px;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    h6 {
+        font-size: 14px;
+        background-color: gray;
+        color: white !important;
+        padding: 3px;
+    }
+</style>
+
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2">
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                </div>
+                <div class="col-8">
+                    <div style="color:black;text-align:center;">
+
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                        <h5>@ViewBag.rptName Attendence Report</h5>
+                        <h5>From @ViewBag.startDate to @ViewBag.endDate</h5>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-2 fa-pull-right">
+                    <p style="font-size:smaller;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%; margin-top: 10px;">
+            <div class="card-body">
+                <div class="container-fluid" style="color:black;">
+                    @foreach (var x in Model.jobCardReportViewModels.Select(x => x.ShiftName).Distinct())
+                    {
+                        <div class="row" style="padding: 0px 15px 0px 20px;color:black;text-align:left;">
+                            <h5>Shift Name:&nbsp;<span style="font-weight:600">@x (Start Time: @Model.jobCardReportViewModels.Where(a => a.ShiftName == x).FirstOrDefault().ShiftStartTime - End Time: @Model.jobCardReportViewModels.Where(a => a.ShiftName == x).FirstOrDefault().ShiftEndTime)</span></h5>                           
+                        </div>
+                        <div class="col-12">
+                            <table class="table table-bordered" id="tblAttendance">
+                                <thead style="background-color:lightgray;">
+                                    <tr>
+                                        <th>Sl </th>
+                                        <th>Name</th>
+                                        <th>EmpCode</th>
+                                        <th>Date</th>
+                                        <th>Time In</th>
+                                        <th>Time Out</th>
+                                        <th>Working Hour</th>
+                                        <th>Late Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int i = 1;
+                                        @foreach (var data in Model.jobCardReportViewModels.Where(y => y.ShiftName == x))
+                                        {
+
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@data.EmpName</td>
+                                                <td>@data.EmpCode</td>
+                                                <td>@data.WorkDate</td>
+                                                <td>@data.StartTime</td>
+                                                <td>@data.EndTime</td>
+                                                <td>@data.Working_Time</td>
+                                                <td>@data.late_time</td>
+                                                <td>@data.Status</td>
+                                            </tr>
+                                            i++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    <div class="col-12">
+                        <br />
+                        <label><b>Summary:</b></label>
+                    </div>
+                    <div class="col-12">
+                        <table class="table table-bordered">
+                            <thead style="background-color:lightgray;">
+                                <tr>
+                                    <th style="text-align:center;">Name</th>
+                                    <th style="text-align:center;">Total Days</th>
+                                    <th style="text-align:center;">Weekly Off</th>
+                                    <th style="text-align:center;">HoliDays</th>
+                                    <th style="text-align:center;">Leave Days</th>
+                                    <th style="text-align:center;">Days Present</th>
+                                    <th style="text-align:center;">Days Absent</th>
+                                    <th style="text-align:center;">Days Late</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data2 in Model.individualAttendanceSummaryReportViewModels)
+                                {
+
+                                    <tr>
+                                        <td>@data2.EmpName</td>
+                                        <td style="text-align:center;">@data2.Tdays</td>
+                                        <td style="text-align:center;">@data2.WeekilyOFF</td>
+                                        <td style="text-align:center;">@data2.Holidays</td>
+                                        <td style="text-align:center;">@data2?.DaysLeave</td>
+                                        <td style="text-align:center;">@data2?.present</td>
+                                        <td style="text-align:center;">@data2?.Absent</td>
+                                        <td style="text-align:center;">@data2?.Late</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+}

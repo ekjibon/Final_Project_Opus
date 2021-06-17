@@ -1,0 +1,142 @@
+﻿@model PublicationViewModel
+
+@{
+    ViewData["Title"] = "Publication";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">Publication Info</h5>
+            </div>
+            <div class="col-4">
+                @*<a href='/HRPMSEmployee/Photograph/EditGrid/@Model.candidateId' style="text-decoration:none;"><h6 class="identity-box">@Model.employeeNameCode</h6></a>*@
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Recruitment" asp-controller="RcrtPublication" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="publicationName" class="col-sm-3 col-form-label">Publication Name <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="publicationName" value="" name="publicationName" data-parsley-required="true">
+                        <input type="hidden" name="candidateId" id="candidateId" value="@Model.candidateId" />
+                        <input type="hidden" name="publicationId" id="publicationId" value="0" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="publicationPlace" class="col-sm-3 col-form-label">Ppublication Place <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="publicationPlace" value="" name="publicationPlace" data-parsley-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="publicationType" class="col-sm-3 col-form-label">Publication Type <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="publicationType" value="" name="publicationType" data-parsley-required="true">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="txtPubDate" class="col-sm-3 col-form-label">Publication Date <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="txtPubDate" value="" name="publicationDate" autocomplete="off" data-parsley-required="true">
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">Publication Info</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="publicationTable">
+                    <thead>
+                        <tr>
+                            <th>Publication Name</th>
+                            <th>Publication Type</th>
+                            <th>Publication Place</th>
+                            <th>Publication Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var data in Model.rcrtPublications)
+                        {
+                            <tr>
+                                <td>@data.publicationName</td>
+                                <td>@data.publicationType</td>
+                                <td>@data.publicationPlace</td>
+                                <td>@data.publicationDate?.ToString("MM/dd/yyyy")</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.publicationName', '@data.publicationType', '@data.publicationDate?.ToString("MM/dd/yyyy")', '@data.publicationPlace')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id,@data.candidateId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+
+            $("#publication").addClass("active");
+            $('#txtPubDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#publicationTable').DataTable();
+        });
+
+        function Edit(Id, publicationName, publicationType, publicationDate, publicationPlace) {
+            $("#publicationId").val(Id);
+            $("#publicationName").val(publicationName);
+            $("#publicationType").val(publicationType);
+            $("#publicationPlace").val(publicationPlace);
+            $("#txtPubDate").val(publicationDate);
+        }
+
+        //function Remove(Id, employeeId) {
+        //    chk = confirm('Do you want to delete this?');
+        //    if (chk) {
+        //        //return true;
+        //        location.replace("/HRPMSEmployee/Publication/Delete/" + Id + "?empId=" + employeeId);
+        //    } else {
+        //        return false;
+        //    }
+        //}
+
+    </script>
+}
+

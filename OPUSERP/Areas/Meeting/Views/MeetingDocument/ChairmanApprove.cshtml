@@ -1,0 +1,119 @@
+﻿@model MeetingDocumentViewModel
+@{
+    ViewData["Title"] = "Create Document";
+}
+
+@section Style{
+
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+
+<div class="container-fluid">
+    <div class="card" style="width: 100%;">
+        <div class="card-body">
+            <h5 class="card-title" style="color: black">Approve Document for Meeting</h5>
+            <hr>
+            <form asp-area="Meeting" asp-controller="MeetingDocument" asp-action="ChairmanApprove" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="container">
+                    <h5 class="card-title text-primary">@Model.meetingInfo.title</h5>
+                    <input type="hidden" name="meetingId" value="@Model.meetingInfo.Id">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>#SL</th>
+                                <th>Document Subject</th>
+                                <th class="text-center text-danger">Select</th>
+                                <th class="text-center text-success">View</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                                @foreach (var data in Model.meetingDocs)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@data.doc.subject</td>
+                                        <td class="text-center"><input type="checkbox" name="checkbox[]" value="@data.docId"></td>
+                                        <td class="text-center"><a target="_blank" href="/Meeting/MeetingDocument/DocPreView/@data.docId"><i class="fas fa-eye"></i></a></td>
+                                    </tr>
+                                    i++;
+                                }
+
+                            }
+                        </tbody>
+                    </table>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <label for="content" style="color: black;">Comment..</label>
+                        <textarea class="form-control" id="content" aria-describedby="contentHelp"
+                                  placeholder="Enter Content" name="ccontent" rows="4" cols="10"
+                                  style="resize: none;"></textarea>
+                    </div>
+
+
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $(function () {
+                $('#date').datepicker({
+                    uiLibrary: 'bootstrap4'
+                });
+            });
+
+        });
+
+
+    </script>
+}
+
+
+
+
+
+
+

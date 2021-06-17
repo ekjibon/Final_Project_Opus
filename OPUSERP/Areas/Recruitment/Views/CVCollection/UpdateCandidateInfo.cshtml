@@ -1,0 +1,93 @@
+﻿@model CandidatePhotographViewModel
+@{
+    ViewData["Title"] = "Update Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .redStar {
+        color: red;
+    }
+</style>
+
+<div class="card" style="width: 100%;">
+    <div class="card-header row">
+        <div class="col-8">
+            <h5 class="card-title" style="color: black">Candidate Information</h5>
+        </div>
+        <div class="col-4">
+            @*<h6 class="identity-box">@Model.employeeNameCode</h6>*@
+        </div>
+    </div>
+
+    <div class="card-body row">
+            <div class="col-2">
+                @*<img id="user_img_current" style="width: 180px;height: 165px;border-radius: 120px;" src="~/@Model.photograph.url" alt="" class="img-thumbnail float-left">*@
+                <input type="hidden" id="hiddenFile" />
+            </div>
+            <div class="col-9">
+                <span>Ref. Job No : </span><span>@Model.candidateInfo.candidateCode</span><br />
+                <span>Candidate Name : </span><span>@Model.candidateInfo.candidateName</span><br />
+                <span>Designation : </span><span>@Model.candidateInfo.designation</span><br />
+                <span>Contact : </span><span>@Model.candidateInfo.mobile</span><br />
+                <span>Email : </span><span>@Model.candidateInfo.email</span><br />
+            </div>
+        </div>
+
+    <div class="card-body row">
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "CVCollection", new { id = @ViewBag.cadidateId })" style="text-decoration:none;">
+                    <i class="fa fa-user-tie fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Basic</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("AddressInfo", "CVCollection", new { id = @ViewBag.cadidateId})" style="text-decoration:none;">
+                    <i class="fa fa-map-marker-alt fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Address</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("EducationInfo", "CVCollection", new { id = @ViewBag.candidateId })" style="text-decoration:none;">
+                    <i class="fa fa-graduation-cap fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Education</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("TrainingInfo", "CVCollection", new { id = @ViewBag.candidateId })" style="text-decoration:none;">
+                    <i class="fa fa-clipboard-list fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Training</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(document).ready(function () {
+            //$("#photo").addClass("active");
+            //$("#imagePath").change(function () {
+            //    readURL(this);
+            //});
+        });
+    </script>
+}
+

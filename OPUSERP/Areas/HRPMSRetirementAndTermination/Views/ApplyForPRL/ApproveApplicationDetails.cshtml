@@ -1,0 +1,69 @@
+﻿@model PRLApplicationViewModel
+@{
+    ViewData["Title"] = "View Award";
+}
+<style>
+    p {
+        color: black;
+        font-size: 14px;
+    }
+</style>
+
+<div class="card" style="width: 100%; margin-top: 10px;">
+    <div class="card-body">
+
+        <hr>
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-3"> <img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:85px" /></div>
+                <h5 style="color:black" class="text text-center text-uppercase">ministry of disaster management and relief</h5>
+            </div>
+
+            <div class="row">
+                <div class="col-11 text-center"><h5 class="card-title" style="color: black">Application Approve Details</h5></div>
+                <div class="col-1">
+                    <button data-toggle="tooltip" title="Print" id="printInfo" class="btn btn-info" style="float:right;margin-top: 25px;"><i class="fa fa-print"></i></button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group row">
+                        <label for="circularRefernce" class="col-sm-4 col-form-label">@Model.flang.applicationName :</label>
+                        <div class="col-sm-8">
+                            <p>@Model.pRLApplicationsById.applicationName</p>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="positionName" class="col-sm-4 col-form-label">@Model.flang.employeeName :</label>
+                        <div class="col-sm-8">
+                            <p>@Model.pRLApplicationsById.employee.nameBangla</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="project" class="col-sm-4 col-form-label">@Model.flang.designation :</label>
+                        <div class="col-sm-8">
+                            <p>Programmer</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="numberOfPosition" class="col-sm-4 col-form-label">@Model.flang.date  :</label>
+                        <div class="col-sm-8">
+                            <p>@Model.pRLApplicationsById.applicationDate</p>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                
+            </div>
+        </div>
+    </div>
+</div>

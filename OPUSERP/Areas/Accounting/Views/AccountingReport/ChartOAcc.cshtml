@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Chart Of Accounts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+
+        .numericCol {
+            text-align: right;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Chart Of Accounts</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="SBUSelect">
+                        <label for="sbuId" class="col-sm-3 col-form-label">SBU</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="sbuId" name="sbuId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerProject">
+                        <label for="projectId" class="col-sm-3 col-form-label">Project</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="projectId" name="projectId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3"></label>
+                        <div class="col-sm-9">                            
+                            <button id="SubmitButton" class="btn btn-success btn-xs" title="Preview">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#toDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+            $('#fromDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+
+
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+            $("#sbuId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', GetProject, false);
+            });
+
+            $("#SubmitButton").click(function (e) {
+                var projectId = $("#projectId").val();
+                var sbuId = $("#sbuId").val();
+                window.open('/Accounting/AccountingReport/chartofAccountspdf?projectId=' + projectId + '&sbuId=' + sbuId, '_blank');
+            });
+        });
+
+        function Refresh() {
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+            GetLedgerDetailsDataEx(ledgerId, fromDate, toDate);
+        }
+
+        function GetLedgerDetailsDataEx(ledgerId, fromDate, toDate) {
+            $('#tblLedgerDetails').DataTable().destroy();
+            table = $('#tblLedgerDetails').DataTable({
+                ajax: {
+                    url: "/global/api/GetLedgerDetailsData/" + ledgerId + "/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "accountName" },
+                    { data: "accountCode" },
+                    {
+                        data: "Amount",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol"
+                    }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "Ledger Details",
+                        messageTop: 'Ledger Details Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "Ledger Details",
+                        messageTop: 'Ledger Details Report'
+                    }
+                ]
+            });
+        }        
+
+        function GetSBU(response) {
+            $('#sbuId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+            });
+            $('#sbuId').append(options);
+        }
+
+        function GetProject(response) {
+            $('#projectId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+            });
+            $('#projectId').append(options);
+        }
+    </script>
+}

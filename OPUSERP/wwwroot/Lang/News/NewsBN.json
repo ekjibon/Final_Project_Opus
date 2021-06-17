@@ -1,0 +1,14 @@
+﻿{
+  "title": "সংবাদ তৈরী",
+  "newsTitle": "সংবাদ শিরোনাম",
+  "newsImage": "সংবাদ ছবি",
+  "date": "তারিখ",
+  "description": "বিবরণ",
+  "upcoming": "সংবাদ তালিকা",
+  "list": "সংবাদ তালিকা",
+  "newsRegister": "সংবাদ নিবন্ধন",
+  "transaction": "লেনদেন",
+  "register": "নিবন্ধন",
+  "cancel": "বাতিল",
+  "action": "প্রক্রিয়া"
+}

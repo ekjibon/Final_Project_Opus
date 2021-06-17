@@ -1,0 +1,103 @@
+﻿@model PackagingViewModel
+@{
+    ViewData["Title"] = "Package List";
+    Layout = "~/Areas/Distribution/Views/shared/_VoucherLayout.cshtml";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@section StyleV{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        #tblInvoiceList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Package List</h5>
+            </div>
+            <div class="col-6">
+                <a href="/Distribution/Package/Index?id=0" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Add New</a>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <div class="row">
+                <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                <div class="col-12">
+                    <table class="table table-bordered table-striped" id="tblInvoiceList" data-parsley-required="true">
+                        <thead style="width:100%;background-color:lightgray;">
+                            <tr>
+                                <th width="5%">SL#</th>
+                                <th width="20%">Package No</th>
+                                <th width="35%">Package Name</th>
+                                <th width="10%">Package Date</th>
+
+                                <th width="10%">Start Date</th>
+                                <th width="10%">End Date</th>
+                              
+                                <th width="10%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+
+                                int i = 1;
+
+                                @foreach (var item in Model.packageMasters)
+                                {
+
+                            <tr>
+                                <td width="5%">@i</td>
+                                <td width="20%"><span style="display:none">-@item.Id-</span>@item.packageNo</td>
+                                <td width="35%">@item.packageName</td>
+                                <td width="10%">@item.packageDate?.ToString("dd/MM/yyyy")</td>
+                                <td width="10%">@item.startDate?.ToString("dd/MM/yyyy")</td>
+                                <td width="10%">@item.endDate?.ToString("dd/MM/yyyy")</td>
+
+                                <td width="10%">
+                                    <a class="btn btn-success" href="/Distribution/Package/Index?id=@item.Id" title="Requisition Edit"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-success" href="/Distribution/Package/InvoicePDFAction?id=@item.Id" target="_blank" title="Requisition Report"><i class="fa fa-eye-dropper"></i></a>
+                                </td>
+                            </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsV{
+    <script>
+        $(document).ready(function () {
+            $('#tblInvoiceList').DataTable();
+
+            var table = $('#tblInvoiceList').DataTable();
+
+            $('#tblInvoiceList tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[1];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var vid = parseInt(id.split('-')[1]);
+                window.location.href = "/Distribution/Package/PackageDetails/?id=" + vid;
+            });
+            $('#tblInvoiceList tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+        });
+
+    </script>
+}
+

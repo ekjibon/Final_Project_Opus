@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+
+    <title>docpdf</title>
+
+    <style>
+        body {
+            font-family: "Tahoma, Geneva, sans-serif;
+        }
+
+        .docNo {
+            margin: 0px;
+            /*padding-top: 10px;*/
+            font-weight: normal;
+            font-size: 14px;
+            /*padding-left: 5px;*/
+        }
+
+        .subject {
+            width: 100%;
+            font-size: 14px;
+            color: black;
+            /*padding-left: 5px;*/
+            /*padding-right: 5px;*/
+        }
+
+        .description {
+            text-align: justify;
+            text-justify: inter-word;
+            width: 100%;
+            font-size: 14px;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+
+
+        .sincerely {
+            margin-top: 40px;
+            width: 100%;
+            text-align: left;
+            padding-left: 70%;
+        }
+
+        .comment {
+            width: 100%;
+            /*border-top: 2px dashed gray;*/
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .note {
+            width: 100%;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .sincerely2 {
+            margin-top: 10px;
+            width: 100%;
+            text-align: left;
+            padding-left: 75%;
+        }
+
+        .mainlayoutLeft {
+            width: 89%;
+            float: left;
+            border-right: 1px dotted black;
+            border-left: 1px dotted black;
+            /*margin-right: 0px;*/
+            /*padding: 5px;*/
+            /*padding-top: 0px;*/
+        }
+
+        .mainlayoutRight {
+            width: 9%;
+            float: right;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .attatchMents {
+            padding-top: 120px;
+            width: 100%;
+            padding-left: 4px;
+        }
+
+        .page {
+            header: page-header;
+            footer: page-footer;
+            margin-top: 2.54cm;
+            margin-bottom: 2.54cm;
+            margin-left: 2cm;
+            margin-right: .2cm;
+        }
+    </style>
+
+</head>
+<body>
+    @RenderBody()
+</body>
+</html>

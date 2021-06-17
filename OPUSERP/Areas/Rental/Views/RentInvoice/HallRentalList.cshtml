@@ -1,0 +1,267 @@
+﻿@model HallRentalViewModel
+@{
+    ViewData["Title"] = "HallRental";
+}
+
+
+@section Style{
+    <link href="~/lib/main.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">List of Hall Booking</h5>
+            </div>
+            <div class="col-6">
+                <a href="/Rental/RentInvoice/CalenderView" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Back to Menu</a>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-6">
+           @*<button style="background-color:#024972; float:left;" class="btn btn-info btn-sm" onclick="Calender()">Calender View</button>*@
+            <button  style="background-color:#024972; float:left;" class="btn btn-info btn-sm active" onclick="List()">List View</button>
+            </div>
+            <div class="col-6"></div>
+        </div>
+        <br />
+        <div class="container">
+            @*<div class="row" id='calendar' style="height:600px; width:1000px"></div>*@
+            <div class="row" id="list">
+                <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                <div class="col-12">
+                    <table class="table table-bordered table-striped table-responsive" id="tblInvoiceList" data-parsley-required="true">
+                        <thead style="width:100%;background-color:lightgray;">
+                            <tr>
+                                <th>SL#</th>
+                                <th>Action</th>
+                                <th>Status</th>
+                                <th>Customer Name</th>
+                                <th class="text-right">Phone No</th>
+                                <th>Hall Name</th>
+                                <th class="text-center">Rental Date</th>
+                                <th>Rental Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                                @foreach (var item in Model.hallRentalApplicationInfos)
+                                {
+                            <tr>
+                                <td>@i</td>
+                                <td>
+                                    @if (item.isPaid == 1)
+                                    {
+                                        <a class="btn btn-success" href="/Rental/RentInvoice/HallRentalReportPdf?id=@item.Id" target="_blank" title="Rental Report"><i class="fa fa-print"></i></a>
+                                    }
+                                    @if (item.status == 3 && item.isPaid != 1)
+                                    {
+                                        <a class="btn btn-success" href="/Rental/RentInvoice/UpdateHallRentalPaymentStatus/@item.Id" title="Payment Status">Pay</a>
+                                    }
+                                    <a class="btn btn-info" href="/Rental/RentInvoice/HallRental?id=@item.Id" title="Edit Information"><i class="fa fa-edit"></i></a>
+                                </td>
+                                @if (item.isPaid == 1)
+                                {
+                                    <td>
+                                        <span class="badge badge-success">Paid</span>
+                                    </td>
+                                }
+                                else
+                                {
+                                    @if (item.status == null || item.status == 0)
+                                    {
+                                        <td>   <span class="badge badge-info">pending</span></td>
+                                    }
+
+                                    else if (item.status == 1)
+                                    {
+                                        <td>
+                                            <span class="badge badge-secondary">Applied</span>
+                                        </td>
+                                    }
+                                    else if (item.status == 3)
+                                    {
+                                        <td>
+                                            <span class="badge badge-secondary">Approved</span>
+                                        </td>
+                                    }
+                                    else if (item.status == 4)
+                                    {
+                                        <td>
+                                            <span class="badge badge-danger">Canceled</span>
+                                        </td>
+                                    }
+                                }
+
+
+
+
+                                <td>@item.applicantName</td>
+                                <td>@item.mobileNo</td>
+
+                                <td>@item.hallInfo.hallName</td>
+                                <td>@item.rentalDate</td>
+
+                                <td>@item.hallRentalShift?.shiftName </td>
+
+                            </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @*<div id="myModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                            </div>
+                            <div class="modal-body">
+                                <p id="pDetails"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script src="~/lib/main.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            GetAllEvent();
+            $("#tblInvoiceList").dataTable();
+            $("#calendar").show();
+            $("#list").hide();
+        });
+
+        function GetAllEvent() {
+            var event = [];
+            $.ajax({
+                url: "/Rental/RentInvoice/InvoiceListjson",
+                type: "GET",
+                dataType: "JSON",
+                success: function (result) {
+
+                    $.each(result, function (i, data) {
+                        //console.log(data)
+                        event.push({
+                            title: data.applicantName,
+                            start: data.rentalDate,
+                            //allDay: data.IsFullDay,
+                            backgroundColor: "#0dd9f2",
+                            borderColor: "#fc0101",
+                            color: "white",
+                            //color:"#FFFFFF"
+                        });
+                    });
+                    GenerateCalander(event);
+                }
+                //,
+                //error: function (error) {
+                //    swal('Error', 'Failed', 'Error');
+                //}
+            })
+
+        };
+        
+        function Calender() {
+            $("#calendar").show();
+            $("#list").hide();
+        };
+        function List() {
+            $("#calendar").hide();
+            $("#list").show();
+        };
+
+        function GenerateCalander(event) {
+            //$('#calendar').fullCalendar('destroy');
+            $('#calendar').fullCalendar({
+                contentHeight: 500,
+                initialDate: Date.now(),
+                navLinks: true, // can click day/week names to navigate views
+                selectable: true,
+                selectMirror: true,
+                //dateClick: function (arg) {
+                //    console.log(arg);
+                //    console.log(arg.dateStr);
+                //},
+                select: function (start, end, jsEvent, view) {
+                    //var allDay = !start.hasTime() && !end.hasTime();
+                    //alert(["Event Start date: " + moment(start).format(),
+                    //"Event End date: " + moment(end).format(),
+                    //"AllDay: " + allDay].join("\n"));
+                    window.location.href = "/Rental/RentInvoice/DateWiseInvoiceDetailsList?date=" + moment(start).format();
+                    // window.location.href = "/Rental/RentInvoice/DateWiseInvoiceDetailsList?date=" + arg.startStr;
+                    //calendar.unselect();
+                },
+                //timeFormat: 'h(:mm)a',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                eventLimit: true,
+                eventColor: '#0dd9f2',
+
+                events: event,
+                eventClick: function (calEvent, jsEvent, view) {
+                    alert("click event");
+                    //$('#myModal #eventTitle').text(calEvent.title);
+                    //var $description = $('<div/>');
+                    //$description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
+                    //if (calEvent.end != null) {
+                    //    $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MMM-YYYY HH:mm a")));
+                    //}
+                    //$description.append($('<p/>').html('<b>Description:</b>' + calEvent.description));
+                    //$('#myModal #pDetails').empty().html($description);
+
+                    //$('#myModal').modal();
+                }
+            });
+        };
+
+    </script>
+}

@@ -1,0 +1,315 @@
+﻿@model FinancialReportViewModel
+@{
+    ViewData["Title"] = "Profit And Loss Account";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+        .vartical-table th {
+            width: 25%;
+        }
+        .vartical-table td {
+            width: 25%;
+        }
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+        table {
+            page-break-inside: auto
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+        thead {
+            display: table-header-group
+        }
+        tfoot {
+            display: table-footer-group
+        }        
+    </style>
+}
+@{
+    decimal? GrossProfit = 0;
+    decimal? GrossProfitPrevious = 0;
+    decimal? TotalExpense = 0;
+    decimal? TotalExpensePrevious = 0;
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-3">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;margin-left:130px;" />
+                    </div>
+                    <div class="col-6">
+                        <div style="color:black">
+                            
+                            <h3 style="text-align:center;">@Model.companies.FirstOrDefault().companyName</h3>
+                            <p style="text-align:center;">@Model.companies.FirstOrDefault().addressLine</p>
+                            <h5 style="text-align:center;">Statement of Income and Expenditure</h5>
+                            <br />
+                        </div>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
+            </div>
+            <div class="container-fluid" style="color:black;">
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr>
+                                <th width="40%" style="text-align:center">Particulars</th>
+                                <th width="10%" style="text-align:center">Notes</th>
+                                <th width="25%" style="text-align:center">Current Year Amount</th>
+                                <th width="25%" style="text-align:center">Previous Year Amount</th>
+                            </tr>
+                        </thead>
+                        @foreach (var data in Model.profitAndLossAccountViewModels.Where(a => a.fsLineName.Contains("Revenue") || a.fsLineName.Contains("Cost of services")))
+                        {
+                            <tr>
+                                <td>@data.fsLineName</td>
+                                <td>@data.noteNo</td>
+                                @if (data.currentAmount < 0)
+                                {
+                                    var negative = data.currentAmount * -1;
+                                    <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                }
+                                else
+                                {
+                                    <td style="text-align:right;width:25%;">@data.currentAmount?.ToString("0,0.00")</td>
+                                }
+                                @if (data.previousAmount < 0)
+                                {
+                                    var negative = data.previousAmount * -1;
+                                    <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                }
+                                else
+                                {
+                                    <td style="text-align:right;width:25%;">@data.previousAmount?.ToString("0,0.00")</td>
+                                }
+                            </tr>
+                        }
+                    </table>
+                </div>
+
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").GroupBy(a => a.fsLineName))
+                            {
+                                decimal? totalRevenue = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").Sum(x => x.currentAmount);
+                                decimal? totalCOS = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Cost of services").Sum(x => x.currentAmount);
+                                decimal? totalRevenuePrevious = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").Sum(x => x.previousAmount);
+                                decimal? totalCOSPrevious = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Cost of services").Sum(x => x.previousAmount);
+                                GrossProfit = totalRevenue - totalCOS;
+                                GrossProfitPrevious = totalRevenuePrevious - totalCOSPrevious;
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Gross Profit</td>
+                                    @if (GrossProfit < 0)
+                                    {
+                                        var negative = GrossProfit * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@GrossProfit?.ToString("0,0.00")</td>
+                                    }
+                                    @if (GrossProfitPrevious < 0)
+                                    {
+                                        var negative = GrossProfitPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@GrossProfitPrevious?.ToString("0,0.00")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        @foreach (var data in Model.profitAndLossAccountViewModels.Where(a => a.fsLineName != "Revenue" && a.fsLineName != "Cost of services"))
+                        {
+                            <tr>
+                                <td width="40%">@data.fsLineName</td>
+                                <td width="10%">@data.noteNo</td>
+                                @if (data.currentAmount < 0)
+                                {
+                                    var negative = data.currentAmount * -1;
+                                    <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                }
+                                else
+                                {
+                                    <td style="text-align:right;width:25%;">@data.currentAmount?.ToString("0,0.00")</td>
+                                }
+                                @if (data.previousAmount < 0)
+                                {
+                                    var negative = data.previousAmount * -1;
+                                    <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                }
+                                else
+                                {
+                                    <td style="text-align:right;width:25%;">@data.previousAmount?.ToString("0,0.00")</td>
+                                }
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").GroupBy(a => a.fsLineName))
+                            {
+                                TotalExpense = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName != "Revenue" && a.fsLineName != "Cost of services").Sum(x => x.currentAmount);
+
+                                TotalExpensePrevious = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName != "Revenue" && a.fsLineName != "Cost of services").Sum(x => x.previousAmount);
+
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Total Expenses</td>
+                                    @if (TotalExpense < 0)
+                                    {
+                                        var negative = TotalExpense * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalExpense?.ToString("0,0.00")</td>
+                                    }
+                                    @if (TotalExpensePrevious < 0)
+                                    {
+                                        var negative = TotalExpensePrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalExpensePrevious?.ToString("0,0.00")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").GroupBy(a => a.fsLineName))
+                            {
+                                decimal? NetProfit = 0;
+                                decimal? NetProfitPrevious = 0;
+                                NetProfit = GrossProfit - TotalExpense;
+                                NetProfitPrevious = GrossProfitPrevious - TotalExpensePrevious;
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Profit before contribution to WPPF</td>
+                                    @if (NetProfit < 0)
+                                    {
+                                        var negative = NetProfit * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfit?.ToString("0,0.00")</td>
+                                    }
+                                    @if (NetProfitPrevious < 0)
+                                    {
+                                        var negative = NetProfitPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfitPrevious?.ToString("0,0.00")</td>
+                                    }
+
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Profit before tax</td>
+                                    @if (NetProfit < 0)
+                                    {
+                                        var negative = NetProfit * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfit?.ToString("0,0.00")</td>
+                                    }
+                                    @if (NetProfitPrevious < 0)
+                                    {
+                                        var negative = NetProfitPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfitPrevious?.ToString("0,0.00")</td>
+                                    }
+
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Profit</td>
+                                    @if (NetProfit < 0)
+                                    {
+                                        var negative = NetProfit * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfit?.ToString("0,0.00")</td>
+                                    }
+                                    @if (NetProfitPrevious < 0)
+                                    {
+                                        var negative = NetProfitPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfitPrevious?.ToString("0,0.00")</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Total comprehensive income</td>
+                                    @if (NetProfit < 0)
+                                    {
+                                        var negative = NetProfit * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfit?.ToString("0,0.00")</td>
+                                    }
+                                    @if (NetProfitPrevious < 0)
+                                    {
+                                        var negative = NetProfitPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfitPrevious?.ToString("0,0.00")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts{
+}

@@ -1,0 +1,182 @@
+﻿@model FinancialReportViewModel
+@{
+    ViewData["Title"] = "Receive & Payment Statement";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }       
+    </style>
+}
+@{
+    decimal? totalbal = 0;
+    decimal? total = @Model.rVMasterViewModels.FirstOrDefault()?.Amount;
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-2">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                    </div>
+                    <div class="col-8">
+                        <div style="color:black;text-align:center;">
+                            <h4>@Model.companies.FirstOrDefault().companyName</h4>                           
+                            <p style="text-align:center;">@Model.companies.FirstOrDefault().addressLine</p>
+                            <h5>Statement of Receipts and Payments</h5>
+                            <h6>From @Model.rVMasterViewModels.FirstOrDefault().fromDate To @Model.rVMasterViewModels.FirstOrDefault().toDate</h6>
+                            <br />
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <div class="container-fluid" style="color:black;">
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Receipts</th>
+                            <th>Notes</th>
+                            <th>Amount in Taka</th>
+                        </tr>
+                        <tr>
+                            <td>Opening Balances</td>
+                            <td></td>
+                            <td style="text-align:right">@Model.rVMasterViewModels.FirstOrDefault().Amount?.ToString("0,0.00")</td>
+                        </tr>
+                        @{
+                            @foreach (var data in Model.rVMasterViewModels.FirstOrDefault().cashOpeningBalance.Where(x => x.noteHead == "OB"))
+                            {
+                                <tr style="background-color:bisque;">
+                                    <td>@data.noteName - (@data.noteHead)</td>
+                                    <td></td>
+                                    <td style="text-align:right">@data.Amount?.ToString("0,0.00")</td>
+                                </tr>
+                            }
+                        }
+
+                        @{
+                            decimal? totalsunone = 0;
+
+                            totalsunone = Model.rVMasterViewModels.FirstOrDefault().Amount;
+
+                            @foreach (var data in Model.rVMasterViewModels.FirstOrDefault().rVDetailViewModels.Where(x => x.fsLineName == "Received"))
+                            {
+
+                                totalsunone = totalsunone + data.Amount;
+                                total = total + data.Amount;
+
+                                <tr>
+                                    <td>@data.noteName</td>
+                                    <td>@data.noteNo</td>
+                                    <td style="text-align:right">@data.Amount?.ToString("0,0.00")</td>
+                                </tr>
+
+
+
+                            }
+                            <tr>
+                                <td colspan="2" style="background-color:lightgray;">Total Receipts</td>
+                                <td style="background-color:lightgray;text-align:right">@totalsunone?.ToString("0,0.00")</td>
+
+                            </tr>
+                        }
+                        <tr>
+                            <th>Payments</th>
+                            <th>Notes</th>
+                            <th>Amount in Taka</th>
+                        </tr>
+
+                        @{
+                            decimal? totalsuntwo = 0;
+
+
+                            @foreach (var data in Model.rVMasterViewModels.FirstOrDefault().rVDetailViewModels.Where(x => x.fsLineName == "Payment"))
+                            {
+
+                                totalsuntwo = totalsuntwo + data.Amount;
+                                total = total - data.Amount;
+
+                                <tr>
+                                    <td>@data.noteName</td>
+                                    <td>@data.noteNo</td>
+                                    <td style="text-align:right">@data.Amount?.ToString("0,0.00")</td>
+                                </tr>
+
+
+
+                            }
+                            totalbal = total + totalsuntwo;
+                            <tr>
+                                <td colspan="2" style="background-color:lightgray;">Total Payments</td>
+                                <td style="background-color:lightgray;text-align:right">@totalsuntwo?.ToString("0,0.00")</td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="background-color:lightgray;">Closing Balance</td>
+                                <td style="background-color:lightgray;text-align:right">@total?.ToString("0,0.00")</td>
+
+                            </tr>
+
+                           
+                        }
+                        @{
+                            @foreach (var data in Model.rVMasterViewModels.FirstOrDefault().cashOpeningBalance.Where(x => x.noteHead == "CB"))
+                            {
+                                <tr style="background-color:bisque;">
+                                    <td>@data.noteName - (@data.noteHead)</td>
+                                    <td></td>
+                                    <td style="text-align:right">@data.Amount?.ToString("0,0.00")</td>
+                                </tr>
+                            }
+                        }
+
+                    </table>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+}

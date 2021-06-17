@@ -1,0 +1,19 @@
+{
+  "galleryTitle": "Create Album",
+  "galleryImage": "Gallery Image",
+  "caption": "Caption",
+  "title": "Title",
+  "type": "Type",
+  "description": "Description",
+  "date": "Date",
+  "galleryTitleList": "Album List",
+  "imageGallery": "Image Gallery",
+  "imageUpload": "Upload Image in Album",
+  "galleryDetails": "Gallery Details",
+  "videoUpload": "Video Upload in Album",
+  "youtubeId": "Youtube Id",
+  "videoList": "Video List",
+  "videot": "Video",
+  "remarks": "Remarks",
+  "action": "Action"
+}

@@ -1,0 +1,58 @@
+﻿@model ProductionRequsitionViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">List of Production Requisition</h6>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreateRequisition", "ProductionRequisition")'">Add New</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="productionTable">
+                    <thead>
+                        <tr>
+                            <th style="width:15%">Requisition No</th>
+                            <th style="width:15%">Requisition Date</th>
+                            <th style="width:20%">Plan No</th>
+                            <th style="width:5%">Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.productionRequsitionMasters)
+                        {
+                            <tr>
+                                <td>@data.requsitionNumber</td>
+                                <td>@data.date?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.productionPlan?.planNumber</td>
+                                <td>
+                                    <a class="btn btn-success" title="View" href="javascript:void(0)"><i class="fa fa-eye"></i></a>
+                                    <a class="btn btn-info" title="Edit" href="/Production/ProductionRequisition/CreateRequisition?id=@data.Id"><i class="fa fa-pen"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#productionTable').DataTable();
+
+        });
+    </script>
+}

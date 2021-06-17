@@ -1,0 +1,242 @@
+﻿@model IOUViewModel
+@{
+    ViewData["Title"] = "IOU Payment Report";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">IOU Payment Report</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreatePO", "PurchaseOrder")'">Create IOU</button>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1" style="padding-right: 0;">
+                        <label for="fromDate">From Date </label>
+                    </div>
+                    <div class="col-2">
+                        <input type="text" class="form-control" id="fromDate" name="fromDate" value="@DateTime.Now.ToString("dd-MMM-yyyy")" />
+                    </div>
+                    <div class="col-1" style="padding-right: 0;">
+                        <label for="toDate">To Date</label>
+                    </div>
+                    <div class="col-2">
+                        <input type="text" class="form-control" id="toDate" name="toDate" value="@DateTime.Now.ToString("dd-MMM-yyyy")" />
+                    </div>
+                    <div class="col-1" style="padding-right: 0;">
+                        <label for="project">Project</label>
+                    </div>
+                    <div class="col-3">
+                        <select class="form-control" id="project" name="project">
+                            <option value="0">Select</option>
+                            @foreach (var item in Model.projects.Where(x => x.projectStatus == "Running"))
+                            {
+                                <option value="@item.Id">@item.projectName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-1" style="padding: 0px 15px 0px 0px;">
+                        <input type="button" onclick="LoadToGrid()" style="width:100%;" value="Load" class="btn btn-sm btn-info" id="btnLoad" />
+                    </div>
+                    <div class="col-1" style="padding: 0px 15px 0px 0px;">
+                        <input type="button" onclick="PrintReport()" style="width:100%;" value="Print" class="btn btn-sm btn-success" id="btnPrint" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-6" style="padding-right: 0;">
+
+                    </div>
+
+                    <div class="col-4">
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-md-4 col-form-label">Received By</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="attentionTo" name="attentionTo" data-parsley-required="true" data-parsley-trigger="keyup">
+                                <input type="hidden" id="attentionToId" name="attentionToId">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-1" style="padding: 0px 15px 0px 0px;">
+                        <input type="button" onclick="PrintReportEmployee()" style="width:100%;" value="Print" class="btn btn-sm btn-success" id="btnPrintReportEmployee" />
+                    </div>
+                    <div class="col-1" style="padding: 0px 15px 0px 0px;">
+
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped table-bordered table-responsive" id="IOUPaymentStatusTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Received By</th>
+                                    <th>IOU Date</th>
+                                    <th>IOU No</th>
+                                    <th>Payment Date</th>
+                                    <th>Payment Amount</th>
+                                    <th>Adjustment Date</th>
+                                    <th>Adjustment Amount</th>
+                                    <th>Return Amount</th>
+                                    <th>Balance Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        var paymentStatusPreviewTable;
+        $(document).ready(function () {
+            //$('#IOUPaymentStatusTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+            $('#fromDate').flatpickr({ dateFormat: "d-M-Y", });
+            $('#toDate').flatpickr({ dateFormat: "d-M-Y", });
+
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+            var projectId = $('#project').val();
+            paymentStatusPreviewTable = $('#IOUPaymentStatusTable').DataTable({
+                ajax: {
+                    url: "/global/api/getIOUPaymentStatus/" + projectId + "/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                language: {
+                    processing: '<span style="width:100%;"><img src="/images/loader-32x/loader3.gif"></span>'
+                },
+                processing: true,
+                columns: [
+                    { data: "projectName" },
+                    { data: "attentionTo" },
+                    { data: "iouDate" },
+                    { data: "iouNo" },
+                    { data: "paymentDate" },
+                    { data: "paymentAmount" },
+                    { data: "adjustmentDate" },
+                    { data: "adjustmentAmount" },
+                    { data: "returnAmount" },
+                    { data: "balanceAmount" }
+                ],
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7,8,9]
+                        },
+                        title: 'ERP',
+                        messageTop: 'IOU Payment Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8,9]
+                        },
+                        title: 'ERP',
+                        messageTop: 'IOU Payment Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: 'ERP',
+                        messageTop: 'IOU Payment Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8,9]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        });
+
+        function LoadToGrid() {
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+            var projectId = $('#project').val();
+            paymentStatusPreviewTable.clear().draw();
+            paymentStatusPreviewTable.ajax.url("/global/api/getIOUPaymentStatus/" + projectId + "/" + fromDate + "/" + toDate).load();
+        }
+
+        function PrintReport() {
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+            var projectId = $('#project').val();
+            if (projectId =="0") {
+                swal("Warning", "Please Select Project first", "warning");
+                return
+            }
+            //location.href = "/SCMReport/ReportMaster/IOUPaymentReportPDF?projectId=" + projectId + "&fromDate=" + fromDate + "&toDate=" + toDate;
+            window.open("/SCMReport/ReportMaster/IOUPaymentReportPDF?projectId=" + projectId + "&fromDate=" + fromDate + "&toDate=" + toDate, "_blank")
+        }
+        function PrintReportEmployee() {
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+            var attentionTo = $('#attentionTo').val();
+            var attentionToId = $('#attentionToId').val();
+            if (attentionTo == "" || attentionTo == null) {
+                swal("Warning", "Please Select Disburse To", "warning");
+                return
+            }
+            if (attentionToId == "" || attentionToId == null) {
+                swal("Warning", "Please Select Disburse To", "warning");
+                return
+            }
+            
+            window.open("/SCMReport/ReportMaster/IOUPaymentReportEmployeePDF?attentionToId=" + attentionToId + "&fromDate=" + fromDate + "&toDate=" + toDate, "_blank")
+        }
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#attentionTo').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#attentionTo").val(ui.item.value);
+                    $("#attentionToId").val(ui.item.key);
+                }
+            });
+        }
+
+    </script>
+}
+

@@ -1,0 +1,62 @@
+﻿@model DisbursmentViewModel
+@{
+    ViewData["Title"] = "Budget Disbursment List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header row">
+                <div class="col-md-8 col-xs-6">
+                    <h5 style="color: black; font-weight:bold">Budget Disbursment List</h5>
+                </div>
+                <div class="col-md-4 col-xs-6">
+                    <a class="btn btn-success btn-sm ml-1" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                    <button type="button" class="btn btn-default btn-sm ml-2" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("Index", "Disbursement", new { id = 0})'">Add New</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="productionTable">
+                    <thead>
+                        <tr>
+                            <th style="width:15%">Disbursment No</th>
+                            <th style="width:15%">Disbursment Date</th>
+                            <th style="width:15%">Fiscal Year</th>
+                            <th style="width:15%">Branch NAme</th>
+                            <th style="width:15%">Amount</th>
+                            <th style="width:10%">Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.budgetDisbursementMasters)
+                        {
+                            <tr>
+                                <td>@data.disburseNo</td>
+                                <td>@data.disburseDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.fiscalYear?.yearName</td>
+                                <td>@data.budgetBranch?.branchUnitName</td>
+                                <td>@data.grandTotal</td>
+                                <td>
+                                    <a class="btn btn-success" title="Edit" href="/Budget/Disbursement/Index?id=@data.Id"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+        <script type="text/javascript">
+        $(document).ready(function () {
+            $('#productionTable').DataTable();
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+        });
+    </script>
+}

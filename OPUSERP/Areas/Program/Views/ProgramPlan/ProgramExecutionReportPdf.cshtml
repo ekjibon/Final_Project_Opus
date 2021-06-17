@@ -1,0 +1,204 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "Program Plan Report (Execution)";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 10px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+    </style>
+}
+<div class="container">
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="fa-pull-right">
+                    <p style="font-size:smaller;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+                </div>
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-2">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                    </div>
+                    <div class="col-8">
+                        <div style="color:black;text-align:center;">
+                            <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                            <label>@Model.companies.FirstOrDefault().addressLine</label>
+                            <label>@Model.companies.FirstOrDefault().officeTelephone</label>
+                            <h5>Annual Work Plan (Execution)</h5>
+                            <br />
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <hr style="border:1px solid black;">
+            <div>
+                <div class="row">
+                    <div class="col-12">
+                        @*<span style="font-weight:600;color:black;">Project No: </span>
+                        <span style="color:black;">@Model.programPlanReportViewModels?.FirstOrDefault()?.number</span>
+                        <br />*@
+                        <span style="font-weight:600;color:black;">Name of the Project: </span>
+                        <span style="color:black;">@Model.programPlanReportViewModels?.FirstOrDefault()?.projectName</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Project Start Date: </span>
+                        <span style="color:black;">@Model.programPlanReportViewModels?.FirstOrDefault()?.Startdate?.ToString("dd-MMM-yyyy")</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Project End Date: </span>
+                        <span style="color:black;">@Model.programPlanReportViewModels?.FirstOrDefault()?.Enddate?.ToString("dd-MMM-yyyy")</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight:600;color:black;">Project Location: </span>
+                        <span style="color:black;">@Model.programLocations?.FirstOrDefault()?.location</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Implementation Organization: </span>
+                        <span style="color:black;">@Model.programImplementors?.FirstOrDefault()?.implementor</span>
+                        @*<br />
+                        <span style="font-weight:600;color:black;">Grant No: </span>
+                        <span style="color:black;">@Model.programPlanReportViewModels?.FirstOrDefault()?.grantNumber</span>*@
+                        @*<br />
+                        <span style="font-weight:600;color:black;">Description: </span>
+                        <span style="color:black;">@Model.programPlanReportViewModels?.FirstOrDefault()?.subject</span>*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        <span style="font-weight:600;color:black;">Source of Fund: </span>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-striped table-bordered" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <td style="width:60%;">Source Name</td>
+                                    <td style="width:20%;">Percent (%)</td>
+                                    <td style="width:20%;">Amount</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var data in Model.programSourceFunds)
+                                {
+                                    <tr>
+                                        <td>@data.sourceName</td>
+                                        <td align="center">@data.percent</td>
+                                        <td align="right">@data.amount</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br />
+                <span style="font-weight:600;color:black;">Impact: </span>
+                <span style="color:black;">@Model.programPlanReportViewModels?.FirstOrDefault()?.impactName</span>
+                <div>
+                    <table class="table table-striped table-bordered" id="voucherList" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th> 
+                                <th></th>
+                                <th colspan="12" style="text-align:center;">Year: @Model.programPlanReportViewModels?.FirstOrDefault()?.yearName</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th colspan="3" style="text-align:center;">Q1</th>
+                                <th colspan="3" style="text-align:center;">Q2</th>
+                                <th colspan="3" style="text-align:center;">Q3</th>
+                                <th colspan="3" style="text-align:center;">Q4</th>
+                            </tr>
+
+                            <tr>
+                                <td style="width:5%;text-align:center;vertical-align:middle;">SL#</td>
+                                <td style="width:15%;text-align:center;vertical-align:middle;">Description of Activities</td>
+                                <td style="width:10%;text-align:center;vertical-align:middle;">Measuring Indicator</td>
+                                <td style="width:10%;text-align:center;vertical-align:middle;">Total Planned Target</td>
+                                <td style="width:10%;text-align:center;vertical-align:middle;">Total Achieved Target</td>
+                                <td style="width:5%;text-align:center;">January</td>
+                                <td style="width:5%;text-align:center;">February</td>
+                                <td style="width:5%;text-align:center;">March</td>
+                                <td style="width:5%;text-align:center;">April</td>
+                                <td style="width:5%;text-align:center;">May</td>
+                                <td style="width:5%;text-align:center;">June</td>
+                                <td style="width:5%;text-align:center;">July</td>
+                                <td style="width:5%;text-align:center;">August</td>
+                                <td style="width:5%;text-align:center;">September</td>
+                                <td style="width:5%;text-align:center;">October</td>
+                                <td style="width:5%;text-align:center;">November</td>
+                                <td style="width:5%;text-align:center;">December</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                                @foreach (var data in Model.programPlanReportViewModels)
+                                {
+                            <tr>
+                                <td style="text-align:center;">@i</td>
+                                <td>@data.activity</td>
+                                <td>@data.indicator</td>
+                                <td align="right">@data.values</td>
+                                <td align="right">@data.executionQuantity</td>
+                                <td align="right">@data.firstMonth</td>
+                                <td align="right">@data.secondMonth</td>
+                                <td align="right">@data.thirdMonth</td>
+                                <td align="right">@data.fourthMonth</td>
+                                <td align="right">@data.fifthMonth</td>
+                                <td align="right">@data.sixthMonth</td>
+                                <td align="right">@data.seventhMonth</td>
+                                <td align="right">@data.eighthMonth</td>
+                                <td align="right">@data.ninethMonth</td>
+                                <td align="right">@data.tenthMonth</td>
+                                <td align="right">@data.eleventhMonth</td>
+                                <td align="right">@data.twelvethMonth</td>
+                            </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>               
+            </div>
+        </div>
+    </div>
+</div>

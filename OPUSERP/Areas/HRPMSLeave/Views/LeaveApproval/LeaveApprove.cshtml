@@ -1,0 +1,116 @@
+﻿@model LeaveApprovalViewModel
+@{
+    ViewData["Title"] = "View Leave";
+}
+<style>
+    p {
+        color: black;
+        font-size: 14px;
+    }
+</style>
+
+@*<div class="card" style="width: 100%; margin-top: 10px;">
+    <div class="card-body">
+
+        <hr>
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-3"> <img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:85px" /></div>
+                <h5 style="color:black" class="text text-center text-uppercase">ministry of disaster management and relief</h5>
+            </div>
+
+            <div class="row">
+                <div class="col-12 text-center"><h5 class="card-title" style="color: black">Leave application Id of @Model.LeaveRegister.Id </h5></div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group row">
+                        <label for="employeeName" class="col-sm-4 col-form-label">@Model.fLang.employeeName</label>
+                        <div class="col-sm-8">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="employeeName" class="col-sm-4 col-form-label">@Model.fLang.applicationCode </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.applicationNo</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="recruitmentType" class="col-sm-4 col-form-label">@Model.fLang.leaveType </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.leaveTypeId</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="positionName" class="col-sm-4 col-form-label">@Model.fLang.totalDays  </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.daysLeave</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="project" class="col-sm-4 col-form-label">@Model.fLang.leavePurpose  </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.reasonOfLeave</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="numberOfPosition" class="col-sm-4 col-form-label">@Model.fLang.leaveFrom  </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.leaveFrom</p>
+                        </div>
+                    </div>
+                                       
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group row">
+                        <label for="jobType" class="col-sm-4 col-form-label">@Model.fLang.leaveTo  </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.leaveTo</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="jobType" class="col-sm-4 col-form-label">@Model.fLang.dateApply  </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.dateApply</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="ageCalculatorDate" class="col-sm-4 col-form-label">@Model.fLang.subsEmpCode </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.substitutionEmpCode</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="locationofJob" class="col-sm-4 col-form-label">@Model.fLang.approverName  </label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.supervisorEmpCode</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="comments" class="col-sm-4 col-form-label">@Model.fLang.supRemarks</label>
+                        <div class="col-sm-8">
+                            <p>@Model.LeaveRegister.supervisorRemarks</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="row">
+            <form asp-area="Leave" asp-controller="LeaveApproval" asp-action="Action" method="post" style="margin-left:550px;">
+                <input type="hidden" name="id" value="@Model.LeaveRegister.Id" />
+                <button style="float:right; margin-right: 25px;" class="btn btn-danger" type="submit" name="type" value="rejected">Decline</button>
+                <button style="float:right;" class="btn btn-success" type="submit" name="type" value="approved">Approve</button>
+            </form>
+            <br />
+            <br />
+        </div>
+    </div>
+</div>*@

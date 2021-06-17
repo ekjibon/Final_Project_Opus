@@ -1,0 +1,242 @@
+﻿@model StockInViewModel
+@{
+    ViewData["Title"] = "Stock Out";
+}
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Stock Out By Requisition</h5>
+            </div>
+            <div class="col-6">
+                <a href="/Inventory/Stock/StockOutList" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Back To List</a>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Inventory" asp-controller="Stock" asp-action="ItemStockOut" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="salesInvoiceNo" class="col-sm-2 col-form-label">SR No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="MRNO" id="MRNO" value="@ViewBag.issueNo" readonly >
+                        <input type="hidden" name="masterId" id="masterId" value="0" />
+                        <input type="hidden" name="itemReqMasterId" id="itemReqMasterId" value="0" />
+                    </div>
+                    <label for="stockDate" class="col-sm-2 col-form-label text-left">SR Date</label>
+                    <div class="col-sm-4 input-group">
+                        <input name="stockDate" id="stockDate" class="form-control input-group-sm" value=""  />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="reqNO" class="col-sm-2 col-form-label">Requisition No<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="reqNO" id="reqNO" value="">
+                    </div>
+                    <label for="paymentDate" class="col-sm-2 col-form-label text-left">Requisition Date</label>
+                    <div class="col-sm-4 input-group">
+                        <input name="paymentDate" id="paymentDate" class="form-control input-group-sm" readonly />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                </div>                 
+                <hr>
+                <div class="form-group row">
+                    <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped" id="tblitemDetails" data-parsley-required="true">
+                            <thead style="width:100%;background-color:lightgray;">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Item Spac.</th>                                
+                                    <th>Req. Qty</th>
+                                    <th>Qty</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>   
+        $(document).ready(function () {
+            $("#stockDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());           
+
+            if ($("#salesInvoiceNo").val() == "") {
+                $("#salesInvoiceNo").val('@ViewBag.SaleNo');
+            }
+
+            Common.Ajax('GET', '/global/api/GetRequisitionMasterListForAssign', [], 'json', ajaxAllRequision);
+
+            $("#quantity").keyup(function () {
+                var bal = parseFloat($("#balquantity").val()) ? parseFloat($("#balquantity").val()) : 0;
+                var qty = parseFloat($("#quantity").val()) ? parseFloat($("#quantity").val()) : 0;
+                if (qty > bal)
+                {
+                    alert("Quantity can not greater than balance.");
+                    $("#quantity").val("0");
+                    return;
+                }
+            }); 
+
+            //$("#reqNO").keyup(function () {
+            //    var reqId = $("#itemReqMasterId").val();
+            //    Common.Ajax('GET', '/SCMRequisition/RequisitionApprove/GetRequisitionMasterById/?reqId=' + reqId, [], 'json', ajaxGetRequisitionMasterById);
+            //    Common.Ajax('GET', '/SCMRequisition/RequisitionApprove/GetAllRequisitionDetailListByReqId/?reqId=' + reqId, [], 'json', ajaxGetAllRequisitionDetailListByReqId);
+            //});   
+
+             
+        });
+
+        function ajaxGetRequisitionMasterById(response) {
+            $("#paymentDate").val(getPurchaseDate(response.reqDate));
+        }   
+
+        function ajaxAllRequision(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.reqNo;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#reqNO').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#itemReqMasterId").val(ui.item.key);    
+
+                    Common.Ajax('GET', '/SCMRequisition/RequisitionApprove/GetRequisitionMasterById/?reqId=' + ui.item.key, [], 'json', ajaxGetRequisitionMasterById);
+                    Common.Ajax('GET', '/SCMRequisition/RequisitionApprove/GetAllRequisitionDetailListByReqId/?reqId=' + ui.item.key, [], 'json', ajaxGetAllRequisitionDetailListByReqId);
+                }
+            });
+        } 
+
+        function Refresh() {
+            location.reload();
+        }       
+
+        var index = 1;  
+        function ajaxGetAllRequisitionDetailListByReqId(response) {
+
+            $("#tblitemDetails tbody>tr").remove();
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            //var dtTable = $("#tblitemDetails");
+            //var tableBody = dtTable.find('tbody');
+
+            //if (response != null) {
+            //    $.each(response, function (i, ite) {  
+            $.each(response, function (key, value) {
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.itemName + '</td>' +
+                    '<td>' + value.specificationName + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + value.itemSpecificationId + '"/></td>' +
+                    '<td>' + value.reqQty + '<input type="hidden" id="reqquantity' + index + '" name="reqquantitys[]" class="clsreqquantity" value="' + value.reqQty + '"/></td>' +
+                    '<td>' + '<input type="text" id="quantity' + index + '" name="quantitys[]" class="clsquantity" value="' + 0 + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a></td>'
+                '</tr>';
+
+                //tableBody.append(trHtml);
+                //index = index + 1;
+                //$("#rowCount").val(index);
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+        }
+
+        function Delete(indx) {
+            $("#tblitemDetails #" + indx).remove();
+            CalculateGrossTotal();
+            CalculateGrossVAT();
+            return false;
+        }
+
+        function ClearLineItem() {
+            $("#itemName").val('');
+            $("#itemId").val('0');
+            $("#itemSpecification").val('');
+            $("#itemSpecificationId").val('0');
+            $("#price").val('');
+            $("#quantity").val('');
+            $("#discount").val('');
+            $("#vat").val('');
+            $("#ait").val('');
+            $("#unit").val('');
+            $("#txtVatpercent").val('');
+            $("#txtTaxpercent").val('');
+            $("#txtDispercent").val('');
+        }
+
+        function CalculateGrossTotal() {
+            var grossTotal = 0;
+            var RowCount = parseInt($("#rowCount").val());
+            for (i = 1; i <= RowCount; i++) {
+                var _totalAmount = 0;
+                if (parseFloat($("#totalAmount" + i).val()) > 0 ) {
+                    _totalAmount = parseFloat($("#totalAmount" + i).val());
+                }
+                grossTotal = grossTotal + _totalAmount;
+            }
+            $("#grossTotal").val(grossTotal.toFixed(2));
+            CalculationNetTotal();
+        }     
+   
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+    </script>
+}

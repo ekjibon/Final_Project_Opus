@@ -1,0 +1,1335 @@
+﻿
+@{
+    ViewData["Title"] = "VAT Submission";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: avoid;
+            page-break-after: auto;
+            page-break-before: avoid;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+            page-break-before: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        tfoot {
+            display: table-footer-group;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+@*@if (@Model?.printHistories?.Count() > 0)
+    {
+        <div class="row">
+            <div class="col-11"></div>
+            <p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">@Model?.printHistories?.FirstOrDefault()?.printStatus</span></p>
+        </div>
+    }*@
+<div class="row">
+    <div class="col-11"></div>
+    <p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">printStatus</span></p>
+</div>
+<div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:17px; font-weight:bolder; margin-bottom: 0px;">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
+    </div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:15px; font-weight:bolder; margin-bottom: 0px;">জাতীয় রাজস্ব বোর্ড</p>
+    </div>
+    <div class="row">
+        <p class="text-right col-12" style="color:black;font-size:15px; font-weight:bolder; margin-bottom: 0px;"><span style="border:1px solid black;padding:3px;">মূসক ৯.১</span></p>
+    </div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:15px; font-weight:bolder; margin-bottom: 0px;">মূল্য সংযোজন কর দাখিলপত্র</p>
+    </div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:13px; font-weight:bolder; margin-bottom: 0px;">[বিধি ৪৭ এর উপ-বিধি (১) দ্রষ্টব্য]</p>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body">
+            <div class="container" style="background:white">
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="5">অংশ-১: করদাতার তথ্য</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:20%;">(১) ব্যবসায় সনাক্তকরণ সংখ্যা</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <th style="text-align:left; width:75%;">4546</th>
+                                @*<th style="text-align:left; width:75%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.binNo</th>*@
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:20%;">(২) করদাতার নাম</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <th style="text-align:left; width:75%;">companyName</th>
+                                @*<th style="text-align:left; width:75%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.companyName</th>*@
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:20%;">(৩) করদাতার ঠিকানা</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <th style="text-align:left; width:75%;">Address</th>
+                                @*<th style="text-align:left; width:75%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.address</th>*@
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:20%;">(৪) ব্যবসার প্রকৃতি</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <th style="text-align:left; width:75%;">BusinessType</th>
+                                @*<th style="text-align:left; width:75%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.businessType</th>*@
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:20%;">(৫) অর্থনৈতিক কার্যক্রম এর প্রকৃতি</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <th style="text-align:left; width:75%;">FinanceNature</th>
+                                @*<th style="text-align:left; width:75%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.financeNature</th>*@
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="5">অংশ-২: দাখিলপত্র জমার তথ্য</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:30%;">(১) কর মেয়াদ</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <td style="text-align:center; width:32.5%;">July</td>
+                                <td style="text-align:center; width:32.5%;">@DateTime.Now.Year</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:30%;">(২) দাখিলপত্রের প্রকার (অনুগ্রহ করিয়া প্রযোজ্যটিতে টিক দিন)</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <td style="text-align:left; width:65%;" colspan="5">
+                                    <input type="checkbox" />&nbsp;(ক) মূল্য দাখিলপত্র (ধারা ৬৪)<br />
+                                    <input type="checkbox" />&nbsp;(খ) সংশোধিত দাখিলপত্র (ধারা ৬৬)<br />
+                                    <input type="checkbox" />&nbsp;(গ) পূর্ণ অতিরিক্ত বা বিকল্প দাখিলপত্র (ধারা ৬৭)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:30%;">(৩) বিগত কর মেয়াদে কোন কার্যক্রম সম্পাদিত হইয়াছে কি?</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <td style="text-align:left; width:65%;" colspan="5">
+                                    <input type="checkbox" value="হ্যাঁ" />&nbsp;হ্যাঁ
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="checkbox" />&nbsp;না <br />
+                                    <span style="font-size:10px;">(যদি না হয় তাহা হইলে অংশ ১, ৩ এবং ১১ পূরণ করুন)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left; width:30%;">(৪) পেশের তারিখ</th>
+                                <th style="text-align:center;width:5%;">:</th>
+                                <td style="text-align:left; width:65%;" colspan="5">@DateTime.Now.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-৩: সরবরাহ প্রদান - প্রদেয় কর</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center; width:40%;" colspan="2">সরবরাহের প্রকৃতি</th>
+                                <th style="text-align:center;width:5%;">নোট</th>
+                                <th style="text-align:center; width:15%;">মূল্য (ক)</th>
+                                <th style="text-align:center; width:15%;">এসডি (খ)</th>
+                                <th style="text-align:center; width:15%;">মূসক (গ)</th>
+                                <th style="text-align:center; width:10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align:left;" rowspan="2">শুন্যহার বিশিষ্ট সরবরাহ পণ্য/সেবা</td>
+                                <td style="text-align:center;">সরাসরি রপ্তানি</td>
+                                <td style="text-align:center;">১</td>
+                                <td style="text-align:right;">7897</td>
+                                <td style="text-align:right;">79880</td>
+                                <td style="text-align:right;">54</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note1Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note1SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note1VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;">প্রচ্ছন্ন রপ্তানি</td>
+                                <td style="text-align:center;">২</td>
+                                <td style="text-align:right;">1234</td>
+                                <td style="text-align:right;">6787</td>
+                                <td style="text-align:right;">7687</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note2Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note2SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note2VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;" colspan="2">অব্যাহতিপ্রাপ্ত পণ্য/সেবা</td>
+                                <td style="text-align:center;">৩</td>
+                                <td style="text-align:right;">3245</td>
+                                <td style="text-align:right;">3452</td>
+                                <td style="text-align:right;">3563</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note3Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note3SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note3VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;" colspan="2">আদর্শ হারের পণ্য/সেবা</td>
+                                <td style="text-align:center;">৪</td>
+                                <td style="text-align:right;">2452</td>
+                                <td style="text-align:right;">2354</td>
+                                <td style="text-align:right;">4235</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note4Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note4SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note4VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;" colspan="2">সর্বোচ্চ খুচরা মূল্যভিত্তিক পণ্য</td>
+                                <td style="text-align:center;">৫</td>
+                                <td style="text-align:right;">2352</td>
+                                <td style="text-align:right;">2345</td>
+                                <td style="text-align:right;">3541</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note5Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note5SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note5VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;" colspan="2">সুনিদিষ্ট কর ভিত্তিক পণ্য/সেবা</td>
+                                <td style="text-align:center;">৬</td>
+                                <td style="text-align:right;">2344</td>
+                                <td style="text-align:right;">3245</td>
+                                <td style="text-align:right;">2345</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note6Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note6SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note6VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-গ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;" colspan="2">আদর্শ করহার ব্যতীত ভিন্ন করহার ভিত্তিক পণ্য/সেবা</td>
+                                <td style="text-align:center;">৭</td>
+                                <td style="text-align:right;">3454</td>
+                                <td style="text-align:right;">2345</td>
+                                <td style="text-align:right;">1324</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note7Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note7SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note7VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;" colspan="2">খুচরা/পাইকারি/ব্যবসায়িক ভিত্তিক সরবরাহ</td>
+                                <td style="text-align:center;">৮</td>
+                                <td style="text-align:right;">4353</td>
+                                <td style="text-align:right;">3452</td>
+                                <td style="text-align:right;">2143</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note8Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note8SD?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note8VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-খ</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align: left;" colspan="2">মোট বিক্রয় মূল্য ও মোট প্রদেয় কর</th>
+                                <td style="text-align:center;">৯</td>
+                                <th style="text-align:right;">2345</th>
+                                <th style="text-align:right;">2345</th>
+                                <th style="text-align:right;">2345</th>
+                                @*<th style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note9Price?.ToString("0,0.00")</th>
+                                    <th style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note9SD?.ToString("0,0.00")</th>
+                                    <th style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note9VAT?.ToString("0,0.00")</th>*@
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-৪: ক্রয় উপকরণ কর</th>
+                            </tr>
+
+                            <tr>
+                                <td colspan="10">
+                                    <span>(ক) আপনার সরবরাহকৃত সকল পণ্য যদি আদর্শ হারের হয়, সেক্ষেত্রে নোট ১০-২০ পূরণ করুন।</span>
+                                    <br />
+                                    <span>(খ) আপনার সরবরাহকৃত সকল পণ্য যদি আদর্শ হারের না হয়, সেক্ষেত্রে নোট ২১-২২ পূরণ করুন।</span>
+                                    <br />
+                                    <span>(ক) আপনার সরবরাহকৃত সকল পণ্য যদি আদর্শ হারের এবং আদর্শ হার ব্যতীত উভয় হয়, সেক্ষেত্রে পণ্য উৎপাদনে ব্যবহার অনুযায়ী উপকরণ মূল্য আনুপাতিক হারে প্রযোজ্যতা অনুযায়ী নোট ১০-২২ পূরণ করুন।</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align:center;width:40%;" colspan="2">ক্রয়ের প্রকৃতি</th>
+                                <th style="text-align:center;width:10%;">নোট</th>
+                                <th style="text-align:center;width:20%;">মূল্য (ক)</th>
+                                <th style="text-align:center;width:15%;">মূসক (খ)</th>
+                                <th style="text-align:center;width:15%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align : left;" rowspan="2">শুন্যহার বিশিষ্ট পণ্য/সেবা</td>
+                                <td style="text-align : left;">স্থানীয় ক্রয়</td>
+                                <td style="text-align:center;">১০</td>
+                                <td style="text-align:right;">23454</td>
+                                <td style="text-align:right;">23542</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note10Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note10VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">আমদানি</td>
+                                <td style="text-align:center;">১১</td>
+                                <td style="text-align:right;">45223</td>
+                                <td style="text-align:right;">65224</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note11Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note11VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;" rowspan="2">অব্যাহতিপ্রাপ্ত পণ্য/সেবা</td>
+                                <td style="text-align : left;">স্থানীয় ক্রয়</td>
+                                <td style="text-align:center;">১২</td>
+                                <td style="text-align:right;">2314</td>
+                                <td style="text-align:right;">1234</td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note12Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note12VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">আমদানি</td>
+                                <td style="text-align:center;">১৩</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note13Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note13VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;" rowspan="2">আদর্শ হারের পণ্য/সেবা</td>
+                                <td style="text-align : left;">স্থানীয় ক্রয়</td>
+                                <td style="text-align:center;">১৪</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note14Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note14VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">আমদানি</td>
+                                <td style="text-align:center;">১৫</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note15Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note15VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;" rowspan="2">আদর্শ করহার ব্যতীত অন্যান্য হারের পণ্য/সেবা</td>
+                                <td style="text-align : left;">স্থানীয় ক্রয়</td>
+                                <td style="text-align:center;">১৬</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note16Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note16VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">আমদানি</td>
+                                <td style="text-align:center;">১৭</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note17Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note17VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">সুনির্দিষ্ট কর ভিত্তিক পণ্য/সেবা</td>
+                                <td style="text-align : left;">স্থানীয় ক্রয়</td>
+                                <td style="text-align:center;">১৮</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note18Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note18VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-গ</td>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align : left;" rowspan="2">রেয়াতযোগ্য নয় এমন পণ্য/সেবা(স্থানীয় ক্রয়)</td>
+                                <td style="text-align : left;">টার্ণওভার প্রতিষ্ঠান হইতে</td>
+                                <td style="text-align:center;">১৯</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note19Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note19VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">অনিবন্ধিত প্রতিষ্ঠান হইতে</td>
+                                <td style="text-align:center;">২০</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note20Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note20VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;" rowspan="2">রেয়াতযোগ্য নয় এমন পণ্য/সেবা(যে সকল করদাতা শুধুমাত্র অব্যাহতিপ্রাপ্ত/সুনির্দিষ্ট কর/আদর্শ হার ব্যতীত অন্যান্য হারের পণ্য/সেবা সরবরাহ করেন)</td>
+                                <td style="text-align : left;">স্থানীয় ক্রয়</td>
+                                <td style="text-align:center;">২১</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note21Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note21VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">আমদানি</td>
+                                <td style="text-align:center;">২২</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note22Price?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note22VAT?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align : left;" colspan="2">মোট উপকরণ কর রেয়াত</th>
+                                <td style="text-align:center;">২৩</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<th style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note23Price?.ToString("0,0.00")</th>
+                                    <th style="text-align:right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note23VAT?.ToString("0,0.00")</th>*@
+                                <td style="text-align:center;">সাবফর্ম-ক</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-৫: বৃদ্ধিকারী সমন্বয় (মূল্য সংযোজন কর)</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:60%;">সমন্বয় ঘটনা</th>
+                                <th style="text-align:center;width:10%;">নোট</th>
+                                <th style="text-align:center;width:20%;">পরিমাণ</th>
+                                <th style="text-align:center;width:10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td style="text-align : left;width:60%;">সরবরাহ গ্রহিতা কর্তৃক উৎসে কর্তনের জন্য</td>
+                                <td style="text-align:center;width:10%;">২৪</td>
+                                <td style="text-align:right;width:20%;">211234</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note24?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;width:10%;">সাবফর্ম-ঘ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left;width:60%;">ব্যাংকিং চ্যানেলে মূল্য পরিশোধিত হয় নাই এমন সরবরাহের জন্য</td>
+                                <td style="text-align:center;width:10%;">২৫</td>
+                                <td style="text-align:right;width:20%;">211234</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note25?.ToString("0,0.00")</td>*@
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left;width:60%;">ডেবিট নোটের জন্য</td>
+                                <td style="text-align:center;width:10%;">২৬</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note26?.ToString("0,0.00")</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left;width:60%;">
+                                    অন্যকোন সমন্বয় ঘটনার জন্য(নিচে বর্ণনা করুন)<br />
+                                    <textarea style="width:100%;"></textarea>
+                                </td>
+                                <td style="text-align:center;width:10%;">২৭</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note27?.ToString("0,0.00")</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left;width:60%;">মোট বৃদ্ধিকারী সমন্বয়</th>
+                                <td style="text-align:center;width:10%;">২৮</td>
+                                @*<th style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note28?.ToString("0,0.00")</th>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-৬: হ্রাসকারী সমন্বয় (মূল্য সংযোজন কর)</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:60%;">সমন্বয় ঘটনা</th>
+                                <th style="text-align:center;width:10%;">নোট</th>
+                                <th style="text-align:center;width:20%;">পরিমাণ</th>
+                                <th style="text-align:center;width:10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td style="text-align : left;width:60%;">প্রদত্ত সরবরাহ কর্তৃক উৎসে কর্তনের জন্য</td>
+                                <td style="text-align:center;width:10%;">২৯</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note29</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                                <td style="text-align:center;width:10%;">সাবফর্ম-ঙ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">আমদানি পর্যায়ে প্রদেয় অগ্রিম কর</td>
+                                <td style="text-align:center;width:10%;">৩০</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note30</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                                <td style="text-align:center;width:10%;">সাবফর্ম-চ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">রপ্তানিপণ্য উৎপাদনে ব্যবহৃত কাঁচামালের বিপরীতে প্রদেয় মূল্য সংযোজন কর</td>
+                                <td style="text-align:center;width:10%;">৩১</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note31</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">ক্রেডিট নোট ইস্যুর জন্য</td>
+                                <td style="text-align:center;width:10%;">৩২</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note32</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+
+
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">
+                                    অন্যকোন সমন্বয় ঘটনার জন্য (নিচে বর্ণনা করুন)<br />
+                                    <textarea style="width:100%;"></textarea>
+                                </td>
+                                <td style="text-align:center;width:10%;">৩৩</td>
+                                @*<td style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note33</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                            <tr>
+                                <th style="text-align : left;width:60%;">মোট হ্রাসকারী সমন্বয়</th>
+                                <td style="text-align:center;width:10%;">৩৪</td>
+                                @*<th style="text-align:right;width:20%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note34</th>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+
+                                <td style="text-align:center;width:10%;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-৭: নীট কর হিসাব</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:60%;">আইটেম</th>
+                                <th style="text-align:center;width:10%;">নোট</th>
+                                <th style="text-align:center;width:30%;">পরিমাণ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align : left;width:60%;">বর্তমান কর মেয়াদে প্রদেয় মোট মূসক (সমাপনী জের এর সহিত সমন্বয় ব্যতীত)(৯গ-২৩খ+২৮-৩৪)</td>
+                                <td style="text-align:center;width:10%;">৩৫</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note35?.ToString("0,0.00")</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">সমাপনী জের এর সহিত সমন্বয়ের পর বর্তমান কর মেয়াদে প্রদেয় মোট মূসক (৩৫-৫০)</td>
+                                <td style="text-align:center;width:10%;">৩৬</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note36?.ToString("0,0.00")</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">বর্তমান কর মেয়াদে প্রদেয় মোট শুল্ক (সমাপনী জের এর সহিত সমন্বয় ব্যতীত)(৯খ+৩৯-৪০-৪১)</td>
+                                <td style="text-align:center;width:10%;">৩৭</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note37</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">সমাপনী জের এর সহিত সমন্বয়ের পর বর্তমান কর মেয়াদে প্রদেয় মোট সম্পূরক শুল্ক (৩৭-৫১)</td>
+                                <td style="text-align:center;width:10%;">৩৮</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note38</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">ডেবিট নোট ইস্যুর জন্য সমন্বয়কৃত সম্পূরক শুল্ক</td>
+                                <td style="text-align:center;width:10%;">৩৯</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note39</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">ক্রেডিট নোট ইস্যুর জন্য সমন্বয়কৃত সম্পূরক শুল্ক</td>
+                                <td style="text-align:center;width:10%;">৪০</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note40</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">রপ্তানিপণ্য উৎপাদনে কাঁচামালের বিপরীতে প্রদেয় সম্পূরক শুল্ক</td>
+                                <td style="text-align:center;width:10%;">৪১</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note41</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">অপরিশোধিত মূসকের জন্য সুদ</td>
+                                <td style="text-align:center;width:10%;">৪২</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">অপরিশোধিত সম্পূরক শুল্ক এর জন্য সুদ</td>
+                                <td style="text-align:center;width:10%;">৪৩</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">অর্থদন্ড ও জরিমানা</td>
+                                <td style="text-align:center;width:10%;">৪৪</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">আবগারি শুল্ক</td>
+                                <td style="text-align:center;width:10%;">৪৫</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">উন্নয়ন সারচার্জ</td>
+                                <td style="text-align:center;width:10%;">৪৬</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">তথ্য প্রযুক্তি উন্নয়ন সারচার্জ</td>
+                                <td style="text-align:center;width:10%;">৪৭</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">স্বাস্থ্য সুরক্ষা সারচার্জ</td>
+                                <td style="text-align:center;width:10%;">৪৮</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">পরিবেশ সুরক্ষা সারচার্জ</td>
+                                <td style="text-align:center;width:10%;">৪৯</td>
+                                <td style="text-align:right;width:30%;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">শেষ করমেয়াদে সমাপনী জের (মূল্য সংযোজন কর)</td>
+                                <td style="text-align:center;width:10%;">৫০</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note50</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;width:60%;">শেষ করমেয়াদে সমাপনী জের (সম্পূরক শুল্ক)</td>
+                                <td style="text-align:center;width:10%;">৫১</td>
+                                @*<td style="text-align:right;width:30%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note51</td>*@
+                                <td style="text-align:right;width:20%;">211234</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-৮: কর পরিশোধের তফসিল (ট্রেজারী জমা)</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:30%;">আইটেম</th>
+                                <th style="text-align:center;width:5%;">নোট</th>
+                                <th style="text-align:center;width:35%;">অর্থনৈতিক কোড</th>
+                                <th style="text-align:center;width:20%;">পরিমাণ</th>
+                                <th style="text-align:center;width:10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align : left;">বর্তমান কর মেয়াদে প্রদেয় মোট মূসক</td>
+                                <td style="text-align:center;">৫২</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note52eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note52</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">বর্তমান কর মেয়াদে প্রদেয় মোট সম্পূরক শুল্ক</td>
+                                <td style="text-align:center;">৫৩</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note53eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note53</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">অপরিশোধিত মূসকের জন্য সুদ</td>
+                                <td style="text-align:center;">৫৪</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note54eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note54</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">অপরিশোধিত সম্পূরক শুল্ক এর জন্য সুদ</td>
+                                <td style="text-align:center;">৫৫</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note55eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note55</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">অর্থদন্ড ও জরিমানা</td>
+                                <td style="text-align:center;">৫৬</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note56eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note56</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">আবগারি শুল্ক</td>
+                                <td style="text-align:center;">৫৭</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note57eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note57</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">উন্নয়ন সারচার্জ</td>
+                                <td style="text-align:center;">৫৮</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note58eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note58</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">তথ্য প্রযুক্তি উন্নয়ন সারচার্জ</td>
+                                <td style="text-align:center;">৫৯</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note59eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note59</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">স্বাস্থ্য সুরক্ষা সারচার্জ</td>
+                                <td style="text-align:center;">৬০</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note60eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note60</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">পরিবেশ সুরক্ষা সারচার্জ</td>
+                                <td style="text-align:center;">৬১</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:right;"></td>
+                                @*<td style="text-align : left;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note61eCode</td>
+        <td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note61</td>*@
+                                <td style="text-align:center;">সাবফর্ম-ছ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-৯: সমাপনী জের (পরবর্তী কর মেয়াদের প্রারম্ভিক জের)</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:45%;">আইটেম</th>
+                                <th style="text-align:center;width:5%;">নোট</th>
+                                <th style="text-align:center;width:40%;">পরিমাণ</th>
+                                <th style="text-align:center;width:10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align : left;">সমাপনী জের (মূল্য সংযোজন কর)</td>
+                                <td style="text-align:center;">৬২</td>
+                                @*<td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note62?.ToString("0,0.00")</td>*@
+                                <td style="text-align: right;">124123</td>
+                                <td style="text-align:center;"></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align : left;">সমাপনী জের (সম্পূরক শুল্ক)</td>
+                                <td style="text-align:center;">৬৩</td>
+                                @*<td style="text-align: right;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.note63?.ToString("0,0.00")</td>*@
+                                <td style="text-align: right;">124123</td>
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <tbody>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-১০: ফেরত</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left;" colspan="10">আমি সমাপনী জেরে উল্লিখিত অর্থ ফেরৎ গ্রহণে ইচ্ছুক</th>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center;"><input type="checkbox" value="হ্যাঁ" />&nbsp; হ্যাঁ</td>
+                                <td style="text-align:center;"><input type="checkbox" value="না" />&nbsp; না</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">অংশ-১১: ঘোষণা</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="" colspan="10">আমি ঘোষণা করিতেছি যে, এই দাখিলপত্রে প্রদত্ত তথ্য সম্পূর্ণ সত্য ও নির্ভূল।</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left;width:15%;">নাম</th>
+                                @*<th style="text-align:left;width:55%;" colspan="1">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.ownerName</th>*@
+                                <td style="text-align: right;">124123</td>
+                                <th style="text-align:center;width:30%;" rowspan="5"></th>
+                            </tr>
+
+                            <tr>
+                                <th style="text-align:left;width:15%;">পদবী</th>
+                                @*<th style="text-align:left;width:55%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.designation</th>*@
+                                <td style="text-align: right;">124123</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left;width:15%;">তারিখ</th>
+                                @*<th style="text-align:left;width:55%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.taxSubmitDate</th>*@
+                                <td style="text-align: right;">124123</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left;width:15%;">মোবাইল নং</th>
+                                @*<th style="text-align:left;width:55%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.phone</th>*@
+                                <td style="text-align: right;">124123</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left;width:15%;">ইমেইল</th>
+                                @*<th style="text-align:left;width:55%;">@Model?.vATReportNinePointOneViewModels?.FirstOrDefault()?.email</th>*@
+                                <td style="text-align: right;">124123</td>
+                            </tr>
+                            <tr>
+                                <th style="text-align:left;width:15%;"></th>
+                                <th style="text-align:left;width:55%;"></th>
+                                <th style="text-align:center;width:30%;">স্বাক্ষর</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br /><br /><br />
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">সাবফর্ম সমূহ</th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">সাবফর্ম-ক(নোট ১,২,৩,৪,৫,৭,১০,১১,১২,১৩,১৪, ১৫,১৬,১৭,১৯,২০,২১,২২ এর জন্য প্রযোজ্য ) </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:10%;">ক্রমিক নং</th>
+                                <th style="text-align:center;width:20%;">পণ্য/সেবার বানিজ্যিক বর্ণনা </th>
+                                <th style="text-align:center;width:10%;">পণ্য/সেবার কোড</th>
+                                <th style="text-align:center;width:20%;">পণ্য/সেবার নাম </th>
+                                <th style="text-align:right;width:10%;">মূল্য(ক)</th>
+                                <th style="text-align:right;width:10%;">সম্পূরক শুল্ক(খ)</th>
+                                <th style="text-align:right;width:10%;">মূল্য সংযোজন কর(গ)</th>
+                                <th style="text-align:center;width:10%;">মন্তব্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                                    <tr>
+                                        <td style="text-align:center;">1</td>
+                                        <td style="text-align:left;">itemName</td>
+                                        <td style="text-align:center;">7587</td>
+                                        <td style="text-align:center;">itemName</td>
+                                        <td style="text-align:right;">527</td>
+                                        <td style="text-align:right;">727</td>
+                                        <td style="text-align:right;">7272</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                   
+                        </tbody>
+                        @*<tbody>
+                            @{
+                                int sl = 1;
+                                @foreach (var item in Model.vATReportNinePointOneKViewModels)
+                                {
+                                    <tr>
+                                        <td style="text-align:center;">@sl</td>
+                                        <td style="text-align:left;">@item.itemName</td>
+                                        <td style="text-align:center;">@item.hsCode</td>
+                                        <td style="text-align:center;">@item.itemName</td>
+                                        <td style="text-align:right;">@item.price?.ToString("0,0.00")</td>
+                                        <td style="text-align:right;">@item.sd?.ToString("0,0.00")</td>
+                                        <td style="text-align:right;">@item.vat?.ToString("0,0.00")</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                    sl++;
+                                }
+                            }
+                        </tbody>*@
+                        <tfoot>
+                            <tr>
+                                <th style="text-align : right;" colspan="4">মোট</th>
+
+                                <th style="text-align:right;">4242</th>
+                                <th style="text-align:right;">5245</th>
+                                <th style="text-align:right;">5355</th>
+                                @*<th style="text-align:right;">@Model?.vATReportNinePointOneKViewModels?.Sum(X => X.price)?.ToString("0,0.00")</th>
+        <th style="text-align:right;">@Model?.vATReportNinePointOneKViewModels?.Sum(X => X.sd)?.ToString("0,0.00")</th>
+        <th style="text-align:right;">@Model?.vATReportNinePointOneKViewModels?.Sum(X => X.vat)?.ToString("0,0.00")</th>*@
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <br /><br /><br />
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">সাবফর্ম-খ(নোট ৮ এর জন্য প্রযোজ্য ) </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:10%;">ক্রমিক নং</th>
+                                <th style="text-align:center;width:10%;">ক্যাটাগরি</th>
+                                <th style="text-align:center;width:15%;">পণ্য/সেবার বানিজ্যিক বর্ণনা </th>
+                                <th style="text-align:center;width:10%;">পণ্য/সেবার কোড</th>
+                                <th style="text-align:center;width:15%;">পণ্য/সেবার নাম </th>
+                                <th style="text-align:right;width:10%;">মূল্য(ক)</th>
+                                <th style="text-align:right;width:10%;">সম্পূরক শুল্ক(খ)</th>
+                                <th style="text-align:right;width:10%;">মূল্য সংযোজন কর(গ)</th>
+                                <th style="text-align:center;width:10%;">মন্তব্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                                    <tr>
+                                        <td style="text-align:center;">1</td>
+                                        <td style="text-align:center;"></td>
+                                        <td style="text-align:left;">itemName</td>
+                                        <td style="text-align:center;">5667</td>
+                                        <td style="text-align:center;">itemName</td>
+                                        <td style="text-align:right;">8757</td>
+                                        <td style="text-align:right;">7578</td>
+                                        <td style="text-align:right;">7527</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                   
+                        </tbody>
+                        @*<tbody>
+                            @{
+                                int slKH = 1;
+                                @foreach (var item in Model.vATReportNinePointOneKHViewModels)
+                                {
+                                    <tr>
+                                        <td style="text-align:center;">@slKH</td>
+                                        <td style="text-align:center;"></td>
+                                        <td style="text-align:left;">@item.itemName</td>
+                                        <td style="text-align:center;">@item.hsCode</td>
+                                        <td style="text-align:center;">@item.itemName</td>
+                                        <td style="text-align:right;">@item.price</td>
+                                        <td style="text-align:right;">@item.sd</td>
+                                        <td style="text-align:right;">@item.vat</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                    slKH++;
+                                }
+                            }
+                        </tbody>*@
+                        <tfoot>
+                            <tr>
+                                <th style="text-align : right;" colspan="5">মোট</th>
+
+                                <th style="text-align:right;">4242</th>
+                                <th style="text-align:right;">5245</th>
+                                <th style="text-align:right;">5355</th>
+                                @*<th style="text-align:right;">@Model?.vATReportNinePointOneKHViewModels?.Sum(X => X.price)?.ToString("0,0.00")</th>
+        <th style="text-align:right;">@Model?.vATReportNinePointOneKHViewModels?.Sum(X => X.sd)?.ToString("0,0.00")</th>
+        <th style="text-align:right;">@Model?.vATReportNinePointOneKHViewModels?.Sum(X => X.vat)?.ToString("0,0.00")</th>*@
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <br /><br />
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">সাবফর্ম-গ(নোট ৬,১৮ এর জন্য প্রযোজ্য ) </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:10%;">ক্রমিক নং</th>
+                                <th style="text-align:center;width:10%;">পণ্য/সেবার বানিজ্যিক বর্ণনা </th>
+                                <th style="text-align:center;width:10%;">পণ্য/সেবার কোড</th>
+                                <th style="text-align:center;width:20%;">পণ্য/সেবার নাম </th>
+                                <th style="text-align:center;width:10%;">পরিমাপের একক(ক)</th>
+                                <th style="text-align:right;width:8%;">পরিমান(খ)</th>
+                                <th style="text-align:right;width:8%;">মূল্য(গ)</th>
+                                <th style="text-align:right;width:8%;">সম্পূরক শুল্ক(ঘ)</th>
+                                <th style="text-align:right;width:8%;">মূল্য সংযোজন কর(ঙ)</th>
+                                <th style="text-align:center;width:8%;">মন্তব্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                                    <tr>
+                                        <td style="text-align:center;">1</td>
+                                        <td style="text-align:left;">itemName</td>
+                                        <td style="text-align:center;">45445</td>
+                                        <td style="text-align:center;">itemName</td>
+                                        <td style="text-align:center;">unitName</td>
+                                        <td style="text-align:right;">568</td>
+                                        <td style="text-align:right;">356</td>
+                                        <td style="text-align:right;">546</td>
+                                        <td style="text-align:right;">3456</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                   
+                        </tbody>
+                        @*<tbody>
+                            @{
+                                int slG = 1;
+                                @foreach (var item in Model.vATReportNinePointOneGViewModels)
+                                {
+                                    <tr>
+                                        <td style="text-align:center;">@slG</td>
+                                        <td style="text-align:left;">@item.itemName</td>
+                                        <td style="text-align:center;">@item.hsCode</td>
+                                        <td style="text-align:center;">@item.itemName</td>
+                                        <td style="text-align:center;">@item.unitName</td>
+                                        <td style="text-align:right;">@item.quantity</td>
+                                        <td style="text-align:right;">@item.price</td>
+                                        <td style="text-align:right;">@item.sd</td>
+                                        <td style="text-align:right;">@item.vat</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                    slG++;
+                                }
+                            }
+                        </tbody>*@
+                        <tfoot>
+                            <tr>
+                                <th style="text-align : right;" colspan="5">মোট</th>
+                                <th style="text-align:right;">asdfasdf</th>
+                                <th style="text-align:right;">asdfasdf</th>
+                                <th style="text-align:right;">asdfasdf</th>
+                                <th style="text-align:right;">asdfasdf</th>
+                                @*<th style="text-align:right;">@Model?.vATReportNinePointOneGViewModels?.Sum(X => X.quantity)?.ToString("0,0.00")</th>
+                                <th style="text-align:right;">@Model?.vATReportNinePointOneGViewModels?.Sum(X => X.price)?.ToString("0,0.00")</th>
+                                <th style="text-align:right;">@Model?.vATReportNinePointOneGViewModels?.Sum(X => X.sd)?.ToString("0,0.00")</th>
+                                <th style="text-align:right;">@Model?.vATReportNinePointOneGViewModels?.Sum(X => X.vat)?.ToString("0,0.00")</th>*@
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <br /><br />
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">সাবফর্ম-ঘ(নোট ২৪-"সরবরাহ গ্রহিতা কর্তৃক উৎসে কর কর্তনের জন্য" এর জন্য প্রযোজ্য ) </th>
+                            </tr>
+                            <tr>
+
+                                <th style="text-align:center;width:10%;">ক্রমিক নং</th>
+                                <th style="text-align:center;width:10%;">সরবরাহকারীর বিআইএন নম্বর</th>
+                                <th style="text-align:center;width:10%;">সরবরাহকারীর নাম </th>
+                                <th style="text-align:center;width:10%;">সরবরাহকারীর ঠিকানা </th>
+                                <th style="text-align:right;width:10%;">সরবরাহ মূল্য</th>
+                                <th style="text-align:right;width:10%;">কর্তিত মূল্য সংযোজন কর</th>
+                                <th style="text-align:center;width:10%;"> ইনভয়েস নং (চালানপত্র/বিল নং ইত্যাদি)</th>
+                                <th style="text-align:center;width:10%;">ইনভয়েস/বিলের তারিখ</th>
+                                <th style="text-align:center;width:10%;">একাউন্ট কোডে পরিশোধিত</th>
+                                <th style="text-align:center;width:10%;">মন্তব্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @*@{
+                                    int sl = 1;
+                                    @foreach (var item in Model.vATReportNinePointOneKViewModels)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center;">@sl</td>
+                                            <td style="text-align:left;">@item.itemName</td>
+                                            <td style="text-align:center;">@item.hsCode</td>
+                                            <td style="text-align:center;">@item.itemName</td>
+                                            <td style="text-align:center;">@item.price</td>
+                                            <td style="text-align:right;">@item.sd</td>
+                                            <td style="text-align:right;">@item.vat</td>
+                                            <td style="text-align:right;"></td>
+                                        </tr>
+                                        sl++;
+                                    }
+                                }*@
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="text-align : right;" colspan="4">মোট</td>
+                                <td style="text-align:right;">0</td>
+                                <td style="text-align:right;">0</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:center;"></td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <br /><br />
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">সাবফর্ম-ঙ(নোট ২৯-"প্রদত্ত সরবরাহ হইতে উৎসে কর কর্তনের জন্য" এর জন্য প্রযোজ্য ) </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:10%;">ক্রমিক নং</th>
+                                <th style="text-align:center;width:10%;">ক্রেতার বিআইএন নম্বর</th>
+                                <th style="text-align:center;width:10%;">ক্রেতার নাম </th>
+                                <th style="text-align:center;width:10%;">ক্রেতার ঠিকানা </th>
+                                <th style="text-align:right;width:10%;">মূল্য</th>
+                                <th style="text-align:right;width:10%;">কর্তিত মূল্য সংযোজন কর</th>
+                                <th style="text-align:center;width:10%;"> ইনভয়েস নং (চালানপত্র/বিল নং ইত্যাদি)</th>
+                                <th style="text-align:center;width:10%;">ইনভয়েস/বিলের তারিখ</th>
+                                <th style="text-align:center;width:10%;">একাউন্ট কোডে পরিশোধিত</th>
+                                <th style="text-align:center;width:10%;">মন্তব্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @*@{
+                                    int sl = 1;
+                                    @foreach (var item in Model.vATReportNinePointOneKViewModels)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center;">@sl</td>
+                                            <td style="text-align:left;">@item.itemName</td>
+                                            <td style="text-align:center;">@item.hsCode</td>
+                                            <td style="text-align:center;">@item.itemName</td>
+                                            <td style="text-align:center;">@item.price</td>
+                                            <td style="text-align:right;">@item.sd</td>
+                                            <td style="text-align:right;">@item.vat</td>
+                                            <td style="text-align:right;"></td>
+                                        </tr>
+                                        sl++;
+                                    }
+                                }*@
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="text-align : right;" colspan="4">মোট</td>
+                                <td style="text-align:right;">0</td>
+                                <td style="text-align:right;">0</td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:center;"></td>
+                                <td style="text-align:right;"></td>
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <br /><br />
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="6">সাবফর্ম-চ(নোট ৩০-"আমদানি পর্যায়ে প্রদত্ত আগাম কর" এর জন্য প্রযোজ্য ) </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:10%;">ক্রমিক নং</th>
+                                <th style="text-align:center;width:20%;"> বিল অব এন্ট্রি নম্বর</th>
+                                <th style="text-align:center;width:10%;">তারিখ</th>
+                                <th style="text-align:center;width:20%;">কাস্টম হাউজ/শুল্ক স্টেশন</th>
+                                <th style="text-align:right;width:10%;">আগাম করের পরিমাণ</th>
+                                <th style="text-align:center;width:10%;">মন্তব্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @*@{
+                                    int sl = 1;
+                                    @foreach (var item in Model.vATReportNinePointOneKViewModels)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center;">@sl</td>
+                                            <td style="text-align:left;">@item.itemName</td>
+                                            <td style="text-align:center;">@item.hsCode</td>
+                                            <td style="text-align:center;">@item.itemName</td>
+                                            <td style="text-align:center;">@item.price</td>
+                                            <td style="text-align:right;">@item.sd</td>
+                                            <td style="text-align:right;">@item.vat</td>
+                                            <td style="text-align:right;"></td>
+                                        </tr>
+                                        sl++;
+                                    }
+                                }*@
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="text-align : right;" colspan="4">মোট</td>
+                                <td style="text-align:right;">0</td>
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <br /><br /><br />
+                <div class="row">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" colspan="10">সাবফর্ম-ছ(নোট  ৫২,৫৩,৫৪,৫৫,৫৬,৫৭,৫৮,৫৯,৬০,৬১ এর জন্য প্রযোজ্য ) </th>
+                            </tr>
+                            <tr>
+                                <th style="text-align:center;width:10%;">ক্রমিক নং</th>
+                                <th style="text-align:center;width:10%;">ট্রেজারি চালান নম্বর</th>
+                                <th style="text-align:center;width:10%;">ব্যাংক</th>
+                                <th style="text-align:center;width:10%;">শাখা</th>
+                                <th style="text-align:center;width:10%;">তারিখ</th>
+                                <th style="text-align:center;width:30%;">একাউন্ট কোডে কর পরিশোধিত</th>
+                                <th style="text-align:right;width:10%;">পরিমান</th>
+                                <th style="text-align:center;width:10%;">মন্তব্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                               <tr>
+                                        <td style="text-align:center;">1</td>
+                                        <td style="text-align:left;">4353</td>
+                                        <td style="text-align:center;">bankName</td>
+                                        <td style="text-align:center;">branchName</td>
+                                        <td style="text-align:center;">@DateTime.Now.ToString("dd/MM/yyyy")</td>
+                                        <td style="text-align:center;">45645</td>
+                                        <td style="text-align:right;">43636</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                   
+                        </tbody>
+                        @*<tbody>
+                            @{
+                                int slCHH = 1;
+                                @foreach (var item in Model.vATReportNinePointOneCHHViewModels)
+                                {
+                                    <tr>
+                                        <td style="text-align:center;">@slCHH</td>
+                                        <td style="text-align:left;">@item.chalanNo</td>
+                                        <td style="text-align:center;">@item.bankName</td>
+                                        <td style="text-align:center;">@item.branchName</td>
+                                        <td style="text-align:center;">@item.paymentDate?.ToString("dd/MM/yyyy")</td>
+                                        <td style="text-align:center;">@item.economicCode</td>
+                                        <td style="text-align:right;">@item.amount?.ToString("0,0.00")</td>
+                                        <td style="text-align:right;"></td>
+                                    </tr>
+                                    slCHH++;
+                                }
+                            }
+                        </tbody>*@
+                        <tfoot>
+                            <tr>
+                                <th style="text-align : right;" colspan="6">মোট</th>
+                                <th style="text-align:right;">321452345</th>
+                                @*<th style="text-align:right;">@Model?.vATReportNinePointOneCHHViewModels?.Sum(X => X.amount)?.ToString("0,0.00")</th>*@
+                                <td style="text-align:center;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <br /><br /><br />
+                    <span style="color:black;">@DateTime.Now</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+

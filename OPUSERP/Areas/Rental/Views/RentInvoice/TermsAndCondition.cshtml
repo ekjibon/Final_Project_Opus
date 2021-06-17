@@ -1,0 +1,109 @@
+﻿@model TermsAndConditionsViewModel
+@{
+    ViewData["Title"] = "TermsAndCondition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Terms & Condition</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Rental" asp-controller="RentInvoice" asp-action="TermsAndCondition" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <input type="hidden" name="termId" id="termId" value="0" />
+                    <label for="termName" class="col-sm-2 col-form-label">Terms & Condition <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="termName" id="termName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="shortOrder" class="col-sm-2 col-form-label">Short Order</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="shortOrder" id="shortOrder">
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Terms & Condition List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="attachmentCategoryTable">
+                    <thead>
+                        <tr>
+                            <th>Short Order</th>
+                            <th>Terms & Condition</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.termsAndConditions)
+                        {
+                            <tr>
+                                <td>@data.shortOrder</td>
+                                <td>@data.termName</td>
+
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.termName', '@data.shortOrder')" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#attachmentCategoryTable').DataTable();
+        });
+
+        function Edit(Id, termName, shortOrder) {
+            $("#termId").val(Id);
+            $("#termName").val(termName);
+            $("#shortOrder").val(shortOrder);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteTermsAndConditionsById", "RentInvoice")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Rental/RentInvoice/TermsAndCondition";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+    </script>
+}

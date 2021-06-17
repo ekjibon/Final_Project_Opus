@@ -1,0 +1,17 @@
+{
+  "title": "Create Notice",
+  "subject": "Subject",
+  "bdEngineClub": "Bangladesh Engineers Club Ltd",
+  "viewAttachment": "View Attachment",
+  "memoNo": "Memorandum No",
+  "date": "Date",
+  "name": "Name",
+  "designation": "Designation",
+  "attachment": "Attachment",
+  "notice": "Notice",
+  "noticeList": "All Notice",
+  "noticeType": "Notice Type",
+  "memberCode": "Member Name",
+  "memberName": "Member Name",
+  "action": "Action"
+}

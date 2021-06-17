@@ -1,0 +1,419 @@
+﻿@model TravelReportModel
+@{
+    ViewData["Title"] = "TravelReport";
+    Layout = "/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 10px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid !important;
+        }
+
+        #travel-report-section-id {
+            margin-top: 20px;
+        }
+
+        #barnd-name-id {
+            color: black;
+            font-weight: bold;
+        }
+
+        #top-right-side-table-id-tbl-01 {
+            float: right;
+        }
+
+        .report-heading-cls h3 {
+            color: black;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table-td-background-color-cls {
+            background: whitesmoke;
+        }
+
+        table thead tr th, .table-td-background-color-cls, table tbody tr td {
+            text-align: center;
+        }
+
+        #table-03-footer-text-id {
+            color: black;
+        }
+
+        #th-font-width-bold-id {
+            font-weight: bold;
+        }
+
+        #th-font-size-sm-id {
+            font-size: 12px;
+        }
+
+        #approve-card-header-id-tbl-07 {
+            text-align: center;
+            color: black;
+        }
+
+        #approve-card-header-id-tbl-08 {
+            text-align: center;
+            color: red;
+        }
+
+        .text-align-left-cls {
+            text-align: left;
+        }
+
+        .travel-report-footer-section-cls .card-header {
+            text-align: center;
+        }
+
+        #report-top-section-right-side-id {
+            margin-left: auto;
+        }
+
+        @@media screen and (max-width: 800px) {
+            #report-top-section-right-side-id {
+                margin-left: 150px;
+            }
+        }
+    </style>
+}
+
+<section id="travel-report-section-id">
+    <div class="container-fluid">
+        <div class="travel-report-cls">
+            <div class="card">
+                <div class="card-header">
+                    <div class="travel-report-top-section-cls">
+                        <div class="row">
+                            <div class="col-md-12 custom-control-inline">
+                                <div id="repost-top-section-left-side-id">
+                                    <div class="custom-control-inline">
+                                        @*<img src="~/images/JasonLogo.png" height="50px" width="100px" />*@
+                                        <img src="@Model.company.filePath" alt="OPUS ERP" style="height:50px;" />
+                                        <h5 id="barnd-name-id">@Model.company.companyName</h5>
+                                    </div>
+                                </div>
+                                <div id="report-top-section-right-side-id">
+                                    <table class="table table-bordered" id="top-right-side-table-id-tbl-01">
+                                        <thead>
+                                            <tr>
+                                                <th>CODE</th>
+                                                <th>BD</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>NUMBER</td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="report-heading-cls">
+                                    <h4 style="text-align:center;color:black">TRAVEL REQUEST - MISSION ORDER</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="travel-report-body-section-cls">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-body">
+                                    <div id="body-table-id-table-02">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="table-td-background-color-cls"><i>ACCOUNT</i></td>
+                                                    <td>@Model.travelMaster.accountNumber</td>
+                                                    <td class="table-td-background-color-cls"><i>PROJECT</i></td>
+                                                    <td>@Model.travelMaster.travelProject.name</td>
+                                                    <td class="table-td-background-color-cls"><i>ACTIVITY</i></td>
+                                                    <td>@Model.travelMaster.hRActivity.name</td>
+                                                    <td class="table-td-background-color-cls"><i>DONOR</i></td>
+                                                    <td>@Model.travelMaster.hRDoner.name</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div id="body-table-id-table-03">
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="table-td-background-color-cls">NAME</th>
+                                                        <th class="table-td-background-color-cls">POSITION</th>
+                                                        <th class="table-td-background-color-cls">DEPARTMENT</th>
+                                                        <th class="table-td-background-color-cls">CONTACT NUMBER</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <span>
+                                                        @foreach (var item in Model.travellerInfos)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.employee.nameEnglish</td>
+                                                                <td>@item.employee?.designation</td>
+                                                                <td>@item.employee?.department?.deptName</td>
+                                                                <td>@item.employee?.mobileNumberPersonal</td>
+                                                            </tr>
+                                                        }
+                                                    </span>
+                                                    <tr>
+                                                        <td colspan="4" class="table-td-background-color-cls text-align-left-cls"><span><b>PURPOSE OF MISSION - </b></span> All Field Travel must be in line with an operational goal.</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <p id="table-03-footer-text-id">Merchandise listed in the waybill will be transported, plus all materials necessary for accomplishment of the mission.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="body-table-id-table-04">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="table-td-background-color-cls">TRAVELLING FROM</th>
+                                                        <th class="table-td-background-color-cls">DEPARTURE DATE</th>
+                                                        <th class="table-td-background-color-cls">DEPARTURE TIME</th>
+                                                        <th class="table-td-background-color-cls">TRAVELLING TO</th>
+                                                        <th class="table-td-background-color-cls">ARRIVAL DATE</th>
+                                                        <th class="table-td-background-color-cls">ARRIVAL TIME</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.travellingInfos)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.travellingFrom</td>
+                                                            <td>@item.startDate?.ToString("dd-MMM-yyyy")</td>
+                                                            <td>@item.startTime</td>
+                                                            <td>@item.travellingTo</td>
+                                                            <td>@item.arrivalDate?.ToString("dd-MMM-yyyy")</td>
+                                                            <td>@item.arrivalTime</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="body-table-id-table-05">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="table-td-background-color-cls">
+                                                            <span id="th-font-width-bold-id">VEHICLE TYPE - </span>
+                                                            <span id="th-font-size-sm-id">IFRC / PNS / BDRCS / <br /> Rental / Bus / Train / Lunch / Boat / Aircraft</span>
+                                                        </th>
+                                                        <th class="table-td-background-color-cls">VEHICLE / FLIGHT NO.</th>
+                                                        <th class="table-td-background-color-cls">DRIVER NAME</th>
+                                                        <th class="table-td-background-color-cls">CONTACT NO</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.travellingInfos)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.travelVehicleType?.name</td>
+                                                            <td>@item.vehicleNumber</td>
+                                                            <td>@item.driverName</td>
+                                                            <td>@item.driverContactNumber</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="body-table-id-table-06">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="table-td-background-color-cls">ACCOMMODATION:</th>
+                                                        <th class="table-td-background-color-cls">BOOKING REQUIRED (Yes/No)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.travellingInfos)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.accommodationDaaress</td>
+                                                            @if (item.bookingRequird == 1)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header" id="approve-card-header-id-tbl-07">
+                                        <h4>APPROVAL</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="body-table-id-table-07">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="table-td-background-color-cls">NAME</th>
+                                                        <th class="table-td-background-color-cls">POSITION</th>
+                                                        <th class="table-td-background-color-cls">SIGNATURE</th>
+                                                        <th class="table-td-background-color-cls">DATE</th>
+                                                        <th class="table-td-background-color-cls">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.travelStatusLogs)
+                                                    {
+                                                        <tr>
+                                                            <td>@item?.employee?.nameEnglish</td>
+                                                            <td>@item?.employee?.designation</td>
+                                                            <td></td>
+                                                            <td>@item.date?.ToString("dd-MMM-yyyy")</td>
+                                                            <td>@item.remarks</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header" id="approve-card-header-id-tbl-08">
+                                        <h5><b>Contacts in the event of a safety or security incident of serious convern:</b></h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="body-table-id-table-08">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="text-align-left-cls">
+                                                            Security Manager:
+                                                            <br />
+                                                            Mob:
+                                                        </td>
+                                                        <td class="text-align-left-cls">
+                                                            Head of Office:
+                                                            <br />
+                                                            Mob:
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="travel-report-footer-section-cls">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-header">
+                                    <p>IFRC thanks local authorities for facilitating safe passage of the above travellers.<br />WHITE: Traveller (submit to Finance to settle bills). GREEN: Security/Admin. YELLOW: Fleet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

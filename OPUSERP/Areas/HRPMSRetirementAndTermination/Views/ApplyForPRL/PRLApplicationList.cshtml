@@ -1,0 +1,97 @@
+﻿@model PRLApplicationViewModel
+
+
+<div class="card" style="width: 100%;margin-top:10px;">
+    <div class="card-body">
+        <div>
+            <h5 class="card-title" style="color: black">@Model.flang.prlApplicationList</h5>
+            <hr>
+            <div class="container">
+                <table class="table table-bordered table-striped" id="prlAppList">
+                    <thead>
+                        <tr>
+                            <th>@Model.flang.sL</th>
+                            <th>@Model.flang.applicationName</th>
+                            <th>@Model.flang.employeeName</th>
+                            <th>@Model.flang.designation</th>
+                            <th>@Model.flang.date</th>
+                            <th>@Model.flang.action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sl = 1;
+                            @foreach (var data in Model.pRLApplications)
+                            {
+                                <tr>
+                                    <td>@sl</td>
+                                    <td>@data.applicationName</td>
+                                    <td>@data.employee.nameBangla</td>
+                                    <td>Programmer</td>
+                                    <td>@data.applicationDate</td>
+                                    <td>
+                                        <a data-toggle="tooltip" title="Details" href="ApplicationDetails/@data.Id" class="btn btn-success"><i class="fa fa-eye"></i></a>
+                                    </td>
+
+                                </tr>
+                                sl = sl + 1;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#prlAppList').dataTable({
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Application',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Employee'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Application',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+}

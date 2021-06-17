@@ -1,0 +1,270 @@
+﻿@model PayrollReportViewModel
+@{
+    ViewData["Title"] = "Monthly Salary Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        h6 {
+            font-size: 14px;
+            color: black !important;
+            padding: 3px;
+        }
+
+        .divstyle {
+            color: black;
+        }
+
+    </style>
+}
+
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div style="width:100%;overflow:hidden;">
+                <div style="width:25%;float:left;">
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+                </div>
+                <div style="width:50%;float:left;">
+                    <h3 style="text-align:center;color:black;"><b>@Model.companies.FirstOrDefault().companyName</b></h3>
+                    <p style="text-align:center;color:black;">@Model.companies.FirstOrDefault().addressLine</p>
+                    <h6 style="text-align:center;color:black;font-size:larger;">Salary Sheet for the month of @Model.monthlySalaryReportViewModels.FirstOrDefault().periodName</h6>
+                </div>
+                <div style="width:25%;float:right;">                    
+                    <div class="fa-pull-right">
+                        <h5 style="text-align:right;color:black;">@Model.monthlySalaryReportViewModels.FirstOrDefault().lockLabel</h5>
+                        <p style="font-size:small;color:black;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr style="border:1px solid black;">
+        <div class="container-fluid" style="color:black;">
+            <table class="table table-bordered">
+                <thead style="background-color:lightgray;">
+                    <tr>
+                        <th colspan="5" style="text-align:center;font-weight:bolder;">Particulars</th>
+                        <th colspan="4" style="text-align:center;font-weight:bolder;">Gross Salary</th>
+                        <th colspan="1" style="text-align:center;"></th>
+                        <th colspan="11" style="text-align:center;font-weight:bolder;">Additions</th>
+                        <th colspan="1" style="text-align:center;"></th>
+                        <th colspan="5" style="text-align:center;font-weight:bolder;">Deductions</th>
+                        <th colspan="1" style="text-align:center;font-weight:bolder;"></th>
+                        <th colspan="1" style="text-align:center;font-weight:bolder;"></th>
+                        <th colspan="2" style="text-align:center;font-weight:bolder;">Wallet Payment</th>
+                        <th colspan="3" style="text-align:center;font-weight:bolder;">Bank Payment</th>
+                    </tr>
+                    <tr>
+                        <th >SL#</th>
+                        <th >Emp Code</th>
+                        <th >Emp Name</th>
+                        <th >Designation</th>
+                        <th >Joining Date</th>
+                        <th >Basic</th>
+                        <th >House Rent</th>
+                        <th >Medical</th>
+                        <th >Conveyance</th>
+                        <th style="font-weight:bolder;">Gross</th>
+                        <th >CC/PF</th>
+                        <th >LFA</th>
+                        <th >Arrear</th>
+                        <th >Advance</th>
+                        <th >Bonus</th>
+                        <th >Over Time</th>
+                        <th >Performance Bonus</th>
+                        <th >Special Allowance</th>
+                        <th >Other Addition</th>
+                        <th >Leave Encash</th>
+                        <th >Tax By Company</th>
+                        <th style="font-weight:bolder;">Total Earnings</th>
+                        <th >Income Tax</th>
+                        <th >PF (Own & Comp.)</th>
+                        <th >Meal Charge</th>
+                        <th >Other Deduction</th>
+                        <th >Advance Deduction</th>
+                        <th style="font-weight:bolder;">Total Deductions</th>
+                        <th style="font-weight:bolder;">Net Payable</th>
+                        <th >Wallet</th>
+                        <th >Wallet No</th>
+                        <th >Bank</th>
+                        <th >Bank A/C No</th>
+                        <th >Bank Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        @foreach (var data in Model.monthlySalaryReportViewModels)
+                        {
+                            <tr>
+                                <td style="text-align:center;">@i</td>
+                                <td>@data.employeeCode</td>
+                                <td>@data.nameEnglish</td>
+                                <td>@data.designation</td>
+                                <td>@data.joiningDatePresentWorkstation</td>
+                                <td style="text-align:right;">@data.Basic?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.HouseRent?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.Medical?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.Conveyance?.ToString("0,0")</td>
+                                <td style="text-align:right;font-weight:bolder;">@data.GROSS?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.PFOwn?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.LFA?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.SalaryAdjustment?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.Advance?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.FestivalBonus?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.OverTime?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.PerformanceBonus?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.SpecialAllowance?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.OtherAddition?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.LeaveEncashment?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.TaxPaidCompany?.ToString("0,0")</td>
+                                <td style="text-align:right;font-weight:bolder;">@data.GROSSWPF?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.IncomeTax?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.PFOC?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.MealCharge?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.OtherDeduction?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.AdvanceDeduction?.ToString("0,0")</td>
+                                <td style="text-align:right;font-weight:bolder;">@data.TOTALDEDUCT?.ToString("0,0")</td>
+                                <td style="text-align:right;font-weight:bolder;">@data.NET?.ToString("0,0")</td>
+                                <td style="text-align:right;">@data.walletPayable?.ToString("0,0")</td>
+                                <td>@data.walletNo</td>
+                                <td style="text-align:right;">@data.bankPayable?.ToString("0,0")</td>
+                                <td>@data.bankAccountNo</td>
+                                <td>@data.bankName</td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td colspan="3" style="text-align:left;border:1px solid;border-color:grey;font-weight:bold;">Total Employees: @Model.monthlySalaryReportViewModels.Count()</td>
+                        <td colspan="2" style="text-align:left;border:1px solid;border-color:grey;font-weight:bold;">Grand Total : </td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.Basic)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.HouseRent)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.Medical)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.Conveyance)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.GROSS)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.PFOwn)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.LFA)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.SalaryAdjustment)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.Advance)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.FestivalBonus)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.OverTime)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.PerformanceBonus)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.SpecialAllowance)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.OtherAddition)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.LeaveEncashment)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.TaxPaidCompany)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.GROSSWPF)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.IncomeTax)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.PFOC)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.MealCharge)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.OtherDeduction)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.AdvanceDeduction)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.TOTALDEDUCT)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.NET)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.walletPayable)?.ToString("0,0")</td>
+                        <td></td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.monthlySalaryReportViewModels.Sum(x => x.bankPayable)?.ToString("0,0")</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br /><br /><br /><br />
+        <div style="width:100%;overflow:hidden;">
+            <div style="width:40%;float:left;">
+                <div class="divstyle">___________________________</div>
+                <div class="divstyle">Prepared by:</div>
+                @*<div class="divstyle">Umme Habiba</div>
+                    <div class="divstyle">Sr. Manager-HR & Legal</div>*@
+                <div class="divstyle">Date: @DateTime.Now.ToString("dd-MMM-yyyy")</div>
+            </div>
+            @*<div style="width:25%;float:left;">
+                    <div class="divstyle">___________________________</div>
+                    <div class="divstyle">Prepared & checked  by:</div>
+                    <div class="divstyle">Nure Alam Siddique</div>
+                    <div class="divstyle">Sr. Finance office</div>
+                    <div class="divstyle">Date: @DateTime.Now.ToString("dd-MMM-yyyy")</div>
+                </div>*@
+            <div style="width:30%;float:left;">
+                <div class="divstyle">___________________________</div>
+                <div class="divstyle">Verified by:</div>
+                @*<div class="divstyle">Motiar Rahman</div>
+                    <div class="divstyle">Sr. Manager-Finance and Admin</div>*@
+                <div class="divstyle">Date: @DateTime.Now.ToString("dd-MMM-yyyy")</div>
+            </div>
+            <div style="width:30%;float:right;">
+                <div class="divstyle">___________________________</div>
+                <div class="divstyle">Approved by:</div>
+                @*<div class="divstyle">Azmat Ullah</div>
+                    <div class="divstyle">Head of Delegation</div>*@
+                <div class="divstyle">Date: @DateTime.Now.ToString("dd-MMM-yyyy")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+
+        });
+    </script>
+}
+
+
+
+
+
+
+
+

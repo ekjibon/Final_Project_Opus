@@ -1,0 +1,260 @@
+﻿@model BudgetHeadViewModel
+@{
+    ViewData["TitleMD"] = "Budget Heads";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+@section StyleMD{
+    <style>       
+        .redStar {
+            color: red;
+        }
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+        <h5 class="card-title" style="color: black; font-weight:bold">Budget Head</h5>
+        <hr>
+        <div class="container">
+            <form id="myForm" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="code" class="col-sm-2 col-form-label">@Model.fLang1.mainHead</label>
+                    <div class="col-sm-10">
+                        <select id="mainHead" class="form-control">
+                            <option>Select</option>
+                            @foreach (var data in Model.budgetMainHeads)
+                            {
+                                <option value="@data.Id">@data.code-@data.name-@data.nameBN</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="code" class="col-sm-2 col-form-label">@Model.fLang1.subHead<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select id="budgetSubHeadId" name="budgetSubHeadId" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="code" class="col-sm-2 col-form-label">@Model.fLang1.code<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="code" id="code">
+                        <input type="hidden" name="headId" id="headId" value="0" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="code" class="col-sm-2 col-form-label">@Model.fLang1.codeBn</label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="codeBN" id="codeBN">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">@Model.fLang1.headEn<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="name" id="name">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">@Model.fLang1.headBn</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="nameBN" id="nameBN">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="SubLedgerof" class="col-sm-2 col-form-label">Head of ledger</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="SubLedgerof" name="SubLedgerof">
+                        <input type="hidden" class="form-control" id="LedgerIds" name="LedgerIds">
+                        <input type="hidden" class="form-control" id="LedgerNames" name="LedgerNames">
+                    </div>
+                    <div class="col-sm-1">
+                        <a class="btn btn-block btn-success" onclick="AddGroup()" style="color:white;" title="Add Ledger"><i class="fas fa-plus"></i></a>
+                    </div>
+                </div>
+                <br /><hr />
+                <div class="form-group row">
+                    <div class="col-sm-2"></div>
+                    <div id="SubLedgerList" class="col-sm-10 row"></div>
+                </div>
+                <hr />
+                <input type="button" id="saveForm" value="Submit" class="btn btn-success" style="float:right; margin-top:5px;">
+            </form>
+        </div>
+    </div>
+</div>
+<br /><br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 style="color: black; font-weight:bold">@Model.fLang1.list</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="budgetHeadTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang1.code</th>
+                            <th>@Model.fLang1.headEn</th>
+                            <th>@Model.fLang1.headBn</th>
+                            <th>@Model.fLang1.subHead</th>
+                            <th>@Model.fLang1.mainHead</th>
+                            <th>@Model.fLang1.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.budgetHeads)
+                        {
+                        <tr>
+                            <td>@data.code</td>
+                            <td>@data.name</td>
+                            <td>@data.nameBN</td>
+                            <td>@data.budgetSubHead.name</td>
+                            <td>@data.budgetSubHead.budgetMainHead.name</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id,@data.budgetSubHeadId,@data.budgetSubHead.budgetMainHeadId, '@data.code','@data.codeBN', '@data.name','@data.nameBN')" href="#"><i class="fa fa-edit"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#budgetHeadTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetLedgerWithoutSubLedger/', [], 'json', GetLedgerForSubLedger);
+            $("#mainHead").change(function () {
+                var id = $(this).val()
+                Common.Ajax('GET', '/api/BudgetSubHead/GetBudgetSubHeadByMainHeadId/' + id, [], 'json', GetBudgetHead);
+            });
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+            $("#saveForm").click(function () {
+                var data = $("#myForm").serialize();
+                let budgetSubHeadId = $('#budgetSubHeadId').val();
+                let code = $('#code').val();
+                let codeBN = $('#codeBN').val();
+                let name = $('#name').val();
+                if (budgetSubHeadId == "") {
+                    swal('Warning', 'Sub Head can not be null', 'warning');
+                    return false;
+                }
+                if (code == "") {
+                    swal('Warning', 'Code(English) can not be null', 'warning');
+                    return false;
+                }
+                if (name == "") {
+                    swal('Warning', 'Head(English) can not be null', 'warning');
+                    return false;
+                }                
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+
+                    $.ajax({
+                        url: "/Budget/BudgetHeads/Index",
+                        type: "POST",
+                        data: data,
+                        success: function () {
+                            swal('', 'Saved Successfully!', 'success')
+                            location.reload(true);
+                        }
+                    });
+                });
+            });
+        });
+
+        function GetBudgetHead(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.code + '-' + item.name+'</option>';
+            });
+            $('#budgetSubHeadId').empty();
+            $('#budgetSubHeadId').append(options);
+        }
+
+        function Edit(Id,subId,mainId, code,codeBn, name,nameBn) {
+            $("#headId").val(Id);
+            $("#mainHead").val(mainId);
+            $("#code").val(code);
+            $("#codeBN").val(codeBn);
+            $("#name").val(name);
+            $("#nameBN").val(nameBn);
+            Common.Ajax('GET', '/api/BudgetSubHead/GetBudgetSubHeadById/' + subId, [], 'json', GetBudgetSubHead, false);
+            Common.Ajax('GET', '/global/api/GetBudgetHeadDetailbyHeadId/' + Id, [], 'json', ajaxLedgerRelation, false);
+        }
+
+        function GetBudgetSubHead(response) {
+            $('#budgetSubHeadId').empty();
+            console.log(response);
+            $('#budgetSubHeadId').append('<option value="' + response.Id + '">' + response.code + '-' + response.name + '</option>');
+        }
+        function GetLedgerForSubLedger(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.name = option.accountName;
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                obj.accountCode = option.accountCode;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#SubLedgerof').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#LedgerIds').val(ui.item.key);
+                    $("#LedgerNames").val(ui.item.name);
+                }
+            });
+        }
+
+        function AddGroup() {
+            var id = $('#LedgerIds').val();
+            var value = $('#SubLedgerof').val();
+            $('#SubLedgerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroup(' + "'" + id + "'" + ')">X</span></a></span>');
+            $('#SubLedgerof').val('')
+        }
+
+        function DeleteGroup(id) {
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+        function ajaxLedgerRelation(response) {
+            console.log("b");
+            console.log(response);
+            $('#SubLedgerList').empty();
+            $.each(response, function (i, item) {
+                $('#SubLedgerList').append('<input type="hidden" name="ids[]" id="Lg' + item.ledger.Id + '" value="' + item.ledger.Id + '"><span class="spanClass" id="LgId' + item.ledger.Id + '" >' + item.ledger.accountName + '<a href="#"><span class="crossButton" onclick="DeleteGroup(' + "'" + item.ledger.Id + "'" + ')">X</span></a></span>');
+            });
+        }
+    </script>
+}

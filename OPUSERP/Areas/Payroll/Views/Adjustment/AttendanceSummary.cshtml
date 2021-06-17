@@ -1,0 +1,309 @@
+﻿@model AttendanceSummaryViewModel
+@{
+    ViewData["Title"] = "Attendance Summary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Attendance Summary</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="Adjustment" asp-action="AttendanceSummary" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    @*@{
+                        var id = 0;
+                        if (@ViewBag.empAttendanceSummaryId == null || @ViewBag.empAttendanceSummaryId == 0)
+                        {
+                            id = 0;
+                        }
+                        else
+                        {
+                            id = ViewBag.empAttendanceSummaryId;
+                        }
+                        <input type="hidden" name="empAttendanceSummaryId" id="empAttendanceSummaryId" value="@id">
+                    }*@
+                    <input type="hidden" id="empAttendanceSummaryId" name="empAttendanceSummaryId" value=0>
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-sm-4 col-form-label">Employee's Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Designation </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="leave" class="col-sm-4 col-form-label">Leave</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="leave" name="leave" value="0" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="absent" class="col-sm-4 col-form-label">Absent</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="absent" name="absent" value="0" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="late" class="col-sm-4 col-form-label">Late</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="late" name="late" value="0" style="text-align:right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="salaryPeriodId" class="col-sm-4 col-form-label">Salary Period<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select name="salaryPeriodId" id="salaryPeriodId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select Salary Period</option>
+                                    @foreach (var data in Model.salaryPeriods.Where(a => a.lockLabel == 0 || a.lockLabel == 1 || a.lockLabel == 2 || a.lockLabel == 3))
+                                    {
+                                        <option value="@data.Id">@data.periodName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="weeklyOff" class="col-sm-4 col-form-label">Weekly Off</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="weeklyOff" name="weeklyOff" value="4" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="holiday" class="col-sm-4 col-form-label">Holiday</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="holiday" name="holiday" value="0" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="present" class="col-sm-4 col-form-label">Present</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="present" name="present" value="0" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="remarks" name="remarks">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Save" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Attendance Summary</h6>
+            </div><br />
+                  <div class="row">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-6">
+                          <div class="form-group row">
+                              <label for="periodId" class="col-sm-4 col-form-label">Salary Period</label>
+                              <div class="col-sm-8">
+                                  <select name="periodId" id="periodId" class="form-control" data-parsley-required="true">
+                                      <option value="">Select Salary Period</option>
+                                      @foreach (var data in Model.salaryPeriods)
+                                      {
+                                          <option value="@data.Id">@data.periodName</option>
+                                      }
+                                  </select>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                          <div class="form-group row">
+                              <label class="col-sm-4 col-form-label"></label>
+                              <div class="col-sm-8">
+                                  <input type="button" class="btn btn-success btn-sm" value="Load" id="btnLoad" />
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-2"></div>
+                  </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="leaveTable" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Employee's @Model.visualEmpCodeName</th>
+                            <th>Employee's Name</th>
+                            <th>Period Name</th>
+                            <th>Weekly Off</th>
+                            <th>Leave</th>
+                            <th>Absent</th>
+                            <th>Holiday</th>
+                            <th>Late</th>
+                            <th width="100px">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+
+            @*let summaryId = parseInt(@ViewBag.empAttendanceSummaryId) ? parseInt(@ViewBag.empAttendanceSummaryId) : 0;
+            if (summaryId == null || summaryId == 0) {
+
+            }
+            else {
+                GetAttendanceSummaryByPeriod(summaryId, 0);
+            }*@
+
+            $("#btnLoad").on("click", function () {
+                let periodId = parseInt($("#periodId").val()) ? parseInt($("#periodId").val()) : 0;
+                GetAttendanceSummaryByPeriod(0, periodId);
+            });
+        });
+
+        function GetAttendanceSummaryByPeriod(summaryId, periodId) {
+            $('#leaveTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetAttendanceSummaryByPeriod", "Adjustment")',
+                    dataSrc: "",
+                    data: { id: summaryId, salaryPeriodId: periodId }
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "employeeCode"},
+                    { data: "nameEnglish"},
+                    { data: "periodName"},
+                    { data: "weeklyOff"},
+                    { data: "leave"},
+                    { data: "absent"},
+                    { data: "holiday"},
+                    { data: "late"},
+                    {
+                        title: "Action", "width": "10%",
+                        "render": function (data, type, e, meta) {
+                            if (e.lockLabel == 0 || e.lockLabel == 1 || e.lockLabel == 2 || e.lockLabel == 3) {
+                                return '<a class="btn btn-success" onclick="Edit(' + e.Id + ',' + e.employeeInfoId + ',' + "'" + e.nameEnglish + "'" + ',' + "'" + e.designation + "'" + ',' + e.salaryPeriodId + ',' + e.weeklyOff + ',' + e.holiday + ',' + e.leave + ',' + e.present + ',' + e.absent + ',' + e.late + ',`' + e.remarks + '`)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;<a class="btn btn-danger" onclick="Remove(' + e.Id + ')" href="#"><i class="fa fa-trash-alt"></i></a>';
+                            }
+                            else {
+                                return '';
+                            }
+                        }
+                    },
+
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "Attendance Summary",
+                        messageTop: 'List Of Attendance Summary',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "Attendance Summary",
+                        messageTop: 'List Of Attendance Summary'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Attendance Summary",
+                        //messageTop: 'List Of Attendance Summary',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+        function Edit(Id, employeeInfoId, nameEnglish, designation, salaryPeriodId, weeklyOff, holiday, leave, present, absent, late, remarks) {
+            $('#empAttendanceSummaryId').val(Id);
+            $('#employeeInfoId').val(employeeInfoId);
+            $('#employeeName').val(nameEnglish);
+            $('#Designation').val(designation);
+            $('#salaryPeriodId').val(salaryPeriodId);
+            $('#weeklyOff').val(weeklyOff);
+            $('#holiday').val(holiday);
+            $('#leave').val(leave);
+            $('#present').val(present);
+            $('#absent').val(absent);
+            $('#late').val(late);
+            $('#remarks').val(remarks);
+        }
+
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                //return true;
+                location.replace("/Payroll/Adjustment/DeleteAttendaneSummary/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+    </script>
+}

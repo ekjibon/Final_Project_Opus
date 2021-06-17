@@ -1,0 +1,240 @@
+﻿@model StockInViewModel
+@{
+    ViewData["Title"] = "Stock Out";
+    //Layout = "~/Areas/Inventory/Views/shared/_InventoryLayout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card col-sm-12">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Item List For Stock Out</h4>
+                <a href="/Inventory/Stock/InoviceList?id=0" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Back To List</a>
+            </div>
+
+            <!-- Card Body -->
+            <!-- Card Body -->
+            @*<div class="card-body">
+                <label style="float:left;color:black"><span style="font-weight:900;color:black">Sales Invoice No:</span>&nbsp;@Model.stockItemViewModels.FirstOrDefault().PONO</label>
+                <input type="hidden" name="purchaseId" value="@Model.purchaseId" id="purchaseId" />
+            </div>*@
+            <div class="card-body row">
+
+                <div class="form-group row col-sm-8">
+                    <label style="color:black;padding-left: 90px;"><span style="font-weight:900;color:black">Sales Invoice No:</span>&nbsp;@Model.SalesInvoiceMaster.invoiceNumber</label>
+                    <input type="hidden" name="purchaseId" value="@Model.purchaseId" id="purchaseId" />
+                </div>
+                <div class="form-group row col-sm-4" style="float:right">
+                    <label style="float:left;color:black"><span style="font-weight:900;color:black">Sales Invoice Date:</span>&nbsp;@Model.SalesInvoiceMaster.invoiceDate?.ToString("dd-MMM-yyyy")</label>
+                </div>
+                <div class="form-group row col-sm-8">
+                    <label style="color:black;padding-left: 90px;"><span style="font-weight:900;color:black">Customer Name:</span>&nbsp;@Model.SalesInvoiceMaster.relSupplierCustomerResourse.Leads.leadName</label>
+                </div>
+                <div class="form-group row col-sm-4" style="float:right">
+                    <label style="color:black;text-align:right"><span style="font-weight:900;color:black">Invoice Value:</span>&nbsp;<span style="color:black;text-align:right;padding-left:83px">@Model.SalesInvoiceMaster.totalAmount?.ToString("0,0.00")</span></label>
+                </div>
+            </div>
+            <form asp- method="post" asp-area="Inventory" asp-controller="Stock" asp-action="IndexOut" class="navbar-right" data-parsley-validate="parsley" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="card-body">
+                    @*<div class="form-group row">
+            <label for="date" class="col-sm-3 col-form-label">SR NO <span class="redStar"></span></label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="MRNO" value="@ViewBag.MRNO" name="MRNO" readonly>
+                <input type="hidden" class="form-control" id="stockMasterId" value="@Model.stockMasterId" name="stockMasterId">
+
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="date" class="col-sm-3 col-form-label">Stock Out Date <span class="redStar">*</span></label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="stockDate" value="" name="stockDate" required>
+            </div>
+        </div>*@
+                    <div class="card-body row">
+                        <div class="form-group row col-sm-8">
+                            <label for="date" style="color:black;padding-left: 90px;"><span style="font-weight:900;color:black">MR NO </span><span class="redStar"></span></label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="MRNO" value="@ViewBag.MRNO" name="MRNO" readonly>
+                                <input type="hidden" class="form-control" id="stockMasterId" value="@Model.stockMasterId" name="stockMasterId">
+                            </div>
+                        </div>
+                        <div class="form-group row col-sm-4" style="float:right">
+                            <label for="date" style="float:left;color:black"><span style="font-weight:900;color:black">SR Date</span><span class="redStar" style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="stockDate" value="" name="stockDate" required>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped table-bordered" id="stockOutList">
+                        <thead>
+                            <tr>
+                                <th width="10%"><input type="checkbox" id="selectAll" onclick="SelectAll()" title="Select all" /></th>
+                                <th width="20%">Item</th>
+                                <th width="20%">Item Specification</th>
+                                <th width="10%">Rate</th>
+                                <th width="15%">Quantity</th>
+                                <th width="10%">Due To Stock</th>
+                                <th width="10%">Stock Quantity</th>
+                        </thead>
+                        <tbody>
+                            @{
+                                var index = 1;
+                                @foreach (var data in Model.stockItemViewModels)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="custom-control custom-checkbox mb-3">
+                                                <input type="checkbox" class="custom-control-input" value="@data.Id" id="select-@index" onclick="AddQuantity(@index);">
+                                                <label class="custom-control-label" for="select-@index">
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td><span style="display:none">-@index-</span>@data.itemName</td>
+                                        <td>@data.itemSpecificationName</td>
+                                        <td><input type="hidden" class="form-control" value="@data.rate" id="rate-@index" /> @data.rate</td>
+                                        <td>@data.quantity</td>
+                                        <td><input type="hidden" class="form-control" value="@data.itemSpecificationId" id="specid-@index" /> <input type="hidden" class="form-control" value="@data.dueQuantity" id="quantity-@index" />@data.dueQuantity</td>
+                                        <td> <input type="number" class="form-control paymentAmount" onkeyup="TotalCalculation();" onclick="TotalCalculation();" max="@data.dueQuantity" min="0" data-parsley-trigger="keyup" value="" id="stock-@index" /></td>
+                                    </tr>
+                                    index++;
+                                }
+                            }
+                            <tr>
+                                <th colspan="6" class="text-center">Total Quantity</th>
+                                <td><input data-parsley-type="number" data-parsley-trigger="keyup" id="total" min="1" value="0" name="total" readonly class="form-control" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    @*<div class="form-group row">
+                        <label for="accountLedgerId" class="col-sm-3 col-form-label">Store Name</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="storeId" id="storeId">
+
+                                @foreach (var data in Model.storeAssigns.Where(x => x.store.Id == ViewBag.storeId))
+                                {
+                                    <option value="@data.Id">@data.store.storeName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>*@
+                    <div class="form-group row">
+                        <label for="remarks" class="col-sm-3 col-form-label"> Remarks</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="remarks" value="" name="remarks">
+                        </div>
+                    </div>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;" title="Payment"><i class="fas fa-shopping-cart"></i></button>
+                    <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        //function checkAmount(id) {
+        //    var y = $("#quantity-" + id).val();
+        //    var x = $("#stock-" + id).val();
+
+        //    if (x > y) {
+        //        swal('Warning', 'Stock exceed purchase quantity', 'warning');
+        //        $("#stock-" + id).val(y);
+        //        return false;
+        //    }
+        //}
+        var count = 0;
+        function Refresh() {
+            location.reload();
+        }
+        function AddQuantity(id) {
+            if ($("#select-" + id).prop("checked") == true) {
+               // var x = $("#stock-" + id).val();duequantitys
+                var y = $("#quantity-" + id).val();
+                count = count + 1;
+                TotalCalculation();
+                $("#stock-" + id).val(y);
+                $("#rate-" + id).attr("name", "rates[]");
+                $("#specid-" + id).attr("name", "specids[]");
+                $("#select-" + id).attr("name", "detailids[]");
+                $("#quantity-" + id).attr("name", "duequantitys[]");
+                $("#stock-" + id).attr("name", "quantitys[]");
+
+            } else {
+                $("#stock-" + id).val("");
+                $("#rate-" + id).removeAttr("name");
+                $("#specid-" + id).removeAttr("name");
+                $("#select-" + id).removeAttr("name");
+                $("#stock-" + id).removeAttr("name");
+                $("#quantity-" + id).removeAttr("name");
+                count = count - 1;
+            }
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+        }
+        $(document).ready(function () {
+            $('#stockDate').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('#ItemList').DataTable();
+
+            var table = $('#ItemList').DataTable();
+
+            //$('#PurchaseList tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var vid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/Purchase/PurchaseOrder/PurchaseDetail/?id=" + vid;
+            //});
+            //$('#PurchaseList tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+
+        });
+        function TotalCalculation() {
+            var sum = 0;
+            //if (count > 0) {
+           
+            //}
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            //alert(sum);
+            $("#total").val(sum);
+        }
+
+        function SelectAll() {
+            if ($("#selectAll").prop('checked') == true) {
+                var trCount = $("#stockOutList tbody tr").length;
+                for (var i = 1; i <= trCount; i++) {
+                    $("#select-" + i).prop('checked', true);
+                    AddQuantity(i);
+                }
+            }
+            else {
+                var trCount = $("#stockOutList tbody tr").length;
+                for (var i = 1; i <= trCount; i++) {
+                    $("#select-" + i).prop('checked', false);
+                    AddQuantity(i);
+                }
+            }
+        }
+    </script>
+}
+
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        #PurchaseList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}

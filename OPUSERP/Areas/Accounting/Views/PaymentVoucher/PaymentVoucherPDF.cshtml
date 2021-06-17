@@ -1,0 +1,201 @@
+﻿@model VoucherMasterViewModel
+@{
+    ViewData["Title"] = "PaymentVoucherPDF";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+<div>
+    <div>
+        <div>
+            <div>
+                <div class="row">
+                    <div class="col-2">
+                        <div style="float:left">
+                            <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;width:120px;" />
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div style="color:black">
+                            <h5 style="text-align:center;">@Model.companies.FirstOrDefault().companyName</h5>
+                            <p style="text-align:center;">@Model.companies.FirstOrDefault().addressLine</p>
+                            <div style="text-align:center;">Fiscal Year: @Model.VoucherMaster.fiscalYear.yearName</div>
+                            <h5 style="text-align:center;">Payment Voucher</h5>
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <br /><br />
+            <div style="margin-bottom:30px;color:black">
+                <div style="float:left;font-weight:600">Voucher No: @Model.VoucherMaster.voucherNo</div>
+                <div style="text-align:right;float:right;font-weight:600">Voucher Date: @Model.VoucherMaster.voucherDate?.ToString("dd-MMM-yyyy")</div>
+                <br />
+                @*<div style="float:left">Ref No: @Model.VoucherMaster.refNo</div>*@
+            </div>
+        </div>
+        <div>
+            <table class="table table-bordered" style="border-color:black" id="voucherList">
+                <thead style="background-color:lightgray;border-bottom:groove;">
+                    <tr>
+                        <th width="10%" style="text-align:center;">Account Code</th>
+                        <th width="40%" style="text-align:center;">Account Name</th>
+                        <th width="22%" style="text-align:center;">Cost Centre Name</th>
+                        <th width="14%" style="text-align:center;">Dr Amount (Tk)</th>
+                        <th width="14%" style="text-align:center;">Cr Amount (Tk)</th>
+                </thead>
+                <tbody style="color:black">
+                    @{
+                        double SumDr = 0.00;
+                        double SumCr = 0.00;
+                        @foreach (var data in Model.GetVoucherDetailsByMasterId.OrderBy(x => x.transectionModeId))
+                        {
+                            double Dr = 0.00;
+                            double Cr = 0.00;
+                            @if (data.transectionModeId == 1)
+                            {
+                                Dr = (double)@data.amount;
+                                SumDr = (SumDr + Dr);
+                            }
+                            else
+                            {
+                                Cr = (double)@data.amount;
+                                SumCr = SumCr + Cr;
+                            }
+                            if (data.ledgerRelation.ledger.group.natureId == 4)
+                            {
+                                @foreach (var vdata in Model.costCentreAllocations.Where(x => x.voucherDetailId == data.Id))
+                                {
+                                    double VDr = 0.00;
+                                    double VCr = 0.00;
+                                    @if (data.transectionModeId == 1)
+                                    {
+                                        VDr = (double)@vdata.amount;
+                                    }
+                                    else
+                                    {
+                                        VCr = (double)@vdata.amount;
+                                    }
+                                    <tr>
+                                        <td>@data.ledgerRelation.ledger.accountCode</td>
+                                        @if (data.ledgerRelation.subLedger == null)
+                                        {
+                                            <td>@data.ledgerRelation.ledger.accountName</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@data.ledgerRelation.ledger.accountName-@data.ledgerRelation.subLedger.accountName (@data.ledgerRelation.ledger.accountCode)</td>
+                                        }
+                                        <td>@vdata.costCentre.centreName</td>
+                                        <td style="text-align:right">@VDr.ToString("0,0.00")</td>
+                                        <td style="text-align:right">@VCr.ToString("0,0.00")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@data.ledgerRelation.ledger.accountCode</td>
+                                    @if (data.ledgerRelation.subLedger == null)
+                                    {
+                                        <td>@data.ledgerRelation.ledger.accountName</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@data.ledgerRelation.ledger.accountName-@data.ledgerRelation.subLedger.accountName </td>
+                                    }
+                                    <td></td>
+                                    <td style="text-align:right">@Dr.ToString("0,0.00")</td>
+                                    <td style="text-align:right">@Cr.ToString("0,0.00")</td>
+                                </tr>
+                            }
+                        }
+                        <tr>
+                            <td colspan="3" style="text-align:right;font-weight:bolder;">Total Amount (Tk)</td>
+                            <td style="text-align:right;font-weight:bolder;">@SumDr.ToString("0,0.00")</td>
+                            <td style="text-align:right;font-weight:bolder;">@SumCr.ToString("0,0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div style="text-align:left;width:500px">
+                <span style="color:black"><span style="font-weight:600">In Words:</span>&nbsp; &nbsp;@ViewBag.InWord</span>
+            </div>
+        </div>
+        <br /><br />
+        <div>
+            <div style="text-align:left;width:500px">
+                <span style="color:black;font-weight:600">Narration</span>
+                <br />
+                <span style="color:black">@Model.VoucherMaster.remarks</span>
+            </div>
+        </div>
+        <br /><br /><br /><br /><br /><br />
+        <div class="col-md-12">
+            <table style="width:100%">
+                <tr>
+                    <th style="width:25%">Received By</th>
+                    <th style="width:25%">@Model.getSignatureViewModel.FirstSignatureDesignation</th>
+                    <th style="width:25%">@Model.getSignatureViewModel.ThirdSignatureDesignation</th>
+                    @*<th style="width:25%">@Model.getSignatureViewModel.FirstSignatureName</th>
+                        <th style="width:25%">@Model.getSignatureViewModel.SecondSignatureName</th>
+                        <th style="width:25%">@Model.getSignatureViewModel.ThirdSignatureName</th>*@
+                </tr>
+                <tr>
+                    <th style="width:25%">Sign:</th>
+                    <th style="width:25%">@Model.companies.FirstOrDefault().companyName</th>
+                    <th style="width:25%">@Model.companies.FirstOrDefault().companyName</th>
+                    @*<th style="width:25%">@Model.getSignatureViewModel.FirstSignatureDesignation</th>*@
+                    @*<th style="width:25%">@Model.getSignatureViewModel.SecondSignatureDesignation</th>*@
+                    @*<th style="width:25%">@Model.getSignatureViewModel.ThirdSignatureDesignation</th>*@
+                </tr>
+                <tr>
+                    <th style="width:25%">Name:</th>
+                    @*<th style="width:25%">@Model.companies.FirstOrDefault().companyName</th>*@
+                    @*<th style="width:25%">@Model.companies.FirstOrDefault().companyName</th>*@
+                    @*<th style="width:25%">@Model.companies.FirstOrDefault().companyName</th>*@
+                </tr>
+            </table>
+        </div><br /><br /><br /><br /><br />
+        @*<div class="row">
+            <div class="col-8"></div>
+            <div class="col-4">
+                @if (SumDr > 300000)
+                {
+                    <span style="width:25%;color:black;font-weight:bold;">@Model.getSignatureViewModel.FourthSignatureName</span><br />
+                    <span style="width:25%;color:black;font-weight:bold;">@Model.getSignatureViewModel.FourthSignatureDesignation</span><br />
+                    <span style="width:25%;color:black;font-weight:bold;">@Model.companies.FirstOrDefault().companyName</span>
+                }
+            </div>
+        </div>*@
+        <br /><br /><br />
+        <div class="row">
+            <div class="col-3">
+                <div style="float:left">
+                    @if (@Model.companies.FirstOrDefault().filePathTwo != "")
+                    {
+                        <img src="@Model.companies.FirstOrDefault().filePathTwo" alt="" style="height:50px;width:120px;" />
+                    }
+                    else
+                    {
+
+                    }
+                </div>
+            </div>
+            <div class="col-6">
+            </div>
+            <div class="col-3">
+                <div style="float:right">
+                    @if (@Model.companies.FirstOrDefault().filePathThree != "")
+                    {
+                        <img src="@Model.companies.FirstOrDefault().filePathThree" alt="OPUS ERP" style="height:90px;width:180px;" />
+                    }
+                    else
+                    {
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

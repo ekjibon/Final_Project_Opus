@@ -1,0 +1,125 @@
+﻿@model MemberInfoViewModel
+@{
+    ViewData["Title"] = "MemberReport";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+
+
+@section Style{
+<style>
+    body {
+        color: black;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    .pb_before {
+        page-break-before: always !important;
+    }
+
+    /***Always insert a page break after the element***/
+    .pb_after {
+        page-break-after: always !important;
+    }
+
+    /***Avoid page break before the element (if possible)***/
+    .pb_before_avoid {
+        page-break-before: avoid !important;
+    }
+
+    /***Avoid page break after the element (if possible)***/
+    .pb_after_avoid {
+        page-break-after: avoid !important;
+    }
+</style>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-2" style="height:125px;">
+
+                    <img src="" style="height:95px;width: inherit;" />
+                </div>
+                <div class="col-6" style="text-align:center;padding-left:140px">
+                    <h4 style="font-size: 25px; font-weight: 900; font-family: sans-serif; margin-top: 5px; margin-bottom: 0px;"> </h4>
+                    <h6 style="font-weight:900;font-family: sans-serif;padding-top:0px;"></h6>
+                    <h5 style="font-weight:900;font-family: sans-serif;padding-top:25px;">Organizationwise Member Info</h5>
+
+                </div>
+
+                <div class="col-4">
+                    <h6 style="font-weight:900;font-family: sans-serif;padding-top:25px;text-align:right">Print date:@DateTime.Now.ToString("dd MMM yyyy") </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row" style="padding: 10px 12px 0px 12px;">
+        @{
+            var i = 0;
+            <table class="table-bordered-grey" style="width:100%;">
+                <thead>
+                    <tr style="background-color:lightgray;">
+                        <th style="text-align:center;">ID</th>
+                        <th style="text-align:center;">Name English</th>
+                        @*<th style="text-align:center;">Designation</th>*@
+                        <th style="text-align:center;">Organization</th>
+                        <th style="text-align:center;">Mobile Number Office</th>
+                        @*<th style="text-align:center;">Email Address</th>*@
+                    </tr>
+                </thead>
+                <tbody style="min-height:400px;">
+                    @foreach (var data in @Model.memberInfoReportViewModels)
+                    {
+                        i = i + 1;
+                    <tr>
+                        <td style="text-align:center;width:5%;">@i</td>
+                        <td> @data.nameEnglish</td>
+                        @*<td> @data.designation</td>*@
+                        <td> @data.organization</td>
+                        <td> @data.mobileNumberPersonal</td>
+                        @*<td> @data.emailAddress</td>*@
+
+                    </tr>
+
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+
+        });
+    </script>
+}
+
+

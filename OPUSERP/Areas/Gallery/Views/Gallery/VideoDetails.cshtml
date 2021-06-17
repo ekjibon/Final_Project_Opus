@@ -1,0 +1,76 @@
+﻿@model ContentViewModel
+@{
+    ViewData["Title"] = Model.fLang.galleryDetails;
+}
+
+@section Style{
+    <style>
+        p {
+            color: black;
+            font-size: 15px;
+        }
+
+        h6 {
+            color: black;
+        }
+
+        h4 {
+            color: black;
+        }
+
+        h5 {
+            padding: 20px;
+            color: black;
+        }
+
+        b {
+            color: black;
+        }
+    </style>
+}
+
+@if (@Model.galleryContents.Count() > 0)
+{
+
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            </div>
+            <h4> @Model.fLang.title  : &nbsp; &nbsp; @Model.galleryContents.FirstOrDefault().galleryTitle.title</h4>
+            <br />
+            <h4>@Model.fLang.description : </h4> <br />
+            <p>
+                @Model.galleryContents.FirstOrDefault().galleryTitle.title
+            </p>
+            <div class="row">
+                <!-- Blog Post -->
+                @foreach (var data in Model.galleryContents)
+                {
+
+                    <div class="col-12" style="padding:20px">
+                        <div class="card ">
+
+                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/@data.url" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <br />
+                            <div class="card-body">
+                                <h6 class="card-title">@data.caption</h6>
+                            </div>
+
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+
+}
+else
+{
+    <br />
+    <br />
+    <br />
+    <h4 class="text-center">No Videos in This Gallery Folder!!</h4>
+
+}
+

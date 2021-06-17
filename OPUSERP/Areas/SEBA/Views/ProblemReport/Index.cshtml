@@ -1,0 +1,414 @@
+﻿@model ProblemMasterViewModel
+@{
+    ViewData["Title"] = "Complain Box";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h6 class="card-title" style="color: black">Issue Ticket</h6>
+        <hr>
+        <div class="container">
+            <form asp-area="SEBA" asp-controller="ProblemReport" asp-action="Index" method="post" data-parsley-validate="parsley" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" id="headId" name="headId" />
+                <input type="hidden" id="headName" name="headName" />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="leadsId" class="col-sm-4 col-form-label">Customer Name <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="leadName" id="leadName" data-parsley-required="true" data-parsley-trigger="keyup">
+                                <input type="hidden" name="leadsId" id="leadsId" value="" />
+                                @{
+                                    var id = 0;
+                                    if (@ViewBag.problemId == null)
+                                    {
+                                        id = 0;
+                                    }
+                                    else
+                                    {
+                                        id = ViewBag.problemId;
+                                    }
+                                    <input type="hidden" name="problemMasterId" id="problemMasterId" value="@id">
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mobile" class="col-sm-4 col-form-label">Customer Mobile</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="mobile" name="mobile" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="address" class="col-sm-4 col-form-label">Customer Address</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="address" name="address" rows="2" readonly></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="tokenNo" class="col-sm-4 col-form-label">Token No</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="tokenNo" name="tokenNo" data-parsley-required="true" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="priority" class="col-sm-4 col-form-label">Priority <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="priority" id="priority" data-parsley-required="true">
+                                    <option value="">Select Priority</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="targetDate" class="col-sm-4 col-form-label">Target Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="targetDate" name="targetDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <h6 style="color: black;"><b>Product Details List</b></h6>
+                    <table class="table table-bordered" id="tblJobStatus" data-parsley-required="true" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th style="width:40%;">Product Name</th>
+                                <th style="width:20%;">Purchase Date</th>
+                                <th style="width:15%;">Invoice No</th>
+                                <th style="width:15%;">Serial No</th>
+                                <th style="width:10%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <h6 style="color: black;"><b>Product Complain List</b></h6>
+                    <table class="table table-bordered" id="tblfuelDetails" data-parsley-required="true">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th><span>Action</span></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <br />
+                <div class="row">
+                    <h6 style="color: black;"><b>Attachment</b></h6>
+                    <div class="row col-sm-12">
+                        <label for="imagePath_Challan" class="col-sm-4 col-form-label" style="padding-left: 80px;"></label>
+                    </div>
+                    <div class="col-sm-4">
+                        <img id="user_img_Challan" style="width:200px;height:200px" src="~/images/upload.jpg" alt="" class="img-thumbnail float-left">
+                        <input type="file" title="Document Upload" id="imagePath_Challan" name="imagePath_Challan" class="img-thumbnail float-left" />
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right;">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New  Complain</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="problemTitle" class="col-form-label">Title:</label>
+                    <input type="text" class="form-control" id="problemTitle" name="problemTitle">
+
+                </div>
+                <div class="form-group">
+                    <label for="description" class="col-form-label">Description<i style="color:red">*</i>:</label>
+                    <textarea class="form-control" rows="4" id="description" name="description" data-parsley-required="true"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0)" style="color:deepskyblue" data-dismiss="modal">Cancel</a>&nbsp;
+                    <button type="button" onclick="AddItemInfo()" style="background-color:#024972;" class="btn-primary btn-sm">Add</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#imagePath_Challan").change(function () {
+                readURLChallan(this);
+            });
+
+            $("#targetDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2050" }).datepicker("setDate", new Date());
+
+            Common.Ajax('GET', '/global/api/GetAllLeads', [], 'json', ajaxGetAllLeads);
+            GetTokenNo();
+
+            let masterId = parseInt(@ViewBag.problemId) ? parseInt(@ViewBag.problemId) : 0;
+            if (masterId != 0) {
+                Common.Ajax('GET', '/SEBA/ProblemReport/GetProblemMasterById/?id=' + masterId, [], 'json', ajaxGetProblemMasterById);
+                Common.Ajax('GET', '/global/api/ProblemReportController/GetProblemDetailByMasterId/' + masterId, [], 'json', ajaxGetProblemDetailByMasterId);
+                Common.Ajax('GET', '/SEBA/ProblemReport/GetProblemphotoByProblemId/?Id=' + masterId, [], 'json', ajaxGetProblemphotoByProblemId);
+            }
+
+            let leadsId = parseInt(@ViewBag.leadId) ? parseInt(@ViewBag.leadId) : 0;
+            if (leadsId != 0) {
+                Common.Ajax('GET', '/CRMLead/LeadManagement/GetLeadContactAddress/?leadId=' + leadsId, [], 'json', ajaxGetLeadContactAddressWithLeadNameId);
+                Common.Ajax('GET', '/SEBA/ProblemReport/GetCustomerProductListByLeadId/?leadId=' + leadsId, [], 'json', ajaxGetCustomerProductListByLeadId);
+
+            }
+
+            //$("#leadsId").keydown(function () {
+            //    var leadsId = $('#leadsId').val()
+            //    //Common.Ajax('GET', '/CRMLead/LeadManagement/GetAllContactsByLeadsId/?leadId=' + leadsId, [], 'json', ajaxGetLeadsById);
+
+            //    Common.Ajax('GET', '/SEBA/ProblemReport/GetCustomerProductListByLeadId/?leadId=' + leadsId, [], 'json', ajaxGetCustomerProductListByLeadId);
+            //});
+
+        });
+
+        function ajaxGetProblemMasterById(response) {
+            $("#tokenNo").val(response.tokenNo);
+            $("#priority").val(response.priority);
+            $("#targetDate").val(getPurchaseDate(response.targetDate));
+        }
+
+        function readURLChallan(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img_Challan').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function ajaxGetProblemphotoByProblemId(response) {
+            var baseUrl = 'http://' + location.host + '/Upload/Photo/' + response.fileName;
+            var image = document.getElementById('user_img_Challan');
+            image.setAttribute('src', baseUrl);
+        }
+
+        function GetTokenNo() {
+            var number = Math.random();
+            var id = number.toString(36).toUpperCase().substr(2, 6);
+            $("#tokenNo").val(id);
+        }
+
+        function ajaxGetAllLeads(response) {
+            var GetLeadList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.leadName;
+                GetLeadList[GetLeadList.length] = obj;
+            });
+            $('#leadName').autocomplete({
+                source: GetLeadList,
+                select: function (event, ui) {
+                    $("#leadName").val(ui.item.value);
+                    $("#leadsId").val(ui.item.key);
+
+                    var leadsId = ui.item.key;
+                    Common.Ajax('GET', '/CRMLead/LeadManagement/GetLeadContactAddress/?leadId=' + leadsId, [], 'json', ajaxGetLeadContactAddress);
+                    Common.Ajax('GET', '/SEBA/ProblemReport/GetCustomerProductListByLeadId/?leadId=' + leadsId, [], 'json', ajaxGetCustomerProductListByLeadId);
+                }
+            });
+        }
+
+        function ajaxGetLeadContactAddressWithLeadNameId(response) {
+            $("#leadsId").val(response.leadsId);
+            $("#leadName").val(response.leadsName);
+            $("#address").val(response.address);
+            $("#mobile").val(response.mobile);
+        }
+
+        function ajaxGetLeadContactAddress(response) {
+            $("#address").val(response.address);
+            $("#mobile").val(response.mobile);
+        }
+
+        function ajaxGetCustomerProductListByLeadId(response) {
+            var index = "1";
+            $("#tblJobStatus tbody>tr").empty();
+            $.each(response, function (key, value) {
+                var sl = "";
+                index = $("#tblJobStatus tbody>tr").length;
+                index = index + 1;
+                var dtTable = $("#tblJobStatus");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.itemSpecification.Item.itemName + '</td>' +
+                    '<td>' + value.salesDate + '</td>' +
+                    '<td>' + value.invoiceNo + '</td>' +
+                    '<td>' + value.serialNo + '</td>' +
+                    '<td><a href="javascript:void(0)" class="btn btn-danger btn-sm" title="Complain" onclick="OpenComplain(' + value.Id + ",'" + value.itemSpecification.Item.itemName + "'," + ')" >Complain</a></td>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+        }
+
+        function OpenComplain(headId, headName) {
+            $('#headId').val(headId);
+            $('#headName').val(headName);
+            $('#commentsModal').modal('show');
+        }
+
+        function ClearModalItem() {
+            $('#problemTitle').val('');
+            $('#description').val('');
+        }
+
+        function AddItemInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let fuelTypeName = $('#headName').val();
+            let headId = $('#headId').val();
+            let amount = $('#problemTitle').val();
+            let description = $('#description').val();
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblfuelDetails tbody>tr").length;
+
+
+            if (amount == null || amount == '') {
+                swal('Warning', 'You must be enter Amount!', 'warning');
+                return false;
+            }
+            if (headId == null || headId == '') {
+                swal('Warning', 'You must be enter an valid Head!', 'warning');
+                return false;
+            }
+
+            //for (i = 0; i < RowCount; i++) {
+
+            //    var _itemId = $('#headAll' + i + '').val();
+            //    if (_itemId == fuelTypeName && editOption == 0) {
+            //        swal('Warning', 'You have already added this Head!', 'warning');
+            //        return false
+            //    }
+            //}
+
+            var dtTable = $("#tblfuelDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="headAll' + index + '" name="headAll" class="clsId" value="' + fuelTypeName + '"></td> <input type="hidden" id="headIdAll' + index + '" name="headIdAll" class="clsId" value="' + headId + '"></td>' +
+                '<td>' + amount + '<input type="hidden" id="problemTitleAll' + index + '" name="problemTitleAll" class="clsId" value="' + amount + '"></td>' +
+                '<td>' + description + '<input type="hidden" id="descriptionAll' + index + '" name="descriptionAll" class="clsId" value="' + description + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            ClearModalItem();
+        }
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblfuelDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function ajaxGetProblemDetailByMasterId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            $.each(response, function (key, value) {
+
+                index = $("#tblfuelDetails tbody>tr").length;
+                var dtTable = $("#tblfuelDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.customerProductWarranty.itemSpecification.Item.itemName + '<input type="hidden" id="headAll' + index + '" name="headAll" class="clsId" value="' + value.customerProductWarranty.itemSpecification.Item.itemName + '"></td> <input type="hidden" id="headIdAll' + index + '" name="headIdAll" class="clsId" value="' + value.customerProductWarranty.Id + '"></td>' +
+                    '<td>' + value.problemTitle + '<input type="hidden" id="problemTitleAll' + index + '" name="problemTitleAll" class="clsId" value="' + value.problemTitle + '"></td>' +
+                    '<td>' + value.description + '<input type="hidden" id="descriptionAll' + index + '" name="descriptionAll" class="clsId" value="' + value.description + '"></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+    </script>
+}
+
+
+

@@ -1,0 +1,301 @@
+﻿@model PRLApplicationViewModel
+
+@section Style{
+    <style>
+        .redClolor {
+            color: red;
+        }
+        .btnWith{width:95%;}
+        h5{color:darkblue;}
+    </style>
+
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.flang.applyForPRL</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSRetirementAndTermination" asp-controller="ApplyForPRL" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="card" style="padding:2%;">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group row">
+                                <label for="employeeId" class="col-sm-2 col-form-label">@Model.flang.employeeId</label>
+                                <input type="hidden" id="employeeId" name="employeeId" data-parsley-required="true" />
+                                <div class="col-sm-10">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="empId" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary form-control" type="button" onclick="getEmployee();"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="designation" class="col-sm-4 col-form-label">@Model.flang.designation</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="designation" id="designation" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="employeeName" class="col-sm-4 col-form-label">@Model.flang.employeeName</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="employeeName" id="employeeName" data-parsley-required="true" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="padding: 2%; margin-top: 1%;">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="applicationName" class="col-sm-4 col-form-label">@Model.flang.applicationName</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="applicationName" id="applicationName" data-parsley-required="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="applicationDate" class="col-sm-4 col-form-label">@Model.flang.applicationDate</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="applicationDate" id="applicationDate" data-parsley-required="true">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 2%; margin-top: 1%;">
+                    <div class="row">
+
+                        <div class="col-4">
+                            <h5 for="" class="">@Model.flang.jobHistory</h5>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group row">
+                                <label for="jobHistoryFromDate" class="col-sm-4 col-form-label">@Model.flang.fromDate</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="jobHistoryFromDate" id="jobHistoryFromDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group row">
+                                <label for="jobHistoryToDate" class="col-sm-5 col-form-label">@Model.flang.toDate</label>
+                                <div class="col-sm-7" style="padding-left:5px;">
+                                    <input type="text" class="form-control" name="jobHistoryToDate" id="jobHistoryToDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <button class="btn btn-info btn-sm btnWith" type="button" id="btnJobHistorySearch"><i class="fa fa-search"></i></button>
+                        </div>
+                        <div class="col-12">
+                            <table class="table table-bordered table-striped" id="jobHistoryList">
+                                <thead>
+                                    <tr>
+                                        <th>@Model.flang.sL</th>
+                                        <th>@Model.flang.officeName</th>
+                                        <th>@Model.flang.fromDate</th>
+                                        <th>@Model.flang.toDate</th>
+                                        <th>@Model.flang.duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 2%; margin-top: 1%;">
+                    <div class="row">
+
+                        <div class="col-4">
+                            <h5 for="" class="">@Model.flang.fillupYourLeaveHistory</h5>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group row">
+                                <label for="leaveHistoryFromDate" class="col-sm-4 col-form-label">@Model.flang.fromDate</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="leaveHistoryFromDate" id="leaveHistoryFromDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group row">
+                                <label for="leaveHistoryToDate" class="col-sm-5 col-form-label">@Model.flang.toDate</label>
+                                <div class="col-sm-7" style="padding-left:5px;">
+                                    <input type="text" class="form-control" name="leaveHistoryToDate" id="leaveHistoryToDate">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <button class="btn btn-info btn-sm btnWith" type="button" id="btnLeavebHistorySearch"><i class="fa fa-search"></i></button>
+                        </div>
+                        <div class="col-12">
+                            <table class="table table-bordered table-striped" id="leaveHistoryList">
+                                <thead>
+                                    <tr>
+                                        <th>@Model.flang.sL</th>
+                                        <th>@Model.flang.leaveTitle</th>
+                                        <th>@Model.flang.fromDate</th>
+                                        <th>@Model.flang.toDate</th>
+                                        <th>@Model.flang.duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 2%; margin-top: 1%;">
+                    <div class="row">
+                        <div class="col-12">
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group row">
+                                <label for="type" class="col-sm-4 col-form-label">@Model.flang.type</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="type" id="type">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group row">
+                                <label for="fileTitle" class="col-sm-4 col-form-label">@Model.flang.fileTitle</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="fileTitle" id="fileTitle">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group row">
+                                <label for="uploadFile" class="col-sm-4 col-form-label">@Model.flang.uploadFile</label>
+                                <div class="col-sm-8">
+                                    <input type="file" class="form-control" name="uploadFile" id="uploadFile">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <button class="btn btn-success btn-sm btnWith" type="button" id="btnAdd"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="col-12">
+                            <table class="table table-bordered table-striped" id="fileHistoryList">
+                                <thead>
+                                    <tr>
+                                        <th>@Model.flang.sL</th>
+                                        <th>@Model.flang.type</th>
+                                        <th>@Model.flang.fileTitle</th>
+                                        <th>@Model.flang.file</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#applicationDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#jobHistoryFromDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#jobHistoryToDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#leaveHistoryFromDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#leaveHistoryToDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#jobHistoryList').DataTable();
+            $('#leaveHistoryList').DataTable();
+            $("#btnAdd").click(function () {
+                addTable();
+            })
+        });
+
+        function getEmployee() {
+            var id = $("#empId").val();
+            if (id == "") {
+                alert("Please Enter Employee Id !!");
+            } else {
+                Common.Ajax('GET', '/global/api/employeeByCode/' + id, [], 'json', ajaxEmployee);
+            }
+        }
+
+        function ajaxEmployee(response) {
+            console.log(response);
+            if (response) {                
+                $("#employeeId").val(response.id);
+                $("#employeeName").val(response.nameEnglish);
+                $("#designation").val(response.designation);
+            }
+            else {
+                alert("Please Enter Correct Employee Id");
+            }
+        }
+
+        function ClearFiles() {
+             $("#type").val("");
+             $("#fileTitle").val("");
+             $('#uploadFile').val("");
+        }
+        var index = 0;
+        function addTable() {
+
+            var table = $("#fileHistoryList tbody");
+            var type = $("#type").val();
+            var fileTitle = $("#fileTitle").val();
+            var filename = $('#uploadFile').val().split('\\').pop();
+            var sl = 1;
+            sl = sl + index;
+            if (type == '') {
+                alert("Please entry type of file");
+                return false;
+            }
+            if (fileTitle == '') {
+                alert("Please entry type of fileTitle");
+                return false;
+            }
+            if (uploadFile == '') {
+                alert("Please entry type of uploadFile");
+                return false;
+            }
+            var validation = $(".clsFileName").html();
+            if (validation == filename) {
+                alert("this file already uploaded !!!!. Choose another file");
+                $('#uploadFile').val("");
+                return false;
+            }
+            table.append("<tr id='trId" + index + "'>" +
+                "<td>" + sl + "</td><td>" + type + "</td><td>" + fileTitle + "</td><td class='clsFileName' id='filename" + index + "'>" + filename + "</td><td><button class='btn btn-danger btn-sm' onclick='DeletetableTr(" + index + ")'><i class='fa fa-trash'></i></button></td>"
+                + "</tr >")
+
+            index = index + 1;
+            ClearFiles();
+        }
+
+
+        function DeletetableTr(index) {
+            $("#trId" + index).remove();
+           
+        }
+    </script>
+}

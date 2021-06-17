@@ -1,0 +1,292 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "Program List";
+}
+
+@section Style{
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    }
+@*@section Style{
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <style>
+        div.justified {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+}*@
+
+<br />
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:bold; color:black" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Program List</label>
+            @*<a class="btn btn-success btn-sm ml-2" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                <a href="/Program/ProgramCategory/ProgramMaster" class="btn btn-info btn-sm " style="float:right">&nbsp; &nbsp; Create &nbsp; &nbsp;</a>*@
+        </div>
+        <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+            <table class="table table-striped table-bordered table-responsive" id="assaignListTable" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th>SL#</th>
+                        <th>Program Number</th>
+                        <th>Program Subject</th>
+                        <th>Program Place</th>
+                        <th>Program Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+
+                        @foreach (var data in Model.programMasters)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@data.number</td>
+                                <td>@data.subject</td>
+                                <td>@data.place</td>
+                                <td>@data.date?.ToString("dd-MMM-yyyy")</td>
+                                <td>
+                                    <a style="color:white" onclick="getData(@data.Id,'@data.number','@data.subject','@data.place','@data.date?.ToString("dd-MMM-yyyy")','@data.programImpact?.name')" title="Execution" class="btn btn-info"><i class="fa fa-edit"></i></a>&nbsp;&nbsp; <a style="color:white" href="/Program/ProgramCategory/ProgramReportViewproPdf/@data.Id" class="btn btn-info" target="_blank" title="Progress Report"><i class="fa fa-print"></i></a>
+                                    &nbsp;&nbsp; <a style="color:white" href="/Program/ProgramCategory/ProgramReportViewAttproPdf/@data.Id" class="btn btn-info" target="_blank" title="Attendence Report"><i class="fa fa-print"></i></a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <form id="myForm" enctype="multipart/form-data" data-parsley-validate="parsley">
+        <div class="card row">
+            <div class="col-sm-12 row">
+                <h5>Program Plan Detail</h5>
+
+            </div>
+            <div class="col-sm-12 row">
+                <div class="col-sm-6 row form-group">
+
+                    <label for="fromDate" class="col-sm-4  col-form-label">Program Number</label>
+                    <div class="col-sm-8 input-group">
+                        <input name="programnumber" id="programnumber" class="form-control input-group-sm" disabled />
+
+                    </div>
+                    <label for="fromDate" class="col-sm-4  col-form-label">Program Place</label>
+                    <div class="col-sm-8 input-group">
+                        <input name="programplace" id="programplace" class="form-control input-group-sm" disabled />
+
+                    </div>
+                    <label for="fromDate" class="col-sm-4  col-form-label">Program Impact</label>
+                    <div class="col-sm-8 input-group">
+                        <textarea name="programimpact" id="programimpact" class="form-control input-group-sm" disabled></textarea>
+
+                    </div>
+
+                </div>
+                <div class="col-sm-6 row">
+
+                    <label for="fromDate" class="col-sm-4  col-form-label">Program Date</label>
+                    <div class="col-sm-8 input-group">
+                        <input name="programdate" id="programdate" class="form-control input-group-sm" disabled />
+
+                    </div>
+                    <label for="fromDate" class="col-sm-4  col-form-label">Program Subject</label>
+                    <div class="col-sm-8 input-group">
+                        <input name="programsubject" id="programsubject" class="form-control input-group-sm" disabled />
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="card row">
+            <div class="col-sm-12 row">
+                <div class="col-sm-12 row">
+                    <h5 class="col-sm-3">Activity</h5>
+                    <h5 class="col-sm-3">Value</h5>
+                    <h5 class="col-sm-3">Execution</h5>
+                    <h5 class="col-sm-3">Execution Date</h5>
+                </div>
+
+            </div>
+            <div class="col-sm-12 row">
+                <div class="col-sm-12 row">
+
+                    <input type="text" class="col-sm-3 form-control" id="activity" name="activity" />
+                    <input type="hidden" id="activityId" name="activityId" />
+                    <input type="text" class="col-sm-3 form-control" id="value" name="value" disabled />
+                    <textarea type="text" class="col-sm-3 form-control" id="description" name="description"></textarea>
+                    <input type="text" class="col-sm-3 form-control" id="date" name="date"  />
+
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="card row">
+            <div class="col-sm-12 row">
+
+                <div class="col-sm-6 row">
+                    <h5 class="col-sm-6">Outcome</h5>
+                    <h5 class="col-sm-6">Status</h5>
+                </div>
+                <div class="col-sm-6 row">
+                    <h5 class="col-sm-6">Output</h5>
+                    <h5 class="col-sm-6">Status</h5>
+                </div>
+            </div>
+            <div class="col-sm-12 row">
+                <div class="col-sm-6 row">
+                    <div class="col-sm-6 row">
+                        <input type="text" class="form-control" id="outcome" name="outcome" disabled />
+
+                    </div>
+                    <div class="col-sm-6 row">
+                        <select name="outcomestatusId" id="outcomestatusId" class="form-control">
+                            <option value="">----Select Status----</option>
+                            @foreach (var item in Model.programStatuses)
+                            {
+                                <option value="@item.Id">@item.name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6 row">
+                    <div class="col-sm-6 row">
+                        <input type="text" class="form-control" id="output" name="output" disabled />
+
+                    </div>
+                    <div class="col-sm-6 row">
+                        <select name="outputstatusId" id="outputstatusId" class="form-control">
+                            <option value="">----Select Status----</option>
+                            @foreach (var item in Model.programStatuses)
+                            {
+                                <option value="@item.Id">@item.name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <input type="button" id="saveForm" value="Submit" class="btn btn-success ml-1" style="float:right; margin-top:5px;" />
+    </form>
+</div>
+
+@section Scripts{
+    <script>
+
+
+        $(document).ready(function () {
+            $('#assaignListTable').DataTable();
+
+            $('#date').datepicker({ uiLibrary: 'bootstrap4' });
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+
+            $("#saveForm").click(function () {
+
+
+
+                var data = $("#myForm").serialize();
+                let activityId = $('#activityId').val();
+
+
+                let outcomestatusId = $('#outcomestatusId').val();
+                let outputstatusId = $('#outputstatusId').val();
+
+
+                if (activityId == "") {
+                    swal('Warning', 'Please select one activity', 'warning');
+                    return false;
+                }
+
+                if (outcomestatusId == "") {
+                    swal('Warning', 'Please select a status of outcome', 'warning');
+                    return false;
+                }
+                if (outputstatusId == "") {
+                    swal('Warning', 'Please select a status of output', 'warning');
+                    return false;
+                }
+
+
+
+
+
+
+
+
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Program/ProgramCategory/ProgramMasterExecution",
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            location.reload(true);
+                            //window.location.href = ";
+                        }
+                    });
+                });
+
+                return false;
+            });
+
+        });
+        function getData(Id, number, subject, place, date, name) {
+            $('#programnumber').val(number);
+            $('#programplace').val(place);
+            $('#programimpact').html(name);
+            $('#programdate').val(date);
+            $('#programsubject').val(subject);
+            Common.Ajax('GET', '/global/api/getprogramactivityByMasterId/' + Id, [], 'json', ajaxGetItemSpacification);
+        }
+        function ajaxGetItemSpacification(response) {
+
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                //console.log(option);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.activity;
+                obj.values = option.values;
+                obj.outcome = option.ProgramOutPut.programOutCome.outcome;
+                obj.output = option.ProgramOutPut.output;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#activity').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#activityId").val(ui.item.key);
+                    $("#value").val(ui.item.values);
+                    $("#output").val(ui.item.output);
+                    $("#outcome").val(ui.item.outcome);
+
+                }
+            });
+        }
+    </script>
+}
+

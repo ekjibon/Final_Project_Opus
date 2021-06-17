@@ -1,0 +1,155 @@
+﻿@model RegistrationViewModel
+@{
+    ViewData["Title"] = "Registration";
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header">
+        <h1>Registration Form </h1>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSHome" asp-controller="VendorHome" asp-action="Registration" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Company Name <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="companyName" name="companyName" data-parsley-required="true" />
+                            <input type="hidden" id="typeOfNDAAgree" name="typeOfNDAAgree" value="@ViewBag.type" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Trade License Number <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="tradeLicenseNumber" name="tradeLicenseNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">eTin Number <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="eTinNumber" name="eTinNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">VAT Number <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="vatNumber" name="vatNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Contact Person Name <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="contactPersonName" name="contactPersonName" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Contact Number <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="contactNumber" name="contactNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Company Email <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="companyEmail" name="companyEmail" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Alternative Email </span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="alternativeEmail" name="alternativeEmail" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Procurement Category <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <select class="form-control" id="procurementCategoryId" name="procurementCategoryId" data-parsley-required="true">
+                                <option value="">Select</option>
+                                @foreach (var item in Model.cSItemCategories)
+                                {
+                                    <option value="@item.Id">@item.itemCatName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Product/Service Name <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="productServiceName" name="productServiceName" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (@ViewBag.type == 2)
+            {
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-2"><span class="col-form-label">Clauses of Partial Disagreement in NDA <span style="color:red;">*</span></span></div>
+                            <div class="col-10">
+                                <textarea rows="3" class="form-control" id="partialDisagreement" name="partialDisagreement" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Login Email <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="loginId" name="loginId" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Password <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="password" class="form-control" id="password" name="password" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                    <a class="btn btn-danger btn-sm" href="/VEMSHome/VendorHome/Index" style="float:right;" onclick=""><i class="fa fa-times"></i> Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

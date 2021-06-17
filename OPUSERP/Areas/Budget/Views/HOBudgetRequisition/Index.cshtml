@@ -1,0 +1,350 @@
+﻿@model HOBudgetRequsitionViewModel
+@{
+    ViewData["Title"] = "Process Budget Requisition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row card">
+    <div class="card-header row">
+        <div class="col-md-8 col-sm-8">
+            <h5 style="color: black; font-weight:bold">@Model.flang.title</h5>
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <a class="btn btn-success btn-sm ml-2" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+            <button type="button" class="btn btn-default btn-sm pull-right" style="width:150px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("BudgetRequisitionList", "HOBudgetRequisition")'">@Model.flang.back</button>
+        </div>
+    </div>
+</div>
+<form id="myForm" data-parsley-validate="parsley" autocomplete="off">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1 m-0 p-0"></div>
+            <div class="card col-md-12">
+                <div class="card-header p-0 m-0">
+                    <h6 class="card-title">@Model.flang.title</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="Number" class="col-sm-4 col-form-label">@Model.flang.reqNo<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="Number" name="Number" value="@Model.Number" class="form-control input-group-sm" data-parsley-required="true" readonly />
+                                    <input type="hidden" id="reqId" name="reqId" value="@Model.reqId" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="year" class="col-sm-4 col-form-label text-left">@Model.flang.fiscalYear<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select name="year" id="year" class="form-control input-group-sm" data-parsley-required="true">
+                                        <option value="">Select One</option>
+                                        @foreach (var data in Model.fiscalYears)
+                                        {
+                                            if (Model.reqId > 0 && data.Id == Model.year)
+                                            {
+                                                <option selected="selected" value="@data.Id">@data.yearName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@data.Id">@data.yearName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="Date" class="col-sm-4 col-form-label text-left">@Model.flang.date<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input name="Date" id="Date" value="@Model.Date?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" data-parsley-required="true" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="container">
+                            <h6 class="card-title pull-left col-12" style="color: black;margin-left:-35px;padding-left:0px;">
+                                <u>
+                                    Approver Panel
+                                </u>
+                            </h6>
+                            <div class="row" style="border:ridge;margin-left: -35px;" id="divPanel"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table table-striped table-bordered table-responsive" id="budgetDetailsTable">
+                            <thead style="border:1px solid;border-color:grey">
+                            </thead>
+                            <tbody style="color:black;border:1px solid;border-color:grey"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height:20px;"></div>
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6">
+                <input type="button" onclick="RefreshAll()" value="@Model.flang.refresh" class="btn btn-info btn-sm" style="width:100px;" />&nbsp;&nbsp;
+                <input type="submit" ondblclick="this.disabled=true;" value="Process" id="btnPSave" class="btn btn-success btn-sm" style="width:100px;" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <script type="text/javascript">
+        var removeItem = 0;
+        function GetApproverPanelList(response) {
+            console.log(response);
+            $("#divPanel").empty();
+            var divPanel = $("#divPanel");
+            var inputPanel;
+            var index = 0;
+            $.each(response, function (id, option) {
+                var empName = option.EmpName;
+                inputPanel = '<div class="col-md-3" style="padding-left:0px;padding-right:0px;" id="divChieldPanel">' +
+                    '<a href="javascript:void(0)" class="btn btn-success div' + index + ' boxDesign" id="btnTotalLead" role="button" style="width:100%;float:left;color:black;background-color:#fff">' +
+                    '<div class="row">' +
+                    '<div class="col-md-4">' +
+                    '<span style="padding:0px 0px 0px 0px;">' +
+                    '<img src="/images/user.png" style="width:40px;height:40px;"/>' +
+                    '<input type="button" class="btn btn-primary btn-sm pull-left cls' + index + ' clsSequenceNo" style="padding:0px 5px 0px 5px;" value="' + option.sequenceNo + '" />' +
+                    '</span>' +
+                    '</div>' +
+                    '<div class="col-md-8">' +
+                    '<span class="pull-left" style="font-size:12px;">' + empName + '</span><br />' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>' +
+                    '<input type="hidden" class="clsUserId" value="' + option.nextApproverId + '" />'
+                '</div>';
+                divPanel.append(inputPanel);
+                index++;
+            });
+        }
+
+        function RefreshAll() {            
+            location.reload();
+        }
+
+        $(document).ready(function () {
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+
+            $('#budgetRequsitionApprovedTable').DataTable();
+            $('#Date').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+            let prdcId = parseInt(@Model.reqId) ? parseInt(@Model.reqId) : 0;
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = mm + '/' + dd + '/' + yyyy;
+            if (prdcId == 0) {
+                $('#productionDate').val(today);
+            }
+            if (prdcId > 0) {
+                EditBudgetDetails();
+                $("#bOMMasterId").val(@Model.reqId);
+                $('#productionDate').val('@Model.Date?.ToString("dd-MMM-yyyy")');
+                $('#Number').val('@Model.Number');
+                $('#year option:selected').val(@Model.year);
+            }
+            Common.Ajax('GET', '/api/matrix/ApproverPanelList/' + 2 + '/' + 1, [], 'json', GetApproverPanelList);
+            $("#year").change(function () {
+                var id = $("#year").val()
+                Common.Ajax('GET', '/global/api/PROCESSHOBudgetRequsition/' + id, [], 'json', GetPROCESSHOBudgetRequsition);
+            });
+
+            $("#btnPSave").click(function () {
+                var data = $("#myForm").serialize();
+                let Number = $('#Number').val();
+                let year = $('#year').val();
+                let Date = $('#Date').val();
+                if (Number == "") {
+                    swal('Warning', 'Number can not be null', 'warning');
+                    return false;
+                }
+                if (year == "") {
+                    swal('Warning', 'Year can not be null', 'warning');
+                    return false;
+                }
+                if (Date == "") {
+                    swal('Warning', 'Date can not be null', 'warning');
+                    return false;
+                }                
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Budget/HOBudgetRequisition/Index",
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            window.location.href="/Budget/HOBudgetRequisition/BudgetRequisitionList";
+                        }
+                    });
+                });
+                return false;
+            });
+        });
+
+        function GetPROCESSHOBudgetRequsition(response) {
+            var monthInfo = dateRange('2015-07-01 00:00:00.0000000', '2016-06-30 00:00:00.0000000');
+            $("#budgetDetailsTable thead>tr").empty();
+            $("#budgetDetailsTable tbody>tr").empty();
+            index = $("#budgetDetailsTable tbody>tr").length;
+            var dtTable = $("#budgetDetailsTable");
+            var tableHead = dtTable.find('thead');
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr>' +
+                '<td>Budget Head</td>' +
+                '<td>' + monthInfo[0] + '</td>' +
+                '<td>' + monthInfo[1] + '</td>' +
+                '<td>' + monthInfo[2] + '</td>' +
+                '<td>' + monthInfo[3] + '</td>' +
+                '<td>' + monthInfo[4] + '</td>' +
+                '<td>' + monthInfo[5] + '</td>' +
+                '<td>' + monthInfo[6] + '</td>' +
+                '<td>' + monthInfo[7] + '</td>' +
+                '<td>' + monthInfo[8] + '</td>' +
+                '<td>' + monthInfo[9] + '</td>' +
+                '<td>' + monthInfo[10] + '</td>' +
+                '<td>' + monthInfo[11] + '</td>' +
+                '<td>Total</td>' +
+                '</tr>';
+            tableHead.append(trHtml);
+            $.each(response, function (id, option) {
+                var trHtml = '<tr id="0">' +
+                    '<td> <input readonly="readonly" class="heads" id="head0" value="' + option.budgetHead.name + '" /> <input type="hidden" name="heads" value="' + option.budgetHead.Id + '" class="heads" id="headId0" /></td>' +
+                    '<td> <input <input readonly="readonly" name="col1"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.firstMonth + '" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col2"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.secondMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col3"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.thirdMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col4"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.fourthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col5"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.fifthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col6"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.sixthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col7"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.seventhMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col8"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.eighthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col9"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.ninethMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col10" class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.tenthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col11"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.eleventhMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col12"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.twelvethMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="amounts"class="TableInput subCol0" value="' + option.subTotal +'" required/></td>' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            });
+        }
+
+        function EditBudgetDetails() {
+            var monthInfo = dateRange('@Model.fiscalYear.yearStartFrom', '@Model.fiscalYear.yearEndOn');
+            $("#budgetDetailsTable thead>tr").empty();
+            $("#budgetDetailsTable tbody>tr").empty();
+            index = $("#budgetDetailsTable tbody>tr").length;
+            var dtTable = $("#budgetDetailsTable");
+            var tableHead = dtTable.find('thead');
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr>' +
+                '<td>Budget Head</td>' +
+                '<td>' + monthInfo[0] + '</td>' +
+                '<td>' + monthInfo[1] + '</td>' +
+                '<td>' + monthInfo[2] + '</td>' +
+                '<td>' + monthInfo[3] + '</td>' +
+                '<td>' + monthInfo[4] + '</td>' +
+                '<td>' + monthInfo[5] + '</td>' +
+                '<td>' + monthInfo[6] + '</td>' +
+                '<td>' + monthInfo[7] + '</td>' +
+                '<td>' + monthInfo[8] + '</td>' +
+                '<td>' + monthInfo[9] + '</td>' +
+                '<td>' + monthInfo[10] + '</td>' +
+                '<td>' + monthInfo[11] + '</td>' +
+                '<td>Total</td>' +
+                '</tr>';
+            tableHead.append(trHtml);
+            $.each(@Html.Raw(Json.Serialize(Model.hOBudgetRequsitionDetails)), function (id, option) {
+                var trHtml = '<tr id="0">' +
+                    '<td> <input readonly="readonly" class="heads" id="head0" value="' + option.budgetHead.name + '" /> <input type="hidden" name="heads" value="' + option.budgetHead.Id + '" class="heads" id="headId0" /></td>' +
+                    '<td> <input <input readonly="readonly" name="col1"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.firstMonth + '" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col2"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.secondMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col3"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.thirdMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col4"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.fourthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col5"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.fifthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col6"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.sixthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col7"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.seventhMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col8"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.eighthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col9"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.ninethMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col10" class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.tenthMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col11"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.eleventhMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="col12"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(0);" value="' + option.twelvethMonth +'" required/></td>' +
+                    '<td> <input <input readonly="readonly" name="amounts"class="TableInput subCol0" value="' + option.subTotal +'" required/></td>' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            })
+        }
+        function dateRange(startDate, endDate) {
+            var monthNames = [
+                "January", "February", "March",
+                "April", "May", "June", "July",
+                "August", "September", "October",
+                "November", "December"
+            ];
+            var start = startDate.split('-');
+            var end = endDate.split('-');
+            var startYear = parseInt(start[0]);
+            var endYear = parseInt(end[0]);
+            var dates = [];
+
+            for (var i = startYear; i <= endYear; i++) {
+                var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+                var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
+                for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
+                    var month = j;
+                    var displayMonth = month < 10 ? '0' + month : month;
+                    dates.push(monthNames[parseInt(displayMonth)]);
+                }
+            }
+            return dates;
+        }
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var date = new Date(date);
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+            return day + '-' + monthNames[monthIndex] + '-' + year;
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+    </script>
+}
+
+@section Style{
+    <style>
+        .TableInput {
+            width: 100px;
+            padding: 0px 0px 0px 0px;
+            margin: 0px 0px 0px 0px;
+            text-align: right;
+        }
+        .tableTd {
+            padding: 0px 0px 0px 0px;
+            margin: 0px 0px 0px 0px;
+        }
+    </style>
+}

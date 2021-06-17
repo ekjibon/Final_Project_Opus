@@ -1,0 +1,176 @@
+﻿@model StockInViewModel
+@{
+    ViewData["Title"] = "Stock In";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">PO Stock In</h4>
+                <a href="/SCMStock/GoodsReceive/Index" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Back To List</a>
+            </div>
+            <div class="card-body">
+                <table style="width:100%;border:1px solid">
+                    <tr>
+                        <th style="width:20%;">Purchase Invoice No</th>
+                        <td style="width:40%;">: @Model.PurchaseOrderMaster.poNo</td>
+                        <th style="width:20%;">Purchase Order Date</th>
+                        <td style="width:20%;">: @Model.PurchaseOrderMaster.poDate?.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                    <tr>
+                        <th style="width:15%;">PR No</th>
+                        <td style="width:45%;">: @Model.PurchaseOrderMaster?.cSMaster?.requisition?.reqNo</td>
+                        <th style="width:15%;">Supplier Name</th>
+                        <td style="width:25%;">: @Model.PurchaseOrderMaster.supplier.organizationName</td>
+                    </tr>
+                </table>
+            </div>
+            <hr style="margin:0;" />
+            <form asp- method="post" asp-area="SCMStock" asp-controller="GoodsReceive" asp-action="Index" class="navbar-right" data-parsley-validate="parsley" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row" style="margin: 0px 5px 15px 8px;">
+                    <div class="col-6">
+                        <div class="row">
+                            <label for="MRNO" class="col-3"><span style="font-weight:bold;color:black">GR NO </span></label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" id="MRNO" value="@ViewBag.MRNO" name="MRNO" readonly>
+                                <input type="hidden" class="form-control" id="stockMasterId" value="@Model.stockMasterId" name="stockMasterId">
+                                <input type="hidden" name="purchaseId" value="@Model.PurchaseOrderMaster.Id" id="purchaseId" />
+                            </div>
+                        </div>                        
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <label for="stockDate" class="col-3"><span style="font-weight:bold;color:black">GR Date</span><span class="redStar" style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="stockDate" value="" name="stockDate" required>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="10%">Select</th>
+                            <th width="20%">Item</th>
+                            <th width="20%">Item Specification</th>
+                            <th width="10%">Rate</th>
+                            <th width="15%">Quantity</th>
+                            <th width="10%">Due To Stock</th>
+                            <th width="10%">Stock Quantity</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.stockItemViewModels)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="custom-control custom-checkbox mb-3">
+                                        <input type="checkbox" class="custom-control-input" value="@data.Id" id="select-@data.Id" onclick="AddQuantity(@data.Id);">
+                                        <label class="custom-control-label" for="select-@data.Id">
+                                        </label>
+                                    </div>
+                                </td>
+                                <td><span style="display:none">-@data.Id-</span>@data.itemName</td>
+                                <td>@data.itemSpecificationName</td>
+                                <td style="text-align:right"><input type="hidden" class="form-control" value="@data.rate" id="rate-@data.Id" /> @data.rate?.ToString("0,0.00")</td>
+                                <td style="text-align:right">@data.quantity?.ToString("0,0.00")</td>
+                                <td style="text-align:right"><input type="hidden" class="form-control" value="@data.itemSpecificationId" id="specid-@data.Id" /> <input type="hidden" class="form-control" value="@data.dueQuantity" id="quantity-@data.Id" />@data.dueQuantity?.ToString("0,0.00")</td>
+                                <td> <input data-parsley-type="number" class="form-control paymentAmount" onkeyup="TotalCalculation();" onclick="TotalCalculation();" max="@data.dueQuantity" min="0" data-parsley-trigger="keyup" value="" id="stock-@data.Id" /></td>
+                            </tr>
+                        }
+                        <tr>
+                            <th colspan="6" class="text-center">Total Quantity</th>
+                            <td><input data-parsley-type="number" data-parsley-trigger="keyup" id="total" min="1" value="0" name="total" readonly class="form-control" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row" style="margin: 0px 5px 15px 8px;">
+                    <label for="remarks" class="col-1 col-form-label">Remarks</label>
+                    <div class="col-11">
+                        <input type="text" class="form-control" id="remarks" value="" name="remarks">
+                    </div>
+                </div>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;" title="Goods Receive"><i class="fas fa-shopping-cart"></i></button>
+                <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">       
+        var count = 0;
+        function Refresh() {
+            location.reload();
+        }
+        function AddQuantity(id) {
+            if ($("#select-" + id).prop("checked") == true) {
+               // var x = $("#stock-" + id).val();duequantitys
+                var y = $("#quantity-" + id).val();
+                count = count + 1;
+                TotalCalculation();
+                $("#stock-" + id).val(y);
+                $("#rate-" + id).attr("name", "rates[]");
+                $("#specid-" + id).attr("name", "specids[]");
+                $("#select-" + id).attr("name", "detailids[]");
+                $("#quantity-" + id).attr("name", "duequantitys[]");
+                $("#stock-" + id).attr("name", "quantitys[]");
+
+            } else {
+                $("#stock-" + id).val("");
+                $("#rate-" + id).removeAttr("name");
+                $("#specid-" + id).removeAttr("name");
+                $("#select-" + id).removeAttr("name");
+                $("#stock-" + id).removeAttr("name");
+                $("#quantity-" + id).removeAttr("name");
+                count = count - 1;
+
+            }
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+        }
+        $(document).ready(function () {
+            $('#stockDate').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('#ItemList').DataTable();
+
+
+            var table = $('#ItemList').DataTable();
+
+            //$('#PurchaseList tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var vid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/Purchase/PurchaseOrder/PurchaseDetail/?id=" + vid;
+            //});
+            //$('#PurchaseList tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+
+        });
+        function TotalCalculation() {
+            var sum = 0;
+            if (count > 0) {
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+                $("#total").val(sum);
+            }
+        }
+    </script>
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        #PurchaseList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}

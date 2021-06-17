@@ -1,0 +1,125 @@
+﻿@model DivisionViewModel
+@{
+    ViewData["Title"] = "Division";
+    Layout = "~/Areas/MasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: #4e73df!important;">Division Info</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="MasterData" asp-controller="Division" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="divisionId" id="divisionId" value="0" />
+
+                    <label for="countryId" class="col-sm-4 col-form-label">Country</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" name="countryId" id="countryId" data-parsley-required="true">
+                            @foreach (var data in Model.countries)
+                            {
+                                <option value="@data.Id">@data.countryName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="divisionCode" class="col-sm-4 col-form-label">Division Code</label>
+                    <div class="col-sm-8">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="divisionCode" id="divisionCode">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="divisionName" class="col-sm-4 col-form-label">Division Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="divisionName" id="divisionName">
+                    </div>
+                </div>
+
+                @*<div class="form-group row">
+                    <label for="divisionNameBn" class="col-sm-4 col-form-label">Division Name Bn</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="divisionNameBn" id="divisionNameBn">
+                    </div>
+                </div>*@
+
+                <div class="form-group row">
+                    <label for="shortName" class="col-sm-4 col-form-label">Short Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="shortName" id="shortName">
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Division Info</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="divisionTable">
+                    <thead>
+                        <tr>
+                            <th>Division Code</th>
+                            <th>Division Name</th>
+                            @*<th>Division Name Bn</th>*@
+                            <th>Short Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.divisions)
+                        {
+                        <tr>
+                            <td>@data.divisionCode</td>
+                            <td>@data.divisionName</td>
+
+                            <td>@data.shortName</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id, '@data.divisionCode', '@data.divisionName', '@data.shortName', '@data.countryId')" href="#"><i class="fa fa-edit"></i></a>
+                                <a class="btn btn-danger" href="#"><i class="fa fa-trash-alt"></i></a>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#division").addClass("active");
+            $('#divisionTable').DataTable();
+        });
+
+        function Edit(Id, divisionCode, divisionName, divisionNameBn, shortName, countryId) {
+            $("#divisionId").val(Id);
+            $("#divisionCode").val(divisionCode);
+            $("#divisionName").val(divisionName);
+            $("#divisionNameBn").val(divisionNameBn);
+            $("#shortName").val(shortName);
+            $("#countryId").val(countryId);
+        }
+    </script>
+}

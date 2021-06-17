@@ -1,0 +1,449 @@
+﻿
+@model AgreementViewModel
+@{
+    ViewData["Title"] = "Agreement Pdf";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<div style="width:100%;overflow:hidden;">
+    <div style="width:100%;overflow:hidden;">
+        @{
+            if (@Model.getAgreementDeatilsById.agreementType.agreementTypeName == "Renewal")
+            {
+                <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:22px;font-weight:bold;"> DEED OF RENEWAL AGREEMENT</p>
+            }
+            else
+            {
+                <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:22px;font-weight:bold;"> DEED OF AGREEMENT</p>
+            }
+        }
+    </div>
+
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:16px;font-weight:bold;"> This Deed of Agreement is made on the @Model?.getAgreementReportByAgreementId?.agreementDate  of the Christian era,</p>
+    </div>
+    <br />
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:18px;font-weight:bold;">BY AND BETWEEN</p>
+    </div>
+
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">
+            <strong>@Model.companies.FirstOrDefault().companyName</strong>
+            , a company registered under the Companies Act, 1994, represented by its Managing Director & CEO  
+            <strong>Mr. @Model.getAgreementDeatilsById.companySignatory</strong>,having its office at <strong>
+                SHAMS Rangs, Level A1 & A2, 104 Park Road, Baridhara, Dhaka 1212, Bangladesh
+            </strong>, hereinafter referred to as <strong>“CRC”</strong> (i.e. a Credit Rating Company registered under the Bangladesh Securities and Exchange Commission, in short <strong>“BSEC”</strong>, and also recognized as an External Credit Assessment Institution by the Bangladesh Bank),which expression shall mean
+            and include its successors-in-interest, administrators, legal representatives and assignees, being the FIRST PARTY to this Agreement;
+        </p>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:16px;font-weight:bold;">AND</p>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">
+            <strong>@Model?.getAgreementReportByAgreementId?.leadName</strong>, @Model?.getAgreementReportByAgreementId?.ownershipText represented by its <strong>@Model.getAgreementDeatilsById.contactSignatory.resource.crmdesignations.designationName   Mr. @Model.getAgreementDeatilsById.contactSignatory.resource.resourceName</strong> having its office at  <strong>@Model.addresses.FirstOrDefault()?.maillingAddress, @Model.addresses.FirstOrDefault()?.thana?.thanaName,  @Model.addresses.FirstOrDefault()?.district?.districtName</strong>, hereinafter referred to as the <strong>“Client”</strong>, which expression shall mean and include its successors-in-interest, administrators, legal representatives and assignees, being the SECOND PARTY to this Agreement;
+        </p>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:14px;font-weight:bold;">FOR THE PURPOSE OF</p>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        @{
+            if (@Model.getAgreementDeatilsById.agreementType.agreementTypeName == "Renewal")
+            {
+        <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">
+            Conducting the <strong>@Model.getAgreementDeatilsById.agreementCategory.agreementCategoryName</strong> Rating Service of the said SECOND PARTY (which shall be referred to as “Rated Subject”) by the said FIRST PARTY for the considerations and under the terms and covenants mutually agreed upon by and between themselves (i.e. the said Parties) as stated hereinafter;and as renewal of the previous agreement dated <strong>@Model?.getAgreementDeatilsBypreId?.agreementDate?.ToString("dd MMM yyyy")</strong>.
+        </p>
+            }
+            else
+            {
+                <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">
+                    Conducting the <strong>@Model.getAgreementDeatilsById.agreementCategory.agreementCategoryName</strong> Rating Service of the said SECOND PARTY (which shall be referred to as “Rated Subject”) by the said FIRST PARTY for the considerations and under the terms and covenants mutually agreed upon by and between themselves (i.e. the said Parties) as stated hereinafter;
+                </p>
+            }
+
+        }
+
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:14px;font-weight:bold;">AND THAT</p>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">
+            The CLIENT requests the CRC and the CRC accepts the said request and agrees to conduct and provide the said rating services, based on Credit Rating Companies Rules, 1996 issued by the BSEC, including the Standard Methodology and Ethical Code which are published and available at the CRC’s Website and Client further hereby confirms that Client has no valid agreement with any other credit rating company and accepts the terms and conditions set forth in this Agreement, but which does not substantiate/reduce the meaning/spirit of the agreement such as fees, quality of the report and any deviation from BSEC and Credit Rating Companies Rules 1996.
+        </p>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:center;color:black;margin-left:5px;margin-right:5px;font-size:14px;font-weight:bold;">THE COVENANTS</p>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        @{
+
+            if (@Model.getAgreementDeatilsById.agreementType.agreementTypeName == "Renewal")
+            {
+        <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">
+            <label style="font-weight:bold;">Now, therefore, the mutual covenants of this Agreement stand as follows;-</label>
+            <br />
+            <label style="font-weight:bold;">1. Definitions:</label>
+            <br />
+            The meaning of the following words and phrases which are widely used in this Agreement shall be defined as follows:
+            <strong>
+                ‘CRC Watch’
+            </strong> means an alert issued to the market by CRC to indicate that the rating of the Rated Subject is under review and may be changed when some factors have occurred or likely to occur which will have an impact on the current rating of the Rated Subject. The Client or Rated Subject may be placed on either CRC Watch Positive, Negative or Developing. CRC Watch Positive indicates that the rating of the Rated Subject may be raised; CRC Watch Negative indicates the rating of the Rated Subject may be lowered while CRC Watch Developing indicates that the rating of the Rated Subject may be raised or lowered.
+            <br />
+            <label style="font-weight:bold;">2.  Rating Fees:</label>
+            <br />
+            In consideration of the First Party providing the requested <strong>
+                rating services below
+            </strong> for the Rated Subject, the Second Party agrees to pay the First Party-
+
+            <br />
+            Surveillance Rating Fee of BDT <label style="font-weight:bold;">@Model.getAgreementReportByAgreementId.sFees</label><label style="font-weight:bold;">(@Model.getAgreementReportByAgreementId.inwordServillencefees)</label>  @Model.getAgreementReportByAgreementId.vATTEXT per annum for <label style="font-weight:bold;">
+                @Model.getAgreementReportByAgreementId.lSurveillance
+            </label> after the end of the validity period of Previous Year's rating   on the Rated Subject  as per requirements of the Credit Rating Companies Rules, 1996.
+            <br />
+            <label style="font-weight:bold;">3. Understanding:</label>
+
+            <br />
+            The understanding of this Agreement, among others, are as follows;-
+            <br />
+            a)  Rating is an independent opinion  of the CRC based on analysis of information obtained from a variety of sources, including but
+            not limited to
+            <br />
+            I. Information submitted to the CRC by the CLIENT and their advisors or agents, and/or any third parties (without limitations to
+            bankers, regulators, industry associations, lawyers and auditors);
+            <br />
+            II. Representations, written or otherwise, made by the Client and their advisors or agents, and/or any third parties; and
+            <br />
+            III. Information available in the public domain including published reports and industry data believed by the CRC to be relevant,
+            accurate, true, dependable and reliable for the purpose of subject rating.
+            <br />
+            b)  The Second Party will authorize all concerned including their banks, creditors, agents, advisors, lawyers, and representatives
+            etc. to provide   information to the CRC as and when required by the CRC for independent analysis and examination purposes
+            <br />
+            c)  The CRC shall have the unilateral right and absolute discretion to place an assigned rating on the Rated Subject under surveillance on CRC Watch. The Client will be notified by the CRC of its rating on the Rated Subject being placed on CRC Watch, but the Client has no right to appeal against the said action or decision of the CRC. The CRC also have unilateral and absolute right to review, change and/or take any rating action they deem appropriate with or without the said rating first being placed on the CRC Watch.
+            <br />
+            d)  The CRC shall also have the unilateral right and absolute discretion to review, assign, change, suspend and/or take any rating action on the Rated Subject, as they deem fit and proper, and to publish in any form and manner, at any time during the tenure of this Agreement, the fact of such assigned rating, change, suspension and/or any rating action taken and any attendant reason or circumstances for such assigned rating, change, suspension and /or rating action, notwithstanding any objection by the Client and/or delay or failure on the part of the Client to act in accordance with the provisions set out herewith for whatsoever reason. The Client shall be informed of in advance any of such change, suspension and/or any rating action.
+            <br />
+            e)  The terms and conditions of this Agreement shall not be disseminated or be made available to anyone by the Client without prior written consent of the CRC. The Client agrees to comply with the relevant obligations that may be imposed upon pursuant to any regulations, notifications or guidelines that may be issued by BSEC, NBR, Bangladesh Bank and/or other Government agencies in relation to the credit rating.
+            <br />
+            <label style="font-weight:bold;">4. Provision for Information, etc.:</label>
+            <br />
+            (a) To enable CRC to perform rating services on the Rated Subject during initial rating and continuous surveillance period, the Client shall promptly supply/provide all the requisite information, documents, data, assistance and also grant access to such documents reasonably felt necessary or relevant to the rating exercise or services which are to be within the Client’s possession, custody or under the Client’s control and/or personnel  control, upon request by the CRC, within stipulated time frame set out by the CRC(i.e. the <strong>
+                “Requested Materials”
+            </strong>).
+            <br /><br />
+            (b)The Client shall use their best endeavor to procure Requested Materials where the said materials are not in the Client’s possession or custody or under the Client’s control.
+            <br /><br />
+            (c) The Client also undertakes to forthwith inform the CRC of any information, circumstance or any development which may come to the Client’s knowledge at any time and which might have a bearing on or relevant to the rating of the Rated Subject(i.e. the <strong>“Relevant Information”</strong>). If the Client fails to provide adequate level of cooperation needed to carry out the rating assignment, CRC will carry out the rating assignment based on the available information and shall disclose such rating award in any manner and to any organization CRC deemed appropriate as per Governing Laws.
+            <br /><br />
+            (d)In the event Client does not/fails to provide the Requested Materials to the CRC, the CRC reserves its unilateral right and absolute discretion to conduct rating exercise on the best effort basis and disclose this fact to the public and/or regulators, if applicable, or to suspend the rating exercise on the Rated Subject, without notice, until and unless the Client furnishes the Requested Materials to the CRC.
+            <br /><br />
+            (e)The CRC and/or any of its employees shall have no liability whatsoever if the Requested Materials and/or the Relevant Information are not provided to the CRC on a timely basis, or if the Client fails to comply with the above provisions and, as a result, the CRC is unable to complete the rating of the Rated Subject under this Agreement within the agreed timeframe, and/or assigns a rating and/or publishes opinion or analysis and/or takes rating action which may not be appropriate.
+            <br /><br />
+            <label style="font-weight:bold;">5. Confidentiality:</label>
+            <br />
+            (a)All non-public information received in course of rating or surveillance process shall be held in strict confidence and used solely for the purpose of determining the initial or subsequent rating(s).
+            <br /><br />
+            (b)In the event the CRC  is required, under a subpoena, civil or criminal investigative demand, and/or is requested by regulatory authorities or otherwise required by law, to disclose such non-public information, working papers or any other documents or to assist in or provide explanations relating to this rating exercise in any judicial proceedings, the CRC shall disclose such part of information, working papers or any other documents which are necessary and legally required pursuant to the request under pain of liability for contempt or other censure or penalty.
+            <br /><br />
+            <label style="font-weight:bold;">6. Limitations and Usage of Ratings:</label>
+            <br />
+            (a)CRC does not guarantee with regard to the accuracy, completeness or timeliness of information relied on by the CRC in connection with the rating on the Rated Subject and factual information reflected or contained in the CRC’s rating report(s) or any related publications.
+            <br />
+            (b)CRC shall not be responsible for any rating assigned based on the information which have been received and/or relied upon by the CRC turns out to be improper, irrelevant, inaccurate, inadequate or misleading.
+            <br />
+            (c)Dissemination, distribution or reproduction of any draft press announcement and draft rating report(s) issued by the CRC either in full or in part is strictly prohibited under any circumstance. The final report shall not be disseminated, distributed or reproduced in any form or manner, either in part or in full, except without prior written consent of the CRC.
+            This provision shall not, however, apply if the disclosure is required by law or by the legally binding requirements of any regulatory Authority.
+            <br /><br />
+            <label style="font-weight:bold;">7. Exclusion of Liability:</label>
+            <br />
+            In conducting the rating exercise under this Agreement, the CRC shall have no liability whatsoever for any direct, indirect or consequential loss (including but not limited to actual loss, loss of profits or opportunity costs) suffered or occurred by the Client, or to any third party, caused by any rating opinion, analysis and/or action taken by the CRC during the term of the Agreement. Furthermore, the CRC shall have no liability whatsoever for any failure or delay due to circumstances beyond their control or due to failure to comply with the provisions of this Agreement by the Client, their advisors or agents, etc.
+            <br /><br />
+            <label style="font-weight:bold;">8. Terms of Payment of the Rating Fees:</label>
+            <br />
+            (a)In both the above cases of Fees, an amount equivalent to 50%(fifty percent) of Initial Rating and/or Surveillance Rating Fees plus VAT shall be payable as Advance to the First Party at the time of signing of the Agreement and/or submitting the Invoices to the Second Party, failure in payment of which the First Party reserves the right to cancel the Agreement and term it void.
+            <br />
+            (b)Once the Agreement is executed and the services has been performed by the CRC based on the Agreement, the Client shall be liable to pay the entire Rating Fees etc., as stated in this Agreement, to the CRC  as per the invoice issued, whether or not the Client accepts the Rating Report issued  by the CRC on the Rated Subject .
+            <br />
+            Mentionable that;-
+            <br />
+            <label style="padding-left:90px;">
+                I.   As per VAT Law in Bangladesh, the Client undertakes his responsibility of paying applicable VAT along with the Fees.
+                <br />
+                II.  After execution of the Agreement if, in any event, it is found that the total exposure on which the rating fees was established is lower or higher, then the final payment amount of the rating fees will be adjusted as per the fee structure/invoice of the First Party which shall be binding upon the Second/First Party, as the case may be.
+            </label>
+            <br />
+            <label style="font-weight:bold;">9. Deliverables:</label>
+            <br />
+            (a)  CRC will deliver a Draft Report to the Client within <strong>4(four) to 6(six) weeks</strong> after receiving of the requisite
+            information/documents (i.e. the “Requested Materials”). The Final Rating will be awarded to the Client within 7(seven) days
+            (excluding the Government and weekly holidays) of delivering the said Draft Report, irrespective of receiving or not receiving of
+            any comments from the Client on the Draft Report, upon receipt of full payment from client.
+            <br /><br />
+            <label style="font-weight:bold;">10.   Validity of Rating:</label>
+            <br />
+            (a)   Any rating which has been assigned based on the surveillance rating exercise shall remain valid for a period not exceeding 12(twelve) months which shall be calculated from the date of issuance of an indicative agreement assigning surveillance Rating on the Rated Subject.
+            <br />
+            (b)   The Surveillance Rating shall also remain valid for a period not exceeding 12(twelve) months from the close of the Surveillance Year for each of the next @Model.getAgreementReportByAgreementId.noOfservellience  (@Model.getAgreementReportByAgreementId.noOfYearTEXT) years which shall be calculated from the expiry of the surveillance Rating year of the rated subject.
+            <br />
+            (c)      In case of any reason a gap occur in any of the surveillance period of @Model.getAgreementReportByAgreementId.noOfYearTEXT years, the rating after the gap will be treated as ‘Initial Rating’ 
+            <br />
+            <label style="font-weight:bold;">11.  Governing Laws for Termination of the Agreement:</label>
+            <br />
+            (a)    The executed Agreement shall remain to be valid until the Initial Rating and for 4(four) subsequent years’. Continuous Surveillance Rating(<label style="font-weight:bold;">
+                @Model.getAgreementReportByAgreementId.lSurveillance
+            </label>) has to be performed by the CRC as per Credit Rating Companies Rules, 1996.
+            <br />
+            (b)   Termination of this Agreement will be governed by the Credit Rating Companies Rules, 1996 of the Bangladesh Securities and Exchange Commission and any subsequent governing laws, rules, regulations, notifications and circulars relevant thereof.
+            <br />
+            (c)    Notwithstanding anything to the contrary contained in the Arbitration clause, after the payment for the Rated Subject is fully made and/or if there is non-existence of the Rated Subject before commencing/completing the rating exercise by the CRC, this Agreement shall be deemed as terminated by both the parties.
+            <br />
+            (d)   In the event this Agreement is terminated in the manner set out herein, the CRC reserves their unilateral right and absolute discretion to review, change the rating and/or take appropriate rating action prior to withdrawal of rating and to publish the fact of such termination or withdrawal, any attendant reason or circumstances for such termination or withdrawal and/or the rating on the Rated Subject.
+            <br />
+            (e)   Clauses regarding considerations, payment, exclusion of liability and termination as contained in this Agreement shall survive despite the termination of this Agreement.
+            <br /><br />
+            <label style="font-weight:bold;">12.  Arbitration:</label>
+            <br />
+            Both the CRC and the Client will attempt in good faith to resolve their controversy or claims, if any, between themselves through respective authorized representatives as appointed by them. If they are unable or fail to do so within 15(fifteen) days, regardless of the cause of action alleged, the matter in question will be resolved by arbitration under the Arbitration Act, 2001 of Bangladesh.
+            <br />
+            <label style="font-weight:bold;">13.  Copies of Agreement:</label>
+            <br />
+            There shall be two engrossment of this Agreement to be retained by the CRC/Client. Both the documents shall constitute as original and shall have the same effect.
+        </p>
+            }
+            else
+            {
+                <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">
+                    <label style="font-weight:bold;">Now, therefore, the mutual covenants of this Agreement stand as follows;-</label>
+                    <br />
+                    <label style="font-weight:bold;">1. Definitions:</label>
+                    <br />
+                    The meaning of the following words and phrases which are widely used in this Agreement shall be defined as follows:
+                    <strong>
+                        ‘CRC Watch’
+                    </strong> means an alert issued to the market by CRC to indicate that the rating of the Rated Subject is under review and may be changed when some factors have occurred or likely to occur which will have an impact on the current rating of the Rated Subject. The Client or Rated Subject may be placed on either CRC Watch Positive, Negative or Developing. CRC Watch Positive indicates that the rating of the Rated Subject may be raised; CRC Watch Negative indicates the rating of the Rated Subject may be lowered while CRC Watch Developing indicates that the rating of the Rated Subject may be raised or lowered.
+                    <br />
+                    <label style="font-weight:bold;">2.  Rating Fees:</label>
+                    <br />
+                    In consideration of the First Party providing the requested <strong>
+                        rating services below
+                    </strong> for the Rated Subject, the Second Party agrees to pay the First Party-
+                    <br />
+                    (a) Initial Rating of the Rated Subject with Initial Rating Fee of BDT <label style="font-weight:bold;">@Model.getAgreementReportByAgreementId.agreementAmount</label><label style="font-weight:bold;">(@Model.getAgreementReportByAgreementId.inwordIntialfees)</label>@Model.getAgreementReportByAgreementId.vATTEXT ; and
+                    <br />
+                    (b) Surveillance rating for the <label style="font-weight:bold;">subsequent @Model.getAgreementReportByAgreementId.noOfYearTEXT</label>  years with Annual Surveillance Rating Fee of BDT <label style="font-weight:bold;">@Model.getAgreementReportByAgreementId.sFees</label><label style="font-weight:bold;">(@Model.getAgreementReportByAgreementId.inwordServillencefees)</label>  @Model.getAgreementReportByAgreementId.vATTEXT for the said services per annum after the end of the validity period of Initial Rating on the Rated Subject for the subsequent three years ending as per requirements of the Credit Rating Companies Rules, 1996.
+                    <br />
+                    <label style="font-weight:bold;">3. Understanding:</label>
+
+                    <br />
+                    The understanding of this Agreement, among others, are as follows;-
+                    <br />
+                    a)  Rating is an independent opinion  of the CRC based on analysis of information obtained from a variety of sources, including but
+                    not limited to
+                    <br />
+                    I. Information submitted to the CRC by the CLIENT and their advisors or agents, and/or any third parties (without limitations to
+                    bankers, regulators, industry associations, lawyers and auditors);
+                    <br />
+                    II. Representations, written or otherwise, made by the Client and their advisors or agents, and/or any third parties; and
+                    <br />
+                    III. Information available in the public domain including published reports and industry data believed by the CRC to be relevant,
+                    accurate, true, dependable and reliable for the purpose of subject rating.
+                    <br />
+                    b)  The Second Party will authorize all concerned including their banks, creditors, agents, advisors, lawyers, and representatives
+                    etc. to provide   information to the CRC as and when required by the CRC for independent analysis and examination purposes
+                    <br />
+                    c)  The CRC shall have the unilateral right and absolute discretion to place an assigned rating on the Rated Subject under surveillance on CRC Watch. The Client will be notified by the CRC of its rating on the Rated Subject being placed on CRC Watch, but the Client has no right to appeal against the said action or decision of the CRC. The CRC also have unilateral and absolute right to review, change and/or take any rating action they deem appropriate with or without the said rating first being placed on the CRC Watch.
+                    <br />
+                    d)  The CRC shall also have the unilateral right and absolute discretion to review, assign, change, suspend and/or take any rating action on the Rated Subject, as they deem fit and proper, and to publish in any form and manner, at any time during the tenure of this Agreement, the fact of such assigned rating, change, suspension and/or any rating action taken and any attendant reason or circumstances for such assigned rating, change, suspension and /or rating action, notwithstanding any objection by the Client and/or delay or failure on the part of the Client to act in accordance with the provisions set out herewith for whatsoever reason. The Client shall be informed of in advance any of such change, suspension and/or any rating action.
+                    <br />
+                    e)  The terms and conditions of this Agreement shall not be disseminated or be made available to anyone by the Client without prior written consent of the CRC. The Client agrees to comply with the relevant obligations that may be imposed upon pursuant to any regulations, notifications or guidelines that may be issued by BSEC, NBR, Bangladesh Bank and/or other Government agencies in relation to the credit rating.
+                    <br />
+                    <label style="font-weight:bold;">4. Provision for Information, etc.:</label>
+                    <br />
+                    (a) To enable CRC to perform rating services on the Rated Subject during initial rating and continuous surveillance period, the Client shall promptly supply/provide all the requisite information, documents, data, assistance and also grant access to such documents reasonably felt necessary or relevant to the rating exercise or services which are to be within the Client’s possession, custody or under the Client’s control and/or personnel  control, upon request by the CRC, within stipulated time frame set out by the CRC(i.e. the <strong>
+                        “Requested Materials”
+                    </strong>).
+                    <br /><br />
+                    (b)The Client shall use their best endeavor to procure Requested Materials where the said materials are not in the Client’s possession or custody or under the Client’s control.
+                    <br /><br />
+                    (c) The Client also undertakes to forthwith inform the CRC of any information, circumstance or any development which may come to the Client’s knowledge at any time and which might have a bearing on or relevant to the rating of the Rated Subject(i.e. the <strong>“Relevant Information”</strong>). If the Client fails to provide adequate level of cooperation needed to carry out the rating assignment, CRC will carry out the rating assignment based on the available information and shall disclose such rating award in any manner and to any organization CRC deemed appropriate as per Governing Laws.
+                    <br /><br />
+                    (d)In the event Client does not/fails to provide the Requested Materials to the CRC, the CRC reserves its unilateral right and absolute discretion to conduct rating exercise on the best effort basis and disclose this fact to the public and/or regulators, if applicable, or to suspend the rating exercise on the Rated Subject, without notice, until and unless the Client furnishes the Requested Materials to the CRC.
+                    <br /><br />
+                    (e)The CRC and/or any of its employees shall have no liability whatsoever if the Requested Materials and/or the Relevant Information are not provided to the CRC on a timely basis, or if the Client fails to comply with the above provisions and, as a result, the CRC is unable to complete the rating of the Rated Subject under this Agreement within the agreed timeframe, and/or assigns a rating and/or publishes opinion or analysis and/or takes rating action which may not be appropriate.
+                    <br /><br />
+                    <label style="font-weight:bold;">5. Confidentiality:</label>
+                    <br />
+                    (a)All non-public information received in course of rating or surveillance process shall be held in strict confidence and used solely for the purpose of determining the initial or subsequent rating(s).
+                    <br /><br />
+                    (b)In the event the CRC  is required, under a subpoena, civil or criminal investigative demand, and/or is requested by regulatory authorities or otherwise required by law, to disclose such non-public information, working papers or any other documents or to assist in or provide explanations relating to this rating exercise in any judicial proceedings, the CRC shall disclose such part of information, working papers or any other documents which are necessary and legally required pursuant to the request under pain of liability for contempt or other censure or penalty.
+                    <br /><br />
+                    <label style="font-weight:bold;">6. Limitations and Usage of Ratings:</label>
+                    <br />
+                    (a)CRC does not guarantee with regard to the accuracy, completeness or timeliness of information relied on by the CRC in connection with the rating on the Rated Subject and factual information reflected or contained in the CRC’s rating report(s) or any related publications.
+                    <br />
+                    (b)CRC shall not be responsible for any rating assigned based on the information which have been received and/or relied upon by the CRC turns out to be improper, irrelevant, inaccurate, inadequate or misleading.
+                    <br />
+                    (c)Dissemination, distribution or reproduction of any draft press announcement and draft rating report(s) issued by the CRC either in full or in part is strictly prohibited under any circumstance. The final report shall not be disseminated, distributed or reproduced in any form or manner, either in part or in full, except without prior written consent of the CRC.
+                    This provision shall not, however, apply if the disclosure is required by law or by the legally binding requirements of any regulatory Authority.
+                    <br /><br />
+                    <label style="font-weight:bold;">7. Exclusion of Liability:</label>
+                    <br />
+                    In conducting the rating exercise under this Agreement, the CRC shall have no liability whatsoever for any direct, indirect or consequential loss (including but not limited to actual loss, loss of profits or opportunity costs) suffered or occurred by the Client, or to any third party, caused by any rating opinion, analysis and/or action taken by the CRC during the term of the Agreement. Furthermore, the CRC shall have no liability whatsoever for any failure or delay due to circumstances beyond their control or due to failure to comply with the provisions of this Agreement by the Client, their advisors or agents, etc.
+                    <br /><br />
+                    <label style="font-weight:bold;">8. Terms of Payment of the Rating Fees:</label>
+                    <br />
+                    (a)In both the above cases of Fees, an amount equivalent to 50%(fifty percent) of Initial Rating and/or Surveillance Rating Fees plus VAT shall be payable as Advance to the First Party at the time of signing of the Agreement and/or submitting the Invoices to the Second Party, failure in payment of which the First Party reserves the right to cancel the Agreement and term it void.
+                    <br />
+                    (b)Once the Agreement is executed and the services has been performed by the CRC based on the Agreement, the Client shall be liable to pay the entire Rating Fees etc., as stated in this Agreement, to the CRC  as per the invoice issued, whether or not the Client accepts the Rating Report issued  by the CRC on the Rated Subject .
+                    <br />
+                    Mentionable that;-
+                    <br />
+                    <label style="padding-left:90px;">
+                        I.   As per VAT Law in Bangladesh, the Client undertakes his responsibility of paying applicable VAT along with the Fees.
+                        <br />
+                        II.  After execution of the Agreement if, in any event, it is found that the total exposure on which the rating fees was established is lower or higher, then the final payment amount of the rating fees will be adjusted as per the fee structure/invoice of the First Party which shall be binding upon the Second/First Party, as the case may be.
+                    </label>
+                    <br />
+                    <label style="font-weight:bold;">9. Deliverables:</label>
+                    <br />
+                    (a)  CRC will deliver a Draft Report to the Client within <strong>4(four) to 6(six) weeks</strong> after receiving of the requisite
+                    information/documents (i.e. the “Requested Materials”). The Final Rating will be awarded to the Client within 7(seven) days
+                    (excluding the Government and weekly holidays) of delivering the said Draft Report, irrespective of receiving or not receiving of
+                    any comments from the Client on the Draft Report, upon receipt of full payment from client.
+                    <br /><br />
+                    <label style="font-weight:bold;">10.   Validity of Rating:</label>
+                    <br />
+                    (a)   Any rating which has been assigned based on the initial rating exercise shall remain valid for a period not exceeding 12(twelve) months which shall be calculated from the date of issuance of an indicative agreement assigning Initial Rating on the Rated Subject.
+                    <br />
+                    (b)   The Surveillance Rating shall also remain valid for a period not exceeding 12(twelve) months from the close of the Surveillance Year for each of the next 3(three) years which shall be calculated from the expiry of the Initial Rating year of the rated subject.
+                    <br />
+                    (c)      In case of any reason a gap occur in any of the surveillance period of three years, the rating after the gap will be treated as ‘Initial Rating’ 
+                    <br /><br />
+                    <label style="font-weight:bold;">11.  Governing Laws for Termination of the Agreement:</label>
+                    <br />
+                    (a)    The executed Agreement shall remain to be valid until the Initial Rating and for 3(three) subsequent years’. Continuous Surveillance Rating has to be performed by the CRC as per Credit Rating Companies Rules, 1996.
+                    <br />
+                    (b)   Termination of this Agreement will be governed by the Credit Rating Companies Rules, 1996 of the Bangladesh Securities and Exchange Commission and any subsequent governing laws, rules, regulations, notifications and circulars relevant thereof.
+                    <br />
+                    (c)    Notwithstanding anything to the contrary contained in the Arbitration clause, after the payment for the Rated Subject is fully made and/or if there is non-existence of the Rated Subject before commencing/completing the rating exercise by the CRC, this Agreement shall be deemed as terminated by both the parties.
+                    <br />
+                    (d)   In the event this Agreement is terminated in the manner set out herein, the CRC reserves their unilateral right and absolute discretion to review, change the rating and/or take appropriate rating action prior to withdrawal of rating and to publish the fact of such termination or withdrawal, any attendant reason or circumstances for such termination or withdrawal and/or the rating on the Rated Subject.
+                    <br />
+                    (e)   Clauses regarding considerations, payment, exclusion of liability and termination as contained in this Agreement shall survive despite the termination of this Agreement.
+                    <br /><br />
+                    <label style="font-weight:bold;">12.  Arbitration:</label>
+                    <br />
+                    Both the CRC and the Client will attempt in good faith to resolve their controversy or claims, if any, between themselves through respective authorized representatives as appointed by them. If they are unable or fail to do so within 15(fifteen) days, regardless of the cause of action alleged, the matter in question will be resolved by arbitration under the Arbitration Act, 2001 of Bangladesh.
+                    <br />
+                    <label style="font-weight:bold;">13.  Copies of Agreement:</label>
+                    <br />
+                    There shall be two engrossment of this Agreement to be retained by the CRC/Client. Both the documents shall constitute as original and shall have the same effect.
+                </p>
+            }
+        }
+
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <p style="text-align:left;color:black;margin-left:30px;margin-right:30px;font-size:12px;">IN WITNESS WHEREOF, BOTH OF THE SAID FIRST AND SECOND PARTIES, HAVE EXECUTED THIS AGREEMENT EFFECTIVE AS OF  @Model.getAgreementReportByAgreementId.agreementDate , CONFIRMED BY THEIR RESPECTIVE  OFFICERS’ SIGNATURES THEREUNTO DULY AUTHORISED, IN PRESENCE OF THE FOLLOWING WITNESSES THEREOF.</p>
+    </div>
+    <br /><br /><br /><br />
+    <div style="width:100%;overflow:hidden;margin-left:30px;margin-right:30px;">
+        <div style="width:40%;float:left;">
+            <div class="divstyle">___________________________</div>
+            <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.companySignatory</strong></div>
+            <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.companySignatoryDesignation</strong></div>
+            <div class="divstyle"><strong>@Model?.companies?.FirstOrDefault()?.companyName</strong></div>
+            <div class="divstyle"><strong>Date: @Model.getAgreementReportByAgreementId.agreementDate</strong></div>
+
+        </div>
+        <div style="width:20%;float:left;">
+
+        </div>
+        <div style="width:40%;float:right;">
+            <div class="divstyle">___________________________</div>
+            <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.contactSignatory?.resource?.resourceName</strong></div>
+            <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.contactSignatoryDesignation</strong></div>
+            <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.leads?.leadName</strong></div>
+            <div class="divstyle"><strong>Date: @Model.getAgreementReportByAgreementId.agreementDate</strong></div>
+        </div>
+
+    </div>
+
+    <br /><br /><br /><br />
+    <div style="width:100%;overflow:hidden;margin-left:30px;margin-right:30px;">
+        <div style="width:40%;float:left;">
+
+            <div class="divstyle">___________________________</div>
+            <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.companyWitness</strong></div>
+            <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.companyWitnessDesignation</strong></div>
+            <div class="divstyle"><strong>@Model?.companies?.FirstOrDefault()?.companyName</strong></div>
+            <div class="divstyle"><strong>Date: @Model.getAgreementReportByAgreementId.agreementDate</strong></div>
+
+        </div>
+        <div style="width:20%;float:left;">
+
+        </div>
+        <div style="width:40%;float:right;">
+           
+                <div class="divstyle">___________________________</div>
+                <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.contactWitness?.resource?.resourceName</strong></div>
+                <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.contactWitnessDesignation</strong></div>
+                <div class="divstyle"><strong>@Model?.getAgreementDeatilsById?.leads?.leadName</strong></div>
+                <div class="divstyle"><strong>Date: @Model.getAgreementReportByAgreementId.agreementDate</strong></div>
+         
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+<style>
+    .divstyle {
+        color: black;
+    }
+    h3, h4, h5, h6 {
+        text-align: center;
+        color: black;
+    }
+
+    td {
+        padding-left: 3px;
+        font-size: large;
+    }
+
+    .leftSide {
+        color: black;
+        font-size: large;
+        font-weight: bold;
+        padding-left: 3px;
+    }
+
+    .paddingAllSide {
+        padding: 10px 0px 10px 0px;
+    }
+
+    .borderAll {
+        border: solid 1px;
+        border-color: black;
+        text-align: center;
+    }
+</style>
+
+
+
+
+
+

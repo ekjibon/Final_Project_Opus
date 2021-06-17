@@ -1,0 +1,103 @@
+﻿@using OPUSERP.CLUB.Services.Auth.Interfaces
+@using System
+@inject ILoggedinUser loggedinUser
+@{
+    string orgType = await loggedinUser.usersOrganization(User.Identity.Name);
+    List<string> userRoles = await loggedinUser.UsersRoles(User.Identity.Name);
+    int myEmpId = await loggedinUser.UserEmpId(User.Identity.Name);
+}
+
+@model ForumViewModel
+@{
+    ViewData["Title"] = "Topic";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .comment-member {
+            background-color: green;
+            color: white !important;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .comment-member-self {
+            background-color: brown;
+            color: white !important;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="" style="color: black;">Topic : @Model.topicz.topic</h5>
+            </div>
+            <div class="col-4 text-right">
+                <h5 class="" style="color: black;">Date : @Model.topicz.date?.ToString("dd-MMMM-yyyy")</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h5 class="" style="color: black;">Details : @Model.topicz.details</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        @foreach (var item in Model.comments)
+        {
+        <div class="row">
+            <div class="col-12 @(myEmpId == @item.memberId ? "" : "text-right")">
+                <label class="@(myEmpId == @item.memberId ? "comment-member-self" : "comment-member")">@item.member.nameEnglish (@item.date?.ToString("dd-MMM-yy"))</label>
+            </div>
+            <div style="background: beige;padding: 20px;" class="col-12 @(myEmpId == @item.memberId ? "" : "text-right")">
+                <p style="color: black;text-align: justify !important;text-justify: inter-word;" readonly>@item.details</p>
+            </div>
+        </div>
+            <hr />
+        }
+    </div>
+</div>
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <form asp-area="Forum" asp-controller="Topic" asp-action="Comments" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group row">
+                <label for="description" class="col-sm-3 col-form-label">Comments <span style="color:red;">*</span></label>
+            </div>
+
+            <div class="form-group row">
+                <textarea type="text" rows="5" class="form-control" id="details" name="details" data-parsley-required="true"data-parsley-required-message="Please Comment before hitting Send Button"></textarea>
+                <input type="hidden" id="topicId" name="topicId" value="@Model.topicz.Id" />
+            </div>
+            <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;" title="Send"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#date').flatpickr({ dateFormat: "m/d/Y", minDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+
+        });
+    </script>
+}
+
+
+

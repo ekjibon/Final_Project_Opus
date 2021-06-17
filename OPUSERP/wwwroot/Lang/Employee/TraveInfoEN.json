@@ -1,0 +1,20 @@
+{
+  "title": "Foreign Travel Information",
+  "type": "Travel Type",
+  "purpose": "Title of Training/Seminar",
+  "location": "Location",
+  "presentDivision": "Present Division",
+  "country": "Country",
+  "sponsoringAgency": "Sponsoring Agency",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "goNumber": "Ref. Number",
+  "goDate": "Ref. Date",
+  "file": "Upload File",
+  "titleOfFile": "Title Of File",
+  "remarks": "Remarks",
+  "action": "Action"
+}
+
+    
+      

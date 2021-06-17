@@ -1,0 +1,12 @@
+﻿{
+  "title": "চাকরীর ইতিহাস",
+  "sl": "ক্রমিক নং",
+  "designation": "পদবি",
+  "organization": "পদবি",
+  "grade": "গ্রেড",
+  "address": "address",
+  "action": "প্রক্রিয়া",
+  "workStation": "কর্মস্থল",
+  "toDate": "তারিখ পর্যন্ত ",
+  "fromDate": "তারিখ থেকে "
+}

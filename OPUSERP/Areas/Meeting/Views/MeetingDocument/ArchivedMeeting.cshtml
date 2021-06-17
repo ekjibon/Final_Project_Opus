@@ -1,0 +1,156 @@
+﻿@model MeetingDocumentViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_WMS.cshtml";
+
+}
+<style>
+    body {
+        font-family: "Tahoma, Geneva, sans-serif;"
+    }
+
+    .docNo {
+        width: 50%;
+        float: left;
+        padding-top: 15px;
+        font-weight: normal;
+    }
+
+    .date {
+        width: 50%;
+        float: right;
+        text-align: right;
+        font-weight: normal;
+    }
+
+    .subject {
+        width: 100%;
+        font-size: 18px;
+        color: black;
+    }
+
+    .description {
+        text-align: justify;
+        text-justify: inter-word;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .attatchments {
+        padding-top: 15px;
+        width: 100%;
+        float: left;
+    }
+
+    .sincerely {
+        margin-top: 10px;
+        width: 50%;
+        text-align: left;
+        float: right;
+    }
+
+    .comment {
+        width: 100%;
+        /*border-top: 2px dashed gray;*/
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    .note {
+        width: 100%;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    .sincerely2 {
+        width: 100%;
+        text-align: left;
+        float: right;
+    }
+
+    .image {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0px;
+    }
+
+    .mainlayoutLeft {
+        width: 89%;
+        float: left;
+        border-right: 1px dotted black;
+        border-left: 1px dotted black;
+        padding: 5px;
+    }
+
+    .mainlayoutRight {
+        width: 9%;
+        float: right;
+    }
+</style>
+
+<div class="image">
+    <img src="@Model.companies.First().filePath" alt="" height="70px;" width="70px">
+    <h2 style="padding: 0px; margin: 0px; font-size: 18px;">@Model.companies.First().companyName</h2>
+</div>
+
+<p class="subject"> <b>Date:</b> @Model.meetingInfo.Date?.ToString("dd-MMM-yyyy")</p>
+<p class="subject">  @Model.meetingInfo.title</p>
+<div class="attatchments">
+    <ul>
+        <li>
+            Attend
+            <ul>
+                @foreach (var data in Model.meetingAttendancesPresents)
+                {
+                    <li>@data?.employee?.nameEnglish</li>
+                }
+            </ul>
+        </li>
+    </ul>
+
+    <ul>
+        <li>
+            Absent
+            <ul>
+                @foreach (var data in Model.meetingAttendancesAbsents)
+                {
+                    <li>@data?.employee?.nameEnglish</li>
+                }
+            </ul>
+        </li>
+    </ul>
+
+</div>
+
+
+@foreach (var data in Model.docWiseMeetingDetails)
+{
+    <pagebreak></pagebreak>
+    <br /><br />
+    <div style="width: 100%; text-align: center"><h3>Discussion</h3></div>
+    <div class="image">
+        <img src="@Model.companies.First().filePath" alt="" height="70px;" width="70px">
+        <h2 style="padding: 0px; margin: 0px; font-size: 18px;">@Model.companies.First().companyName</h2>
+    </div>
+
+    <div class="comment">
+        <p style="min-width: 20px; text-align: justify; text-justify: inter-word; "> <b>Subject:</b>@data.meetingDocument.subject</p>
+        <p style="min-width: 20px; text-align: justify; text-justify: inter-word; "> <b>Summery:</b>@data.meetingDocument.summary</p>
+    </div>
+
+    @foreach (var data1 in data.meetingDetails)
+    {
+        <div class="comment">
+            <div style="width: 100%; text-align: left"><h3>Comments</h3></div>
+            <p style=" margin: 10px; min-width: 20px; text-align: justify; text-justify: inter-word; "> @data1.action.description</p>
+            <div style="text-align: right; width: 100%">
+                <p style="margin: 5px; font-size: 16px;"><B>@data1?.employee?.nameEnglish</B></p>
+            </div>
+        </div>
+    }
+
+    <div class="comment">
+        <p style=" min-width: 20px; text-align: justify; text-justify: inter-word; "> <b>Decision:</b>@data.meetingDocument.decision</p>
+    </div>
+}

@@ -1,0 +1,259 @@
+﻿@model RequisitionViewModel
+@{
+    ViewData["Title"] = "Requisition Status";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <br />
+            <div class="row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">Requisition Status</h6>
+                </div>
+                <div class="col-md-2 pull-right">
+                </div>
+            </div>
+
+            <hr />
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1" style="padding: 0 0 0 15px;">
+                        <span>From Date</span>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="From Date" value="@DateTime.Now.ToString("dd-MMM-yyyy")" />
+                    </div>
+                    <div class="col-1" style="padding: 0 0 0 15px;">
+                        <span>To Date</span>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" id="toDate" name="toDate" placeholder="To Date" value="@DateTime.Now.ToString("dd-MMM-yyyy")" />
+                    </div>
+                    <div class="col-1" style="padding:0;">
+                        <span>Search Type</span>
+                    </div>
+                    <div class="col-2">
+                        <select class="form-control" id="searchType" name="searchType">
+                            <option value="PR">PR</option>
+                            <option value="CS">CS</option>
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <input type="button" class="btn btn-info btn-sm" value="Search" onclick="LoadPR()" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-striped table-bordered table-responsive" id="requisitionListTable" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Requisition No</th>
+                                    <th>Req Date</th>
+                                    <th>Project Name</th>
+                                    <th>PR Value</th>
+                                    <th>CS No</th>
+                                    <th>CS Value</th>
+                                    <th>Subject</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="StatusListModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="width:1040px;">
+            <div class="modal-header">
+                <label class="modal-title pull-left" id="myModalLabel" style="color:rgb(9, 7, 161);font-size:1em;">
+                    Details List For Requisition Status
+                </label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <br />
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-bordered" id="statusListTable" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>SL.</th>
+                            <th>User Name</th>
+                            <th>Status</th>
+                            <th>Date Time</th>
+                            <th>Next Process By</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        var statusPreviewTable;
+        var statusListTable;
+        $(document).ready(function () {
+            $('#fromDate').flatpickr({ dateFormat: "d-M-Y" });
+            $('#toDate').flatpickr({ dateFormat: "d-M-Y" });
+            //$('#requisitionListTable').DataTable();
+
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+            var searchType = $('#searchType').val();
+            statusPreviewTable = $('#requisitionListTable').DataTable({
+                ajax: {
+                    url: "/global/api/getAllRequisitionMasterListForViewStatus/" + fromDate + "/" + toDate + "/" + searchType,
+                    dataSrc: ""
+                },
+                language: {
+                    //processing: '<span style="width:100%;"><img src="/images/loader-32x/loader3.gif"></span>'
+                    processing: '<span style="width:100%;"><img src="/images/spinner.gif"></span>'
+                },
+                processing: true,
+                columns: [
+                    { data: "reqNo" },
+                    { data: "reqDate" },
+                    { data: "projectName" },
+                    { data: "reqValue" },
+                    { data: "csNo" },
+                    { data: "csValue" },
+                    { data: "subject" },
+                    { data: "action" }
+                ],
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: 'ERP',
+                        messageTop: 'Requisition List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: 'ERP',
+                        messageTop: 'Requisition List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: 'ERP',
+                        messageTop: 'Requisition List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+
+            statusListTable = $('#statusListTable').DataTable({
+                ajax: {
+                    url: "/global/api/getStatusLogListByReqId/0",
+                    dataSrc: ""
+                },
+                language: {
+                    //processing: '<span style="width:100%;"><img src="/images/loader-32x/loader3.gif"></span>'
+                    processing: '<span style="width:100%;"><img src="/images/spinner.gif"></span>'
+                },
+                processing: true,
+                columns: [
+                    { data: "Sl" },
+                    { data: "empName" },
+                    { data: "Status" },
+                    { data: "timeDate" },
+                    { data: "nextEmpName" }
+                ],
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: 'ERP',
+                        messageTop: 'Status List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: 'ERP',
+                        messageTop: 'Status List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: 'ERP',
+                        messageTop: 'Status List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+            
+        });
+
+        function LoadPR() {
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+            var searchType = $('#searchType').val();
+            statusPreviewTable.clear().draw();
+            statusPreviewTable.ajax.url("/global/api/getAllRequisitionMasterListForViewStatus/" + fromDate + "/" + toDate + "/" + searchType).load();
+        }
+
+        function LoadPRStatusById(reqId) {
+            statusListTable.clear().draw();
+            statusListTable.ajax.url("/global/api/getStatusLogListByReqId/" + reqId).load();
+            $('#StatusListModal').modal('show');
+        }
+
+        function PRReportView(reqId) {
+            window.open('/SCMReport/ReportMaster/PurchaseRequisitionPdf?reqId=' + reqId, '_blank');
+        }
+
+        
+    </script>
+}
+

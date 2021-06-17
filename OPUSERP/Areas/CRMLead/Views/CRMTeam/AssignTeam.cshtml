@@ -1,0 +1,235 @@
+﻿@model CRMTeamViewModel
+@{
+    ViewData["Title"] = "AssignTeam";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Team</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="teamTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Team Code</th>
+                            <th>Team Name</th>
+                            <th>Area</th>
+                            <th>Leader</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.teams)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td>@data.teamCode</td>
+                                    <td>@data.memberName</td>
+                                    <td>@data.areaName</td>
+                                    <td>@data.empName</td>
+                                    <td>
+                                        <a class="btn btn-success" title='Add Team' onclick="AddTeam(@data.tId,'@data.memberName','@data.teamCode',@data.areaId)" href="javascript:void(0)"><i class="fa fa-plus-square"></i></a>
+                                        @*&nbsp; &nbsp;
+                                            <a class="btn btn-danger" title="Delete Team" onclick="DeleteTeam(@data.Id)" href="#"><i class="fa fa-trash-alt"></i></a>*@
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="width: 100%;" id="divTeamMember">
+    <div class="card-body">
+        <h5 class="card-title" style="color: #4e73df!important">Add Team Member</h5>
+        <hr>
+        <div class="container" id="entrydata">
+            <form id="frmJob" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" name="teamId" id="teamId">
+                <input type="hidden" name="areaId" id="areaId">
+                <input type="hidden" name="tId" id="tId" value="0">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="teamCode" class="col-sm-3 col-form-label">Team Code</label>
+                            <div class="col-sm-9">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="teamCode" id="teamCode" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="memberName" class="col-sm-3 col-form-label">Team Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="memberName" id="memberName" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="aspnetuserId" class="col-sm-3 col-form-label">Team Member <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                @*<select class="form-control" id="aspnetuserId" name="aspnetuserId" data-parsley-required="true" data-parsley-trigger="keyup">
+            <option value="" id="aspnetuserId">Select Team Member</option>
+            @foreach (var data in Model.aspNetUsers)
+            {
+                <option value="@data.Id">@data.EmpName</option>
+            }
+        </select>*@
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                                <input type="hidden" id="aspnetuserId" name="aspnetuserId">
+                            </div>
+                        </div>
+                        @*<button type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right; margin-top:5px;">Add Member</button>*@
+                        <button type="button" id="btnAddTeam" onclick="SaveTeamAsign()" class="btn btn-success btn-sm" style="float:right;">Add Member</button>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped" id="memberTable" data-parsley-required="true">
+                            <thead style="width:100%;background-color:lightgray;">
+                                <tr>
+                                    <th>Team Name</th>
+                                    <th>Team Member</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#teamTable').DataTable();
+            $('#divTeamMember').hide();
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+            
+        });
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.ApplicationUserId;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            //console.log(GeEmployeesList);
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#aspnetuserId").val(ui.item.key);
+                }
+            });
+        }
+
+        function AddTeam(Id, memberName, teamCode, areaId) {
+            $('#divTeamMember').show();
+
+            $("#teamId").val(Id);
+            $("#memberName").val(memberName);
+            $("#teamCode").val(teamCode);           
+            $("#areaId").val(areaId);
+
+            Common.Ajax('GET', '/CRMLead/CRMTeam/GetTeamInfoByTeamId/?Id=' + Id, [], 'json', ajaxGetTeamInfoByTeamId);
+        }
+
+        function ajaxGetTeamInfoByTeamId(response) {
+            var index = "1";
+            $("#memberTable tbody>tr").empty();
+            $.each(response, function (key, value) {
+                index = $("#memberTable tbody>tr").length;
+                index = index + 1;
+                var dtTable = $("#memberTable");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.memberName + '</td>' +
+                    '<td>' + value.empName + '</td>' +
+                    '<td><a href="javascript:void(0)" class="btn btn-danger btn-sm" title="Delete" onclick="DeleteTeam(' + value.tId + ',' + value.teamId  + ')"><i class="fa fa-trash"></i></a></td>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+            $('#memberTable').DataTable();
+        }
+
+        function SaveTeamAsign() {
+
+            let teamsId = $('#teamId').val();
+            if (teamsId == 0) {
+                swal("Please Select Team");
+                return false;
+            }
+            else if ($('#aspnetuserId').val() == '') {
+                swal("Please Select Employee");
+                return false;
+            }
+            var form = $("#frmJob");
+                $.ajax({
+                    url: '@Url.Action("SaveAssignTeam", "CRMTeam")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (teamId) {
+                        if (teamId === 0) {
+                            swal('This employee has already added!');
+                        }
+                        else {
+                            swal({
+                                title: '', text: 'Add Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                            }).then(function () {
+                                Common.Ajax('GET', '/CRMLead/CRMTeam/GetTeamInfoByTeamId/?Id=' + teamsId, [], 'json', ajaxGetTeamInfoByTeamId);                               
+                                
+                            });
+                        }
+                    }
+            });
+            $("#aspnetuserId").val('');
+            $("#employeeName").val('');
+        }
+
+        function DeleteTeam(tId, teamId) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteTeamById", "CRMTeam")',
+                    data: { Id: tId },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        Common.Ajax('GET', '/CRMLead/CRMTeam/GetTeamInfoByTeamId/?Id=' + teamId, [], 'json', ajaxGetTeamInfoByTeamId);                       
+                    })
+                    .fail(function () {
+                        alert("Unable to Delete. Please Try Again");
+                    });
+            });
+        }
+
+    </script>
+}
+
+
+

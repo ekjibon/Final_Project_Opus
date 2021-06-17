@@ -1,0 +1,258 @@
+﻿@model EducationInfoViewModel
+
+@{
+    ViewData["Title"] = "Education Info";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">Education Info</h5>
+            </div>
+            @*<div class="col-4">
+                    <h6 class="identity-box">@Model.employeeNameCode</h6>
+                </div>*@
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Recruitment" asp-controller="CVCollection" asp-action="EducationInfo" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="levelOfEducation" class="col-sm-3 col-form-label">Level of Education </label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="levelOfEducation" id="levelOfEducation" data-parsley-required="true">
+                                    <option value="">Select </option>
+                                </select>
+                                <input type="hidden" id="candidateId" name="candidateId" value="@Model.candidateId">
+                                <input type="hidden" id="educationId" name="educationId" value=0>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="degree" class="col-sm-3 col-form-label">Degree </label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="degreeId" id="degreeId" data-parsley-required="true">
+                                    <option value="">Select </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="country" class="col-sm-3 col-form-label">Subject </label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="reldegreesubjectId" id="reldegreesubjectId" data-parsley-required="true">
+                                    <option value="">Select </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="country" class="col-sm-3 col-form-label">Organization </label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="organizationId" id="organizationId" data-parsley-required="true">
+                                    <option value="">Select </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="instritution" class="col-sm-3 col-form-label">Institution </label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="instritution" value="" name="institution" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="result" class="col-sm-3 col-form-label">Result </label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="resultId" id="resultId" data-parsley-required="true">
+                                    <option value="">Select </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="result" class="col-sm-3 col-form-label">Grade </label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="grade" name="grade" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="passingYear" class="col-sm-3 col-form-label">Passing Year</label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="number" min="1" data-parsley-length="[4, 4]" data-parsley-trigger="keyup" class="form-control" id="passingYear" value="" name="passingYear" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Educational Information</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Degree</th>
+                            <th>Institution</th>
+                            <th>Passing Year</th>
+                            <th>Grade</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.rCRTEducations)
+                        {
+                            <tr>
+                                <td>@data.degree.degreeName</td>
+                                <td>@data.institution</td>
+                                <td>@data.passingYear</td>
+                                <td>@data.grade</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.degree.levelofeducationId','@data.degreeId','@data.reldegreesubjectId','@data.organizationId','@data.institution','@data.resultId','@data.grade','@data.passingYear')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id,@data.candidateId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {           
+            $('#educationalTable').DataTable();
+
+            Common.Ajax('GET', '/global/api/levelOfEducations', [], 'json', ajaxLevelOfEducation, false);
+            Common.Ajax('GET', '/global/api/organizations', [], 'json', ajaxOrganization, false);
+            Common.Ajax('GET', '/global/api/results', [], 'json', ajaxResult, false);
+
+            $("#levelOfEducation").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/degrees/' + id, [], 'json', ajaxDegrees);
+            });
+
+            $("#degreeId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/relDegreeSubjects/' + id, [], 'json', ajaxRelDegreeSubjects);
+            });
+        });
+
+        function ajaxLevelOfEducation(response) {
+            var options = '<option value="">Select </option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.id + '">' + item.levelofeducationName + '</option>';
+            });
+            $('#levelOfEducation').empty();
+            $('#levelOfEducation').append(options);
+        }
+
+        function ajaxOrganization(response) {
+            console.log(response);
+            var options = '<option value="">Select </option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.id + '">' + item.organizationName + '</option>';
+            });
+            $('#organizationId').empty();
+            $('#organizationId').append(options);
+        }
+
+        function ajaxResult(response) {
+            console.log(response);
+            var options = '<option value="">Select </option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.id + '">' + item.resultName + '</option>';
+            });
+            $('#resultId').empty();
+            $('#resultId').append(options);
+        }
+
+
+        function ajaxDegrees(response) {
+            var options = '<option value="">Select </option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.id + '">' + item.degreeName + '</option>';
+            });
+            $('#degreeId').empty();
+            $('#degreeId').append(options);
+        }
+
+        function ajaxRelDegreeSubjects(response) {
+            var options = '<option value="">Select </option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.subjectId + '">' + item.subject.subjectName + '</option>';
+            });
+            $('#reldegreesubjectId').empty();
+            $('#reldegreesubjectId').append(options);
+        }
+
+        function Edit(Id, levelofeducationId, degreeId, reldegreesubjectId, organizationId, institution, resultId, grade, passingYear) {
+            $('#educationId').val(Id);
+            $("#levelOfEducation").val(levelofeducationId);
+
+            Common.Ajax('GET', '/global/api/degrees/' + levelofeducationId, [], 'json', ajaxDegrees, false);
+            $('#degreeId').val(degreeId);
+
+            Common.Ajax('GET', '/global/api/relDegreeSubjects/' + degreeId, [], 'json', ajaxRelDegreeSubjects, false);
+            $('#reldegreesubjectId').val(reldegreesubjectId);
+
+            $('#organizationId').val(organizationId);
+            $('#instritution').val(institution);
+            $('#resultId').val(resultId);
+            $('#grade').val(grade);
+            $('#passingYear').val(passingYear);
+        }
+
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                //return true;
+                location.replace("/HRPMSEmployee/EducationalQualification/Delete/" + Id + "?empId=" + employeeId);
+            } else {
+                return false;
+            }
+        }
+
+    </script>
+}
+

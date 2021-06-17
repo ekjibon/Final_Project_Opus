@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewData["Title"] = "IndexPO";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="row">
+    <div class="col-md-12" style="padding-right:5px;">
+        <div style="height:10px;"></div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Operational Report</label>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-12 row">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">Report Name</label>
+                <select class="col-sm-6 form-control" id="reportId" name="reportId">
+                    <option value="1">SKU Summer Sheet</option>
+                    <option value="2">Item Summary Sheet</option>
+                    <option value="3">Issue Details</option>
+                    <option value="4">Item wise Issue Details</option>
+                </select>
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="fromid" style="margin-top:5px">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">From Date</label>
+                <input type="text" class="col-sm-6 form-control" id="fromDate" name="fromDate" />
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="toid" style="margin-top:5px">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">To Date</label>
+                <input type="text" class="col-sm-6 form-control" id="toDate" name="toDate" />
+                <label class="col-sm-2"></label>
+            </div>
+
+
+        </div>
+        <br />
+        <br />
+        <div class="row">
+
+            <div class="col-12">
+
+                <button type="button" onclick="ProcessReport()" class="btn btn-success" style="float:right;margin-left:10px;">Preview</button>
+                <button type="button" onclick="ReloadPage()" class="btn btn-danger" style="float:right;">Refresh</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+        });
+
+        function ReloadPage() {
+            location.reload();
+        };
+
+        function ProcessReport() {
+            var Id = $('#number').val();
+            if ($('#reportId').val() == "1") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                window.open('/SCMReport/SCMItemReport/SKUSummerSheetReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "2") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                window.open('/SCMReport/SCMItemReport/ItemSummarySheetReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "3") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                window.open('/SCMReport/SCMItemReport/IssueDetailsReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "4") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                window.open('/SCMReport/SCMItemReport/ItemWiseIssueDetailsReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val(), '_blank');
+            }
+        }
+
+    </script>
+}

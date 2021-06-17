@@ -1,0 +1,562 @@
+﻿@model ItemPriceFixingViewModel
+@{
+    ViewData["Title"] = "Item Price Fixing";
+    Layout = "~/Areas/MasterData/Views/Shared/_CustomerDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Item Price Fixing</h5>
+        <hr>
+        <div class="container">
+
+            <form asp-area="Sales" asp-controller="ItemPriceFixing" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="itemName" class="col-sm-2 col-form-label">Item Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemName" id="itemName">
+                        <input type="hidden" name="itemId" id="itemId" value="0" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Item Specification<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemSpecification" id="itemSpecification">
+                        <input type="hidden" name="itemSpecificationId" id="itemSpecificationId" value="0" />
+                    </div>
+                    @*<label for="purchasePrice" class="col-sm-2 col-form-label">Purchase Price </label>
+            <div class="col-sm-2">
+                <input data-parsley-type="number" class="form-control" style="text-align:right;" name="purchasePrice" id="purchasePrice" readonly>
+            </div>*@
+                    <label for="price" class="col-sm-2 col-form-label">Price (Taka)<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" data-parsley-required="true" data-parsley-trigger="keyup" style="text-align:right;" class="form-control" name="price" id="price">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    @*<label for="profit" class="col-sm-2 col-form-label">Profit (Taka)</label>
+            <div class="col-sm-4">
+                <input data-parsley-type="number" style="text-align:right;" class="form-control" name="profit" id="profit" readonly>
+            </div>*@
+                    @*<label for="price" class="col-sm-2 col-form-label">Price (Taka)<span style="float:right;" class="redStar">*</span></label>
+            <div class="col-sm-4">
+                <input data-parsley-type="number" data-parsley-required="true" data-parsley-trigger="keyup" style="text-align:right;" class="form-control" name="price" id="price">
+            </div>*@
+
+                </div>
+                <div class="form-group row">
+
+                    <label for="discount" class="col-sm-2 col-form-label">Discount (%)</label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" class="form-control" data-parsley-trigger="keyup" style="text-align:right;" name="discount" id="discount">
+                    </div>
+                    <label for="vat" class="col-sm-2 col-form-label">VAT (%) </label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" class="form-control" data-parsley-trigger="keyup" style="text-align:right;" name="vat" id="vat">
+                    </div>
+                </div>
+
+                <hr>
+                <h6 class="card-title" style="color: black">Item Price Fixing Detail</h6>
+                <hr>
+                <div class="form-group row">
+
+
+                    <label for="levelofeducationId" class="col-sm-2 col-form-label">Distributor Type<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <select class="form-control" name="distributortypeId" id="distributortypeId">
+                            <option value="0">Select</option>
+                            @foreach (var data in Model.distributorTypes)
+                            {
+                                <option value="@data.Id">@data.name</option>
+                            }
+                        </select>
+                    </div>
+                    <label for="price" class="col-sm-2 col-form-label">Price (Taka)<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number"  data-parsley-trigger="keyup" style="text-align:right;" class="form-control" name="disprice" id="disprice">
+                        <input type="hidden" id="detailid" name="detailid" />
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <label for="discount" class="col-sm-2 col-form-label">Discount (%)</label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" class="form-control" data-parsley-trigger="keyup" style="text-align:right;" name="disdiscount" id="disdiscount">
+                    </div>
+                    <label for="vat" class="col-sm-2 col-form-label">VAT (%) </label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" class="form-control" data-parsley-trigger="keyup" style="text-align:right;" name="disvat" id="disvat">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" onclick="Adddetail()" value="Addcon" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                        <button type="button" onclick="Refreshdetail()" value="Refreshcon" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-md-12">
+                        <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Price Details</h5>
+
+                        <input type="hidden" id="IsEditCon" name="IsEditCon" value="0" />
+                        <table class="table table-responsive col-form-label " id="tblcontactDetails" data-parsley-required="true">
+                            <thead style="width:100%">
+                                <tr>
+                                    <th width="40%">Type Name</th>
+                                    <th width="25%">Prive</th>
+                                    <th width="25%">Vat</th>
+                                    <th width="10%">Discount</th>
+                          
+                                    <th width="10%"><span>Action</span></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Item Price Fixing List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="itemPriceTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Item Specification</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>VAT</th>
+                            <th>Action</th>
+                            @*<th>Bar Code</th>
+                                <th></th>*@
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.itemPriceFixings)
+                        {
+                            <tr>
+                                <td>@data.itemSpecification.Item.itemName</td>
+                                <td>@data.itemSpecification.specificationName</td>
+                                <td>@data.price?.ToString("0.00")</td>
+                                <td>@data.discountPersent?.ToString("0.00")</td>
+                                <td>@data.VAT?.ToString("0.00")</td>
+                                @*<td><barcode content="@data.barCode" width="200" height="70"></barcode><br /><span style="text-align:right;padding-left:22%;">@data.barCode</span></td>*@
+                                <td><button onclick="showdetail(@data.Id)" title="Show Detail" class="btn btn-sm btn-info"><i class="fa fa-info fa-fw"></i></button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="printBarCodeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Bar Code Print Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="itemPriceId" />
+                <div class="form-group row">
+                    <label for="imgUrl" class="col-sm-3 col-form-label">Bar Code</label>
+                    <div class="col-sm-6">
+                        <barcode id="imgUrl" content="99-043563" width="200" height="70"></barcode><br />
+                        <span id="txtBarCode" style="text-align:right;padding-left:22%;"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="printQTY" class="col-sm-3 col-form-label">Print Qty<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control numeric" name="printQTY" id="printQTY">
+                    </div>
+                </div>
+            </div>
+            @*<div class="modal-footer">
+                    <button type="button" onclick="barCodePrint()" class="btn btn-success" title="Print"><i class="fa fa-print fa-fw"></i></button>
+                </div>*@
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pricedetailModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width:1200px;max-height:600px;overflow-y:auto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-2">
+                        @*<img src="~/images/JasonLogo.png" style="height:66px; width:168px;" />*@
+                    </div>
+                    <div class="col-9">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Price Details</h3>
+                       
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" style="line-height:.9;width:100%" id="tblcontactDetailsmodal">
+                    <thead>
+                        <tr>
+                            <th width="40%">Type Name</th>
+                            <th width="25%">Price</th>
+                            <th width="25%">Vat</th>
+                            <th width="10%">Discount(%)</th>
+
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsMD{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#itemPriceTable').DataTable();
+            //Common.Ajax('GET', '/global/api/getAllStockItemByStockIn', [], 'json', ajaxAllInStockItem);
+            Common.Ajax('GET', '/global/api/GetAllItem', [], 'json', ajaxAllInStockItem);
+            $("#profit").keyup(function () {
+                let purchasePrice = parseFloat($('#purchasePrice').val()) ? parseFloat($('#purchasePrice').val()) : 0;
+                let thisVal = parseFloat(this.value) ? parseFloat(this.value) : 0;
+                $('#price').val(purchasePrice + thisVal);
+            });
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+        });
+
+        //function barCodePrint() {
+        //    let itemPriceId = parseInt($('#itemPriceId').val()) ? parseInt($('#itemPriceId').val()):0;
+        //    let printCount = parseInt($('#printQTY').val()) ? parseInt($('#printQTY').val()) : 0;
+        //    if (itemPriceId != 0 || printCount != 0) {
+        //        window.open('/Sales/ItemPriceFixing/BarCodePrintOption?itemPriceId=' + itemPriceId + '&printCount=' + printCount, '_blank');
+        //    }
+        //}
+       
+        function showdetail(Id) {
+         
+            //Common.Ajax('GET', '/global/api/TotalHitInfoViewModelsTodayU/', [], 'json', totalUnSuccessHitInfotViewModelsU);
+            $('#tblcontactDetailsmodal').DataTable().destroy();
+            $('#tblcontactDetailsmodal').DataTable({
+                ajax: {
+                    url: '/global/api/getdetailprice/'+Id,
+                    dataSrc: ""
+                },
+                columns: [
+                    { data: "name" },
+                    { data: "price" },
+                    { data: "VAT" },
+                    { data: "discountPersent" }
+                ]
+            });
+            $("#pricedetailModal").modal("show");
+        }
+        function EditconTbl(index, price, VAT,discount, typeId, Id) {
+            var rightIndex = index;
+
+            $('#detailid').val(Id);
+            $('#distributortypeId').val(typeId);
+            $('#disprice').val(price);
+            $('#disdiscount').val(discount);
+            $('#disvat').val(VAT);
+            $("#IsEditCon").val(1);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+        //function ajaxGetContactId(response) {
+        //    var ifExistIndex = window.localStorage.getItem("holdIndex");
+        //    var index = "0";
+        //    if (ifExistIndex == "null" || ifExistIndex == null) {
+        //        index = $("#tblcontactDetailsmodal tbody>tr").length;
+        //    }
+        //    else {
+        //        index = ifExistIndex;
+        //        tdRID = $("#tblcontactDetailsmodal tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+        //    }
+        //    $("#tblcontactDetailsmodal tbody>tr").empty();
+
+        //    var itemtotalAmount = 0;
+        //    $.each(response, function (key, value) {
+        //        index = $("#tblcontactDetailsmodal tbody>tr").length;
+        //        var dtTable = $("#tblcontactDetailsmodal");
+        //        var tableBody = dtTable.find('tbody');
+        //        var trHtml = '<tr id=' + index + '>' +
+        //            '<td>' + value.distributorType.name + '<input type="hidden" name="distributortypeIdall"  id="txtcontactId" class="clscontactDetailsId" value="' + value.distributorType.Id + '"/></td>' +
+        //            '<td>' + value.price + '<input type="hidden"name="priceall" class="clsQtypdone"value="' + value.price + '"/></td>' +
+        //            '<td>' + value.VAT + '<input type="hidden"name="vatall" class="clsQtmmy"value="' + value.VAT + '"/></td>'
+        //            +
+        //            '<td>' + value.discountPersent + '<input type="hidden"name="discountall" class="clsQtmmy"value="' + value.discountPersent + '"/></td>'
+        //            +
+        //            '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+        //            //'<a onclick="EditconTbl(' + index + "," + value.price + "," + value.VAT + ", " + value.discountPersent + ","  + value.distributorType.Id + ", " + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+        //            '</tr>';
+
+        //        if (ifExistIndex == null || ifExistIndex == "null") {
+        //            tableBody.append(trHtml);
+        //        }
+        //        else {
+        //            var rowUpdate = $("#tblcontactDetailsmodal tbody >tr:eq(" + ifExistIndex + ")");
+        //            rowUpdate.replaceWith(trHtml);
+        //            window.localStorage.setItem("holdIndex", null);
+        //            ifExistIndex = null;
+        //        }
+        //    })
+
+        //    index = index + 1;
+        //}
+
+        function Adddetail() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblcontactDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+
+
+            let id = parseInt($("#detailid").val()) ? parseInt($("#detailid").val()) : 0;
+
+            let typeName = $('#distributortypeId option:Selected').text();
+            let typeid = $('#distributortypeId').val();
+            if (typeName == null || typeName == '') {
+                alert("Please select type first");
+                return
+            }
+
+            let disprice = $('#disprice').val();
+            if (disprice == null || disprice == '') {
+                alert("Please entire price first");
+                return
+            }
+
+            let disvate = $('#disvat').val();
+            if (disvate == null || disvate == '') {
+                disvate = "0";
+            }
+
+            let disdiscount = $('#disdiscount').val();
+            if (disdiscount == null || disdiscount == '') {
+                disdiscount = "0";
+            }
+
+           
+            var editOption = parseInt($('#IsEditCon').val()) ? parseInt($('#IsEditCon').val()) : 0;
+            var RowCount = $("#tblcontactDetails tbody>tr").length;
+
+            var dtTable = $("#tblcontactDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + typeName + '<input type="hidden" name="distributortypeIdall"  id="txtcontactId" class="clscontactDetailsId" value="' + typeid + '"/></td>' +
+                '<td>' + disprice + '<input type="hidden"name="priceall" class="clsQtypdone"value="' + disprice + '"/></td>' +
+                '<td>' + disvate + '<input type="hidden"name="vatall" class="clsQtmmy"value="' + disvate + '"/></td>'
+                +
+                '<td>' + disdiscount + '<input type="hidden"name="discountall" class="clsQtmmy"value="' + disdiscount + '"/></td>'
+                //+
+                //'<td>' + Department + '<input type="hidden"name="deptall" class="clsQtmmy"value="' + Department + '"/></td>'
+                //+
+                //'<td>' + Designation + '<input type="hidden"name="desall" class="clsQtmmy"value="' + Designation + '"/></td>'
+                +
+
+
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                //'<a onclick="EditconTbl(' + index + "', '" + phone + "','" + mobile + ", " + resouceid + ", " +id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            index = index + 1;
+            RefreshContact();
+        }
+        function RefreshContact() {
+            //alert("refresh")
+            $('#detailid').val('');
+            $('#distributortypeId').val(0);
+            $('#disprice').val('');
+
+            $('#disvat').val('');
+            $('#disdiscount').val('');
+           
+
+            $("#IsEditCon").val(0);
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+        function DeleteContact(index) {
+            $("#tblcontactDetails #" + index).remove();
+            return false;
+        }
+        function BarCodePrintOption(itemPriceId, imgUrl) {
+            $('#imgUrl').attr('content', imgUrl);
+            $('#txtBarCode').html(imgUrl);
+            $('#itemPriceId').val(itemPriceId);
+            $('#printBarCodeModal').modal('show');
+        }
+
+        function ajaxAllInStockItem(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+
+                    $("#itemId").val(ui.item.key);
+                    //Common.Ajax('GET', '/global/api/getAllStockItemSpacificationByItemId/' + ui.item.key, [], 'json', ajaxAllInStockItemSpacification);
+                    //Common.Ajax('GET', '/global/api/ItemSpecPrice/' + ui.item.key, [], 'json', ajaxAllInStockItemSpacification);
+                    var ItemId = ui.item.key;
+                    Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetAllItemSpecificationByitemId/?ItemId=' + ItemId, [], 'json', ajaxAllInStockItemSpacification);
+                }
+            });
+        }
+        function ajaxgetpurchaserate(response) {
+            $("#purchasePrice").val(response);
+        }
+        function ajaxAllInStockItemSpacification(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                //obj.VAT = option.VAT;
+                // alert(obj.key);
+                obj.value = option.specificationName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecification').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecificationId").val(ui.item.key);
+                    //$("#vat").val(ui.item.VAT);
+                    // alert(ui.item.key);
+                    //Common.Ajax('GET', '/api/itemPriceFixing/GetBoMPriceBySpecId/' + ui.item.key, [], 'json', ajaxgetpurchaserate, false);
+                    //Common.Ajax('GET', '/api/itemPriceFixing/GetPurchaseProfitFromBoMBySpecId/' + ui.item.key, [], 'json', ajaxGetPurchaseProfitFromBoMBySpecId);
+
+
+                }
+            });
+        }
+
+        function ajaxGetPurchaseProfitFromBoMBySpecId(response) {
+            $("#profit").val(response);
+            $("#price").val(parseFloat($("#purchasePrice").val()) + parseFloat(response));
+        }
+
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/MasterData/Ledger/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Edit(Id, name, code, alias, have, group) {
+            $("#ledgerId").val(Id);
+            $("#accountName").val(name);
+            $("#accountCode").val(code);
+            $("#aliasName").val(alias);
+            $("#groupId").val(group);
+            if (have == 1 || have == 2) {
+                $("#haveSubLedger").prop('checked', true);
+                //alert("checked");
+            } else {
+                $("#haveSubLedger").prop('checked', false);
+                //alert("Unchecked");
+            }
+        }
+
+        function ajaxCode(response) {
+            if (response != null) {
+                $('#accountCode').val(response.accountCode);
+            } else {
+                $('#accountCode').val('');
+            }
+        }
+
+    </script>
+}
+
+

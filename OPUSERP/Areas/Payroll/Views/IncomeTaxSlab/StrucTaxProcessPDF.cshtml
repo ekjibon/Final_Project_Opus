@@ -1,0 +1,99 @@
+﻿@model IncomeTaxProcessViewModel
+@{
+    ViewData["Title"] = "Tax Process";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Tax List</h5>
+        <hr>
+        <div class="container">
+     
+               
+            <div class="row">
+                <table class="table table-bordered" id="JobsTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+
+                            <th>Emplyee Name</th>
+                            <th>Tax Year Name</th>
+                            <th>Taxable Income</th>
+                            <th>Taxable Amount</th>
+                            <th>Tax Per month</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.employeesTaxes.Where(x => x.isActive == 1))
+                        {
+                            <tr>
+                                <td>@data.employeeInfo.nameEnglish</td>
+                                <td style="text-align:center">@data.taxYear.taxYearName</td>
+                                <td style="text-align:right">@data.yearlyTaxableincome?.ToString("0,0.00")</td>
+                                <td style="text-align:right">@data.yearlyTaxableamount?.ToString("0,0.00")</td>
+                                <td style="text-align:right">@data.amount?.ToString("0,0.00")</td>
+                            </tr>
+                        }
+                            <tr>
+                                <td colspan="2">Total</td>
+                               
+                                <td style="text-align:right">@Model.employeesTaxes.Sum(x=>x.yearlyTaxableincome)?.ToString("0,0.00")</td>
+                                <td style="text-align:right">@Model.employeesTaxes.Sum(x => x.yearlyTaxableamount)?.ToString("0,0.00")</td>
+                                <td style="text-align:right">@Model.employeesTaxes.Sum(x => x.amount)?.ToString("0,0.00")</td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        
+        </div>
+    </div>
+</div>
+
+
+<!-- View Service Reminders Modal-->
+
+
+@section Scripts{
+    <script>
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        $(document).ready(function () {
+
+            //$('#JobsTable').DataTable();
+
+        });
+
+       
+
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

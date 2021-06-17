@@ -1,0 +1,738 @@
+﻿@model EmployeeInfoViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="Info" asp-action="Create" method="post" id="infoCreateForm" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            @*<label for="employeeID" class="col-sm-4 col-form-label">@Model.fLang.employeeID <span class="redStar">*</span></label>*@
+                            <label for="employeeID" class="col-sm-4 col-form-label">@Model.visualEmpCodeName <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" id="employeeCode" value="" name="employeeCode">
+                                <input type="hidden" id="employeeID" name="employeeID" value="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="employeeType" class="col-sm-4 col-form-label">@Model.fLang.employeeType</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="employeeType" name="employeeType">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.employeeTypes)
+                                    {
+                                        <option value="@data.Id">@data.empType</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="sbu" class="col-sm-4 col-form-label">SBU <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="sbu" name="sbu" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.specialBranchUnits)
+                                    {
+                                        <option value="@data.Id">@data.branchUnitName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="pns" class="col-sm-4 col-form-label"> PNS </label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="pns" name="pns">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="nameEnglish" class="col-sm-2 col-form-label">@Model.fLang.name</label>
+                    <label for="nameEnglish" class="col-sm-1 col-form-label">@Model.fLang.english <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" id="nameEnglish" value="" name="nameEnglish" style="text-transform:uppercase">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="nameBangla" class="col-sm-2 col-form-label"></label>
+                    <label for="nameBangla" class="col-sm-1 col-form-label">@Model.fLang.bangla</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="nameBangla" value="" name="nameBangla">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="motherNameEnglish" class="col-sm-2 col-form-label">@Model.fLang.motherName</label>
+                    <label for="motherNameEnglish" class="col-sm-1 col-form-label">@Model.fLang.english</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="motherNameEnglish" value="" name="motherNameEnglish" style="text-transform:uppercase">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="motherNameBangla" class="col-sm-2 col-form-label"></label>
+                    <label for="motherNameBangla" class="col-sm-1 col-form-label">@Model.fLang.bangla </label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="motherNameBangla" value="" name="motherNameBangla">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="fatherNameEnglish" class="col-sm-2 col-form-label">@Model.fLang.fatherName</label>
+                    <label for="fatherNameEnglish" class="col-sm-1 col-form-label">@Model.fLang.english </label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="fatherNameEnglish" value="" name="fatherNameEnglish" style="text-transform:uppercase">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="fatherNameBangla" class="col-sm-2 col-form-label"></label>
+                    <label for="fatherNameBangla" class="col-sm-1 col-form-label">@Model.fLang.bangla</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="fatherNameBangla" value="" name="fatherNameBangla">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="nationality" class="col-sm-4 col-form-label">@Model.fLang.nationality <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="nationality" name="nationality" data-parsley-required="true">
+                                    <option value="Bangladeshi">Bangladeshi</option>
+                                    <option value="Foreigner">Foreigner</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="nationalID" class="col-sm-4 col-form-label">@Model.fLang.nationalID</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-length="[10, 30]" data-parsley-trigger="keyup" class="form-control" id="nationalID" value="" name="nationalID">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="dateOfBirth" class="col-sm-4 col-form-label">@Model.fLang.dateOfBirth</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control datePicker" id="dateOfBirth" value="" name="dateOfBirth" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="dateOfLPR" class="col-sm-4 col-form-label">@Model.fLang.dateOfLPR</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control datePicker" id="dateOfLPR" value="" name="dateOfLPR" autocomplete="off" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="birthPlace" class="col-sm-4 col-form-label">@Model.fLang.birthPlace</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="birthPlace" value="" name="birthPlace">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="homeDistrict" class="col-sm-4 col-form-label">@Model.fLang.homeDistrict</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="homeDistrict" value="" name="homeDistrict">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.districts)
+                                    {
+                                        <option value="@data.districtName">@data.districtName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row" style="display:none;">
+                            <label for="birthIdentificationNo" class="col-sm-4 col-form-label">@Model.fLang.birthIdentificationNo</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="false" data-parsley-length="[10, 30]" data-parsley-trigger="keyup" class="form-control" id="birthIdentificationNo" value="" name="birthIdentificationNo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="religion" class="col-sm-4 col-form-label">@Model.fLang.religion</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="religion" name="religion">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.religions)
+                                    {
+                                        <option value="@data.Id">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="gender" class="col-sm-4 col-form-label">@Model.fLang.gender</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="bloodGroup" class="col-sm-4 col-form-label">@Model.fLang.bloodGroup</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="bloodGroup" name="bloodGroup">
+                                    <option value="">Select</option>
+                                    <option value="O-">O-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="A+">A+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="AB+">AB+</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="maritalStatus" class="col-sm-4 col-form-label">@Model.fLang.maritalStatus</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="maritalStatus" name="maritalStatus">
+                                    <option value="">Select</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Unmarried">Unmarried</option>
+                                    <option value="Widow">Widow</option>
+                                    <option value="Separated">Separated</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="tin" class="col-sm-4 col-form-label">@Model.fLang.tin</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-length="[4, 25]" data-parsley-trigger="keyup" class="form-control" id="tin" value="" name="tin">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row" style="display:none;">
+                            <label for="seniorityNumber" class="col-sm-4 col-form-label">@Model.fLang.seniorityNumber</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="seniorityNumber" value="" name="seniorityNumber">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="disability" class="col-sm-4 col-form-label">@Model.fLang.disability</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="disability" name="disability" data-parsley-required="true">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <label for="disablityType" class="col-sm-2 col-form-label">@Model.fLang.disablityType</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="disablityType" value="" name="disablityType" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row" style="display:none;">
+                            <label for="batch" class="col-sm-4 col-form-label">@Model.fLang.batch</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="batch" value="" name="batch">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="freedomFighter" class="col-sm-4 col-form-label">@Model.fLang.freedomFighter</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="freedomFighter" name="freedomFighter">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="freedomFighterNo" class="col-sm-4 col-form-label">@Model.fLang.freedomFighterNo</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-length="[2, 30]" data-parsley-trigger="keyup" class="form-control" id="freedomFighterNo" value="" name="freedomFighterNo" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="display:none;">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="pabx" class="col-sm-4 col-form-label">@Model.fLang.pabx</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="pabx" value="" name="pabx">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="telephoneOffice" class="col-sm-4 col-form-label">@Model.fLang.telephoneOffice</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-length="[6, 20]" data-parsley-trigger="keyup" class="form-control" id="telephoneOffice" value="" name="telephoneOffice">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="telephoneResidence" class="col-sm-4 col-form-label">@Model.fLang.telephoneResidence</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-length="[6, 20]" data-parsley-trigger="keyup" class="form-control" id="telephoneResidence" value="" name="telephoneResidence">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="emailAddress" class="col-sm-4 col-form-label">@Model.fLang.emailAddress</label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="email" data-parsley-trigger="keyup" class="form-control" id="emailAddress" value="" name="emailAddress">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="emailAddressPersonal" class="col-sm-4 col-form-label">@Model.fLang.emailAddressPersonal</label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="email" data-parsley-trigger="keyup" class="form-control" id="emailAddressPersonal" value="" name="emailAddressPersonal">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="mobileNumberOffice" class="col-sm-4 col-form-label">@Model.fLang.mobileNumberOffice</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-length="[6, 20]" data-parsley-trigger="keyup" class="form-control" id="mobileNumberOffice" value="" name="mobileNumberOffice">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="mobileNumberPersonal" class="col-sm-4 col-form-label">@Model.fLang.mobileNumberPersonal</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-length="[6, 20]" data-parsley-trigger="keyup" class="form-control" id="mobileNumberPersonal" value="" name="mobileNumberPersonal">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="joiningDateGovtService" class="col-sm-4 col-form-label">@Model.fLang.joiningDateGovtService</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control datePicker" id="joiningDateGovtService" value="" name="joiningDateGovtService" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="natureOfRequitment" class="col-sm-4 col-form-label">@Model.fLang.natureOfRequitment</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="natureOfRequitment" name="natureOfRequitment">
+                                    <option value="Direct">Direct</option>
+                                    <option value="Absorbed">Absorbed</option>
+                                    <option value="ByPromotion">By Promotion</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row" style="display:none;">
+                            <label for="joiningDatePresentWorkstation" class="col-sm-4 col-form-label">@Model.fLang.joiningDatePresentWorkstation</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control datePicker" id="joiningDatePresentWorkstation" value="" name="joiningDatePresentWorkstation" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="activityStatus" class="col-sm-4 col-form-label">Activity Status<span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="activityStatus" name="activityStatus" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">InActive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="department" class="col-sm-4 col-form-label">Department<span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="department" name="department" required>
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.departments)
+                                    {
+                                        <option value="@data.Id">@data.deptName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="specialSkill" class="col-sm-4 col-form-label">@Model.fLang.specialSkill</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="specialSkill" value="" name="specialSkill">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="currentDivision" class="col-sm-4 col-form-label">@Model.fLang.currentDivision</label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="currentDivision" name="currentDivision">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.organoOrganizations)
+                                    {
+                                        <option value="@data.Id">@data.nameEN</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="joiningDesignation" class="col-sm-4 col-form-label">@Model.fLang.joiningDesignation</label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="joiningDesignation" name="joiningDesignation">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.designations)
+                                    {
+                                        <option value="@data.designationName">@data.designationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="designation" class="col-sm-4 col-form-label">@Model.fLang.designation</label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="designation" value="" name="designation">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.designations)
+                                    {
+                                        <option value="@data.designationName">@data.designationName</option>
+                                    }
+                                </select>
+                            </div>
+                            <input type="hidden" name="post" value="" id="post" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="dateofregularity" class="col-sm-4 col-form-label">@Model.fLang.dateofregularity</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control datePicker" id="dateofregularity" value="" name="dateofregularity" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="dateOfPermanent" class="col-sm-4 col-form-label">@Model.fLang.dateOfPermanent</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control datePicker" id="dateOfPermanent" value="" name="dateOfPermanent" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">                   
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="salaryStatus" class="col-sm-4 col-form-label">Salary Status<span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="salaryStatus" name="salaryStatus" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">InActive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="employeeStatusId" class="col-sm-4 col-form-label">@Model.fLang.employeeStatusId</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="employeeStatusId" name="employeeStatusId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.serviceStatuses)
+                                    {
+                                        <option value="@data.Id">@data.statusName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="col-sm-6">
+                <div class="form-group row">
+                    <label for="dateOfPermanent" class="col-sm-4 col-form-label">@Model.fLang.dateOfPermanent</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control datePicker" id="dateOfPermanent" value="" name="dateOfPermanent" autocomplete="off">
+                    </div>
+                </div>
+            </div>*@
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="salaryStatusComment" class="col-sm-4 col-form-label">Remarks</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="salaryStatusComment" name="salaryStatusComment">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="skypeId" class="col-sm-4 col-form-label">Skype Id</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="skypeId" name="skypeId" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="hrProgramId" class="col-sm-4 col-form-label">@Model.fLang.hrProgramId</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="hrProgramId" name="hrProgramId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.hrPrograms)
+                                    {
+                                        <option value="@data.Id">@data.programName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="hrUnitId" class="col-sm-4 col-form-label">@Model.fLang.hrUnitId</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="hrUnitId" name="hrUnitId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.hrUnits)
+                                    {
+                                        <option value="@data.Id">@data.unitName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="hrProgramId" class="col-sm-4 col-form-label">Function</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="functionInfoId" name="functionInfoId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.functionInfos)
+                                    {
+                                        <option value="@data.Id">@data.branchUnitName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="hrUnitId" class="col-sm-4 col-form-label">Location</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="locationId" name="locationId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.locations)
+                                    {
+                                        <option value="@data.Id">@data.branchUnitName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var posts = {};
+        $(document).ready(function () {
+            $("#personal").addClass("active");
+
+            $('#dateOfBirth').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $('#joiningDateofPresentPost').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $('#joiningDatePresentWorkstation').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $('#joiningDateGovtService').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $('#dateofregularity').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $('#dateOfPermanent').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $("#dateOfBirth").change(function () {
+                var dob = $("#dateOfBirth").val();
+                //$("#dateOfLPR").val(dob);
+            });
+
+            $("#freedomFighter").change(function () {
+                if ($("#freedomFighter").val() == 'Yes') {
+                    $("#freedomFighterNo").attr('readonly', false);
+                }
+                else {
+                    $("#freedomFighterNo").attr('readonly', true);
+                    $("#freedomFighterNo").val('');
+                }
+            });
+
+            $("#disability").change(function () {
+                if ($("#disability").val() == 'Yes') {
+                    $("#disablityType").attr('readonly', false);
+                }
+                else {
+                    $("#disablityType").attr('readonly', true);
+                    $("#disablityType").val('');
+                }
+            });
+
+            //$("#currentDivision").change(function () { Common.Ajax('GET', '/global/api/allAvailablePosts/' + $(this).val(), [], 'json', ajaxPosts); });
+
+            $("#designation").change(function () { $("#post").val(posts['"' + $(this).val() + '"']); });
+
+            $("#sbu").change(function () {
+                if ($(this).val() != '') {
+                    Common.Ajax('GET', '/global/api/getRlnSBUPNSBySBUId/' + $(this).val(), [], 'json', ajaxPNS);
+                }
+                else {
+                    var options = '<option value="">Select</option>';
+                    $('#pns').empty();
+                    $('#pns').append(options);
+                }
+            });
+        });
+
+        function ajaxPosts(response) {
+            posts = {}
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                posts['"' + item.designationName + '"'] = item.postId;
+                options += '<option value="' + item.designationName + '">' + item.designationName + '</option>';
+            });
+            $('#designation').empty();
+            //$('#designation').append(options);
+        }
+
+        function ajaxPNS(response) {
+            console.log(response);
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.pNS.Id + '">' + item.pNS.name + '</option>';
+            });
+            $('#pns').empty();
+            $('#pns').append(options);
+        }
+    </script>
+}

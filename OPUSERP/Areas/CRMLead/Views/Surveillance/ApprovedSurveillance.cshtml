@@ -1,0 +1,208 @@
+﻿
+
+@model AgreementViewModel
+@{
+    ViewData["Title"] = "Surveillance Approval List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black; font-weight:bold">Surveillance Approved List</h5>
+        <hr>
+        <div class="row" style="margin-top:0;margin-left:2px;">
+            <div class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="form-group row">
+                    <div class="col-sm-4 col-md-4 col-lg-4" style="overflow:hidden;padding:0;">
+                        <label class="control-label input-sm" style="float:left;margin-right:0">FROM</label>
+                    </div>
+                    <div class="col-sm-8 col-md-8 col-lg-8" style="padding:0;">
+                        <span style="float:left;padding-right: 1%;"> : </span>
+                        <input type="text" class="form-control input-sm" id="fdate" name="" placeholder="" style="width:96%;" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="form-group row">
+                    <div class="col-sm-4 col-md-4 col-lg-4" style="overflow:hidden;padding:0;">
+                        <label class="control-label input-sm" style="float:left;margin-right:0">TO</label>
+                    </div>
+                    <div class="col-sm-8 col-md-8 col-lg-8" style="padding:0;">
+                        <span style="float:left;padding-right: 1%;"> : </span>
+                        <input type="text" class="form-control input-sm" id="tdate" name="" placeholder="" style="width:96%;" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <input type="button" class="btn-sm btn btn-info" id="dateSearch" onclick="GetProposeList()" value="Search" />
+            </div>
+
+        </div>
+        <h5 class="card-title" style="color: black">Approved List</h5>
+        <hr>
+        <div class="container">
+            <form id="frmProposal" aria- data-parsley-validate="parsley" autocomplete="off">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <table class="table table-bordered table-striped table-responsive" id="tblitemDetails" data-parsley-required="true">
+                    <thead style="width:100%;background-color:lightgray;">
+                        <tr>
+                            <th style="width:10%">Client Name</th>
+                            <th style="width:10%">Rating Type</th>
+                            <th style="width:5%">Year</th>
+                            <th style="width:10%">Date</th>
+                            <th style="width:15%;text-align:right;">Agree. Amount</th>
+                            <th style="width:10%;text-align:right;">Rating Fees</th>
+                            <th style="width:10%;text-align:right;">Vat Amount</th>
+                            <th style="width:10%;text-align:right;">Tax Amount</th>
+                            <th style="width:10%;text-align:right;">Total Amount</th>
+                            <th style="width:10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#tblitemDetails').DataTable();
+            $("#fdate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#tdate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            //GetProposeListOwner();
+
+        });
+
+        function GetProposeList() {
+            Common.Ajax('GET', '/CRMLead/Surveillance/GetApprovedSurveillancebyRatingDate/?FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val(), [], 'json', ajaxGetAgreementDetailsbyRatingDate);
+
+        }
+        function GetProposeListOwner() {
+            Common.Ajax('GET', '/CRMLead/Surveillance/GetApprovedSurveillancebyOwner', [], 'json', ajaxGetAgreementDetails);
+
+        }
+        function ajaxGetAgreementDetails(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            $('#tblitemDetails').DataTable().destroy();
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblitemDetails tbody").empty();
+            $.each(response, function (key, value) {
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.agreement ?.leads ?.leadName + '<input type="hidden" id="leadName' + index + '" name="leadName" class="clsleadName" value="' + value.agreement ?.leads ?.leadName + '"/></td>' +
+                        '<td>' + value?.ratingYear?.ratingTypeName + '<input type="hidden" name="id"class="clsId" value="' + value.agreement.Id + '"><input type="hidden" id="ratingYearId' + index + '" name="ratingYearId" class="clsratingYearId" value="' + value.ratingYearId + '"/></td>' +
+                    '<td>' + value.ratingYear?.ratingYearName + '<input type="hidden" id="vatCategoryId' + index + '" name="vatCategoryId" class="clsvatCategoryId" value="' + value.vatCategoryId + '"/><input type="hidden" id="taxCategoryId' + index + '" name="taxCategoryId" class="clstaxCategoryId" value="' + value.taxCategoryId + '"/></td>' +
+                    '<td>' + getPurchaseDate(value.ratingDate?.toString("dd-MMM-yyyy")) + '<input type="hidden" id="ratingDate' + index + '" name="ratingDate" class="clsratingDate" value="' + getPurchaseDate(value.ratingDate?.toString("dd-MMM-yyyy")) + '"/></td>' +
+                    '<td style="text-align:right;">' + value.agreementAmount + '<input type="hidden" id="agreementAmount' + index + '" name="agreementAmount" class="clsagreementAmount" value="' + value.agreementAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.ratingAmount + '<input type="hidden" id="ratingAmount' + index + '" name="ratingAmount" class="clsratingAmount" value="' + value.ratingAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.vatAmount + '<input type="hidden" id="vatAmount' + index + '" name="vatAmount" class="clsvatAmount" value="' + value.vatAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.taxAmount + '<input class="clstaxAmount" type="hidden" id="taxAmount' + index + '" name="taxAmount"  value="' + value.taxAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.totalAmount + '<input type="hidden" id="totalAmount' + index + '" name="totalAmount" class="clstotalAmount" value="' + value.totalAmount + '"/></td>' +
+                    '<td><a onclick="EditProposeTbl(' + index + "," + value.ratingYearId + ", " + value.agreementId + "," + value.Id + ')"  title="View" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+            $('#tblitemDetails').DataTable();
+        }
+        function ajaxGetAgreementDetailsbyRatingDate(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            $('#tblitemDetails').DataTable().destroy();
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblitemDetails tbody>tr").empty();
+            $.each(response, function (key, value) {
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.agreement?.leads?.leadName + '<input type="hidden" id="leadName' + index + '" name="leadName" class="clsleadName" value="' + value.agreement?.leads?.leadName + '"/></td>' +
+                        '<td>' + value ?.ratingYear ?.ratingTypeName + '<input type="hidden" name="id"class="clsId" value="' + value.agreement.Id + '"><input type="hidden" id="ratingYearId' + index + '" name="ratingYearId" class="clsratingYearId" value="' + value.ratingYearId + '"/></td>' +
+                    '<td>' + value.ratingYear?.ratingYearName + '<input type="hidden" id="vatCategoryId' + index + '" name="vatCategoryId" class="clsvatCategoryId" value="' + value.vatCategoryId + '"/><input type="hidden" id="taxCategoryId' + index + '" name="taxCategoryId" class="clstaxCategoryId" value="' + value.taxCategoryId + '"/></td>' +
+                    '<td>' + getPurchaseDate(value.ratingDate?.toString("dd-MMM-yyyy")) + '<input type="hidden" id="ratingDate' + index + '" name="ratingDate" class="clsratingDate" value="' + getPurchaseDate(value.ratingDate?.toString("dd-MMM-yyyy")) + '"/></td>' +
+                    '<td style="text-align:right;">' + value.agreementAmount + '<input type="hidden" id="agreementAmount' + index + '" name="agreementAmount" class="clsagreementAmount" value="' + value.agreementAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.ratingAmount + '<input type="hidden" id="ratingAmount' + index + '" name="ratingAmount" class="clsratingAmount" value="' + value.ratingAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.vatAmount + '<input type="hidden" id="vatAmount' + index + '" name="vatAmount" class="clsvatAmount" value="' + value.vatAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.taxAmount + '<input class="clstaxAmount" type="hidden" id="taxAmount' + index + '" name="taxAmount"  value="' + value.taxAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.totalAmount + '<input type="hidden" id="totalAmount' + index + '" name="totalAmount" class="clstotalAmount" value="' + value.totalAmount + '"/></td>' +
+                    '<td><a onclick="EditProposeTbl(' + index + "," + value.ratingYearId + ", " + value.agreementId + "," + value.Id + ')"  title="Verify" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+            $('#tblitemDetails').DataTable();
+        }
+        function EditProposeTbl(index, ratingYearId, agreementId, Id) {
+            window.location.href = "/CRMLead/Surveillance/SurveillanceProposalApproved?id=" + agreementId + '&FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val();
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+
+
+    </script>
+}
+
+
+
+

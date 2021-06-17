@@ -1,0 +1,213 @@
+﻿@model LeaveRegisterViewModel
+
+@{
+    ViewData["Title"] = "Leave Cancel";
+    Layout = "~/Areas/HRPMSLeave/Views/Shared/_LeaveForm.cshtml";
+}
+
+@section StyleL{
+    
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Leave Cancel</h5>
+        <hr>
+        <div class="container">
+            <div class="form-group row">
+                <label for="employeeCode" class="col-sm-2 col-form-label">Employee ID</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="employeeCode" id="employeeCode">
+                    <input type="hidden" name="employeeId" id="employeeId">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="fromDate" class="col-sm-2 col-form-label">From Date</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="fromDate" id="fromDate" autocomplete="off">
+                </div>
+
+                <label for="toDate" class="col-sm-2 col-form-label">To Date</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="toDate" id="toDate" autocomplete="off">
+                </div>
+            </div>
+
+            <input type="submit" value="Submit" onclick="GetLeaveRegister()" class="btn btn-success" style="float:right; margin-top:5px;">
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Leave Cancel</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="leaveTypeTable">
+                    <thead>
+                        <tr>
+                            <th>Employee Code</th>
+                            <th>Employee Name</th>
+                            <th>Designation</th>
+                            <th>Reason</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ValidatModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <label class="modal-title pull-left" id="myModalLabel" style="color:rgb(9, 7, 161);font-size:1em;">
+                    Cancel Leave
+                </label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <br />
+            </div>
+            <div class="modal-body">
+                <form asp-area="HRPMSLeave" asp-controller="LeaveRegister" asp-action="LeaveCancel" method="post">
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label style="font-size:15px;font-weight:bold;color:black" class="control-label col-md-3">Emp Name: </label>
+                                <label style="font-size:15px;font-weight:bold;color:black" class="control-label col-md-9" id="lblUser"></label>
+                            </div>
+                            <div class="form-group row">
+                                <label style="font-size:15px;font-weight:bold;color:black" class="control-label col-md-3">From Date: </label>
+                                <label style="font-size:15px;font-weight:bold;color:black" class="control-label col-md-9" id="lblStartTime"></label>
+
+                            </div>
+
+                            <div class="form-group row">
+                                <label style="font-size:15px;font-weight:bold;color:black" class="control-label col-md-3">To Date: </label>
+                                <label style="font-size:15px;font-weight:bold;color:black" class="control-label col-md-9" id="lblEndTime"></label>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label style="font-size:15px;font-weight:bold;color:black" class="control-label col-md-3">Remarks</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="txtRemarks" name="txtRemarks" placeholder="Remarks">
+                                    <input type="hidden" id="registerId" name="id" value="0">
+                                </div>
+                            </div>
+                            <input type="submit" value="submit" class="btn btn-success" style="float:right" />
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsL{
+    <script>
+        $(document).ready(function () {
+            $('#leaveType').addClass("active");
+            $('#leaveTypeTable').DataTable();
+            $('#fromDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $('#toDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            Common.Ajax('GET', '/global/api/GetAllEmployeeInfo/', [], 'json', ajaxEmployeeList);
+        });
+
+        function ajaxEmployeeList(response) {
+            //console.log(response);
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode + ' - ' + option.nameEnglish;
+                obj.name = option.nameEnglish;
+                obj.designation = option.designation;
+                obj.orgType = option.orgType;
+                obj.nationalID = option.nationalID;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#employeeCode').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#employeeId").val(ui.item.key);
+                }
+            });
+        }
+
+        function GetLeaveRegister() {
+            var id = $("#employeeId").val();
+            var fromDate = $("#fromDate").val();
+            var toDate = $("#toDate").val();
+            if (id == "" && fromDate == "" && toDate == "") {
+                alert("Please Enter Employee Id and Date Range Correctly !!");
+            } else {
+                Common.Ajax('GET', '/global/api/GetAllLeaveRegisterByEmpIdAndDateRange/' + id + '/' + fromDate + '/' + toDate, [], 'json', ajaxLeave);
+            }
+        }
+
+        function ajaxLeave(response) {
+            $('#leaveTypeTable').DataTable().destroy();
+            //console.log(response);
+            var dtTable = $("#leaveTypeTable");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            $.each(response, function (key, value) {
+                var trHtml = '<tr>' +
+                    '<td>' + value.employee.employeeCode + '</td>' +
+                    '<td>' + value.employee.nameEnglish + '</td>' +
+                    '<td>' + value.employee.designation + '</td>' +
+                    '<td>' + value.purposeOfLeave + '</td>' +
+                    '<td>' + formatDate(value.leaveFrom) + '</td>' +
+                    '<td>' + formatDate(value.leaveTo) + '</td>' +
+                    '<td><a class="btn btn-info" data-toggle="modal" data-target="#ValidatModal" onclick="GetStatus(' + value.Id + ",'" + value.employee.nameEnglish + "'" + ',' + "'" + formatDate(value.leaveFrom) + "'" + ',' + "'" + formatDate(value.leaveTo) + "'" + ')" title="View" href="#"><i class="fa fa-edit"></i></a></td>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+            $('#leaveTypeTable').DataTable();
+        }
+
+        function GetStatus(Id, name, from, to) {
+            $('#registerId').val(Id);
+            $('#lblUser').html(name);
+            $('#lblStartTime').html(from);
+            $('#lblEndTime').html(to);
+        }
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            date = new Date(date);
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+
+            return day + '-' + monthNames[monthIndex] + '-' + year;
+        }
+    </script>
+}
+
+

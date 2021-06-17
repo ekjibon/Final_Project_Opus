@@ -1,0 +1,107 @@
+﻿@model JobRequisitionViewModel
+@{
+    ViewData["Title"] = "Job Grid View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        p {
+            color: black;
+        }
+
+        h6 {
+            color: black;
+        }
+
+        b {
+            color: black;
+        }
+
+        .card-img-top {
+            height: 200px;
+        }
+    </style>
+}
+
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="card">
+                @foreach (var data in Model.jobRequisitions)
+                {
+                <div class="card">
+                    <h5 class="card-header">@data.jobTitle.</h5>
+                    <div class="card-body">
+                        <h6 class="card-title">Job Ref. No   : @data.jobNo</h6>
+                        <h6 class="card-title">Justification : @data.justification</h6>
+                        <h6 class="card-title">Job Location  : @data.jobLocation</h6>
+                        <h6 class="card-title">Vacancy       : @data.vacancy</h6>
+                        <h6 class="card-title">Salary        : @data.salary</h6>
+                        <h6 class="card-title">Deadline      : @data.deadline?.ToString("yyyy-MM-dd")</h6>
+                        @*<h6 class="card-title">Deadline      : @data.jobPost?.deadline?.ToString("yyyy-MM-dd")</h6>*@
+                        @*<a href="~/News/NewsInfo/Details/@data.Id" class="btn btn-warning">Read More &rarr;</a>*@
+                        <p class="card-text">@data.jobContext</p>
+                        <a href="~/Recruitment/JobPost/Apply/@data.Id" class="btn btn-primary">Go to details</a>
+                    </div><br />
+                </div>
+                    
+                }
+
+            </div>
+            @*<div class="card">
+                    <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <div class="col-10">
+                            <h4 class="m-0 font-weight-bold text-primary">Job List Grid View</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @foreach (var data in Model.jobRequisitions)
+                        {
+                             Blog Post
+                            <div class="col-4" style="padding:10px">
+                                <div class="card ">
+                                    <img class="card-img-top" src="~/@data.url" alt="Card image cap">
+                                    <div class="card-body">
+                                        <h6 class="card-title">@data.jobNo</h6>
+                                        <h6 class="card-title">@data.justification</h6>
+                                        <h6 class="card-title">@data.jobLocation</h6>
+                                        <h6 class="card-title">@data.vacancy</h6>
+                                        <h6 class="card-title">@data.salary</h6>
+                                        <h6>Appointment Date : @data.appointmentDate?.ToString("yyyy-MM-dd")</h6>
+                                        <a href="~/News/NewsInfo/Details/@data.Id" class="btn btn-warning">Read More &rarr;</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+            </div>*@
+
+            <br />
+            <br />
+            <br />
+        </div>
+    </div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            //$('#batchCreateDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $(".card-title").each(function (i) {
+                len = $(this).text().length;
+                if (len > 30) {
+                    $(this).text($(this).text().substr(0, 30) + '...');
+                }
+            });
+        });
+
+        function TransferId(id) {
+            $('#eventId').val(id)
+        }
+
+
+    </script>
+}

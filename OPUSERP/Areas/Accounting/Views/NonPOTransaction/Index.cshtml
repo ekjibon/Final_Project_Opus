@@ -1,0 +1,745 @@
+﻿@model DailyBillReceiveViewModel
+@{
+    ViewData["Title"] = "Non PO Tansaction";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+    //int masterId = Convert.ToInt32(ViewBag.masterId);
+}
+
+<div class="card p-0 m-0">
+    <div class="row">
+        <div class="col-sm-10">
+            <span style="font-size:1.5em;font-weight:700;color:gray;text-align:center;">Daily Vendor Bill Collection</span>
+        </div>
+        @*<div class="col-sm-2 text-right">
+                <a class="btn btn-sm btn-dark" href="/Accounting/PaymentVoucher/PaymentVoucherList">Back To List</a>
+            </div>*@
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="formNonPOTransaction" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Transaction Basic</u></label>
+                    <span>
+                        <a class="btn btn-success btn-sm ml-2" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="slNo" class="col-sm-4 col-form-label text-left">Serial Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="SLNo" id="slNo" value="@Model.SLNo" readonly />
+                                    <input type="hidden" name="billReceiveId" id="billReceiveId" value="@Model.dailyBillReceive?.Id" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="processNo" class="col-sm-4 col-form-label text-left">Process Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="ProcessNo" id="processNo" value="@Model.ProcessNo" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vendorName" class="col-sm-4 col-form-label text-left">Vendor Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="vendorName" id="vendorName" value="@Model.dailyBillReceive?.supplier?.organizationName" class="form-control input-group-sm read" />
+                                    <input type="hidden" name="supplierId" id="supplierId" value="@Model.dailyBillReceive?.supplier?.Id" class="form-control input-group-sm read" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="invoiceNo" class="col-sm-4 col-form-label text-left">Invoice Number<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="InvoiceNo" id="invoiceNo" value="@Model.dailyBillReceive?.InvoiceNo" />
+                                </div>
+                            </div>
+                            @*<div class="form-group row">
+                                    <label for="nonListedVendorName" class="col-sm-4 col-form-label text-left">Non Listed Vendor Name</label>
+                                    <div class="col-sm-8">
+                                        <input name="nonListedVendorName" id="nonListedVendorName" value="@Model.dailyBillReceive?." class="form-control input-group-sm read text-left" />
+                                    </div>
+                                </div>*@
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="billReceiveDate" class="col-sm-4 col-form-label text-left">Bill Receive Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="billReceiveDate" id="billReceiveDate" value="@Model.dailyBillReceive?.BillReceiveDate?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+                                <label for="poNo" class="col-sm-4 col-form-label text-left">PO No</label>
+                                <div class="col-sm-8">
+                                    <input name="poNo" id="poNo" value="@Model.dailyBillReceive?.PoNo" class="form-control input-group-sm read text-left" />
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label for="itemName" class="col-sm-4 col-form-label text-left">Item Name<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="itemName" id="itemName" value="@Model.dailyBillReceive?.Item?.itemName" class="form-control input-group-sm read text-left" />
+                                    <input type="hidden" name="itemId" id="itemId" value="@Model.dailyBillReceive?.Item?.Id" class="form-control input-group-sm read text-right" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="returnProcessNo" class="col-sm-4 col-form-label text-left">Return Process Number</label>
+                                <div class="col-sm-8">
+                                    <input name="returnProcessNo" id="returnProcessNo" value="@Model.dailyBillReceive?.ReturnProcessNo" class="form-control input-group-sm read text-left" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="notProcessNo" class="col-sm-4 col-form-label text-left">Not Return Process No</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" name="NoReturn" id="NoReturn" value="1" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Transaction Details</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="vatClaimed" class="col-sm-4 col-form-label">VAT Claimed</label>
+                                <div class="col-sm-8">
+                                    <div id="vatClaimed" class="form-control" style="padding-top:4px;">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="vatClaimedYes" value="1" name="IsClaimed">
+                                            <label class="form-check-label" for="vatClaimed">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="vatClaimedNo" value="0" name="IsClaimed">
+                                            <label class="form-check-label" for="vatClaimedNo">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatClaimable" class="col-sm-4 col-form-label">VAT Claimable</label>
+                                <div class="col-sm-8">
+                                    <div id="vatClaimable" class="form-control" style="padding-top:4px;">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="vatClaimableYes" value="1" name="isClaimable">
+                                            <label class="form-check-label" for="vatClaimableYes">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="vatClaimableNo" value="0" name="isClaimable">
+                                            <label class="form-check-label" for="vatClaimableNo">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatChalanDate" class="col-sm-4 col-form-label text-left">VAT Chalan Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="ChalanDate" id="vatChalanDate" value="@Model.dailyBillReceive?.ChalanDate?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="vatChalanAttached" class="col-sm-4 col-form-label">VAT Chalan Attached</label>
+                                <div class="col-sm-8">
+                                    <div id="vatChalanAttached" class="form-control" style="padding-top:4px;">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="vatChalanAttachedYes" name="ischallan" value="1">
+                                            <label class="form-check-label" for="vatChalanAttachedYes">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="vatChalanAttachedNo" name="ischallan" value="0">
+                                            <label class="form-check-label" for="vatChalanAttachedNo">No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="status" class="col-sm-4 col-form-label">Status</label>
+                                <div class="col-sm-8">
+                                    <div id="status" class="form-control" style="padding-top:4px;">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="nonPo" name="status">
+                                            <label class="form-check-label" for="nonPo">Non PO</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="agreement" name="status">
+                                            <label class="form-check-label" for="agreement">Agreement</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatNo" class="col-sm-4 col-form-label text-left">VAT Number</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="vatNumber" id="vatNo" value="@Model.dailyBillReceive.vatNumber" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="notVatNo" class="col-sm-4 col-form-label text-left">Not VAT No</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" name="NoVat" id="NoVat" value="1" class="form-control" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Transaction Amount and Payment</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="usetDeptResponsible" class="col-sm-4 col-form-label text-left">User Dept. Responsible</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" name="usetDeptResponsible" id="usetDeptResponsible" value="@Model.dailyBillReceive?.employeeInfo?.nameEnglish" class="form-control input-group-sm" />
+                                    <input type="hidden" name="ResposneemployeeInfoId" id="ResposneemployeeInfoId" value="@Model.dailyBillReceive?.employeeInfo?.Id" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="nonPoDept" class="col-sm-4 col-form-label text-left">Non PO Department</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" name="nonPoDept" id="nonPoDept" value="@Model.dailyBillReceive?.NonDepartment?.deptName" class="form-control input-group-sm" />
+                                    <input type="hidden" name="NonDepartmentId" id="NonDepartmentId" value="@Model.dailyBillReceive?.NonDepartment?.Id" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="responsible" class="col-sm-4 col-form-label text-left">Responsible Person</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" name="responsiblename" id="responsiblename" value="@Model.dailyBillReceive?.employeeInfo?.nameEnglish" class="form-control input-group-sm" />
+                                    <input type="hidden" name="employeeInfoId" id="employeeInfoId" value="@Model.dailyBillReceive?.employeeInfo?.Id" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="chequeNo" class="col-sm-4 col-form-label text-left">Cheque No</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="ChequeNo" id="chequeNo" value="@Model.dailyBillReceive?.ChequeNo" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="billPaymentDate" class="col-sm-4 col-form-label text-left">Bill Payment Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="PaymentDate" id="billPaymentDate" value="@Model.dailyBillReceive?.PaymentDate?.ToString("dd-MMM-yyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="expBillReturnDate" class="col-sm-4 col-form-label text-left">Expected Bill Return Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="BillReturnDate" id="expBillReturnDate" value="@Model.dailyBillReceive.BillReturnDate?.ToString("dd-MMM-yyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="sendDeptDate" class="col-sm-4 col-form-label text-left">Send to Department Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="SentToDepDate" id="sendDeptDate" value="@Model.dailyBillReceive.SentToDepDate?.ToString("dd-MMM-yyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="deptRecvDate" class="col-sm-4 col-form-label text-left">Receive from Department Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="ReceiveDepDate" id="deptRecvDate" value="@Model.dailyBillReceive.ReceiveDepDate?.ToString("dd-MMM-yyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vendorPayRecvDate" class="col-sm-4 col-form-label text-left">Vendor Payment Receive Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="VendorPayReceiveDate" id="vendorPayRecvDate" value="@Model.dailyBillReceive.VendorPayReceiveDate?.ToString("dd-MMM-yyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="chqRcvFinDate" class="col-sm-4 col-form-label text-left">Cheque Receive from Finance Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="CheckReceiveDate" id="chqRcvFinDate" value="@Model.dailyBillReceive.CheckReceiveDate?.ToString("dd-MMM-yyy")" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="grossBillAmount" class="col-sm-4 col-form-label text-left">Gross Bill Amount</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="number" name="GBamount" id="grossBillAmount" onclick="CalculationNetTotal()" onkeyup="CalculationNetTotal()" value="@Model.dailyBillReceive?.GBamount?.ToString("0.00")" class="form-control input-group-sm text-right" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="commision" class="col-sm-4 col-form-label text-left">Commission (if any)</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="number" name="Commission" id="commision" value="@Model.dailyBillReceive?.Commission?.ToString("0.00")" onkeyup="CalculationNetTotal()" onclick="CalculationNetTotal()" class="form-control input-group-sm text-right" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vat" class="col-sm-4 col-form-label text-left">VAT</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="number" name="Vat" id="vat" value="@Model.dailyBillReceive?.Vat?.ToString("0.00")" onkeyup="CalculationNetTotal()" onclick="CalculationNetTotal()" class="form-control input-group-sm text-right" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="others" class="col-sm-4 col-form-label text-left">Others</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="number" name="Other" id="others" value="@Model.dailyBillReceive?.Other?.ToString("0.00")" onkeyup="CalculationNetTotal()" onclick="CalculationNetTotal()" class="form-control input-group-sm text-right" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="totalBillAmount" class="col-sm-4 col-form-label text-left">Total Bill Amount</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="number" name="Total" id="totalBillAmount" value="@Model.dailyBillReceive?.Total?.ToString("0.00")" class="form-control input-group-sm text-right" readonly />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div>
+                                <p style="color:green;">Bill Return Info</p>
+                            </div>
+                            <div class="form-group row">
+                                <label for="billReturnDate" class="col-sm-4 col-form-label text-left">Bill Return Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="billReturnDate" id="billReturnDate" value="@Model.dailyBillReceive?.BillReturnDate?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="comments" class="col-sm-4 col-form-label text-left">Comments</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="ReturnComments" id="comments" value="@Model.dailyBillReceive?.ReturnComments" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="text-align:right">
+                            <input type="submit" id="btnSaveVoucher" value="Save" class="btn btn-info btn-sm" style="width:90px;" />&nbsp;&nbsp;
+                            <input type="button" onclick="RefreshAll()" id="btnRefesh" value="Refresh" class="btn btn-outline-secondary btn-sm" style="width:90px;" />&nbsp;&nbsp;
+                            @*<input type="button" id="btnReview" value="Review" class="btn btn-danger btn-sm" style="width:90px;" />*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+
+        <div style="height:5px;"></div>
+        <div class="card" hidden>
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Edit Instruction</u></label>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 p-0">
+                        <div class="form-group row">
+                            <label for="fromDate" class="col-sm-4 col-form-label text-left">Date From</label>
+                            <div class="col-sm-8 input-group">
+                                <input name="fromDate" id="fromDate" class="form-control input-group-sm" />
+                                <div class="input-group-prepend">
+                                    <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="vendorName" class="col-sm-4 col-form-label text-left">Vendor Name</label>
+                            <div class="col-sm-8 input-group">
+                                <input name="vendorName" id="vendorName" class="form-control input-group-sm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="toDate" class="col-sm-4 col-form-label text-left">Date To</label>
+                            <div class="col-sm-8 input-group">
+                                <input name="toDate" id="toDate" class="form-control input-group-sm" />
+                                <div class="input-group-prepend">
+                                    <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="processNo" class="col-sm-4 col-form-label text-left">Process No</label>
+                            <div class="col-sm-8 input-group">
+                                <input name="processNo" id="processNo" class="form-control input-group-sm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="text-align:right">
+                        <input type="button" id="btnSearch" value="Search" class="btn btn-info btn-sm" style="width:90px;" />
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <div class="card mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">List</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <table class="table table-striped table-bordered" id="nonPOTrTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Process No</th>
+                                            <th>Vendor Name</th>
+                                            <th>PO No</th>
+                                            <th>Bill Receive Date</th>
+                                            <th>Bill Payment Date</th>
+                                            <th>View</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>P123456</td>
+                                            <td>M/S Business Trading</td>
+                                            <td>PO123968</td>
+                                            <td>01/01/2020</td>
+                                            <td>09/01/2020</td>
+                                            <td>View</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+
+
+
+
+@section ScriptsV{
+
+
+    <script type="text/javascript">
+        function RefreshAll() {
+            window.location.href = "/Accounting/NonPOTransaction/Index?Id=0";
+            };
+        function CalculationNetTotal() {
+            var grossTotal = 0; var grossDiscount = 0; var grossVAT = 0; var grossOther = 0;
+
+            if ($("#grossBillAmount").val() != "") {
+                grossTotal = parseFloat($("#grossBillAmount").val());
+            }
+
+            if ($("#commision").val() != "") {
+                grossDiscount = parseFloat($("#commision").val());
+            }
+
+            if ($("#vat").val() != "") {
+                grossVAT = parseFloat($("#vat").val());
+            }
+            if ($("#others").val() != "") {
+                grossOther = parseFloat($("#others").val());
+            }
+
+
+
+            var Net = (grossTotal + grossVAT + grossDiscount + grossOther);
+
+            $("#totalBillAmount").val(Net.toFixed(2));
+
+        }
+        $(document).ready(function () {
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+            $('.haveSubledger').hide();
+            window.localStorage.clear("holdIndex");
+            //$('#voucherDate').datepicker({
+            //    uiLibrary: 'bootstrap4'
+            //});
+            $("#billReturnDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $('#nonPOTrTable').DataTable();
+
+            $("#billReceiveDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#vatChalanDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#billPaymentDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#expBillReturnDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#sendDeptDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#deptRecvDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#vendorPayRecvDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#chqRcvFinDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+
+            Common.Ajax('GET', '/global/api/getItem', [], 'json', GetItem);
+            Common.Ajax('GET', '/global/api/GetSupplier', [], 'json', GetSupplier);
+            Common.Ajax('GET', '/global/api/GetEmployeer', [], 'json', GetEmployeer);
+            Common.Ajax('GET', '/global/api/GetDepartment', [], 'json', GetDepartment);
+
+            if ('@Model.dailyBillReceive.NoVat' == '1') {
+                $("#NoVat").attr("checked", true);
+            }
+            else
+            {
+                $("#NoVat").attr("checked", false);
+            }
+            if ('@Model.dailyBillReceive.NoReturn' == '1') {
+                $("#NoReturn").attr("checked", true);
+            }
+            else
+            {
+                $("#NoReturn").attr("checked", false);
+            }
+            if ('@Model.dailyBillReceive.IsClaimed' == '1') {
+                $("#vatClaimedYes").attr("checked", true);
+                $("#vatClaimedNo").attr("checked", false);
+            }
+            else
+            {
+                $("#vatClaimedYes").attr("checked", false);
+                $("#vatClaimedNo").attr("checked", true);
+            }
+            if ('@Model.dailyBillReceive.isClaimable' == '1') {
+                $("#vatClaimableYes").attr("checked", true);
+                $("#vatClaimableNo").attr("checked", false);
+            }
+            else
+            {
+                $("#vatClaimableYes").attr("checked", false);
+                $("#vatClaimableNo").attr("checked", true);
+            }
+            if ('@Model.dailyBillReceive.ischallan' == '1') {
+                $("#vatChalanAttachedYes").attr("checked", true);
+                $("#vatChalanAttachedNo").attr("checked", false);
+            }
+            else
+            {
+                $("#vatChalanAttachedYes").attr("checked", false);
+                $("#vatChalanAttachedNo").attr("checked", true);
+            }
+             if ('@Model.dailyBillReceive.IsPo' == '1') {
+                 $("#nonPo").attr("checked", true);
+                 $("#agreement").attr("checked", false);
+            }
+            else
+            {
+                 $("#nonPo").attr("checked", false);
+                 $("#agreement").attr("checked", true);
+            }
+
+            $("#btnSaveVoucher").click(function () {
+                var data = $("#formNonPOTransaction").serialize();
+
+                if ($("#invoiceNo").val() == "") {
+                    swal('Warning', 'Entry Invoice No!', 'warning');
+                    return false;
+                }
+                if ($("#itemName").val() == "") {
+                  swal('Warning', 'Select Item!', 'warning');
+                  return false;
+                }
+
+                if ($("#totalBillAmount").val() == "") {
+                  swal('Warning', 'Amount Empty!', 'warning');
+                  return false;
+              }
+
+
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Accounting/NonPOTransaction/Index',
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            window.location.href = "/Accounting/NonPOTransaction/DailyBillReceiveList";
+                        }
+                    });
+                });
+
+                return false;
+            });
+
+
+
+        });
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        function GetItem(response) {
+            //$('#itemName').empty();
+            //$("#itemId").val('');
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                //console.log(option.itemName);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                lstParticular[lstParticular.length] = obj;
+
+            });
+            $('#itemName').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#itemId').val(ui.item.key);
+                    $("#itemName").val(ui.item.value);
+
+
+                }
+            });
+        }
+
+        function GetSupplier(response) {
+            //$('#itemName').empty();
+            //$("#itemId").val('');
+           // console.log(response);
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.organizationName;
+                lstParticular[lstParticular.length] = obj;
+
+            });
+            $('#vendorName').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#supplierId').val(ui.item.key);
+                    $("#vendorName").val(ui.item.value);
+
+
+                }
+            });
+        }
+        function GetEmployeer(response) {
+            //$('#itemName').empty();
+            //$("#itemId").val('');
+            // console.log(response);
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish;
+                lstParticular[lstParticular.length] = obj;
+
+            });
+            $('#responsiblename').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#employeeInfoId').val(ui.item.key);
+                    $("#responsiblename").val(ui.item.value);
+
+
+                }
+            });
+            $('#usetDeptResponsible').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#ResposneemployeeInfoId').val(ui.item.key);
+                    $("#usetDeptResponsible").val(ui.item.value);
+
+
+                }
+            });
+        }
+
+        function GetDepartment(response) {
+            //$('#itemName').empty();
+            //$("#itemId").val('');
+            // console.log(response);
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.deptName;
+                lstParticular[lstParticular.length] = obj;
+
+            });
+            $('#nonPoDept').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#NonDepartmentId').val(ui.item.key);
+                    $("#nonPoDept").val(ui.item.value);
+
+
+                }
+            });
+
+        }
+
+    </script>
+}
+
+@section StyleV{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+
+
+

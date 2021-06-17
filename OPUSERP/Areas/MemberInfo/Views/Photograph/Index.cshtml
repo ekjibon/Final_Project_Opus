@@ -1,0 +1,69 @@
+﻿@model PhotographViewModel
+@{
+    ViewData["Title"] = "Photograph";
+    Layout = "~/Areas/MemberInfo/Views/Shared/_EmployeeForm.cshtml";
+}
+
+<style>
+    .redStar {
+        color: red;
+    }
+</style>
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">@Model.fLang.memberPhoto</h5>
+            </div>
+            <div class="col-4">
+                <h6 class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="MemberInfo" asp-controller="Photograph" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <div class="col-5">
+                        <img id="user_img_current" style="width:200px;height:200px" src="~/@Model.photograph.url" alt="" class="img-thumbnail float-left">
+                        <input type="hidden" id="hiddenFile" />
+                    </div>
+                    <div class="col-7">
+                        <img id="user_img" style="width:200px;height:200px" src="~/images/user.png" alt="" class="img-thumbnail float-left">
+                        <input type="hidden" name="employeeID" value="@ViewBag.employeeID" />
+                        <input type="hidden" name="photographID" value="@Model.photograph.Id" />
+                        <input type="file" title="Photo Upload" id="imagePath" data-parsley-required="true" data-parsley-required-message="File is not selected." name="empPhoto" class="btn btn-default btn-sm pull-right" accept="image/jpg, image/jpeg, image/png" data-parsley-trigger="change" data-parsley-max-file-size="1500" />
+                        <span style="float:left;" class="redStar">*</span>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(document).ready(function () {
+            $("#photo").addClass("active");
+            $("#imagePath").change(function () {
+                readURL(this);
+            });
+        });
+    </script>
+}
+

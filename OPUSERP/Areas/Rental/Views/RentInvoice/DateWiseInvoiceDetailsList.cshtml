@@ -1,0 +1,129 @@
+﻿@model HallRentalViewModel
+@{
+    ViewData["Title"] = "DateWiseInvoiceDetailsList";
+}
+
+@section Style{
+    <style>
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Hall Booking list for &nbsp;&nbsp;<span>@Model.rentalDate?.ToString("dd-MMM-yyyy")</span></h5>
+            </div>
+            <div class="col-6">
+                <a href="/Rental/RentInvoice/HallRental?id=0" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Add New</a>
+                <a href="/Rental/RentInvoice/HallRentalList" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Back to Calender</a>
+            </div>
+        </div>
+        <hr>
+        @*<div class="row">
+                <div class="col-6">
+                    <button style="background-color:#024972; float:left;" class="btn btn-info btn-sm" onclick="Calender()">Calender View</button>
+                    <button style="background-color:#024972; float:left;" class="btn btn-info btn-sm" onclick="List()">List View</button>
+                </div>
+                <div class="col-6">
+                </div>
+            </div>*@
+        <br />
+        <div class="container">
+            @*<div class="row" id='calendar' style="height:600px; width:1000px"></div>*@
+            <div class="row" id="list">
+                <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                <div class="col-12">
+                    <table class="table table-bordered table-striped table-responsive" id="tblInvoiceList" data-parsley-required="true">
+                        <thead style="width:100%;background-color:lightgray;">
+                            <tr>
+                                <th>SL#</th>
+                                <th>Action</th>
+                                <th>Status</th>
+                                <th class="text-center">Rental Date</th>
+                                <th>Customer Name</th>
+                                <th class="text-right">Phone No</th>
+                                <th>Hall Name</th>
+
+                                <th>Rental Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                                @foreach (var item in Model.hallRentalApplicationInfos)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>
+                                            @if (item.isPaid == 1)
+                                            {
+                                                <a class="btn btn-success" href="/Rental/RentInvoice/HallRentalReportPdf?id=@item.Id" target="_blank" title="Rental Report"><i class="fa fa-print"></i></a>
+                                            }
+                                            @if (item.status == 3 && item.isPaid != 1)
+                                            {
+                                                <a href="/Rental/RentInvoice/UpdateHallRentalPaymentStatus?id=@item.Id" class="btn btn-success" title="Payment Status">Pay</a>
+                                                @*<a href="/Rental/RentInvoice/UpdateHallRentalPaymentStatusDateWise?id=@item.Id&datetime=@item.rentalDate.ToString()" class="btn btn-success" title="Payment Status">Pay</a>*@
+                                            }
+
+
+                                            <a class="btn btn-info" href="/Rental/RentInvoice/HallRental?id=@item.Id" title="Edit Information"><i class="fa fa-edit"></i></a>
+                                        </td>
+                                        @if (item.isPaid == 1)
+                                        {
+                                            <td>
+                                                <span class="badge badge-success">Paid</span>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            @if (item.status == null || item.status == 0)
+                                            {
+                                                <td>   <span class="badge badge-info">pending</span></td>
+                                            }
+
+                                            else if (item.status == 1)
+                                            {
+                                                <td>
+                                                    <span class="badge badge-secondary">Applied</span>
+                                                </td>
+                                            }
+                                            else if (item.status == 3)
+                                            {
+                                                <td>
+                                                    <span class="badge badge-secondary">Approved</span>
+                                                </td>
+                                            }
+                                            else if (item.status == 4)
+                                            {
+                                                <td>
+                                                    <span class="badge badge-danger">Canceled</span>
+                                                </td>
+                                            }
+                                        }
+                                        <td class="text-right">@item.rentalDate</td>
+                                        <td>@item.applicantName</td>
+                                        <td class="text-center">@item.mobileNo</td>
+                                        <td>@item.hallInfo.hallName</td>
+
+                                        <td>@item.hallRentalShift.shiftName </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#tblInvoiceList").dataTable();
+        });
+
+    </script>
+}

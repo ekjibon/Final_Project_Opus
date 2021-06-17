@@ -1,0 +1,397 @@
+﻿@model BonousStructureViewModel
+@{
+    ViewData["Title"] = "Bonus Rule";
+    Layout = "~/Areas/Payroll/Views/Shared/_SalaryMasterForm.cshtml";
+}
+
+
+@section StyleMD{
+
+    <style>
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Bonus Rule</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="SalaryMaster" asp-action="BonousStructuree" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="form-group row">
+                            <label for="bonusCategoryId" class="col-sm-3 col-form-label">Rules Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <select name="bonusCategoryId" id="bonusCategoryId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.bonousCategories)
+                                    {
+                                        <option value="@data.Id">@data.bonousCategoryName</option>
+                                    }
+                                </select>
+                                <input type="hidden" id="bonousStructureId" name="bonousStructureId" value=0>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group row">
+                            <label for="salaryCalulationTypeId" class="col-sm-5 col-form-label">Calculation Mode <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select name="salaryCalulationTypeId" id="salaryCalulationTypeId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.salaryCalulationTypes)
+                                    {
+                                        <option value="@data.Id">@data.salaryCalulationTypeName</option>
+                                    }
+                                </select>
+                                <input type="hidden" id="bonusRuleId" name="bonusRuleId" value=0>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="form-group row">
+                            <label for="BonousSubCategoryId" class="col-sm-3 col-form-label">Sub Rules Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <select name="BonousSubCategoryId" id="BonousSubCategoryId" class="form-control" data-parsley-required="true"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group row">
+                            <label for="percentAmount" class="col-sm-5 col-form-label">Percentage/Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <input type="number" class="form-control" id="percentAmount" name="percentAmount" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="form-group row" id="divHideShow">
+                            <label for="minMonthValue" class="col-sm-3 col-form-label">From</label>
+                            <div class="col-sm-3">
+                                <input type="number" class="form-control" id="minMonthValue" value="0" name="minMonthValue">
+                            </div>
+                            <div class="col-sm-3">
+                                <select class="form-control" id="monthYearType" name="monthYearType">
+                                    <option value="Month">Month</option>
+                                    <option value="Year">Year</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="number" class="form-control" id="maxMonthValue" value="0" name="maxMonthValue">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group row">
+                            <label for="bonousBasedOn" class="col-sm-5 col-form-label">Based On <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="bonousBasedOn" name="bonousBasedOn" data-parsley-required="true">
+                                    <option value="Basic">Basic</option>
+                                    <option value="Gross">Gross</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="form-group row">
+                            <label for="hasEmployee" class="col-sm-3 col-form-label">Tag Employee?</label>
+                            <div class="col-sm-2">
+                                <input type="checkbox" class="form-control" id="hasEmployee" value="0" name="hasEmployee">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group row">
+                            <label for="isActive" class="col-sm-5 col-form-label">Is Active? <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="isActive" name="isActive" data-parsley-required="true">
+                                    <option value="1">Active</option>
+                                    <option value="0">InActive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    @*<div class="col-sm-4">
+                            <div class="form-group row">
+                                <input type="checkbox" class="form-control" id="hasEmployee" value="0" name="hasEmployee">
+                            </div>
+
+
+                        </div>*@
+                    <div class="col-sm-12" style="margin-bottom:15px;" id="divEmployee">
+
+                        <div class="card">
+                            <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Employee's List</label>
+                            </div>
+                            <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                <div class="row" id="TaskCompleteFollowerList" style="padding:10px;"></div><br />
+                                <div class="form-group row">
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="employeeName">
+                                        <input type="hidden" class="form-control" id="employeeInfoId" name="employeeInfoId">
+                                        <input type="hidden" class="form-control" id="TaskIDEmpIDFollower" name="taskIdForFollower">
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <a class="btn btn-success" title="Add Employee" onclick="AddGroupFollower()" style="color:white" id="addVerifier"><i class="fa fa-plus"></i></a>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Bonus Rule List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Bonus Rule</th>
+                            <th>Bonus Sub Rule</th>
+                            <th>Range</th>
+                            <th>Mode</th>
+                            <th>Based On</th>
+                            <th>Percentage/Amount</th>
+                            <th>Is Active?</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.bonousStructures)
+                        {
+                            <tr>
+                                <td>@data.bonousSubCategory?.bonousCategory?.bonousCategoryName</td>
+                                <td>@data.bonousSubCategory?.bonousSubCategoryName</td>
+                                <td>@data.minMonthValue-@data.maxMonthValue @data.monthYearType</td>
+                                <td>@data.salaryCalulationType?.salaryCalulationTypeName</td>
+                                <td>@data.bonousBasedOn</td>
+                                <td>@data.percentAmount</td>
+                                <td>
+                                    @if (data.isActive == 1)
+                                    {
+                                        <label>Active</label>
+                                    }
+                                    else
+                                    {
+                                        <label>InActive</label>
+                                    }
+                                </td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.salaryCalulationTypeId','@data.bonousSubCategory.bonousCategoryId','@data.BonousSubCategoryId','@data.bonousBasedOn','@data.percentAmount','@data.monthYearType','@data.minMonthValue','@data.maxMonthValue','@data.isActive','@data.hasEmployee')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+
+            $('#educationalTable').DataTable();
+            $('#divHideShow').hide();
+            $('#divEmployee').hide();
+
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+
+            $('#bonusCategoryId').change(function () {
+                let bonusCategoryId = $('#bonusCategoryId').val();
+                Common.Ajax('GET', '/api/global/GetBonusSubCategoryByMasterId/' + bonusCategoryId, [], 'json', ajaxGetBonusSubCategoryByMasterId);
+                if (bonusCategoryId == 1) {
+                    $('#divHideShow').show();
+                }
+                else {
+                    $('#divHideShow').hide();
+                    $('#monthYearType').val('');
+                    $('#minMonthValue').val('');
+                    $('#maxMonthValue').val('');
+                }
+            })
+
+            $('#hasEmployee').change(function () {
+                if (this.checked == true) {
+                    $("#divEmployee").show();
+                    $("#hasEmployee").val('1');
+                } else {
+                    $("#divEmployee").hide();
+                    $("#hasEmployee").val('0');
+                }
+            });
+
+        });
+
+        function ajaxGetBonusSubCategoryByMasterId(response) {
+            //console.log(response);
+            var options = "";//'<option value="">Select Note Master</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.bonousSubCategoryName + '</option>';
+            });
+            $('#BonousSubCategoryId').empty();
+            $('#BonousSubCategoryId').append(options);
+        }
+
+        function Edit(Id, salaryCalulationTypeId, bonousCategoryId, BonousSubCategoryId, bonousBasedOn, percentAmount, monthYearType, minMonthValue, maxMonthValue, isActive, hasEmployee) {
+            $('#bonousStructureId').val(Id);
+            $('#salaryCalulationTypeId').val(salaryCalulationTypeId);
+            $('#bonusCategoryId').val(bonousCategoryId);
+            Common.Ajax('GET', '/api/global/GetBonusSubCategoryByMasterId/' + bonousCategoryId, [], 'json', ajaxGetBonusSubCategoryByMasterId, false);
+            $('#BonousSubCategoryId').val(BonousSubCategoryId);
+            $('#bonousBasedOn').val(bonousBasedOn);
+            $('#percentAmount').val(percentAmount);
+            $('#monthYearType').val(monthYearType);
+            $('#minMonthValue').val(minMonthValue);
+            $('#maxMonthValue').val(maxMonthValue);
+            $('#isActive').val(isActive);
+            $('#hasEmployee').val(hasEmployee);
+
+            if (bonousCategoryId == 1) {
+                $('#divHideShow').show();
+            }
+            else {
+                $('#divHideShow').hide();
+            }
+
+            if (hasEmployee == 1) {
+                $('#divEmployee').show();
+                $('#hasEmployee').attr('checked', true);
+                $('#hasEmployee').val('1');
+            }
+            else {
+                $('#divEmployee').hide();
+                $('#hasEmployee').attr('checked', false);
+                $('#hasEmployee').val('0');
+            }
+
+            Common.Ajax('GET', '/global/api/GetEmployeesBonusStructureByBonusId/' + Id, [], 'json', ajaxGetEmployeesBonusStructureByBonusId, false);
+        }
+
+         function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteBonousStructureById", "SalaryMaster")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Payroll/SalaryMaster/BonousStructuree";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+        function AddGroupFollower() {
+            var id = $('#employeeInfoId').val();
+            if (id == null || id == "") {
+                swal('Warning', 'Incorrect Employee Please Try Correct Employee!!', 'warning');
+                return false;
+            }
+            var value = $('#employeeName').val();
+
+            $('#TaskCompleteFollowerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroupModal(' + "'" + id + "'" + ')">X</span></a></span>');
+            $('#employeeName').val('');
+            //$('#employeeInfoId').val('');
+        }
+
+        function DeleteGroupModal(id) {
+            //$("#TaskCompleteFollowerList #" + id).remove();
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+
+        function ajaxGetEmployeesBonusStructureByBonusId(response) {
+            $('#TaskCompleteFollowerList').empty();
+            $.each(response, function (i, item) {
+                var id = item.employeeInfoId;
+                var value = item.employeeInfo.nameEnglish + '(' + item.employeeInfo.employeeCode + ')';
+                $('#TaskCompleteFollowerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroupModal(' + "'" + id + "'" + ')">X</span></a></span>');
+            });
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+    </script>
+}
+
+
+
+
+
+
+

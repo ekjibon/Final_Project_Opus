@@ -1,0 +1,250 @@
+﻿@model ContactsViewModel
+@{
+    ViewData["Title"] = "Client Contacts";
+    Layout = "~/Areas/CRMClient/Views/Shared/_ClientForm.cshtml";
+}
+@section StyleClient{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">       
+        <hr>
+        <div class="container">
+            <form asp-area="CRMClient" asp-controller="Client" asp-action="ClientContacts" method="post" id="infoCreateForm" data-parsley-validate="parsley" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <input type="hidden" id="id" name="id" value="0">
+                                <div class="form-group row">
+                                    <div class="col-sm-9">
+                                        <input type="hidden" id="leadId" name="leadId" value="@ViewBag.leadId">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="contactName" class="col-sm-3 col-form-label">Contact Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" id="contactName" value="" name="contactName">
+                                        <input type="hidden" id="contactId" name="contactId" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="department" class="col-sm-3 col-form-label">Department</label>
+                                    <div class="col-sm-9">
+                                        <select data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" id="department" name="department">
+                                            <option value="">-Select-</option>
+                                            @{
+                                                foreach (var data in Model.departments)
+                                                {
+                                                    <option value="@data.Id">@data.deptName</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="designation" class="col-sm-3 col-form-label">Designation</label>
+                                    <div class="col-sm-9">
+                                        <select data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" id="designation" name="designation">
+                                            <option value="">-Select-</option>
+                                            @{
+                                                foreach (var data in Model.designations)
+                                                {
+                                                    <option value="@data.Id">@data.designationName</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="imagePath" class="col-sm-3 col-form-label">Image</label>
+                                    <div class="col-sm-9">
+                                        <img id="user_img" style="width:200px;height:200px" src="~/images/user.png" alt="" class="img-thumbnail float-left">
+                                        <input type="hidden" id="leadID" name="leadID" value="0">
+                                        <input type="file" title="Photo Upload" id="imagePath" name="imagePath" class="img-thumbnail float-left" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label for="phone" class="col-sm-3 col-form-label">Phone</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="phone" value="" name="phone">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="mobile" class="col-sm-3 col-form-label">Mobile</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="mobile" value="" name="mobile">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="email" class="col-sm-3 col-form-label">Email</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="email" value="" name="email">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="fax" class="col-sm-3 col-form-label">Fax</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="fax" value="" name="fax">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="imagePath_Vcard_Font" class="col-sm-4 col-form-label">Visiting Card Upload</label>
+                                    <label class="col-sm-8 col-form-label"></label>
+
+                                </div>
+                                <div class="form-group row">
+                                    <label for="imagePath_Vcard_Font" class="col-sm-6 col-form-label" style="padding-left: 80px;">Font Site</label>
+                                    <label for="imagePath_Vcard_Back" class="col-sm-6 col-form-label" style="padding-left: 70px;">Back Site</label>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6">
+                                        <img id="user_img_Vcard_Font" style="width:200px;height:200px" src="~/images/upload.jpg" alt="" class="img-thumbnail float-left">
+                                        <input type="file" title="Visiting Card Font site Upload" id="imagePath_Vcard_Font" name="imagePath_Vcard_Font" class="img-thumbnail float-left" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <img id="user_img_Vcard_Back" style="width:200px;height:200px" src="~/images/upload.jpg" alt="" class="img-thumbnail float-left">
+                                        <input type="file" title="Visiting Card Back site Upload" id="imagePath_Vcard_Back" name="imagePath_Vcard_Back" class="img-thumbnail float-left" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Contacts</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="contactsTable">
+                    <thead>
+                        <tr>
+                            <th>Contact Owner</th>
+                            <th>Resource Name</th>
+                            <th>Phone</th>
+                            <th>Mobile</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.contacts)
+                        {
+                            <tr>
+                                <td>@data.contactOwner</td>
+                                <td>@data.resource.resourceName</td>
+                                <td>@data.resource.phone</td>
+                                <td>@data.resource.mobile</td>
+                                <td>@data.resource.email</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.resource.resourceName',@data.resourceId,@data.leadsId,'@data.resource.phone','@data.resource.mobile','@data.resource.email',@data.resource.departmentsId,@data.resource.designationsId,'@data.resource.fax')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="javascript:void(0)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsClient{
+    <script>
+        $(document).ready(function () {
+            $("#contacts").addClass("active");
+            $("#imagePath").change(function () {
+                readURL(this);
+            });
+
+            $("#imagePath_Vcard_Font").change(function () {
+                readURLVcard_Font(this);
+            });
+            $("#imagePath_Vcard_Back").change(function () {
+                readURLVcard_Back(this);
+            });
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+        function readURLVcard_Font(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img_Vcard_Font').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function readURLVcard_Back(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img_Vcard_Back').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+          
+        function Edit(id,contactowner,resourceid,leadid,phone,mobile,email,departmentid,desigid,fax) {
+            $('#id').val(id);
+            $('#leadId').val(leadid);
+            $('#contactName').val(contactowner);
+            $('#contactId').val(resourceid);
+            $('#designation').val(desigid);
+            $('#imagePath').val();
+            $('#phone').val(phone);
+            $('#mobile').val(mobile);
+            $('#email').val(email);
+            $('#fax').val(fax);
+            $('#department').val(departmentid);
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetContactphotoByContactId/?Id=' + id, [], 'json', ajaxGetContactphotoByContactId);
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetContactVcard_FontByContactId/?Id=' + id, [], 'json', ajaxGetContactVcard_FontByContactId);
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetContactVcard_BackByContactId/?Id=' + id, [], 'json', ajaxGetContactVcard_BackByContactId);
+        }
+
+        function ajaxGetContactphotoByContactId(response) {
+            var baseUrl = 'http://' + location.host + '/Upload/Photo/' + response.fileName;
+            var image = document.getElementById('user_img');
+            image.setAttribute('src', baseUrl);
+        }
+
+        function ajaxGetContactVcard_FontByContactId(response) {
+            var baseUrl = 'http://' + location.host + '/Upload/Photo/' + response.fileName;
+            var image = document.getElementById('user_img_Vcard_Font');
+            image.setAttribute('src', baseUrl);
+        }
+        function ajaxGetContactVcard_BackByContactId(response) {
+            var baseUrl = 'http://' + location.host + '/Upload/Photo/' + response.fileName;
+            var image = document.getElementById('user_img_Vcard_Back');
+            image.setAttribute('src', baseUrl);
+        }
+    </script>
+}

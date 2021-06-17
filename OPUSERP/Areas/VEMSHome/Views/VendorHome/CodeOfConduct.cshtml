@@ -1,0 +1,29 @@
+﻿@model RegistrationViewModel
+@{
+    ViewData["Title"] = "Code of Conduct";
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header">
+        <h1>Business Code of Conduct</h1>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <p class="col-12" style="font-weight:bold;">Business Code of Conduct for vendor’s</p>
+            <ol class="col-12" style="margin-left: 30px;">
+                @foreach (var item in Model.codeOfContacts)
+                {
+                    <li style="margin-right: 35px;"> @item.description</li>
+                }
+            </ol>
+        </div>        
+        <div class="row">
+            <div class="col-1" style="padding: 0px 0px 0px 24px;">
+                <a class="btn btn-danger btn-sm" href="/VEMSHome/VendorHome/Index" onclick=""><i class="fa fa-times"></i> Cancel</a>
+            </div>
+            <div class="col-10">
+                <a class="btn btn-info btn-sm" href="/VEMSHome/VendorHome/NDAView" onclick=""><i class="fa fa-check"></i> Yes, I Agree</a>
+            </div>
+        </div>
+    </div>
+</div>

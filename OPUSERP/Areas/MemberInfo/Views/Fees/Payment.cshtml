@@ -1,0 +1,273 @@
+﻿@using OPUSERP.CLUB.Services.Auth.Interfaces
+@using System
+@inject ILoggedinUser loggedinUser
+@{
+    string orgType = await loggedinUser.usersOrganization(User.Identity.Name);
+    List<string> userRoles = await loggedinUser.UsersRoles(User.Identity.Name);
+    int myEmpId = await loggedinUser.UserEmpId(User.Identity.Name);
+}
+@model FeesViewModel
+
+@{
+    ViewData["Title"] = "Payment";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<br />
+<br />
+<div class="container">
+
+    <form asp- method="post" asp-area="MemberInfo" asp-controller="Fees" asp-action="Payment" id="logoutForm" class="navbar-right" data-parsley-validate="parsley" enctype="multipart/form-data">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group row">
+            <label for="date" class="col-3 col-form-label" style="margin-top:24px;">Payment Type <span class="redStar">*</span></label>
+            <div class="col-9 row">
+                <a onclick="Bank()" id="bankCercle">
+                    <div class="col-sm-3">
+                        <input type="hidden" class="" id="type" value="" name="type">
+                        <img src="~/images/bank-building-icon.jpg" height="60" width="60" />
+                    </div>
+                </a>
+                <a onclick="MobileBanking()" id="mobileCercle">
+                    <div class="col-sm-3">
+                        @*<input type="hidden" class="" id="type1" value="MobileBanking" name="type">*@
+                        <img src="~/images/mobile-banking-icon.jpg" height="60" width="60" />
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="date" class="col-sm-3 col-form-label">Payment<span class="redStar">*</span></label>
+            <div class="col-sm-9">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Payment Head</th>
+                            <th>Due</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.monthlyPaymentHeadWithDues.Count() > 0)
+                        {
+
+                            @foreach (var data in Model.monthlyPaymentHeadWithDues)
+                            {
+                                <tr>
+                                    <th>
+                                        <div class="custom-control custom-checkbox mb-3">
+                                            <input type="checkbox" class="custom-control-input" value="@data.paymentHead.Id" id="select-@data.paymentHead.Id" onclick="AddQuantity(@data.paymentHead.Id);">
+                                            <label class="custom-control-label" for="select-@data.paymentHead.Id">
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control" value="@data.paymentHead.name" id="paymentHead-@data.paymentHead.Id" readonly />
+                                    </th>
+                                    <th>
+                                        <input type="number" class="form-control" value="@data.Due?.ToString("0.00")" id="paymentDue-@data.paymentHead.Id" readonly />
+                                    </th>
+                                    <th>
+                                        <input type="number" onkeyup="TotalCalculation();" class="form-control paymentAmount" value="" id="paymentAmount-@data.paymentHead.Id" readonly />
+                                    </th>
+                                </tr>
+                            }
+
+                        }
+
+                        @if (Model.onetimePaymentHeadWithDues.Count() > 0)
+                        {
+
+                            @foreach (var data in Model.onetimePaymentHeadWithDues)
+                            {
+                                <tr>
+                                    <th>
+                                        <div class="custom-control custom-checkbox mb-3">
+                                            <input type="checkbox" class="custom-control-input" value="@data.paymentHead.Id" id="select-@data.paymentHead.Id" onclick="AddQuantity(@data.paymentHead.Id);">
+                                            <label class="custom-control-label" for="select-@data.paymentHead.Id">
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <input type="text" class="form-control" value="@data.paymentHead.name" id="paymentHead-@data.paymentHead.Id" readonly />
+                                    </th>
+                                    <th>
+                                        <input type="number" class="form-control" value="@data.Due?.ToString("0.00")" id="paymentDue-@data.paymentHead.Id" readonly />
+                                    </th>
+                                    <th>
+                                        <input type="number" onkeyup="TotalCalculation();" class="form-control paymentAmount" value="" id="paymentAmount-@data.paymentHead.Id" readonly min="0" data-parsley-trigger="keyup"/>
+                                    </th>
+                                </tr>
+                            }
+
+                        }
+
+                        <tr>
+                            <th colspan="3" class="text-center">Total Amount to pay</th>
+                            <td><input type="number" id="total" name="total" readonly class="form-control" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="date" class="col-sm-3 col-form-label">Payment Date <span class="redStar">*</span></label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="date" value="" name="date" required>
+            </div>
+        </div>
+
+        <div class="form-group row" id="mobile">
+            <label for="transectionId" class="col-sm-3 col-form-label">Payment Transection Number </label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="transectionId" placeholder="transection Number" value="" name="transectionId">
+            </div>
+        </div>
+
+        <div class="form-group row" id="bank">
+            <label for="bankReceipt" class="col-sm-3 col-form-label">Payment Bank Receipt</label>
+            <div class="col-sm-9">
+
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile" name="bankReceipt" accept="image/jpg, image/jpeg, image/png" data-parsley-trigger="change" data-parsley-max-file-size="1500">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+
+            </div>
+        </div>
+
+        @*<div class="form-group row">
+            <label for="amount" class="col-sm-3 col-form-label">Amount <span class="redStar">*</span></label>
+            <div class="col-sm-9">
+                <input type="number" class="form-control" id="amount" value="" name="amount" required>
+            </div>
+        </div>*@
+
+        <div class="form-group row">
+            <label for="remarks" class="col-sm-3 col-form-label"> Remarks</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="remarks" value="" name="remarks">
+            </div>
+        </div>
+
+        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;" title="Payment"><i class="fas fa-shopping-cart"></i></button>
+        <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+
+
+    </form>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            $('#date').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('#date1').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+
+            $('#memberTable').DataTable({
+                colReorder: true
+            });
+
+            Bank();
+
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+
+
+            //$('input[type=radio][name=type]').change(function () {
+            //    if (this.value == "Bank") {
+            //        $('#mobile').show();
+            //        $('#bank').show();
+            //    } else if (this.value == "MobileBanking"){
+            //        $('#mobile').show();
+            //        $('#bank').hide();
+            //    }else {
+            //        $('#mobile').hide();
+            //        $('#bank').hide();
+            //    }
+            //});
+
+            $('#customFile').on('change', function (e) {
+                //get the file name
+                //var fileName = $(this).val();
+                var fileName = e.target.files[0].name;
+                //replace the "Choose a file" label
+                $(this).next('.custom-file-label').html(fileName);
+            })
+        });
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Bank() {
+            $('#mobile').show();
+            $('#bank').show();
+            $('#type').val("Bank");
+            $('#bankCercle').addClass("active");
+            $('#mobileCercle').removeClass("active");
+        }
+
+        function MobileBanking() {
+            $('#mobile').show();
+            $('#bank').hide();
+            $('#type').val("MobileBanking");
+            $('#bankCercle').removeClass("active");
+            $('#mobileCercle').addClass("active");
+        }
+
+        function Payment(employeeId) {
+            $('#employeeId').val(employeeId);
+        }
+
+        function AddQuantity(id) {
+            if ($("#select-" + id).prop("checked") == true) {
+                var x = $("#paymentDue-" + id).val();
+                $("#paymentAmount-" + id).val($("#paymentDue-" + id).val());
+                $("#paymentAmount-" + id).removeAttr("readonly");
+                $("#select-" + id).attr("name","selectPaymentHeadIds[]");
+                $("#paymentAmount-" + id).attr("name","selectPaymentHeadAmounts[]");
+            } else {
+                $("#paymentAmount-" + id).val("");
+                $("#paymentAmount-" + id).attr("readonly", true);
+                $("#select-" + id).removeAttr("name");
+                $("#paymentAmount-" + id).removeAttr("name");
+            }
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+        }
+
+        function TotalCalculation() {
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+        }
+    </script>
+}

@@ -1,0 +1,564 @@
+﻿@model ProposalMasterViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/CRMLead/Views/Shared/_LeadForm.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary" style="text-align:center;">Lead Name: @ViewBag.leadName</h6>
+                @*<a href="/CRMLead/Proposal/ProposalList" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Back to List</a>*@
+            </div>
+            <div class="card-body">
+                <div class="container" id="entrydata">
+                    <form asp-area="CRMLead" asp-controller="Proposal" asp-action="Index" method="post" data-parsley-validate="parsley">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <input type="hidden" name="proposalMasterId" id="proposalMasterId" value="0" />
+                                    <input type="hidden" id="leadsId" name="leadsId" value="@ViewBag.leadId">
+                                    <input type="hidden" id="leadName" name="leadName" value="@ViewBag.leadName">
+                                    <label for="proposalTypeId" class="col-sm-3 col-form-label">Proposal Type <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="proposalTypeId" name="proposalTypeId" data-parsley-required="true">
+                                            <option value="" id="proposalTypeId">Select Proposal Type</option>
+                                            @foreach (var data in Model.proposalTypes)
+                                            {
+                                                <option value="@data.Id">@data.proposalTypeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="proposalNo" class="col-sm-3 col-form-label">Proposal No <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="proposalNo" id="proposalNo">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="addSpecification" class="col-sm-3 col-form-label">Add Particulars</label>
+                                    <div class="col-sm-9">
+                                        @*<a href="#" title='Add Specification' class="btn btn-info" data-toggle="modal" data-target="#addItemSpecificationModal" style="font-size:12px;float:left;">
+                                                <span>
+                                                    <i class="fas fa-plus-square"></i>
+                                                </span>
+                                            </a>*@
+                                        <a href="javascript:void(0)" title='Add Particulars' class="btn btn-info" style="font-size:12px;float:left;" onclick="OpenParticularsModal()">
+                                            <span>
+                                                <i class="fas fa-plus-square"></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="proposalDate" class="col-sm-3 col-form-label">Proposal Date</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="proposalDate" id="proposalDate">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="proposalStatusId" class="col-sm-3 col-form-label">Proposal Status<span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="proposalStatusId" name="proposalStatusId" data-parsley-required="true">
+                                            <option value="" id="proposalStatusId">Select Proposal Status</option>
+                                            @foreach (var data in Model.proposalStatuses)
+                                            {
+                                                <option value="@data.Id">@data.proposalStatusName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="productId" class="col-sm-3 col-form-label">Product Name</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="productId" name="productId">
+                                            <option value="0">Select Product</option>
+                                            @foreach (var data in Model.products)
+                                            {
+                                                <option value="@data.Id">@data.productName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <a href="#" class="btn  btn-default" onclick="AddProduct()" style="float:right;"><i class="fas fa-plus"></i></a>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-3">
+
+                                    </div>
+                                    <div class="col-sm-6" id="productdivId">
+
+                                    </div>
+                                    <div class="col-sm-1" id="productdivIdbtn">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="addItemSpecificationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Add Particulars</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    @*<input type="hidden" id="itemSpecificationId" name="itemSpecificationId" />*@
+                                                    <label for="itemDescription" class="col-sm-2 col-form-label">Proposal Type</label>
+                                                    <div class="col-sm-10">
+                                                        <input maxlength="150" type="text" class="form-control" id="itemspecification" name="itemspecification" disabled>
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group row">
+                                                            <label for="accountLedgerId" class="col-sm-4 col-form-label">Particulars</label>
+                                                            <div class="col-sm-8">
+                                                                <select class="form-control" name="specCategory" id="specCategory">
+                                                                    <option value="">Select Particulars</option>
+                                                                    @foreach (var data in Model.proposalParticulars)
+                                                                    {
+                                                                        <option value="@data.Id">@data.proposalParticularsName</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group row">
+                                                            <label for="catValue" class="col-sm-4 col-form-label">Value</label>
+                                                            <div class="col-sm-8">
+                                                                <input maxlength="150" type="text" class="form-control" id="catValue" name="catValue">
+
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-11">
+                                                            </div>
+                                                            <div class="col-sm-1">
+                                                                <button type="button" onclick="AdditemDetails()" value="Add" title="Add" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <br />
+                                                <div class="row">
+
+                                                    <input type="hidden" id="detailsId" name="detailsId" value="0" />
+                                                    <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                                                    <div class="col-12" style="overflow-y:auto;height:400px;">
+                                                        <table class="table table-bordered table-striped" id="tblitemDetails" data-parsley-required="true">
+                                                            <thead style="width:100%;background-color:lightgray;">
+                                                                <tr>
+                                                                    <th style="width:40%;">Type</th>
+                                                                    <th style="width:20%">Particulars</th>
+                                                                    <th style="width:20%">Value</th>
+                                                                    <th style="width:20%">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody></tbody>
+                                                        </table>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="col-sm-10">
+                                        </div>
+                                        <div class="col-sm-2">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Proposal</h6>
+                @*<a href="/CRMLead/Proposal/Index?id=0" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Add New</a>*@
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="statusTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Proposal No</th>
+                            <th>Proposal Type</th>
+                            <th>Leads Name</th>
+                            <th>Proposal Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.proposalMasters)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.proposalNo</td>
+                                    <td>@data.proposalType.proposalTypeName</td>
+                                    <td>@data.leads.leadName</td>
+                                    <td>@data.proposalDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data?.proposalStatus?.proposalStatusName</td>
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edit(@data.Id,'@data.proposalNo',@data.proposalTypeId,'@data.proposalDate','@data.proposalStatusId')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsLead{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#ProposalList").addClass("active");
+
+            $("#proposalDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $('#statusTable').DataTable();
+
+            var table = $('#statusTable').DataTable();
+            $('#statusTable tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[1];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var lid = parseInt(id.split('-')[1]);
+                window.location.href = "/CRMLead/Proposal/ProposalDetails/?Id=" + lid + '&leadid=' + @ViewBag.leadId+ '&leadName=' + '@ViewBag.leadName';
+            });
+            $('#statusTable tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+
+            $("#specCategory").change(function () {
+                $('#catValue').val('');
+            });
+
+        });
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function AddProduct() {
+            var comvalue = $('#productId option:selected').text();
+            var comvalueId = $('#productId').val();
+            if (comvalueId == 0) {
+                swal('Attention', 'Please select valid product', 'warning');
+
+                return false;
+            }
+            if (document.getElementById(comvalueId) == null || document.getElementById(comvalueId) == 0) {
+                $('#productdivId').append('<input class="form-control" type="text" id="' + comvalueId + '" name="' + comvalue + '" readonly value="' + comvalue + '" />');
+                $('#productdivId').append('<input  type="hidden" id="hdn' + comvalueId + '" name="productList[]" value="' + comvalueId + '" />');
+                $('#productdivIdbtn').append('<a href="javasript:void(0)" id="txt' + comvalueId + '" class="btn  btn-default" onclick="hideelementx(' + comvalueId + ',' + "'" + comvalue + "'" + ')" style="float:right;"><i class="fas fa-minus"></i></a>');
+            }
+            else {
+                swal('Attention', 'This record already exists', 'warning');
+                return false;
+            }
+        }
+
+        function AddProductEdit(Id, Name) {
+            hideelementxt(Id, Name);
+
+
+            var comvalue = Name;
+            var comvalueId = Id;
+
+            $('#productdivId').append('<input class="form-control" type="text" id="' + comvalueId + '" name="' + comvalue + '" readonly value="' + comvalue + '" />');
+            $('#productdivId').append('<input type="hidden" id="hdn' + comvalueId + '" name="productList[]" value="' + comvalueId + '" />');
+            $('#productdivIdbtn').append('<a href="javasript:void(0)" id="txt' + comvalueId + '" class="btn  btn-default" onclick="hideelementx(' + comvalueId + ',' + "'" + comvalue + "'" + ')" style="float:right;"><i class="fas fa-minus"></i></a>');
+        }
+
+        function hideelementx(comvalueId, name) {
+            $('#txt' + comvalueId).remove();
+            $('#hdn' + comvalueId).remove();
+            $('#' + comvalueId).remove();
+        }
+
+        function hideelementxt(comvalueId, name) {
+            $('#txt' + comvalueId).remove();
+            $('#hdn' + comvalueId).remove();
+            $('#' + comvalueId).remove();
+        }
+
+        function ajaxGetProductProposalByMasterId(response) {
+            var GetLeadList = [];
+            $.each(response, function (id, option) {
+                AddProductEdit(option.productId, option.productName);
+            });
+        }
+
+        function Edit(Id, proposalNo, proposalTypeId, proposalDate, proposalStatusId) {
+
+            $("#proposalMasterId").val(Id);
+            $("#proposalNo").val(proposalNo);
+            $("#proposalTypeId").val(proposalTypeId);
+            $("#proposalDate").val(getPurchaseDate(proposalDate.toString("dd-MMM-yyyy")));
+            $("#proposalStatusId").val(proposalStatusId);
+
+            Common.Ajax('GET', '/CRMLead/Proposal/GetProductProposalByMasterId/?masterId=' + Id, [], 'json', ajaxGetProductProposalByMasterId);
+
+            Common.Ajax('GET', '/CRMLead/Proposal/GetProposalDetailByMasterId/?masterId=' + Id, [], 'json', ajaxGetProposalDetailByMasterId);
+        }
+
+        function OpenParticularsModal() {
+            if ($("#proposalTypeId").val() == "") {
+                alert("Please Select Proposal Type.");
+                return false
+            }
+            else {
+                $("#addItemSpecificationModal").modal("show");
+                $("#itemspecification").val($("#proposalTypeId option:selected").text());
+            }
+        }
+
+        function AdditemDetails() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsproposalParticularsId").val();
+            }
+
+            if ($("#itemspecification").val() == "") {
+                alert("Please Enter Specification Name.");
+                return false
+            }
+
+            if ($("#specCategory").val() == "") {
+                alert("Plaese Enter Particulars.");
+                return false
+            }
+            if ($("#catValue").val() == "") {
+                alert("Plaese Enter Particulars Value.");
+                return false
+            }
+
+
+
+            let id = parseInt($("#detailsId").val()) ? parseInt($("#detailsId").val()) : 0;
+            var itemSpecificationName = $("#itemspecification").val();
+            var itemSpecificationNameShow = $("#itemspecification").val();
+            var proposalParticularsId = $("#specCategory").val();
+            var specificationCategoryName = $("#specCategory option:selected").text();
+            var catValue = $("#catValue").val();
+
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+
+            for (i = 0; i <= RowCount; i++) {
+                var _itemSpecificationName = $("#itemSpecificationNameVD" + i).val();
+                var _proposalParticularsId = $("#proposalParticularsId" + i).val();
+                if ((_itemSpecificationName == itemSpecificationName && _proposalParticularsId == proposalParticularsId) && editOption == 0) {
+                    alert('You have already added this particulars!');
+                    return false
+                }
+                if (editOption == 1) {
+                    itemSpecificationNameShow = itemSpecificationNameShowedit;
+                }
+                else {
+                    if (_itemSpecificationName == itemSpecificationName) {
+                        itemSpecificationNameShow = "";
+                    }
+                }
+
+            }
+
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + itemSpecificationNameShow + '<input type="hidden" id="itemSpecificationName' + index + '" name="itemSpecificationName" class="clsitemSpecificationName" value="' + itemSpecificationNameShow + '"/><input type="hidden" id="itemSpecificationNameVD' + index + '" name="itemSpecificationNameVD" class="clsitemSpecificationNameVD" value="' + itemSpecificationName + '"/></td>' +
+                '<td>' + specificationCategoryName + '<input type="hidden" name="id"class="clsId" value="' + id + '"><input type="hidden" id="proposalParticularsId' + index + '" name="proposalParticularsId" class="clsproposalParticularsId" value="' + proposalParticularsId + '"/></td>' +
+                '<td>' + catValue + '<input type="hidden" id="particularsValue' + index + '" name="particularsValue" class="clsparticularsValue" value="' + catValue + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTbl(' + index + "," + proposalParticularsId + ", '" + itemSpecificationName + "',  '" + catValue + "', '" + itemSpecificationNameShow + "'," + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                '</tr>';
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+
+            Refresh();
+        }
+
+        var itemSpecificationNameShowedit = "";
+
+        function EditTbl(index, proposalParticularsId, itemSpecificationName, catValue, itemSpecificationNameShow, Id) {
+            var rightIndex = index;
+            itemSpecificationNameShowedit = itemSpecificationNameShow;
+            $("#IsEdit").val(1);
+            $('#detailsId').val(Id);
+            $('#itemspecification').val(itemSpecificationName);
+            $('#specCategory').val(proposalParticularsId);
+            $('#catValue').val(catValue);
+
+            $("#itemspecification").prop("disabled", true);
+            $("#specCategory").prop("disabled", true);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+        function Refresh() {
+            $('#detailsId').val('');
+            $("#IsEdit").val(0);
+
+            $('#specCategory').val('');
+            $('#catValue').val('');
+
+            $("#itemspecification").prop("disabled", false);
+            $("#specCategory").prop("disabled", false);
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+        function RefreshAll() {
+            location.reload();
+        }
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblitemDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success');
+            });
+
+        }
+
+
+        function ajaxGetProposalDetailByMasterId(response) {
+            console.log(response);
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsproposalParticularsId").val();
+            }
+            $("#tblitemDetails tbody>tr").empty();
+            $.each(response, function (key, value) {
+                var itemSpecificationName = value.specificationName;
+                var itemSpecificationNameShow = value.specificationName;
+                var RowCount = $("#tblitemDetails tbody>tr").length;
+                for (i = 0; i <= RowCount; i++) {
+                    var _itemSpecificationName = $("#itemSpecificationNameVD" + i).val();
+
+                    if (_itemSpecificationName == itemSpecificationName) {
+                        itemSpecificationNameShow = "";
+                    }
+                }
+
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + itemSpecificationNameShow + '<input type="hidden" id="itemSpecificationName' + index + '" name="itemSpecificationName" class="clsitemSpecificationName" value="' + itemSpecificationNameShow + '"/><input type="hidden" id="itemSpecificationNameVD' + index + '" name="itemSpecificationNameVD" class="clsitemSpecificationNameVD" value="' + itemSpecificationName + '"/></td>' +
+                    '<td>' + value.proposalParticularsName + '<input type="hidden" name="id"class="clsId" value="' + value.Id + '"><input type="hidden" id="proposalParticularsId' + index + '" name="proposalParticularsId" class="clsproposalParticularsId" value="' + value.proposalParticularsId + '"/></td>' +
+                    '<td>' + value.particularsValue + '<input type="hidden" id="particularsValue' + index + '" name="particularsValue" class="clsparticularsValue" value="' + value.particularsValue + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTbl(' + index + "," + value.proposalParticularsId + ", '" + value.specificationName + "',  '" + value.particularsValue + "','" + itemSpecificationNameShow + "'," + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                    '</tr>';
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+
+    </script>
+}
+
+
+@section StyleLead{
+    <style>
+
+        .redStar {
+            color: red;
+        }
+
+        #statusTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+

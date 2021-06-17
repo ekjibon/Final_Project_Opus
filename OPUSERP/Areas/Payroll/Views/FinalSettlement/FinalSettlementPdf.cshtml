@@ -1,0 +1,332 @@
+﻿@model FinalSettlementViewModel
+@{
+    ViewData["Title"] = "Final Settlement Report Pdf";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<div style="width:100%;overflow:hidden;">
+    <div style="">
+        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+    </div>
+    <br />
+    <div style="color:black;font-size:large;text-align:center">
+        <h5>Final Settlement</h5>
+    </div>
+    <br />
+    <div style="width:100%;overflow:hidden;">
+        <div style="width:49%;float:left;">
+            <div style="color:black;font-size:large;text-align:left">
+                <h5>Personal Information</h5>
+            </div>
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Name of Employee</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.EmpName</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">@Model.visualEmpCodeName</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.EmpCode</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Designation</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.Designation</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Department</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.Department</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Division</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.Division</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Location</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.Location</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Employment Status</td>
+                        <td style="border:solid 1px;"></td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Date of Joining</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.JoiningDate</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Contact Number</td>
+                        <td style="border:solid 1px;"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="width:49%;float:right;">
+            <div style="color:black;font-size:large;text-align:left">
+                <h5>Service Information</h5>
+            </div>
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Separation Status</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementData.seperationStatus</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Last Working Day</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementDataViewModel.LastWorkingDate</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Notice Period-Employment</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementData.noticePeriod_Emt</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Notice Period-Served</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementData.noticePeriod_Served</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Length of Service (LOS)</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementData.lenghtOfService</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">LOS Consider for Gratuity</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementData.lofSvsCG</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Salary Disbursed Upto</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementData.salaryDisbUpto</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Approved Date</td>
+                        <td style="border:solid 1px;">@Model.finalSettlementData.appDate</td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div style="width:100%;overflow:hidden;">
+        <div style="width:49%;float:left;">
+            <div style="color:black;font-size:large;text-align:left">
+                <h5>Salary Information</h5>
+            </div>
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Gross Salary</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementDataViewModel.Gross</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Basic Salary</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementDataViewModel.BasicSal</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Special Allowance</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementDataViewModel.DailyAllowance</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Car Allowance</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementDataViewModel.FixedAllowST</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Gross Salary Per Day</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementDataViewModel.GrossSalaryPerDay</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Basic Salary Per Day</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementDataViewModel.BasicSalPerDay</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="width:49%;float:right;">
+            <div style="color:black;font-size:large;text-align:left">
+                <h5>Salary Dues Information</h5>
+            </div>
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Salary Dues</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.salDue</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Special Allowance Dues</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.specDue</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Car Allowance Dues</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.carADue</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Leave Balance</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.leaveBalance</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">LFA</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.lFAAdjust</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Mobile Allowance</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.mobileAllowance</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Internet Allowance</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.internetAllowance</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div style="width:100%;overflow:hidden;">
+        <div style="width:49%;float:left;">
+            <div style="color:black;font-size:large;text-align:left">
+                <h5>Addition Information</h5>
+            </div>
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Gratuity</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.gratuity</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Performance Bonus</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.perfBonus</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Other Addition-1</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.oAddition1</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Other Addition-2</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.oAddition2</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">PF Amount Own</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.pFAmount</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">PF Amount Company</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.pFAmountHund</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">PF Interest</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.pFAmountInter</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Pro-rata Bonus</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementDataViewModel.PoratedBonusAmount</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="width:49%;float:right;">
+            <div style="color:black;font-size:large;text-align:left">
+                <h5>Deduction Information</h5>
+            </div>
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Notice Period Deduction</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.noticePeriodDeducion</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Hardware</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.hardInstall</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Advance Salary</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.advSal</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Cell Phone</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.mobilePhone</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Data</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.mobileData</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Other Deduction-1</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.oDeduction1</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Other Deduction-2</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.oDeduction2</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Income Tax</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.incomeTax</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Deducted Bonus</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.deductedBonus</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Deducted Salary</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.salaryadjustment</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div style="width:100%;overflow:hidden;">
+            <div>
+                <table style="border:solid 0px;width:100%;font-size:16px;font-weight:bolder;">
+                    <tr>
+                        <td style="border:solid 1px;">Total End of Service Benefit</td>
+                        <td style="border:solid 1px;text-align:right;">@Model.finalSettlementData.totalAmount</td>
+                    </tr>
+                </table>
+           
+        </div>
+    </div>
+    <br /><br /><br /><br /><br />
+    <div style="width:100%;overflow:hidden;color:black;font-size:17px;">
+        <div style="width:25%;float:left;">
+            <div >___________________________</div>
+            <div style="text-align:center">Prepared by:</div>
+
+        </div>
+        <div style="width:25%;float:left;">
+            <div >___________________________</div>
+            <div style="text-align:center">Checked  by:</div>
+        </div>
+        <div style="width:25%;float:left;">
+            <div >___________________________</div>
+            <div style="text-align:center">Verified by:</div>
+        </div>
+        <div style="width:25%;float:right;">
+            <div>___________________________</div>
+            <div style="text-align:center">Approved by:</div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+<style>
+
+    /*label {
+        font-size: large;
+    }*/
+
+    /*tr, td div, th div, table {
+        page-break-inside: auto !important;
+        font-size: large;
+    }*/
+</style>
+
+
+
+
+

@@ -1,0 +1,217 @@
+﻿@model EventViewModel
+@{
+    ViewData["Title"] = Model.fLang.title;
+}
+
+@section Style{
+    <style>
+        p {
+            color: black;
+        }
+
+        h6 {
+            color: black;
+        }
+
+        b {
+            color: black;
+        }
+
+        .for-size-fixed {
+            width: 331px;
+            height: 248px;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="col-12">
+        <div class="card">
+            <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="col-10">
+                    <h4 class="m-0 font-weight-bold text-primary">@Model.fLang.upcoming</h4>
+                </div>
+            </div>
+            <div class="row">
+                @foreach (var data in Model.eventDatas)
+                {
+                    @if (data.isRegistered == false)
+                    {
+                        <!-- Blog Post -->
+                        <div class="col-4" style="padding:10px">
+                            <div class="card ">
+                                <img class="card-img-top for-size-fixed" src="~/@data.eventInformation.url" alt="Card image cap">
+                                <div class="card-body">
+                                    <h6 class="card-title">@data.eventInformation.title</h6>
+                                    <h6>@Model.fLang.date : @data.eventInformation.date?.ToString("yyyy-MM-dd")</h6>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <b>@Model.fLang.deadline : </b> <p>@data.eventInformation.deadline?.ToString("yyyy-MM-dd")</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <i class="fas fa-map-marker-alt"></i><b>@Model.fLang.venue : </b> <p class="venue-info">@data.eventInformation.venue</p>
+                                        </div>
+                                    </div>
+
+                                    @*<div class="row">
+                                            <div class="col-sm-6">
+                                                <b>@Model.fLang.type : </b> <p>@data.eventInformation.type</p>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <b>@Model.fLang.amount : </b> <p>@data.eventInformation.amount?.ToString("0.00") Tk</p>
+                                            </div>
+                                        </div>*@
+
+                                    <a href="~/Event/EventInfo/Details/@data.eventInformation.Id" class="btn btn-warning" style="float:right">Read More &rarr;</a>
+                                </div>
+                                @*<div class="card-footer text-muted">
+                                        @if (data.isRegistered == true)
+                                        {
+                                        <button class="btn btn-block btn-info" onclick="TransferId(@data.eventInformation.Id)" disabled>@Model.fLang.registered</button>
+                                        }
+                                        else
+                                        {
+                                        <a class="btn btn-block btn-info" onclick="TransferId(@data.eventInformation.Id,'@data.eventInformation.type')" href="#" data-toggle="modal" data-target="#registerModal">@Model.fLang.register</a>
+                                        }
+
+                                    </div>*@
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="col-12">
+        <div class="card">
+            <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="col-10">
+                    <h4 class="m-0 font-weight-bold text-primary">@Model.fLang.joining</h4>
+                </div>
+            </div>
+            <div class="row">
+
+                @foreach (var data in Model.eventRegisters)
+                {
+                    <!-- Blog Post -->
+                    <div class="col-4" style="padding:10px">
+                        <div class="card ">
+                            <img class="card-img-top for-size-fixed" src="~/@data.eventInformation.url" alt="Card image cap">
+                            <div class="card-body">
+                                <h6 class="card-title">@data.eventInformation.title</h6>
+                                <h6>@Model.fLang.date : @data.eventInformation.date?.ToString("yyyy-MM-dd")</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <b>@Model.fLang.deadline : </b> <p>@data.eventInformation.deadline?.ToString("yyyy-MM-dd")</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <i class="fas fa-map-marker-alt"></i><b>@Model.fLang.venue : </b> <p class="venue-info">@data.eventInformation.venue</p>
+                                    </div>
+                                </div>
+
+                                @*<div class="row">
+                                        <div class="col-sm-6">
+                                            <b>@Model.fLang.type : </b> <p>@data.eventInformation.type</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <b>@Model.fLang.amount : </b> <p>@data.eventInformation.amount?.ToString("0.00") Tk</p>
+                                        </div>
+                                    </div>*@
+
+                                <a href="~/Event/EventInfo/Details/@data.eventInformationId" class="btn btn-warning" style="float:right">Read More &rarr;</a>
+                            </div>
+                            @*<div class="card-footer text-muted">
+                                    <button class="btn btn-block btn-info" onclick="TransferId(@data.eventInformation.Id)" disabled>@Model.fLang.registered</button>
+                                </div>*@
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+@*<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row" style="width:100%;">
+                        <div class="col-3">
+                            <img src="~/images/Key-Club-International-Logo.jpg" style="height:50px; width:50px;" />
+                        </div>
+                        <div class="col-8">
+                            <h5 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px;">@Model.fLang.modalHead</h5>
+                        </div>
+                        <div class="col-1">
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <form asp- method="post" asp-area="Event" asp-controller="EventInfo" asp-action="Register" id="logoutForm" class="navbar-right">
+                    <div class="modal-body">
+                        <h4 class="text-center text-success">@Model.fLang.evtReg</h4>
+                        <hr />
+                        <input type="hidden" name="eventId" id="eventId" value="" />
+                        <div class="form-group row" id="transId">
+                            <label for="transectionId" class="col-sm-3 col-form-label">@Model.fLang.transaction</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="transectionId" value="" name="transectionId">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">@Model.fLang.cancel</button>
+                        <button type="submit" class="btn btn-success">@Model.fLang.register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>*@
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            //$('#batchCreateDate').datepicker({ uiLibrary: 'bootstrap4' });
+
+            $(".card-title").each(function (i) {
+                len = $(this).text().length;
+                if (len > 30) {
+                    $(this).text($(this).text().substr(0, 30) + '...');
+                }
+            });
+            $(".venue-info").each(function (i) {
+                len = $(this).text().length;
+                if (len > 15) {
+                    $(this).text($(this).text().substr(0, 15) + '...');
+                }
+            });
+        });
+
+            //function TransferId(id,type) {
+            //    $('#eventId').val(id)
+            //    console.log(type);
+            //    if (type == "free") {
+            //        $('#transId').hide();
+            //    } else {
+            //        $('#transId').show();
+            //    }
+            //}
+
+
+    </script>
+}

@@ -1,0 +1,476 @@
+﻿@model DocumentViewModel
+@{
+    ViewData["Title"] = "Document Preview";
+    var cnt = 0;
+}
+
+@section Style{
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .b-success {
+            background: deepskyblue;
+            padding: 10px;
+            color: white;
+            border-radius: 30%;
+        }
+
+        .b-wait {
+            background: gainsboro;
+            padding: 10px;
+            color: black;
+            border-radius: 30%;
+        }
+
+        .b-current {
+            background: #278c9b;
+            padding: 10px;
+            color: white;
+            border-radius: 30%;
+        }
+    </style>
+}
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="card" style="width: 100%; margin-bottom: 10px;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: black">@Model.doc.doc.subject</h5>
+                <hr>
+                <div class="container">
+                    <br>
+                    <div class="row">
+                        @foreach (var data in Model.docRoute)
+                        {
+                            <div class="col-3">
+                                @if (data.docRoute.actionId != null || data.docRoute.order == 1)
+                                {
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <b class="b-success">@data.docRoute.order</b>
+                                        </div>
+                                        <div class="col-9">
+                                            <p class="text-success">@data.docRoute.employee.nameEnglish</p>
+                                        </div>
+                                    </div>
+                                }
+                                else if (data.docRoute.isActive == 1)
+                                {
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <b class="b-current">@data.docRoute.order</b>
+                                        </div>
+                                        <div class="col-9">
+                                            <p class="text-primary">@data.docRoute.employee.nameEnglish</p>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <b class="b-wait">@data.docRoute.order</b>
+                                        </div>
+                                        <div class="col-9">
+                                            <p>@data.docRoute.employee.nameEnglish</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            cnt++;
+                            if (cnt == 3)
+                            {
+                                <br />
+                                <br />
+                            }
+                        }
+
+                    </div>
+
+                    <hr>
+
+                    <div class="col-12">
+                        <embed src="/Workflow/Document/DocViewPdf/@Model.doc.doc.Id" type="application/pdf" width="100%"
+                               height="800px" />
+                    </div>
+                    <br>
+                    <br>
+                    <h5 class="card-title" style="color: black">Attachments</h5>
+                    <hr>
+                    <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">File Name</th>
+                                <th scope="col" colspan="2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int serial = 1;
+                                @foreach (var data in Model.docAttachment)
+                                {
+                                    <tr>
+                                        <th scope="row">@serial</th>
+                                        <td>@data.title</td>
+
+                                        <td>
+
+                                            <a class="btn btn-primary"
+                                               href="@data.fileUrl"
+                                               download>
+                                                Download
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-primary"
+                                               href="@data.fileUrl" target="_blank">
+                                                Preview
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @foreach (var data in Model.reviewRoutes)
+        {
+            if (data.docRoute.employeeId == Model.employeeId)
+            {
+                <div class="card" style="width: 100%; margin-bottom: 10px;">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: red">Review Comments Section</h5>
+                        <hr>
+                        <div class="container-fluid">
+
+                            <div class="row clearfix">
+
+                                <div class="col-12">
+                                    <div class="card" style="width: 100%;">
+                                        <div class="card-body">
+                                            <h5 class="card-title" style="color: black"> Review Comments </h5>
+                                            <hr>
+                                            <div class="container">
+                                                @foreach (var data1 in Model.reviewRoutes)
+                                                {
+                                                    <div class="col-12">
+                                                        <b>@data1.employee.nameBangla</b>
+                                                        <p style="margin-left: 30px">@data1?.action?.description</p>
+                                                        <hr>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        @if (Model.docCheck.isActive == 1)
+        {
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h4 class="m-0 font-weight-bold">Action for External/Internal Route</h4>
+                    </div>
+
+                    <hr>
+                    <div class="container">
+                        <form asp-area="Workflow" asp-controller="Document" asp-action="DocApproverAdd" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    <div class="row">
+                                        <label for="radio1" class="col-sm-2 col-form-label" style="color: black;">Type</label>
+                                        <div class="col-sm-10">
+                                            <div class="form-group">
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input" name="noteType" value="External" checked>External Route
+                                                        <input name="docId" type="hidden" value="@Model.doc.doc.Id">
+                                                        <input name="docRouteID" type="hidden" value="@Model.docCheck.Id">
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label" for="radio2">
+                                                        <input type="radio" class="form-check-input" id="radio2" name="noteType"
+                                                               value="Internal">Internal
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <br />
+                                    <div class="form-group row">
+                                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Doc Verifier</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="verifier">
+                                            <input type="hidden" class="form-control" id="supervisorName">
+                                            <input type="hidden" class="form-control" id="supervisorEmpID">
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <a class="btn btn-success" title="Add Verifier" onclick="AddGroup()" style="color:white" id="addVerifier"><i class="fa fa-plus"></i></a>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-sm-2">
+
+                                        </div>
+                                        <div id="SubLedgerList" class="col-sm-10 row">
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <button type="submit" value="Submit" onclick="return checkSave();" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <br>
+
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title" style="color: black">Doc Attachments</h5>
+                    <hr>
+                    <form asp-area="Workflow" asp-controller="Document" asp-action="DocAttachment" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="container">
+                            <div class="custom-file mb-3">
+                                <input type="file" class="custom-file-input" id="customFile" name="attachments[]" multiple>
+                                <input name="docId" type="hidden" value="@Model.doc.doc.Id">
+                                <input name="docRouteID" type="hidden" value="@Model.docCheck.Id">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                            <div class="well">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#SL</th>
+                                            <th scope="col">Selected File Name</th>
+                                            <th scope="col">Selected File Type</th>
+                                            <th scope="col">Selected File Title</th>
+                                            <th scope="col">Selected File Subject</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="attatchmentsDetails"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr>
+                        <button type="submit" value="Submit" onclick="return SaveAttachment();" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+                    </form>
+
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title" style="color: black">
+                        Add Your Comments & Perform
+                        Action
+                    </h5>
+                    <hr>
+                    <div class="container">
+                        <form asp-area="Workflow" asp-controller="Document" asp-action="DocForward" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                            <textarea id="comment" name="comment" class="form-control" rows="4" cols="10" style="resize: none; margin-bottom: 10px;" required></textarea>
+                            <input type="radio" id="approved" name="text_display" value="1"
+                                   onClick="display_text()">Approved
+                            <input type="radio" id="notApproved" name="text_display" value="2"
+                                   onClick="display_text()">Not Approved
+
+                                <input name="docId" type="hidden" value="@Model.doc.doc.Id">
+                                <input name="docRouteID" type="hidden" value="@Model.docCheck.Id">
+                                <br>
+                                <div style="float: right">
+                                    <input type="submit" name="submit" value="Forward"
+                                           class="btn btn-success">
+
+                                    <input type="submit" name="submit" value="Return"
+                                           class="btn btn-danger">
+                                </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        }
+
+
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('#description').summernote({
+                tabsize: 2,
+                height: 300
+            });
+            Common.Ajax('GET', '/global/api/getEmployeeInfoByOrg/', [], 'json', ajaxEmployeeList, false);
+
+            //Attatchments Related
+            $('#customFile').change(function (e) {
+                var fileName = "";
+                for (var i = 0; i < e.target.files.length; i++) {
+                    fileName += '<tr>\
+                                <th scope="row">' + (i + 1) + '</th>\
+                                <td>' + e.target.files[i].name + '</td>\
+                                <td>' + e.target.files[i].type + '</td>\
+                                <td> <div class="form-group">\
+                                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="File Title" name="fileTitle[]" value="' + (i + 1) + 'A" maxlength="10" required>\
+                                    </div></td>\
+                                <td> <div class="form-group">\
+                                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="File Subject" name="fileSubject[]" value="' + (i + 1) + 'A Subject" maxlength="240" required>\
+                                    </div>\
+                                </td>\
+                            </tr>';
+                }
+                $('#attatchmentsDetails').html(fileName);
+            });
+
+        });
+
+        function ajaxEmployeeList(response) {
+            console.log(response);
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode + ' - ' + option.nameEnglish;
+                obj.name = option.nameEnglish;
+                obj.designation = option.designation;
+                obj.orgType = option.orgType;
+                obj.nationalID = option.nationalID;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#verifier').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#supervisorName").val(ui.item.name);
+                    $("#supervisorEmpID").val(ui.item.key);
+                }
+            });
+        }
+
+        function AddGroup() {
+            var id = $('#supervisorEmpID').val();
+            if (id == null) {
+                swal('Warning', 'Incorrect Employee Please Try Correct Employee!!', 'warning');
+                return false;
+            }
+            var value = $('#verifier').val();
+            $('#SubLedgerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroup(' + "'" + id + "'" + ')">X</span></a></span>');
+            $('#verifier').val('');
+            $('#supervisorEmpID').val('');
+            $('#supervisorName').val('');
+        }
+
+        function DeleteGroup(id) {
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+
+        function checkSave() {
+            chk = confirm('Are You Sure To Send Internal/External Route ?');
+            if (chk) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function SaveAttachment() {
+            chk = confirm('Are You Sure To Save This Attachment ?');
+            if (chk) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function display_text() {
+            if (document.getElementById("approved").checked == true) {
+                document.getElementById("comment").innerHTML = "Approved";
+            }
+            else if (document.getElementById("notApproved").checked == true) {
+                document.getElementById("comment").innerHTML = "Not Approved";
+            }
+        }
+
+
+
+    </script>
+}
+
+
+
+
+
+
+

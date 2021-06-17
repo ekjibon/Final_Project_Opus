@@ -1,0 +1,412 @@
+﻿@model JobPostViewModel
+@{
+    ViewData["Title"] = "Job Posting";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .ui-autocomplete {
+            cursor: pointer;
+            height: 400px;
+            width: 300px;
+            overflow-y: scroll;
+            background-color: white;
+            color: rgb(0,188,212);
+            z-index: 1050;
+            /*outline-style:outset;*/
+        }
+    </style>
+}
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Job Requisition List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="jobRequisitionTable">
+                    <thead>
+                        <tr>
+                            <th>Job No</th>
+                            <th>Designation</th>
+                            <th>Requisition Date</th>
+                            <th>Appointment Date</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.jobRequisitions)
+                        {
+                        <tr>                          
+                            <td>@data.jobNo</td>
+                            <td>@data.designation</td>
+                            <td>@data.requisitionDate</td>
+                            <td>@data.appointmentDate</td>
+                            <td>
+                                <button href="#" class="btn btn-facebook" data-toggle="modal" data-target="#jobPostDetailsModal" style="font-size:12px;width:40%;" onclick="AddValue(@data.Id,'@data.jobNo','@data.','@data.requisitionDate','@data.appointmentDate','@data.justification',@data.vacancy,@data.salary,'@data.employmentStatus','@data.jobLocation','@data.jobContext','@data.jobResponsibility','@data.reqEducationalQ','@data.reqExperience','@data.addRequirements','@data.compensationOthers')" ><span data-toggle="tooltip" title='Show Job Post'><i class="fas fa-info"></i></span></button>
+                                @*<button class="btn btn-info" data-toggle="modal" data-target="#jobPostingModal" title="Reject" type="submit" onclick="AddValue(@data.Id)"><i class="fa fa-eye"></i></button>*@
+                                <a href="#" class="btn btn-info" data-toggle="modal" data-target="#jobPostingModal" style="font-size:12px;width:40%;"><span data-toggle="tooltip" onclick="ReqAdd(@data.Id)" title='Job Posting'><i class="fas fa-plus-square"></i></span></a>
+                            </td>
+                        </tr>
+                        }
+                        @*<tr>
+            <td>fd456</td>
+            <td>sdfsf</td>
+            <td>2012/12/12</td>
+            <td>2019/12/12</td>
+            @*<td>@data.startDateActual?.ToString("MM/dd/yy")</td>
+                <td>@data.endDateActual?.ToString("MM/dd/yy")</td>
+            <td>
+                <a href="#" class="btn btn-facebook" data-toggle="modal" data-target="#jobPostDetailsModal" style="font-size:12px;width:40%;"><span data-toggle="tooltip" title='Show Job Post'><i class="fas fa-info"></i></span></a>
+                <a href="#" class="btn btn-info" data-toggle="modal" data-target="#jobPostingModal" style="font-size:12px;width:40%;"><span data-toggle="tooltip" title='Job Posting'><i class="fas fa-plus-square"></i></span></a>
+            </td>
+        </tr>*@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br /><br />
+      <div class="row clearfix">
+          <div class="col-12">
+              <div class="card mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                      <h6 class="m-0 font-weight-bold text-primary">Job Post List</h6>
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                      <table class="table table-striped table-bordered" id="jobPostTable">
+                          <thead>
+                              <tr>
+                                  <th>Job No</th>
+                                  <th>Designation</th>
+                                  <th>Posting Date</th>
+                                  <th>Deadline</th>
+                                  <th>Media</th>
+                                  <th>Action</th>
+                          </thead>
+                          <tbody>
+                              @foreach (var data in Model.jobPosts)
+                              {
+                              <tr>
+                                  <td>@data.jobReq.jobNo</td>
+                                  <td>@data.jobReq.designation</td>
+                                  <td>@data.postDate</td>
+                                  <td>@data.deadline</td>
+                                  <td>@data.media</td>
+                                  <td>
+                                     
+                                      <a href="#" class="btn btn-info" data-toggle="modal" data-target="#jobPostingModal" style="font-size:12px;width:40%;"><span data-toggle="tooltip" onclick="ReqAdd(@data.Id)" title='Job Posting'><i class="fas fa-plus-square"></i></span></a>
+                                  </td>
+                              </tr>
+                              }
+
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+<!-- Show Job Posting -Modal-->
+      <div class="modal fade" id="jobPostingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Job Posting</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <form asp-area="Recruitment" asp-controller="JobPost" asp-action="Action" method="post" data-parsley-validate="parsley">
+                          <div asp-validation-summary="All" class="text-danger"></div>
+                          <div class="row">
+                              <input type="hidden" id="jobPostId" name="jobPostId" value="0" />
+                              <div class="col-8">
+                                  <div class="form-group row">
+                                      <label for="jobNo" class="col-sm-4 col-form-label">Job No</label>
+                                      <div class="col-sm-8">
+                                          <input type="text" class="form-control" id="jobNo" name="jobNo" value="@Model.jobNo" />
+                                          <input type="hidden" id="jobReqId" name="jobReqId" value="0" />
+                                      </div>
+                                  </div>
+                                  <div class="form-group row">
+                                      <label for="media" class="col-sm-4 col-form-label">Media</label>
+                                      <div class="col-sm-8">
+                                          <select class="form-control" name="media" id="media">
+                                              <option value="bdjobs">BDJobs</option>
+                                              <option value="facebook">Facebook</option>
+                                              <option value="linkedin">Linkedin</option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  <div class="form-group row">
+                                      <label for="postingDate" class="col-sm-4 col-form-label">Posting Date</label>
+                                      <div class="col-sm-8">
+                                          <input type="text" class="form-control" id="postingDate" name="postingDate" value="" />
+                                      </div>
+                                  </div>
+                                  <div class="form-group row">
+                                      <label for="deadline" class="col-sm-4 col-form-label">Deadline</label>
+                                      <div class="col-sm-8">
+                                          <input type="text" class="form-control" id="deadline" name="deadline" value="" />
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
+                          <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                      </form>
+                      <br />
+
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-sm-12">
+                          <a href="javascript:void(0)" style="color:deepskyblue;float:right;" data-dismiss="modal">Cancel</a>
+                      </div>
+                      @*<div class="col-sm-2">
+                        <button type="button" id="btnSaveItemSpec" class="btn-primary btn-sm">Save</button>
+                    </div>*@
+                  </div>
+              </div>
+          </div>
+      </div>
+
+<!-- Show Job Post Details -Modal-->
+      <div class="modal fade" id="jobPostDetailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Job Post Details</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="row">
+                          <input type="hidden" id="jobRequisitionId" name="jobRequisitionId" value="0" />
+                          <div class="col-8">
+                              <div class="form-group row">
+                                  <label for="jobNo" class="col-sm-4 col-form-label">Job No</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="jobNo" name="jobNo" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="reqDate" class="col-sm-4 col-form-label">Requisition Date</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="reqDate" name="reqDate" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="targetDate" class="col-sm-4 col-form-label">Target Appointment Date</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="targetDate" name="targetDate" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="justification" class="col-sm-4 col-form-label">Job Justification</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="justification" name="justification" value="" readonly />
+                                  </div>
+                              </div>
+
+                          </div>
+                      </div><br />
+                      <div class="row">
+                          @*<input type="hidden" id="jobReqId" name="jobReqId" value="0" />*@
+                          <div class="col-6">
+                              <div class="form-group row">
+                                  <label for="jobDesignation" class="col-sm-4 col-form-label">Job Designation</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="jobDesignation" name="jobDesignation" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="department" class="col-sm-4 col-form-label">Department</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="department" name="department" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="vacancy" class="col-sm-4 col-form-label">Vacancy No</label>
+                                  <div class="col-sm-8">
+                                      <input type="number" class="form-control" id="vacancy" name="vacancy" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="employmentStatus" class="col-sm-4 col-form-label">Employment Status</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="employmentStatus" name="employmentStatus" value="" readonly />
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="col-6">
+                              <div class="form-group row">
+                                  <label for="experience" class="col-sm-4 col-form-label">Required Experience<span style="color:red;">*</span></label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="experience" name="experience" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="jobLocation" class="col-sm-4 col-form-label">Job Location<span style="color:red;">*</span></label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="jobLocation" name="jobLocation" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="salary" class="col-sm-4 col-form-label">Salary</label>
+                                  <div class="col-sm-8">
+                                      <input type="number" class="form-control" id="salary" name="salary" value="" readonly />
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="jobSource" class="col-sm-4 col-form-label">Job Source</label>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="jobSource" name="jobSource" value="" readonly />
+                                  </div>
+                              </div>
+                          </div>
+                      </div><br />
+                      <div class="row">
+                          @*<input type="hidden" id="jobReqId" name="jobReqId" value="0" />*@
+                          <div class="col-12">
+                              <div class="form-group row">
+                                  <label for="jobContext" class="col-sm-4 col-form-label">Job Context</label>
+                                  <div class="col-sm-8">
+                                      <textarea class="form-control" id="jobContext" name="jobContext" readonly></textarea>
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="eduReq" class="col-sm-4 col-form-label">Educational Requirements</label>
+                                  <div class="col-sm-8">
+                                      <textarea class="form-control" id="eduReq" name="eduReq" readonly></textarea>
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="responsibility" class="col-sm-4 col-form-label">Job Responsibilities</label>
+                                  <div class="col-sm-8">
+                                      <textarea class="form-control" id="responsibility" name="responsibility" readonly></textarea>
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="additionalReq" class="col-sm-4 col-form-label">Additional Requirements</label>
+                                  <div class="col-sm-8">
+                                      <textarea class="form-control" id="additionalReq" name="additionalReq" readonly></textarea>
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="compensation" class="col-sm-4 col-form-label">Compensation &amp; Other Benifits</label>
+                                  <div class="col-sm-8">
+                                      <textarea class="form-control" id="compensation" name="compensation" readonly></textarea>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-sm-12">
+                          <a href="javascript:void(0)" style="color:deepskyblue;float:right;" data-dismiss="modal">Cancel</a>
+                      </div>
+                      <div class="col-sm-2">
+                        <a href="~/Recruitment/CVCollection/Create/@Model.jobRequisitionId" id="btnSaveItemSpec" class="btn-primary btn-sm">Apply Now</a>
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+@section Scripts{
+    <script>
+        function ReqAdd(Id) {
+            $("#jobReqId").val(Id);
+        }
+
+        $(document).ready(function () {
+            //$("#award").addClass("active");
+
+            $('#postingDate').datepicker({
+                uiLibrary: 'bootstrap4'
+            });
+            $('#deadline').datepicker({
+                uiLibrary: 'bootstrap4'
+            }); jobPostTable
+            $('#jobPostTable').DataTable();
+            $('#jobRequisitionTable').DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: "ERP Sytem",
+                        messageTop: 'List Of Foreign Training For Evalution',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: "ERP Sytem",
+                        messageTop: 'List Of Employee Training'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ERP Sytem",
+                        messageTop: 'List Of Foreign Training For Evalution',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        });       
+
+        function AddValue(id, jobNo, requisitionDate, appointmentDate, justification, vacancy, salary, employmentStatus, jobLocation, jobContext, jobResponsibility, reqEducationalQ, reqExperience, addRequirements, compensationOthers) {
+            //$('#jobPostDetailsModal').modal('show');
+            $("#jobRequisitionId").val(id);
+            $("#jobNo").val(jobNo);
+            //$("#designation").val(designation);
+            //$("#department").val(department);
+            $("#reqDate").val(requisitionDate);
+            $("#targetDate").val(appointmentDate);
+            $("#justification").val(justification);
+            $("#vacancy").val(vacancy);
+            $("#salary").val(salary);
+            $("#employmentStatus").val(employmentStatus);
+            $("#jobLocation").val(jobLocation);
+            $("#jobContext").val(jobContext);
+            $("#responsibility").val(jobResponsibility);
+            $("#eduReq").val(reqEducationalQ);
+            $("#experience").val(reqExperience);
+            $("#additionalReq").val(addRequirements);
+            $("#compensation").val(compensationOthers);
+            //Common.Ajax('GET', '/global/api/GetLeaveBalanceByempId/' + employeeId + '/' + leaveTypeId, [], 'json', ajaxLeaveBalance);
+        }
+    </script>
+}

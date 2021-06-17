@@ -1,0 +1,625 @@
+﻿@model SalesTeamDeploymentViewModel
+@{
+    ViewData["TitleMD"] = "Sales Team Deployment";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fas fa-table"></i>
+            All Areas
+            @*<div class="btn-group" role="group" style="float:right" aria-label="Basic example">
+                    <button id="lanENG" type="button" style="font-size:10px;" class="btn btn-info">ENG</button>
+                    <button id="lanBAN" type="button" style="font-size:10px;" class="btn btn-success">বাংলা</button>
+                </div>*@
+        </div>
+
+        <div class="card-body" style="min-height: 500px;">
+            <div id="d3Content">
+                <img id="customLoaderMenu" src="~/images/loader-64x/Preloader_3.gif" alt="loader" style="margin-top: 200px; margin-left: 48%;" />
+            </div>
+        </div>
+        <div class="card-footer small text-muted"></div>
+
+    </div>
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Sales Team Deployment Information</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="SalesTeamDeployment" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+
+                <div class="form-group row">
+
+                    <label for="degreeName" class="col-sm-2 col-form-label">Employee Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="hidden" name="employeeInfoId" id="employeeInfoId" value="0" />
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="empName" id="empName">
+                    </div>
+                    <label for="degreeNameBn" class="col-sm-2 col-form-label">Joining Date</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="joiningdate" id="joiningdate" readonly>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+
+
+                    <div class="col-sm-6">
+
+                    </div>
+
+                    <div class="col-sm-4">
+                        <img id="pic" src="~/Upload/Photo/bimage.png" style="height:50px;width:80px" />
+                    </div>
+                    <div class="col-sm-2">
+
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="degreeNameBn" class="col-sm-2 col-form-label">Designation</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="designation" id="designation" readonly>
+                    </div>
+                    <label for="degreeNameBn" class="col-sm-2 col-form-label">Department</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="department" id="department" readonly>
+                    </div>
+                </div>
+
+
+
+
+                <div class="form-group row">
+                    <input type="hidden" name="Id" id="Id" value="0" />
+
+                    <label for="levelofeducationId" class="col-sm-2 col-form-label">Sales Level<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="salesLevelId" id="salesLevelId">
+                            <option value="0">Select</option>
+                            @foreach (var data in Model.salesLevels)
+                            {
+                                <option value="@data.Id">@data.name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <input type="hidden" name="Id" id="Id" value="0" />
+
+                    <label for="levelofeducationId" class="col-sm-2 col-form-label">Area<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="areaId" id="areaId">
+                            @foreach (var data in Model.areas)
+                            {
+                                <option value="@data.Id">@data.areaName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <input type="hidden" name="Id" id="Id" value="0" />
+
+                    <label for="levelofeducationId" class="col-sm-2 col-form-label">Supervisor<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="salesTeamDeploymentId" id="salesTeamDeploymentId">
+                            <option value="0">Select</option>
+                            @foreach (var data in Model.salesTeamDeployments)
+                            {
+                                <option value="@data.Id">@data.employeeInfo.nameEnglish</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Sales Level Information List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Sales Level</th>
+                            <th>Area Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.salesTeamDeployments)
+                        {
+                            <tr>
+                                <td>@data.employeeInfo.nameEnglish</td>
+                                <td>@data.employeeInfo.designation</td>
+
+                                <td>@data.salesLevel?.name</td>
+                                <td>@data.area?.areaName</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,@data.employeeInfoId,@data.salesLevelId,@data.areaId,'@data.employeeInfo.designation','@data.employeeInfo.nameEnglish','@data.employeeInfo.employeeCode',@data.salesTeamDeploymentId)" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#degree").addClass("active");
+            $('#departmentTable').DataTable();
+            Common.Ajax('GET', '/api/global/getEmployeeInfo/', [], 'json', GetEmployeeList);
+            //$("#salesLevelId").change(function () {
+            //    var Id = $(this).val();
+
+            //    Common.Ajax('GET', '/api/global/getareabysaleslevelId/' + Id, [], 'json', Getarea, false);
+
+            //});
+            $("#d3Content").empty();
+            $.get("/Distribution/SalesTeamDeployment/GetMenusJson", function (data, status) {
+
+                GenerateTreeENG(data.menus, data.depth);
+            });
+        });
+        function Getarea(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.areaName + '</option>';
+            });
+            $('#areaId').empty();
+            $('#areaId').append(options);
+        }
+        function Getsales(response) {
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.name + '</option>';
+            });
+            $('#salesLevelId').empty();
+            $('#salesLevelId').append(options);
+        }
+        function GetEmployeeList(response) {
+            $('#empName').empty();
+            $("#employeeInfoId").val('');
+            $("#designation").val('');
+
+            var lstLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.department = option.department.deptName;
+                obj.joiningDate = option.joiningDate;
+                obj.designation = option.designation;
+                obj.value = option.nameEnglish + ' (' + option.employeeCode + ')';
+                lstLedger[lstLedger.length] = obj;
+            });
+            $('#empName').autocomplete({
+                source: lstLedger,
+                select: function (event, ui) {
+                    $('#empName').val(ui.item.value);
+                    $("#joiningDate").val(ui.item.joiningDate);
+                    $("#department").val(ui.item.department);
+                    $("#designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+                    Common.Ajax('GET', '/api/global/getemployeepicbyId/' + ui.item.key, [], 'json', Getphoto, false);
+
+                }
+            });
+        }
+        function Getphoto(response) {
+            console.log(response);
+            $('#pic').empty();
+            if (response != null) {
+                $('#pic').attr("src", "/" + response.url);
+            }
+            else {
+                $('#pic').attr("src", "/Upload/Photo/noimage.jpg");
+            }
+
+            //$.each(response, function (i, item) {
+
+
+            //});
+
+
+        }
+
+        function Edit(Id, employeeId, SaleslevlelId, areaId, designation, employeeName, code, salesTeamDeployementId) {
+            $("#Id").val(Id);
+            $("#empName").val(employeeName + ' (' + code + ')');
+            $("#designation").val(designation);
+            $("#employeeInfoId").val(employeeId);
+            $("#salesLevelId").val(SaleslevlelId);
+            $("#salesTeamDeploymentId").val(salesTeamDeployementId);
+            // Common.Ajax('GET', '/api/global/getareabysaleslevelId/' + SaleslevlelId, [], 'json', Getarea, false);
+
+            $("#areaId").val(areaId);
+        }
+        //function Getsaleslevel(response) {
+
+        //    if (response.salesLevelId != null) {
+        //        $('#parrentidarea').show();
+        //    }
+        //    else {
+        //        $('#parrentidarea').hide();
+        //    }
+
+
+
+
+        //}
+        function Remove(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/Distribution/SalesLevel/Delete/?id=" + Id;
+                swal({
+                    title: '', text: 'Deleted Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                });
+            });
+
+        }
+
+        function ClearMenu() {
+
+
+
+        }
+
+        function SelectMenu(id, menuName, menuNameEN, type) {
+            $("#salesTeamDeploymentId").val(id);
+            Common.Ajax('GET', '/api/global/getsaleslevelparentId/' + type, [], 'json', Getsales, false);
+            //  table.columns(5).search(menuName).draw(); // Data Seraching Done, By menu selecting.
+
+        }
+        //function Edit(Id, areaCode, areaName, areaLocation, saleslevelId, areaid,salesTeamDeployementId) {
+        //    $("#areaId").val(Id);
+        //    $("#areaCode").val(areaCode);
+        //    $("#areaName").val(areaName);
+        //    $("#areaLocation").val(areaLocation);
+        //    $("#salesLevelareaId").val(saleslevelId);
+        //    $("#masterareaid").val(areaid);
+        //    $("#salesTeamDeploymentId").val(salesTeamDeployementId);
+        //  //  Common.Ajax('GET', '/api/global/getsaleslevelbyId/' + saleslevelId, [], 'json', Getsaleslevel, false);
+        //}
+        function Remove(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/Distribution/Area/Delete/?id=" + Id;
+                swal({
+                    title: '', text: 'Deleted Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                });
+            });
+
+        }
+
+        function CheckStatus3() {
+            if ($("#ParrentMenuName").val() == "" || $("#ParrentMenuName").val() == null) {
+                swal("Opps!!!", "Select A Menu First", "error");
+                return false;
+            }
+
+            if ($("#actionConfirmation").val() != "yes") {
+                swal("Opps!!!", "Type yes for confirmation", "info");
+                return false;
+            }
+
+            return true;
+        }
+
+        var treeData, treeDataDepth;
+
+        // ************** Generate the tree diagram	 *****************
+        var margin = { top: 20, right: 60, bottom: 20, left: 60 },
+            width = 960 - margin.right - margin.left,
+            height = 500 - margin.top - margin.bottom;
+
+        var i = 0,
+            duration = 750,
+            root;
+
+        var tree = d3.layout.tree()
+            .size([height, width]);
+
+        var diagonal = d3.svg.diagonal()
+            .projection(function (d) { return [d.y, d.x]; });
+        var svg;
+
+        function GenerateTree(tempData, tempdepth) {
+            console.log(tempData);
+            $("#customLoaderMenu").hide();
+            treeData = JSON.parse(tempData);
+            treeDataDepth = tempdepth;
+            svg = d3.select("#d3Content").append("svg")
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            root = treeData[0];
+            root.x0 = height / 2;
+            root.y0 = 0;
+
+            update(root);
+
+            d3.select(self.frameElement).style("height", "500px");
+        }
+        function GenerateTreeENG(tempData, tempdepth) {
+            console.log(tempData);
+            $("#customLoaderMenu").hide();
+            treeData = JSON.parse(tempData);
+            treeDataDepth = tempdepth;
+            svg = d3.select("#d3Content").append("svg")
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            root = treeData[0];
+            root.x0 = height / 2;
+            root.y0 = 0;
+
+            updateENG(root);
+
+            d3.select(self.frameElement).style("height", "500px");
+        }
+
+        function updateENG(source) {
+
+
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+
+            // Normalize for fixed-depth.
+            nodes.forEach(function (d) { d.y = d.depth * ((width - 90) / treeDataDepth); });
+
+            // Update the nodes…
+            var node = svg.selectAll("g.node")
+                .data(nodes, function (d) { return d.id || (d.id = ++i); });
+
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+                .on("click", clickENG);
+
+            nodeEnter.append("circle")
+                .attr("r", 1e-6)
+                .style("fill", function (d) {
+                    if (d.type == "parrent") return "lightsteelblue";
+                    return "#111";
+                });
+
+            nodeEnter.append("text")
+                .attr("x", function (d) { return d.children || d._children ? -13 : 13; })
+                .attr("dy", ".35em")
+                .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
+                .text(function (d) { return d.nameEN; })
+                .style("fill-opacity", 1e-6);
+
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+            nodeUpdate.select("circle")
+                .attr("r", 10)
+                .style("fill", function (d) {
+                    if (d.type == "parrent") return "lightsteelblue";
+                    return "#111";
+                });
+
+            nodeUpdate.select("text")
+                .style("fill-opacity", 1);
+
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
+                .remove();
+
+            nodeExit.select("circle")
+                .attr("r", 1e-6);
+
+            nodeExit.select("text")
+                .style("fill-opacity", 1e-6);
+
+            // Update the links…
+            var link = svg.selectAll("path.link")
+                .data(links, function (d) { return d.target.id; });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("d", function (d) {
+                    var o = { x: source.x0, y: source.y0 };
+                    return diagonal({ source: o, target: o });
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function (d) {
+                    var o = { x: source.x, y: source.y };
+                    return diagonal({ source: o, target: o });
+                })
+                .remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function (d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+        function update(source) {
+
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+
+            // Normalize for fixed-depth.
+            nodes.forEach(function (d) { d.y = d.depth * ((width - 90) / treeDataDepth); });
+
+            // Update the nodes…
+            var node = svg.selectAll("g.node")
+                .data(nodes, function (d) { return d.id || (d.id = ++i); });
+
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+                .on("click", click);
+
+            nodeEnter.append("circle")
+                .attr("r", 1e-6)
+                .style("fill", function (d) {
+                    if (d.type == "parrent") return "lightsteelblue";
+                    return "#111";
+                });
+
+            nodeEnter.append("text")
+                .attr("x", function (d) { return d.children || d._children ? -13 : 13; })
+                .attr("dy", ".35em")
+                .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
+                .text(function (d) { return d.name; })
+                .style("fill-opacity", 1e-6);
+
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+            nodeUpdate.select("circle")
+                .attr("r", 10)
+                .style("fill", function (d) {
+                    if (d.type == "parrent") return "lightsteelblue";
+                    return "#111";
+                });
+
+            nodeUpdate.select("text")
+                .style("fill-opacity", 1);
+
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
+                .remove();
+
+            nodeExit.select("circle")
+                .attr("r", 1e-6);
+
+            nodeExit.select("text")
+                .style("fill-opacity", 1e-6);
+
+            // Update the links…
+            var link = svg.selectAll("path.link")
+                .data(links, function (d) { return d.target.id; });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("d", function (d) {
+                    var o = { x: source.x0, y: source.y0 };
+                    return diagonal({ source: o, target: o });
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function (d) {
+                    var o = { x: source.x, y: source.y };
+                    return diagonal({ source: o, target: o });
+                })
+                .remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function (d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        // Toggle children on click.
+        function click(d) {
+
+            //console.log(d.name);
+
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            update(d);
+            SelectMenu(d.data, d.name, d.nameEN, d.type);
+            $('html, body').animate({
+                scrollTop: $("#modificationSec").offset().top
+            }, 2000);
+
+        }
+        function clickENG(d) {
+
+            //console.log(d.name);
+
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            updateENG(d);
+            SelectMenu(d.data, d.name, d.nameEN, d.type);
+            $('html, body').animate({
+                scrollTop: $("#modificationSec").offset().top
+            }, 2000);
+
+        }
+    </script>
+}
+

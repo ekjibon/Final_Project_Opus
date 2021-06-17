@@ -1,0 +1,63 @@
+﻿@model MarksEntryViewModel
+@{
+    ViewData["Title"] = "Marks Entry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Marks Entry</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Recruitment" asp-controller="Result" asp-action="MarksEntry" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="marksId" id="marksId" value="0" />
+                    <input type="hidden" name="candidateId" id="candidateId" value="0" />
+                    <input type="hidden" name="reqId" id="reqId" value="0" />
+
+                    <label for="examOrder" class="col-sm-2 col-form-label">Order of Exam</label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="examOrder" id="examOrder">
+                    </div>
+
+                    <label for="marks" class="col-sm-2 col-form-label">Marks</label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control" name="marks" id="marks" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="percentage" class="col-sm-2 col-form-label">Percentage</label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control" name="percentage" id="percentage" min="0" max="100">
+                    </div>
+
+                    <label for="remarks" class="col-sm-2 col-form-label">Remarks</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="remarks" id="remarks">
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#interviewDate').flatpickr({ dateFormat: "d-M-Y" });
+            $('#jobRequisitionTable').DataTable();
+        });
+
+        function Edit(Id, awardName, awardNameBn, awardShortName) {
+            $("#awardId").val(Id);
+            $("#awardName").val(awardName);
+            $("#awardNameBn").val(awardNameBn);
+            $("#awardShortName").val(awardShortName);
+        }
+    </script>
+}

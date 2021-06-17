@@ -1,0 +1,77 @@
+﻿
+@model RFQViewModel
+@{
+    ViewData["Title"] = "BudgetApprovalList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header row">
+                <div class="col-md-12">
+                    <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                    <h5 style="color: black; font-weight:bold">List of RFQ Approval</h5>
+                </div>
+
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="budgetTable">
+                    <thead>
+                        <tr>
+                            <th style="width:15%">RFQ No</th>
+                            <th style="width:15%">RFQ Date</th>
+                            <th style="width:15%">Subject</th>
+                           
+                            <th style="width:15%">Status</th>
+                            <th style="width:10%">Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.rFQApprovedListViewModels)
+                        {
+                            string status = data.status == 1 ? "Created" : data.status == 2 ? "Ongoing" : "Approved";
+                            <tr>
+                                <td>@data.rfqNo</td>
+                                <td>@data.rfqDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.rfqSubject</td>
+                              
+                                <td>@status</td>
+                                <td>
+                                    @if (data.status != 3)
+                                    {
+
+                                        <a class="btn btn-success" title="Approve" href="/SCMIOU/IOU/IndexRFQ?id=@data.Id"><i class="fa fa-check-square"></i></a>
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#budgetTable').DataTable();
+
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+
+        });
+    </script>
+}
+

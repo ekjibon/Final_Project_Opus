@@ -1,0 +1,346 @@
+﻿@model BudgetRequisitionViewModel
+@{
+    ViewData["Title"] = "Create Requisition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row card">
+    <div class="card-header">
+        <span>
+            <button type="button" class="btn btn-default btn-sm pull-right ml-2" style="width:140px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("BudgetRequisitionList", "BudgetRequisition")'">@Model.flang1.back</button>
+            <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+        </span>
+        <h5 style="font-weight:bold; color:black">@Model.flang1.title</h5>
+    </div>
+</div>
+
+<form asp-area="Budget" asp-controller="BudgetRequisition" asp-action="IndexByExcel" method="post" data-parsley-validate="parsley" autocomplete="off">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1 m-0 p-0"></div>
+            <div class="card col-md-12">
+                <div class="card-header p-0 m-0">
+                    <h6 class="card-title">@Model.flang1.title</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="Number" class="col-sm-4 col-form-label">@Model.flang1.reqNo<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="Number" name="Number" value="@Model.Number" class="form-control input-group-sm" data-parsley-required="true" readonly />
+                                    <input type="hidden" id="reqId" name="reqId" value="@Model.reqId" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="year" class="col-sm-4 col-form-label text-left">@Model.flang1.fiscalYear<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select name="year" id="year" class="form-control input-group-sm" data-parsley-required="true">
+                                        <option value="">Select One</option>
+                                        @foreach (var data in Model.fiscalYears)
+                                        {
+                                            <option value="@data.Id">@data.yearName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="Date" class="col-sm-4 col-form-label text-left">@Model.flang1.date<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input name="Date" id="Date" value="@Model.Date?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" data-parsley-required="true" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header p-0 m-0">
+                    <h6 class="card-title">@Model.flang1.reqDetailFile</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="head" class="col-sm-4 col-form-label text-left">@Model.flang1.select<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="file" class="form-control input-sm" id="UpFile" name="UpFile" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <a style="float:left;color:white" onclick="fnLoadBOMDetails()" class="btn btn-sm btn-info">@Model.flang1.add</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height:10px;"></div>
+        <div class="row">
+            <div class="col-md-1 m-0 p-0"></div>
+            <div class="card col-md-12">
+                <div class="card-header p-0 m-0">
+                    <h6 class="card-title">Budget Details</h6>
+                    <h6 class="card-title">@Model.flang1.productionBatch</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-bordered table-responsive" id="productionDetailsTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField0"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField1"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField2"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField3"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField4"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField5"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField6"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField7"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField8"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField9"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField10"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField11"></select>
+                                </th>
+                                <th>
+                                    <select data-parsley-required="true" class="columnName" name="dbField" id="dbField12"></select>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>                    
+                </div>
+            </div>
+        </div>
+        <div style="height:20px;"></div>
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6">
+                <input type="button" onclick="RefreshAll()" value="@Model.flang1.refresh" class="btn btn-info btn-sm" style="width:100px;" />&nbsp;&nbsp;
+                <input type="submit" value="@Model.flang1.save" id="btnPSave" class="btn btn-success btn-sm" style="width:100px;" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <script type="text/javascript">
+        var formdata = new FormData();
+        function fnLoadBOMDetails() {
+            var isValidItem = true;
+            if ($('#UpFile').val() == "") {
+                isValidItem = false;
+                alert("Please select file");
+            }
+            if (isValidItem) {
+                if (window.FormData !== undefined) {
+                    var fileUpload = $("#UpFile").get(0);
+                    var files = fileUpload.files;
+                    for (var i = 0; i < files.length; i++) {
+                        formdata.append(files[i].name, files[i]);
+                    }
+                    $.ajax({
+                        url: '@Url.Action("LoadFile", "BudgetRequisition", "http")',
+                        type: "POST",
+                        contentType: false,
+                        processData: false,
+                        data: formdata,
+                        success: function (response) {
+                            $('#UpFile').val('');
+                            formdata = new FormData();
+                            if (response != null) {
+                                index = 0;
+                                var dtTable = $("#productionDetailsTable");
+                                var tableHead = dtTable.find('thead');
+                                var tableBody = dtTable.find('tbody');
+                                $.each(response, function (key, value) {
+                                    if (index == 0) {
+                                        tableHead.append(
+                                            '<tr id=' + index + '>' +
+                                            '<th>' + value.col0 + '</th>' +
+                                            '<th>' + value.col1 + '</th>' +
+                                            '<th>' + value.col2 + '</th>' +
+                                            '<th>' + value.col3 + '</th>' +
+                                            '<th>' + value.col4 + '</th>' +
+                                            '<th>' + value.col5 + '</th>' +
+                                            '<th>' + value.col6 + '</th>' +
+                                            '<th>' + value.col7 + '</th>' +
+                                            '<th>' + value.col8 + '</th>' +
+                                            '<th>' + value.col9 + '</th>' +
+                                            '<th>' + value.col10 + '</th>' +
+                                            '<th>' + value.col11 + '</th>' +
+                                            '<th>' + value.col12 + '</th>' +
+                                            '</tr>'
+                                        );
+                                    }
+                                    else {
+                                        tableBody.append(
+                                            '<tr id=' + index + '>' +
+                                            '<td>' + value.col0 + '<input type="hidden" name="headName" value="' + value.col0 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col1 + '<input type="hidden" name="col1" value="' + value.col1 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col2 + '<input type="hidden" name="col2" value="' + value.col2 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col3 + '<input type="hidden" name="col3" value="' + value.col3 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col4 + '<input type="hidden" name="col4" value="' + value.col4 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col5 + '<input type="hidden" name="col5" value="' + value.col5 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col6 + '<input type="hidden" name="col6" value="' + value.col6 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col7 + '<input type="hidden" name="col7" value="' + value.col7 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col8 + '<input type="hidden" name="col8" value="' + value.col8 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col9 + '<input type="hidden" name="col9" value="' + value.col9 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col10 + '<input type="hidden" name="col10" value="' + value.col10 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col11 + '<input type="hidden" name="col11" value="' + value.col11 + '" /></td>' +
+                                            '<td style="text-align:right;">' + value.col12 + '<input type="hidden" name="col12" value="' + value.col12 + '" /></td>' +
+                                            '</tr>'
+                                        );
+                                    }
+                                    index = index + 1;
+                                })
+                                Common.Ajax('GET', '/global/api/getAllColumnBySp/', [], 'json', ajaxAllColumn);
+                            }                            
+                        },
+                        error: function (err) {
+                            alert(err.statusText);
+                        }
+                    });
+                } else {
+                    alert("FormData is not supported.");
+                }
+            }
+        }
+
+        function ajaxAllColumn(response) {
+            console.log(response);
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.title + '">' + item.title + '</option>';
+            });
+            $('.columnName').empty();
+            $('.columnName').append(options);
+        }
+
+        function GetBOMDetailList(response) {
+            $("#productionDetailsTable tbody>tr").empty();
+            $.each(response, function (key, value) {
+                index = $("#productionDetailsTable tbody>tr").length;
+                var dtTable = $("#productionDetailsTable");
+                var tableBody = dtTable.find('tbody');
+                let budgetSubHead = value.budgetSubHead.name;
+                let budgetSubHeadId = value.budgetSubHeadId;
+                let amount = value.amount;
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + budgetSubHead + '<input type="hidden" name="heads" value="' + budgetSubHeadId + '" /></td>' +
+                    '<td>' + addCommas(amount) + '<input type="hidden" name="amounts" value="' + amount + '" /></td>' +
+                    '<td><a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="DeleteBOM(' + index + ')"><i class="fa fa-trash"></i></a>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+        }
+
+        function DeleteBOM(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#productionDetailsTable #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function RefreshAll() {
+            $("#productionDetailsTable tbody>tr").empty();
+            $('#bomQty').val('');
+            $('#productionDate').val('');
+            $('#bOMId').val('');
+            $('#bomItem').val('');
+            $('#productionId').val(0);
+            $('#productionNo').val('');
+            location.reload();
+        }
+
+        $(document).ready(function () {
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+            $('#Date').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+            let prdcId = parseInt(@Model.reqId) ? parseInt(@Model.reqId) : 0;
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+            today = mm + '/' + dd + '/' + yyyy;
+            if (prdcId == 0) {
+                $('#productionDate').val(today);
+            }
+            if (prdcId > 0) {
+                $("#bOMMasterId").val(@Model.reqId);
+                Common.Ajax('GET', '/global/api/GetBudgetRequsitionDetailBymasterId/' + @Model.reqId , [], 'json', GetBOMDetailList);
+            }
+        });
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var date = new Date(date);
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+            return day + '-' + monthNames[monthIndex] + '-' + year;
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        function ajaxEmployeeList(response) {
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.code + ' - ' + option.name;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#head').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#headId").val(ui.item.key);
+                }
+            });
+        }
+    </script>
+}
+
+@section Style{
+    <style>
+    </style>
+}

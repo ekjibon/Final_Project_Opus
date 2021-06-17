@@ -1,0 +1,264 @@
+﻿
+@model AddressViewModel
+@{
+    ViewData["Title"] = "Client Address";
+    Layout = "~/Areas/CRMClient/Views/Shared/_ClientForm.cshtml";
+}
+
+@section StyleClient{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        @*<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h4 class="m-0 font-weight-bold text-primary">Address Info</h4>
+            <a href="/CRMClient/Client/Index" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Back to List</a>
+        </div>*@
+       
+        <form asp-area="CRMLead" asp-controller="Address" asp-action="ClientAddress" method="post" data-parsley-validate="parsley">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label for="addressTypeId" class="col-sm-3 col-form-label">Address Type</label>
+                                    <div class="col-sm-9">
+                                        <input type="hidden" id="Id" name="Id" value="0">
+                                        <select class="form-control" name="addressTypeId" id="addressTypeId" data-parsley-required="true">
+                                            <option value="">select</option>
+                                            @foreach (var data in Model.addressTypes)
+                                            {
+                                                <option value="@data.Id">@data.typeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="m-0 font-weight-bold text-primary">Address Info</h6>
+                                <hr />
+                                <div class="form-group row">
+                                    <div class="col-sm-9">
+                                        <input type="hidden" id="leadId" name="leadId" value="@ViewBag.leadId">
+                                        <input type="hidden" id="addressId" name="addressId" value="@Model.company.Id" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="mailingAddress" class="col-sm-3 col-form-label">Mailing Address</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="mailingAddress" value="" name="mailingAddress" data-parsley-required="true">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="divisionId" class="col-sm-3 col-form-label">Division</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="divisionId" id="divisionId" data-parsley-required="true"></select>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="districtId" class="col-sm-3 col-form-label">District</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="districtId" id="districtId" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="thanaId" class="col-sm-3 col-form-label">Thana</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="thanaId" id="thanaId" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="email" class="col-sm-3 col-form-label">Email</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="email" value="" name="email" data-parsley-required="true">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="mobile" class="col-sm-3 col-form-label">Mobile</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="mobile" value="" name="mobile">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="website" class="col-sm-3 col-form-label">Website</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="website" value="" name="website">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="phone" class="col-sm-3 col-form-label">Phone</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="phone" value="" name="phone">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="fax" class="col-sm-3 col-form-label">Fax</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="fax" value="" name="fax">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+        </form>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Address Info</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="addressTable">
+                    <thead>
+                        <tr>
+                            <th>Mailing Address</th>
+                            <th>Division</th>
+                            <th>District</th>
+                            <th>Thana</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.Addresses)
+                        {
+                            <tr>
+                                <td>@data.maillingAddress</td>
+                                <td>@data.division.divisionName</td>
+                                <td>@data.district.districtName</td>
+                                <td>@data.thana.thanaName</td>
+                                <td>@data.email</td>
+                                <td>@data.phone</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.maillingAddress','@data.divisionId','@data.districtId','@data.thanaId','@data.email','@data.phone','@data.mobile','@data.website','@data.fax','@data.addressTypeId')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsClient{
+    <script>
+        $(document).ready(function () {
+            $("#address").addClass("active");
+            $('#addressTable').DataTable();
+
+            Common.Ajax('GET', '/global/api/divisions/1', [], 'json', ajaxDivision, false);
+
+            $("#divisionId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', ajaxDistrict, false);
+            });
+
+            $("#districtId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', ajaxThana, false);
+            });
+
+              if (@Model.company.divisionId > 0) {
+                  $('#divisionId').val();
+                var divisionId = @Model.company.divisionId;
+                Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', ajaxDistrict, false);
+
+                  $('#districtId').val();
+                var districtId = @Model.company.districtId;
+                Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', ajaxThana, false);
+
+                  $('#thanaId').val();
+            }
+
+        });
+
+        function Edit(Id, maillingAddress, divisionId, districtId, thanaId, email, phone,mobile,website,fax,addressTypeId) {
+            $("#Id").val(Id);
+            $("#mailingAddress").val(maillingAddress);
+            $("#divisionId").val(divisionId);
+            $("#districtId").val(districtId);
+            $("#thanaId").val(thanaId);
+            $("#email").val(email);
+            $("#phone").val(phone);
+            $("#mobile").val(mobile);
+            $("#website").val(website);
+            $("#fax").val(fax);
+            $("#addressTypeId").val(addressTypeId);
+        }
+
+
+        function ajaxDivision(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#divisionId').empty();
+            $('#divisionId').append(options);
+        }
+
+
+        function ajaxDistrict(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#districtId').empty();
+            $('#districtId').append(options);
+        }
+
+        function ajaxThana(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#thanaId').empty();
+            $('#thanaId').append(options);
+        }
+
+
+    </script>
+}
+
+
+

@@ -1,0 +1,94 @@
+﻿@model CustomerViewModel
+@{
+    ViewData["TitleMD"] = "Customer List";
+    Layout = "~/Areas/MasterData/Views/Shared/_CustomerDataForm.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Customer List</h6>
+               
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Customer Name</th>
+                            <th>Trade License Number</th>
+                            <th>Contact Number</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int i = 1;
+                            @foreach (var data in Model.relSupplierCustomerResourses.Where(x=>x.ledgerId==null||x.ledgerId==0))
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.resource?.nameEnglish</td>
+                                    <td>@data.resource?.LicenseNumber</td>
+                                    <td>@data.resource?.mobile</td>
+                                    <td>
+                                        @*<a class="btn btn-success" href="@Url.Action("EditCustomer", "Customer", new { id = data.Id })"><i class="fa fa-edit"></i></a>*@
+                                        <a class="btn btn-success" title="Convert to  Ledger" href="/MasterData/Customer/CreateSubLedger?name=@data.resource?.nameEnglish&Id=@data.Id&actionType=defaultOpen"><i class="fas fa-directions"></i></a>&nbsp;&nbsp;
+                                        @*<a class="btn btn-success" title="View Details" href="/MasterData/Customer/CustomerDetails?id=@data.Id&actionType=defaultOpen"><i class="fa fa-eye"></i></a>*@
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#education").addClass("active");
+            $('#educationalTable').DataTable();
+        });
+
+
+        var table = $('#educationalTable').DataTable();
+        //$('#educationalTable tbody').on('click', 'tr', function () {
+        //    var data = table.row(this).data();
+        //    var iddata = data[0];
+        //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+        //    var vid = parseInt(id.split('-')[1]);
+        //    window.location.href = "/MasterData/Customer/CustomerDetails/?id=" + vid;
+        //});
+
+
+    </script>
+}
+
+@section StyleMD{
+    <style>
+        #educationalTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

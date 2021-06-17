@@ -1,0 +1,341 @@
+﻿@model ReportMasterViewModel
+@{
+    ViewData["Title"] = "Operational Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="row">
+    <div class="col-md-12" style="padding-right:5px;">
+        <div style="height:10px;"></div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Operational Report</label>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+
+            <div class="col-12 row">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">Report Name</label>
+                <select class="col-sm-6 form-control" id="reportId" name="reportId">
+                    <option value="1">Date Range wise workorder summary</option>
+                    <option value="2">Supplier wise workorder summary</option>
+                    <option value="3">Item wise work order summary</option>
+                    <option value="4">Project wise work order summary</option>
+                    <option value="5">Difference Between PR Approved Date VS PO Date</option>
+                    <option value="6">Buyer Wise PO Report</option>
+                    <option value="7">Item List Report</option>
+                    <option value="8">Item Wise Cumulative Quantity</option>
+
+                </select>
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="fromid" style="margin-top:5px">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">From Date</label>
+                <input type="text" class="col-sm-6 form-control" id="fromDate" name="fromDate" />
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="toid" style="margin-top:5px">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">To Date</label>
+                <input type="text" class="col-sm-6 form-control" id="toDate" name="toDate" />
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="suppid" style="margin-top:5px">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">Supplier Name</label>
+                <select class="col-sm-6 form-control" id="supplierId" name="supplierId">
+                    <option value="0">Select</option>
+                    @foreach (var item in Model.organizations)
+                    {
+                        <option value="@item.Id">@item.organizationName</option>
+                    }
+                </select>
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="itid" style="margin-top:5px">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">Item Name</label>
+                <select class="col-sm-6 form-control" id="itemId" name="itemId">
+                    <option value="0">Select</option>
+                    @foreach (var item in Model.items)
+                    {
+                        <option value="@item.Id">@item.itemName</option>
+                    }
+                </select>
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="itSpecId" style="margin-top:5px;display:none;">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">Item Specification</label>
+                <select class="col-sm-6 form-control" id="specId" name="specId">
+                    <option value="0">Select</option>
+                    
+                </select>
+                <label class="col-sm-2"></label>
+            </div>
+
+            <div class="col-12 row" id="proid" style="margin-top:5px">
+                <label class="col-sm-2"></label>
+                <label class="col-sm-2">Project Name</label>
+                <select class="col-sm-6 form-control" id="projectId" name="projectId">
+                    <option value="0">Select</option>
+                    @foreach (var item in Model.projects.Where(x => x.projectStatus == "Running"))
+                    {
+                        <option value="@item.Id">@item.projectName</option>
+                    }
+                </select>
+                <label class="col-sm-2"></label>
+            </div>
+
+
+
+
+
+
+
+
+
+        </div>
+        <br />
+        <br />
+        <div class="row">
+
+            <div class="col-12">
+                <button type="button" onclick="ProcessReport()" class="btn btn-success" style="float:right;margin-left:10px;">Preview</button>
+                <button type="button" onclick="ReloadPage()" class="btn btn-danger" style="float:right;">Refresh</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            $("#reportId").change(function () {
+                if ($('#reportId').val() == "1")
+                {
+                    $('#suppid').hide();
+                    $('#itid').hide();
+                    $('#proid').hide();
+                    $('#fromid').show();
+                    $('#toid').show();
+                    $('#itSpecId').hide();
+                }
+                else if ($('#reportId').val() == "2") {
+                    $('#suppid').show();
+                    $('#itid').hide();
+                    $('#proid').hide();
+                    $('#fromid').show();
+                    $('#toid').show();
+                    $('#itSpecId').hide();
+                }
+                else if ($('#reportId').val() == "3") {
+                    $('#suppid').hide();
+                    $('#itid').show();
+                    $('#proid').hide();
+                    $('#fromid').show();
+                    $('#toid').show();
+                    $('#itSpecId').hide();
+                }
+                else if ($('#reportId').val() == "4") {
+                    $('#suppid').hide();
+                    $('#itid').hide();
+                    $('#proid').show();
+                    $('#fromid').show();
+                    $('#toid').show();
+                    $('#itSpecId').hide();
+                }
+                else if ($('#reportId').val() == "5") {
+                    $('#suppid').hide();
+                    $('#itid').hide();
+                    $('#proid').hide();
+                    $('#fromid').show();
+                    $('#toid').show();
+                    $('#itSpecId').hide();
+                }
+                else if ($('#reportId').val() == "6") {
+                    $('#suppid').hide();
+                    $('#itid').hide();
+                    $('#proid').hide();
+                    $('#fromid').show();
+                    $('#toid').show();
+                    $('#itSpecId').hide();
+                }
+                else if ($('#reportId').val() == "7") {
+                    $('#suppid').hide();
+                    $('#itid').hide();
+                    $('#proid').hide();
+                    $('#fromid').hide();
+                    $('#toid').hide();
+                    $('#itSpecId').hide();
+                }
+                else if ($('#reportId').val() == "8") {
+                    $('#suppid').hide();
+                    $('#itid').show();
+                    $('#proid').hide();
+                    $('#fromid').hide();
+                    $('#toid').hide();
+                    $('#itSpecId').show();
+                }
+            });
+
+            $('#itemId').on('change', function () {
+                var itemId = $(this).val();
+                if (itemId > 0) {
+                    Common.Ajax('GET', '/global/api/ItemSpec/' + itemId, [], 'json', GetSpecName);
+                } else {
+                    $('#specId').val(0);
+                }
+                
+            })
+
+        });
+
+        function AllNumberList(response) {
+            //console.log(response);
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.Number + '</option>';
+            });
+            $('#number').empty();
+            $('#number').append(options);
+        }
+
+        function GetSpecName(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.specificationName + '</option>';
+            });
+            $('#specId').empty();
+            $('#specId').append(options);
+        }
+
+        function ReloadPage() {
+            location.reload();
+        }
+
+        function ProcessReport() {
+            var Id = $('#number').val();
+            if ($('#reportId').val() == "1") {
+                if ($('#fromDate').val() == "")
+                {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                window.open('/SCMReport/ReportMaster/POReportDaterangeReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "2") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                if ($('#supplierId').val() == "0") {
+                    alert("Please select supllier bane.");
+                    return;
+                }
+                window.open('/SCMReport/ReportMaster/POReportSuppReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val() + '&&suppId=' + $('#supplierId').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "3") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                if ($('#itemId').val() == "0") {
+                    alert("Please select supllier name.");
+                    return;
+                }
+                window.open('/SCMReport/ReportMaster/POReportItemReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val() + '&&itemId=' + $('#itemId').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "4") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+                if ($('#projectId').val() == "0") {
+                    alert("Please select project name.");
+                    return;
+                }
+                window.open('/SCMReport/ReportMaster/POReportprojectReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val() + '&&projectId=' + $('#projectId').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "5") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+               
+                window.open('/SCMReport/ReportMaster/POReportDiffReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "6") {
+                if ($('#fromDate').val() == "") {
+                    alert("Please enter date.");
+                    return
+                }
+                if ($('#toDate').val() == "") {
+                    alert("Please enter date.");
+                    return;
+                }
+
+                window.open('/SCMReport/ReportMaster/POReportBuyerReportPdf?fromDate=' + $('#fromDate').val() + '&&toDate=' + $('#toDate').val(), '_blank');
+            }
+            else if ($('#reportId').val() == "7") {
+               
+
+                window.open('/SCMReport/ReportMaster/POReportItemCatReportPdf', '_blank');
+            }
+            else if ($('#reportId').val() == "8") {
+                var itemId = parseInt($('#itemId').val()) ? parseInt($('#itemId').val()) : 0;
+                var specId = parseInt($('#specId').val()) ? parseInt($('#specId').val()) : 0;
+
+                window.open('/SCMReport/ReportMaster/ItemCumulativeQTYView?itemId=' + itemId + '&specId=' + specId, '_blank');
+            }
+           
+        }
+
+    </script>
+}

@@ -1,0 +1,133 @@
+﻿@model LeaveRegisterViewModel
+@{
+    ViewData["Title"] = "Leave Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+<style>
+    .print-card-body {
+        width: 100%;
+        padding-bottom: 10px;
+    }
+
+    .vartical-table th {
+        width: 25%;
+    }
+
+    .vartical-table td {
+        width: 25%;
+    }
+
+    .horizontal-table {
+        /*width: 100%;*/
+    }
+
+    .table td, .table th {
+        padding: .3rem;
+        font-size: 15px;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+    
+</style>
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div class="fa-pull-right">
+                <p style="font-size:smaller;color:black;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+            </div>
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2">
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                </div>
+                <div class="col-8">
+                    <div style="color:black;text-align:center;">
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                        <h5>Leave Report </h5>
+                        <h6>From @Model.leaveIndividualViewModels.FirstOrDefault().fromDate to @Model.leaveIndividualViewModels.FirstOrDefault().toDate</h6>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-2">                    
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 100%;">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <div class="col-5" style="color:black;"><label>@Model.visualEmpCodeName</label></div>
+                                <div class="col-7" style="color:black;">: @Model.employeeInfo?.employeeCode</div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-5" style="color:black;"><label>Employee Name</label></div>
+                                <div class="col-7" style="color:black;">: @Model.employeeInfo?.nameEnglish</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <div class="col-5" style="color:black;"><label>Designation</label></div>
+                                <div class="col-7" style="color:black;">: @Model.employeeInfo?.designation</div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-5" style="color:black;"><label>Department</label></div>
+                                <div class="col-7" style="color:black;">: @Model.employeeInfo?.department?.deptName</div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="container-fluid">
+                    <div class="col-12">
+                        <table class="table table-bordered">
+                            <thead style="background-color:lightgray;">
+                                <tr>
+                                    <th>Sl </th>
+                                    <th>Leave Type</th>
+                                    <th>Leave From</th>
+                                    <th>Leave To</th>
+                                    <th>Days Leave</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 1;
+                                    @foreach (var data in Model.leaveIndividualViewModels)
+                                    {                                        
+                                        <tr>
+                                            <td>@i</td>
+                                            <td>@data.leaveTypeName</td>
+                                            <td>@data.leaveFrom</td>
+                                            <td>@data.leaveTo</td>
+                                            <td>@data.daysLeave</td>
+                                            <td>@data.purposeOfLeave</td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>

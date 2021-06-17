@@ -1,0 +1,163 @@
+﻿@model SalesCollectionViewModel
+@{
+    ViewData["Title"] = "Collection Slip";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+    </style>
+}
+<br />
+<br />
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+
+        <div class="container-fluid">
+            <div class="fa-pull-right">
+                <p style="font-size:smaller;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+            </div>
+            <div class="fa-pull-left">
+                <p style="font-size:small;color:black;">Office Copy</p>
+            </div>
+            <div class="row" style="padding-top:0px;">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div style="color:black;text-align:center;">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                        <label>Customer Care:@Model.companies.FirstOrDefault().officeTelephone</label>
+                        <h5>Bill Receive</h5>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-1"></div>
+            </div>
+        </div>
+
+        <hr style="border:1px solid black;">
+        <div class="container-fluid" style="color:black;">
+            <div class="row" style="padding: 5px 0px 5px 0px;">
+                <div class="col-3">
+                    <span style="font-weight:bold;font-size: 15px;">Customer Name</span>
+                    <span style="font-weight:bold;font-size: 15px;float: right;">:</span>
+                </div>
+                <div class="col-3">
+                    <span style="font-size: 15px;">@Model.salesCollectionBillInfobyid.relSupplierCustomerResourse?.Leads?.leadName</span>
+                </div>
+                <div class="col-3 text-right">
+                    <span style="font-weight:bold;font-size: 15px;">Date</span>
+                    <span style="font-weight:bold;font-size: 15px;">:</span>
+                </div>
+                <div class="col-3 text-right">
+                    <span style="font-size: 15px;">@Model.salesCollectionBillInfobyid.billPaymentDate?.ToString("dd-MMMM-yyyy")</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <span style="font-weight:bold;font-size: 15px;">Issue Number</span>
+                    <span style="font-weight:bold;font-size: 15px;float: right;">:</span>
+                </div>
+                <div class="col-3">
+                    <span class="m-0" style="font-size: 13px;">@Model.salesCollectionBillInfobyid.billPaymentNo</span>
+                </div>
+                <div class="col-3 text-right">
+                    <span style="font-weight:bold;font-size: 15px;">Remarks</span>
+                    <span style="font-weight:bold;font-size: 15px;">:</span>
+                </div>
+                <div class="col-3 text-right">
+                    <span style="font-size: 15px;">@Model.salesCollectionBillInfobyid.remarks</span>
+                </div>
+            </div>
+            <hr />
+            <div class="row" style="padding: 0px 15px 0px 15px;">
+                <table class="table table-striped table-bordered vartical-table">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th style="width:30%;text-align:center;">Customer Name</th>
+                            <th style="width:30%;text-align:center;">Bill Payment Date</th>
+                            <th style="width:20%;text-align:center;">Total Amount</th>
+                            <th style="width:20%;text-align:right;">Due Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>@Model.salesCollectionBillInfobyid.relSupplierCustomerResourse.Leads.leadName</td>
+                            <td>@Model.salesCollectionBillInfobyid.billPaymentDate?.ToString("dd/MM/yyyy")</td>
+                            <td>@Model.salesCollectionBillInfobyid.Amount?.ToString("0,0.00")</td>
+                            <td class="text-right">@Model.salesCollectionBillInfobyid.dueAmount?.ToString("0,0.00")</td>
+                        </tr>
+
+                    </tbody>
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th colspan="3">Total Due Amount</th>
+                            <th style="text-align:right;padding-right:10px;">@Model.salesCollectionBillInfobyid.dueAmount?.ToString("0,0.00")</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <br /><br /><br /><br /><br /><br />
+            <div>
+                <div>
+                    <div style="float:left">
+                        <span style="color:black"></span>
+                        <br />
+                        <span style="color:black">-------------------</span>
+                        <br />
+                        <span style="color:black;padding-left:0px">Approved By</span>
+                    </div>
+                    <div style="float:right">
+                        <span style="color:black;text-align:center;">@Model.salesCollectionBillInfobyid.createdBy</span>
+                        <br />
+                        <span style="color:black">------------------</span>
+                        <br />
+                        <span style="color:black;padding-left:0px">Created By</span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

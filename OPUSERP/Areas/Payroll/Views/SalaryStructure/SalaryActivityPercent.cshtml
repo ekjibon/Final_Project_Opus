@@ -1,0 +1,210 @@
+﻿@model EmployeesSalaryActivityViewModel
+@{
+    ViewData["Title"] = "Employees Salary Structure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Employees Salary Structure</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="SalaryStructure" asp-action="SalaryActivityPercent" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="salaryActivityPercentId" name="salaryActivityPercentId" value=0>
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label  for="employeeInfoId" class="col-sm-3 col-form-label">Emp Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-3 col-form-label">Designation </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="Designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+                                <label for="department" class="col-sm-3 col-form-label">Department</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="department" value="" name="department" readonly>
+                                </div>
+                            </div>*@
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="salaryGradeId" class="col-sm-3 col-form-label">Activity <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <select name="employeeProjectActivityId" id="employeeProjectActivityId" class="form-control" data-parsley-required="true">
+                                    @*<option value="">Select Activity</option>
+                                        @foreach (var data in Model.employeeProjectActivities)
+                                        {
+                                            <option value="@data.Id">@data.hRActivity.name-@data.hRDoner.name-@data.hRProject.name</option>
+                                        }*@
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="amount" class="col-sm-3 col-form-label"> Percent(%) <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="Amount" value="" name="Amount" data-parsley-required="true">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Calculate" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Salary Activity Percent List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Emp Name</th>
+                            <th>Activity Name</th>
+                            <th>Percent Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.GetSalaryActivityPercents)
+                        {
+                            <tr>
+                                <td>@data.employeeInfo.nameEnglish</td>
+                                <td>@data.employeeProjectActivity.hRActivity.name-@data.employeeProjectActivity.hRDoner.name-@data.employeeProjectActivity.hRProject.name</td>
+                                <td>@data.Amount</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,@data.employeeProjectActivityId,@data.Amount,@data.employeeInfoId)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    @*<a class="btn btn-danger" onclick="Delete(@data.Id)" href="#"><i class="fa fa-trash-alt"></i></a>*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- View Service Reminders Modal-->
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#educationalTable').DataTable();
+
+
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+        });
+        function ajaxActivity(response) {
+            // console.log(response);
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                /**/
+
+                options += '<option value="' + item.Id + '">' + item.hRActivity.name + "-" + item.hRDoner.name + "-" + item.hRProject.name + '</option>';
+                /**/
+            });
+            $('#employeeProjectActivityId').empty();
+            $('#employeeProjectActivityId').append(options);
+        }
+
+        function Edit(Id, employeeProjectActivityId, Amount, employeeInfoId) {
+            $('#salaryActivityPercentId').val(Id);
+
+            $('#Amount').val(Amount);
+
+            Common.Ajax('GET', '/global/api/GetAllEmployessbyId/' + employeeInfoId, [], 'json', ajaxGetEmployeesbyId);
+            Common.Ajax('GET', '/global/api/GetAcitivyProject/' + employeeInfoId, [], 'json', ajaxActivity, false);
+            $('#employeeProjectActivityId').val(employeeProjectActivityId);
+        }
+        function ajaxGetEmployees(response) {
+            console.log(response);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                //  obj.department = option.department.deptName;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            //console.log(GeEmployeesList);
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    // $("#Department").val(ui.item.department);
+                    $("#employeeInfoId").val(ui.item.key);
+
+                    Common.Ajax('GET', '/global/api/GetAcitivyProject/' + ui.item.key, [], 'json', ajaxActivity, false);
+                }
+            });
+        }
+        function ajaxGetEmployeesbyId(response) {
+            //var GeEmployeesList = [];
+            //$.each(response, function (id, option) {
+            //    var obj = new Object();
+            //    obj.key = option.Id;
+            //    obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+            //    obj.designation = option.designation;
+            //    obj.employeeCode = option.employeeCode;
+            //    GeEmployeesList[GeEmployeesList.length] = obj;
+            //});
+            console.log(response);
+            $("#employeeName").val(response.nameEnglish + "(" + response.employeeCode + ")");
+            $("#Designation").val(response.designation);
+            $("#Department").val(response.deptName);
+            $("#employeeInfoId").val(response.Id);
+
+
+        }
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

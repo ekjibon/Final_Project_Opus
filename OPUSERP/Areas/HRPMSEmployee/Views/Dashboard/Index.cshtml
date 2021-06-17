@@ -1,0 +1,488 @@
+﻿@model MainDashboardViewModel
+
+@{
+    ViewData["TitleMD"] = "HRM Dashboard";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="row bg-danger" style="padding-top:10px;padding-bottom:10px;margin-bottom:20px;">
+    <div class="col-sm-12">
+        <h5 class="text-center" style="color:white;">HR & Payroll Dashboard </h5>
+    </div>
+</div>
+
+<div class="row" style="margin-left:20px;">
+    <div class="col-sm-3 row" style="border:1px solid none;max-height:170px;margin-right:10px">
+        <div class="col-sm-6 text-center" style="padding: 15px;background-color:#030383">
+            @*<i style="color:white" class="fa fa-user fa-5x"></i>*@
+            <img style="height:100px;margin-left:-15px" src="~/images/HR_DB_Image/Artboard – 9.png" />
+        </div>
+        <div class="col-sm-6 text-center" style="float:right;color:white;background-color:#030383">
+            <span style="font-size:30px;font-weight:bolder">@Model.activeEmployeeCountViewModel.totalActiveEmployee</span><br />
+            <span style="font-size:20px;font-weight:bolder;color:white">Active Employee</span><br />
+        </div>
+        <div class="col-sm-12 text-center" style="background-color:#e3e4e5;height:40px">
+            <p style="padding-top:11px;padding-left:10px;color:#3f2e96;">View Details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="margin-left:70px;color:#030383;" class="fa fa-arrow-alt-circle-right"></i></p>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="relef_distribution" style='width: 100%;height: 100%'></canvas>
+    </div>
+
+    <div class="col-sm-3 row" style="border:1px solid none;max-height:140px;margin-right:10px">
+
+        <div class="col-sm-6 text-center" style="padding: 15px;background-color:#acacac">
+            <img src="~/images/HR_DB_Image/Artboard – 10.png" height="80" width="100" class="img-responsive" />
+            <hr style="margin: 0px 0px 0px 25px;border: 4px solid;color:#0080ff;width:40px;" />
+            <b style="color:white">@Model.activeEmployeeCountViewModel.totalMalePercent %</b>
+        </div>
+        <div class="col-sm-6 text-center" style="padding: 15px;background-color:#acacac">
+            <img src="~/images/HR_DB_Image/Artboard – 11.png" height="80" width="100" class="img-responsive" />
+            <hr style="margin: 0px 0px 0px 35px;border: 4px solid;color:#6D14B8;width:40px;" />
+            <b style="color:white;margin-left:15px">@Model.activeEmployeeCountViewModel.totalFeMalePercent %</b>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-sm-3">
+        <canvas id="year_wise_Employee" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-4">
+        <canvas id="department_wise_employee" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-5 row" style="margin-top:20px;margin-left:5px;">
+        <div class="col-sm-4">
+            <canvas id="piegender" style='width: 100%;height: 100%'></canvas>
+        </div>
+        <div class="col-sm-4">
+            @*<p>Employee Status</p>*@
+            <canvas id="pietiming" style='width: 100%;height: 100%'></canvas>
+        </div>
+        <div class="col-sm-4 text-center">
+            <p>Internal Promotion Rate</p>
+            <span style="font-size:30px;font-weight:bolder;color:#6f99a3">@Model.activeEmployeeCountViewModel.employeepromotionrate %</span>
+        </div>
+    </div>
+</div>
+
+@*<hr />
+    <div class="row" style="margin-left:20px;">
+        <div class="col-sm-3 row" style="border:1px solid none;max-height:170px;margin-right:10px">
+            <div class="col-sm-6 text-center" style="padding: 15px;background-color:#F84D5D">
+                <img style="height:100px;margin-left:-15px" src="~/images/HR_DB_Image/Artboard – 5.png" />
+            </div>
+            <div class="col-sm-6 text-center" style="float:right;color:white;background-color:#F84D5D">
+                <span style="font-size:30px;font-weight:bolder">@Model.activeEmployeeCountViewModel.turnOverrate %</span><br />
+                <span style="font-size:20px;font-weight:bolder;color:white">Employee Turnover</span><br />
+            </div>
+        </div>
+
+    </div>*@
+<br />
+<div class="row" style="margin-left:20px;margin-top:-10px">
+
+    <div class="col-sm-3 row" style="border:1px solid none;max-height:170px;margin-right:10px">
+        <div class="col-sm-6 text-center" style="padding: 15px;background-color:#84D0EF">
+            <i style="color:white" class="fa fa-user fa-5x"></i>
+        </div>
+        <div class="col-sm-6 text-center" style="float:right;color:white;background-color:#84D0EF">
+            <span style="font-size:30px;font-weight:bolder">@Model.activeEmployeeCountViewModel.empAttendances.Where(x => x.summaryId == 1).Count()</span><br />
+            <span style="font-size:20px;font-weight:bolder;color:white">Present</span><br />
+        </div>
+        <div class="col-sm-12 text-center" style="background-color:#e3e4e5;height:40px">
+            <p style="padding-top:11px;padding-left:10px;color:#3f2e96;">View Details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="margin-left:70px;color:#84D0EF;" class="fa fa-arrow-alt-circle-right"></i></p>
+        </div>
+    </div>
+    <div class="col-sm-3 row" style="border:1px solid none;max-height:170px;margin-right:10px">
+        <div class="col-sm-6 text-center" style="padding: 15px;background-color:#002350">
+            <i style="color:white" class="fa fa-user fa-5x"></i>
+        </div>
+        <div class="col-sm-6 text-center" style="float:right;color:white;background-color:#002350">
+            <span style="font-size:30px;font-weight:bolder">@Model.activeEmployeeCountViewModel.empAttendances.Where(x => x.summaryId == 0).Count()</span><br />
+            <span style="font-size:20px;font-weight:bolder;color:white">Absent</span><br />
+        </div>
+        <div class="col-sm-12 text-center" style="background-color:#e3e4e5;height:40px">
+            <p style="padding-top:11px;padding-left:10px;color:#3f2e96;">View Details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="margin-left:70px;color:#002350;" class="fa fa-arrow-alt-circle-right"></i></p>
+        </div>
+    </div>
+    <div class="col-sm-3 row" style="border:1px solid none;max-height:170px;margin-right:10px">
+        <div class="col-sm-6 text-center" style="padding: 15px;background-color:#B1F85B">
+            <i style="color:white" class="fa fa-user fa-5x"></i>
+        </div>
+        <div class="col-sm-6 text-center" style="float:right;color:white;background-color:#B1F85B">
+            <span style="font-size:30px;font-weight:bolder">@Model.activeEmployeeCountViewModel.empAttendances.Where(x => x.summaryId == 3).Count()</span><br />
+            <span style="font-size:20px;font-weight:bolder;color:white">Late</span><br />
+        </div>
+        <div class="col-sm-12 text-center" style="background-color:#e3e4e5;height:40px">
+            <p style="padding-top:11px;padding-left:10px;color:#3f2e96;">View Details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="margin-left:70px;color:#B1F85B;" class="fa fa-arrow-alt-circle-right"></i></p>
+        </div>
+    </div>
+    <div class="col-sm-3 row" style="border:1px solid none;max-height:170px;margin-right:10px">
+        <div class="col-sm-6 text-center" style="padding: 15px;background-color:#F84D5D">
+            <i style="color:white" class="fa fa-user fa-5x"></i>
+        </div>
+        <div class="col-sm-6 text-center" style="float:right;color:white;background-color:#F84D5D">
+            <span style="font-size:30px;font-weight:bolder">@Model.activeEmployeeCountViewModel.totalActiveEmployee</span><br />
+            <span style="font-size:20px;font-weight:bolder;color:white">Leave</span><br />
+        </div>
+        <div class="col-sm-12 text-center" style="background-color:#e3e4e5;height:40px">
+            <p style="padding-top:11px;padding-left:10px;color:#3f2e96;">View Details&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="margin-left:70px;color:#F84D5D;" class="fa fa-arrow-alt-circle-right"></i></p>
+        </div>
+
+        @*the below one is important code, need to utilize*@
+
+        @*<p>Employee Attenteeism Rate</p>
+            <span style="font-size:30px;font-weight:bolder;color:hotpink">@Model.activeEmployeeCountViewModel.absentRate %</span>*@
+    </div>
+
+</div>
+
+<hr />
+
+
+<div class="row">
+    <div class="col-sm-3 text-center">
+        <canvas id="travel" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-9">
+        <div class="row">
+            <div class="col-sm-6">
+                <canvas id="monthlyLeave" style='width: 100%;height: 100%'></canvas>
+            </div>
+            <div class="col-sm-6">
+                <canvas id="categoryLeave" style='width: 100%;height: 100%'></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="row">
+    <div class="col-sm-3 text-center">
+        <p>Employee Attenteeism Rate</p>
+        <span style="font-size:30px;font-weight:bolder;color:hotpink">@Model.activeEmployeeCountViewModel.absentRate %</span>
+    </div>
+    <div class="col-sm-9">
+        <div class="row">
+            <div class="col-sm-4" style="background-color:aquamarine">
+                <canvas id="absent7" style='width: 100%;height: 100%'></canvas>
+            </div>
+            <div class="col-sm-4" style="background-color:antiquewhite">
+                <canvas id="absent_month" style='width: 100%;height: 100%'></canvas>
+            </div>
+            <div class="col-sm-4" style="background-color:cornsilk">
+                <canvas id="late7" style='width: 100%;height: 100%'></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />*@
+
+@section ScriptsMD{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="~/js/palette.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#activityStatus").addClass("active");
+            $('#departmentTable').DataTable();
+            //chart1();
+           // chart2();
+            Common.Ajax('GET', '/HRPMSEmployee/Dashboard/DashboardValue', [], 'json', chart1, false);
+        });
+
+        function chart1(response) {
+            console.log(response);
+            var ctx = document.getElementById('relef_distribution');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: response.activeEmployeeCountViewModel.depmalecount,
+                        label: 'Male',
+                        // This binds the dataset to the left y axis
+                        yAxisID: 'left-y-axis',
+                        backgroundColor: 'rgba(0, 128, 255 , 0.9)',
+                    }, {
+                        data: response.activeEmployeeCountViewModel.depfemalecount,
+                        label: 'Female',
+
+                        // This binds the dataset to the right y axis
+                        yAxisID: 'right-y-axis',
+                            backgroundColor: 'rgba(109, 20, 184, 0.9)',
+                    }],
+                    labels: response.activeEmployeeCountViewModel.departments
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            id: 'left-y-axis',
+                            type: 'linear',
+                            position: 'left'
+                        }, {
+                            id: 'right-y-axis',
+                            type: 'linear',
+                            position: 'right'
+                        }]
+                    }
+                }
+            });
+
+
+            var ctx2 = document.getElementById('year_wise_Employee');
+            //console.log(response.activeEmployeeCountViewModel.noofemployeesbyyears);
+            //console.log(response.activeEmployeeCountViewModel.years);
+            var myChart2 = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: response.activeEmployeeCountViewModel.years,
+                    datasets: [{
+                        label: 'Number of Employee by Year',
+                        data: response.activeEmployeeCountViewModel.noofemployeesbyyears,
+                        backgroundColor: '#e93f77',
+                        borderColor:'#e93f77',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var ctx3 = document.getElementById('department_wise_employee');
+            var myChart3 = new Chart(ctx3, {
+                type: 'horizontalBar',
+                data: {
+
+                    datasets: [{
+                        label: 'Department wise employee percent',
+                        data: response.activeEmployeeCountViewModel.departmentswisepercent,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }],
+                    labels: response.activeEmployeeCountViewModel.departments
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+
+            var ctx4 = document.getElementById('piegender').getContext('2d');
+           // window.myPie = new Chart(ctx, config);
+
+            var data = {
+                datasets: [{
+                    data: [ @Model.activeEmployeeCountViewModel.totalFeMalePercent,
+                           @Model.activeEmployeeCountViewModel.totalMalePercent],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                    ],
+                    borderWidth: 1
+                }],
+                labels: ['Female', 'Male'],
+            };
+
+
+            var myDoughnutChart = new Chart(ctx4, {
+                type: 'doughnut',
+                data: data,
+            });
+
+            var ctxpart = document.getElementById('pietiming').getContext('2d');
+           // window.myPie = new Chart(ctx, config);
+
+            var datapart = {
+                datasets: [{
+                    data: response.activeEmployeeCountViewModel.employeeTypePercent,
+                    backgroundColor: palette('tol', response.activeEmployeeCountViewModel.employeeTypePercent.length).map(function (hex) {
+                        return '#' + hex;
+                    })
+                }],
+              //labels:  response.activeEmployeeCountViewModel.employeTypes
+            };
+
+
+            var myDoughnutCharts = new Chart(ctxpart, {
+                type: 'doughnut',
+                data: datapart
+
+            });
+
+
+
+            var absent7 = document.getElementById('absent7').getContext('2d');
+            // window.myPie = new Chart(ctx, config);
+
+            var datapart = {
+                datasets: [{
+                    data: response.activeEmployeeCountViewModel.absentlistseven,
+                    backgroundColor: palette('tol', response.activeEmployeeCountViewModel.absentlistseven.length).map(function (hex) {
+                        return '#' + hex;
+                    })
+                }],
+                //labels:  response.activeEmployeeCountViewModel.days
+            };
+
+
+            var myDoughnutCharts = new Chart(absent7, {
+                type: 'pie',
+                data: datapart
+
+            });
+
+
+
+            var absent_month = document.getElementById('absent_month').getContext('2d');
+            // window.myPie = new Chart(ctx, config);
+
+            var datapart = {
+                datasets: [{
+                    data: response.activeEmployeeCountViewModel.absentlistmonth,
+                    backgroundColor: palette('tol', response.activeEmployeeCountViewModel.absentlistmonth.length).map(function (hex) {
+                        return '#' + hex;
+                    })
+                }],
+                //labels:  response.activeEmployeeCountViewModel.months
+            };
+
+
+            var myDoughnutCharts = new Chart(absent_month, {
+                type: 'doughnut',
+                data: datapart
+
+            });
+
+
+
+            var late7 = document.getElementById('late7').getContext('2d');
+            // window.myPie = new Chart(ctx, config);
+
+            var datapart = {
+                datasets: [{
+                    data: response.activeEmployeeCountViewModel.latelistseven,
+                    backgroundColor: palette('tol', response.activeEmployeeCountViewModel.latelistseven.length).map(function (hex) {
+                        return '#' + hex;
+                    })
+                }],
+                //labels:  response.activeEmployeeCountViewModel.days
+            };
+
+
+            var myDoughnutCharts = new Chart(late7, {
+                type: 'pie',
+                data: datapart,
+                options: {
+                    labels: {
+                        display: false,
+                    }
+                }
+            });
+
+
+            var travel = document.getElementById('travel').getContext('2d');
+
+            var datapart = {
+                datasets: [{
+                    data: response.activeEmployeeCountViewModel.travelcount,
+                    backgroundColor: palette('tol', response.activeEmployeeCountViewModel.travelcount.length).map(function (hex) {
+                        return '#' + hex;
+                    })
+                }],
+                //labels:  response.activeEmployeeCountViewModel.departments
+            };
+
+
+            var myDoughnutCharts = new Chart(travel, {
+                type: 'pie',
+                data: datapart,
+                options: {
+                    labels: {
+                        display: false,
+                    }
+                }
+            });
+
+
+            var monthlyLeave = document.getElementById('monthlyLeave');
+            var myChart2 = new Chart(monthlyLeave, {
+                type: 'bar',
+                data: {
+                    labels: response.activeEmployeeCountViewModel.months,
+                    datasets: [{
+                        label: 'Monthly Total Leave Liability',
+                        data: response.activeEmployeeCountViewModel.monthlyleavecount,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var categoryLeave = document.getElementById('categoryLeave');
+            var myChart2 = new Chart(categoryLeave, {
+                type: 'bar',
+                data: {
+                    labels: response.activeEmployeeCountViewModel.leavecatogies,
+                    datasets: [{
+                        label: 'Category Wise Leave Summary',
+                        data: response.activeEmployeeCountViewModel.categoryleavecount,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+
+        }
+
+
+
+    </script>
+}
+

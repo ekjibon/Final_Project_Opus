@@ -1,0 +1,191 @@
+﻿@model IncomeTaxProcessViewModel
+@{
+    ViewData["Title"] = "Tax Process";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Tax Structure Process</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="" asp-action="" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-3">
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <div>  <p>@ViewBag.value</p></div>
+                        @*<div class="form-group row">
+
+                                <label for="salaryPeriodId" class="col-md-4 col-form-label">Salary Period <span style="color:red;">*</span></label>
+                                <div class="col-md-8">
+                                    <select name="salaryPeriodId" id="salaryPeriodId" class="form-control" data-parsley-required="true">
+                                        <option value="">Select Salary Period</option>
+                                        @foreach (var data in Model.salaryPeriods)
+                                        {
+                                            <option value="@data.Id">@data.periodName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <br />*@
+                        <div class="row col-md-12">
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-8 row">
+
+
+                                <a value="Submit" href="javascript:void(0)" title="Update All Employee Tax" onclick="Select()" class="btn-success btn-sm" style="width:80px;color:white;">Process</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a value="Submit" title="PDF" href="/Payroll/IncomeTaxSlab/StrucTaxPdfAction"  class="btn btn-info" target="_blank" style="text-align:center;width:80px;color:white;"><i class="fa fa-file-pdf"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a value="Submit" title="Excel"  onclick="WORD()"  class="btn btn-info" style="text-align:center;width:80px;color:white;"><i class="fa fa-file-excel"></i></a>
+
+                            </div>
+                            <div class="col-md-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped table-bordered table-responsive" width="100%" id="JobsTable">
+                            <thead style="width:100%;background-color:lightgray;">
+                                <tr>
+
+                                    <th>Emplyee Name</th>
+                                    <th>Tax Year Name</th>
+                                    <th>Taxable Income</th>
+                                    <th>Taxable Amount</th>
+                                    <th>Tax Per month</th>
+
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.employeesTaxes.Where(x => x.isActive == 1))
+                                {
+                                <tr>
+
+                                    <td>@data.employeeInfo.nameEnglish</td>
+                                    <td>@data.taxYear.taxYearName</td>
+                                    <td>@data.yearlyTaxableincome</td>
+                                    <td>@data.yearlyTaxableamount</td>
+                                    <td>@data.amount</td>
+                                    <td>
+                                        <a class="btn btn-info" href="javascript:void(0)" onclick="SelectJob(@data.Id,@data.employeeInfoId)" title="Update Tax"><i class="fa fa-plus-square"></i></a>
+                                        <a class="btn btn-info" href="/Payroll/PayrollReport/TaxCalculationReport?employeeInfoId=@data.employeeInfoId&&taxYearId=@data.taxYearId&&periodId=0" target="_blank" title="Select Job"><i class="fa fa-street-view"></i></a>
+                                        <a class="btn btn-info" href="/Payroll/PayrollReport/TaxCalculationReportAction?employeeInfoId=@data.employeeInfoId&&taxYearId=@data.taxYearId&&periodId=0" target="_blank" title="Select Job"><i class="fa fa-print"></i></a>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- View Service Reminders Modal-->
+
+
+@section Scripts{
+    <script>
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        $(document).ready(function () {
+
+            $('#JobsTable').DataTable();
+
+        });
+        function WORD() { 
+            Common.Ajax('GET', '/Payroll/IncomeTaxSlab/StrucTaxExcelPdfAction', [], 'json', normalword);
+        }
+        function normalword(response) {
+            console.log(response);
+            //window.location.href = response;
+            //swal('', 'Review Successfully!', 'success');
+            // e.preventDefault();  //stop the browser from following
+            // window.location.href = response;
+            window.open('/pdf/' + response);
+            //window.location.reload();
+        }
+        function SelectJob(Id, employeeId) {
+           
+            $.ajax({
+                url: '/global/api/processsingleTaxStruc/' +employeeId + '/'+Id,
+                // data: form.serialize(),
+                type: 'GET',
+                success: function (records) {
+                    swal({
+                        title: '', text: 'Structure Updated Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                    }).then(function () {
+                        window.location.href = "/Payroll/IncomeTaxSlab/StrucTaxProcess";
+                    });
+                }
+            });
+
+        }
+        function Select() {
+            //alert(id);
+            var salid = $('#salaryPeriodId').val();
+
+            if (salid == "" || salid == "0") {
+                alert("Please select salary period.");
+                return;
+            }
+            // Common.Ajax('GET', '/CRO/JobProgress/UpdateOperationMasterblockbyId/?Id=' + id, [], 'json',
+            $.ajax({
+                url: '/Payroll/IncomeTaxSlab/processAllTaxStruc/',
+                // data: form.serialize(),
+                type: 'GET',
+                success: function (records) {
+                    swal({
+                        title: '', text: 'Structure Updated Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                    }).then(function () {
+                        window.location.href = "/Payroll/IncomeTaxSlab/StrucTaxProcess";
+                    });
+                }
+            });
+
+        }
+
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

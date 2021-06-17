@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewData["Title"] = "Candidate List";
+}
+<br />
+<h4 class="text text-center" style="color:black">Candidate List</h4><br />
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Candidate List</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSRecruitment" asp-controller="CandidateList" asp-action="Index" method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="jobCircularReference" class="col-sm-4 col-form-label">Job Circular Referance</label>
+                    <div class="col-sm-8">
+                        <select type="text" class="form-control" id="jobCircularReference" value="" name="jobCircularReference">
+                            <option value="">Select Here</option>
+                            <option value="">Ex 1</option>
+                            <option value="">Ex 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="position" class="col-sm-4 col-form-label">Position</label>
+                    <div class="col-sm-8">
+                        <select type="text" class="form-control" id="position" value="" name="position">
+                            <option value="">Select Here</option>
+                            <option value="">Ex 1</option>
+                            <option value="">Ex 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <br />
+
+                <table class="table table-striped table-bordered" id="candidateListTable">
+                    <thead>
+                        <tr>
+                            <th>Applicants ID</th>
+                            <th>Applicants Name</th>
+                            <th>Written</th>
+                            <th>Viva</th>
+                            <th>Total</th>
+                            <th>Qualification</th>
+                            <th>Photo</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>654564</td>
+                            <td>Ansar Ali</td>
+                            <td>78</td>
+                            <td>44</td>
+                            <td>122</td>
+                            <td>Msc in CSE</td>
+                            <td>
+                                <img src="~/images/user.png" style="height:30%;" />
+                            </td>
+                            <td><a href="#" class="btn btn-info">Details</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr />
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#language").addClass("active");
+            $('#candidateListTable').DataTable();
+        });
+
+    </script>
+}
+

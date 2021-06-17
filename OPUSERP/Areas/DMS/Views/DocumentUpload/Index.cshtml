@@ -1,0 +1,347 @@
+﻿@model DocumentSettingViewModel
+@{
+    ViewData["TitleMD"] = "Field Setting";
+    Layout = "~/Areas/DMS/Views/Shared/_DMSForm.cshtml";
+}
+
+@section StyleDMS{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        #contactsTable tbody tr {
+            cursor: pointer;
+        }
+
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Documents Info</h5>
+        <hr />
+        <div class="container">
+            <form asp-area="DMS" asp-controller="DocumentUpload" asp-action="Index" id="frmDoc" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="documentName" class="col-sm-4 col-form-label">Document Name <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" class="form-control" name="documentName" id="documentName">
+                                @{
+                                    var id = 0;
+                                    if (@ViewBag.masterId == null)
+                                    {
+                                        id = 0;
+                                    }
+                                    else
+                                    {
+                                        id = ViewBag.masterId;
+                                    }
+                                    <input type="hidden" name="documentMasterId" id="documentMasterId" value="@id">
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="employeeName" class="col-sm-4 col-form-label">Owner Name <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="employeeName" id="employeeName" data-parsley-required="true">
+                                <input type="hidden" name="employeeInfoId" id="employeeInfoId" value="" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="leadsId" class="col-sm-4 col-form-label">Client Name <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="leadName" id="leadName" data-parsley-required="true" data-parsley-trigger="keyup">
+                                <input type="hidden" name="leadsId" id="leadsId" value="" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <input type="hidden" name="documentId" id="documentId" value="0" />
+                            <label for="documentCategoryId" class="col-sm-4 col-form-label">Document Type <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="documentCategoryId" id="documentCategoryId" data-parsley-required="true">
+                                    <option value="">Select Document Type</option>
+                                    @foreach (var data in Model.documentCategories)
+                                    {
+                                        <option value="@data.Id">@data.categoryName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="documentNo" class="col-sm-4 col-form-label">Document No. <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" class="form-control" name="documentNo" id="documentNo">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="docCreateDate" class="col-sm-4 col-form-label">Create Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="docCreateDate" id="docCreateDate" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="docCreateBy" class="col-sm-4 col-form-label">Create By</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="docCreateBy" id="docCreateBy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered table-responsive" id="tblfuelDetails">
+                        <thead style="border:1px solid;border-color:grey">
+                            </thead>
+                            <tbody style="color:black;border:1px solid;border-color:grey"></tbody>                       
+                    </table>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right;">Save</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsDMS{
+    <script>
+        $(document).ready(function () {
+
+            $("#docCreateDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+
+            Common.Ajax('GET', '/global/api/GetAllLeads', [], 'json', ajaxGetAllLeads);           
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+
+            //var table = $('#contactsTable').DataTable();
+            //$('#contactsTable tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[1];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var lid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/DMS/DocumentUpload/DocumentDetails/?Id=" + lid;
+            //});
+            //$('#contactsTable tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+
+            $('#documentCategoryId').change(function () {
+                Common.Ajax('GET', '/global/api/DocumentUploadController/GetDocumentDetailsByDocType/' + $("#documentCategoryId").val(), [], 'json', ajaxGetDocumentDetailsByDocType);
+            });
+
+            let masterId = parseInt(@ViewBag.masterId) ? parseInt(@ViewBag.masterId) : 0;
+            if (masterId != 0) {
+                Common.Ajax('GET', '/DMS/DocumentUpload/GetDocumentMasterById/?id=' + masterId, [], 'json', ajaxGetDocumentMasterById);
+                Common.Ajax('GET', '/global/api/DocumentUploadController/GetDocumentDetailByMasterId/' + masterId, [], 'json', ajaxGetDocumentDetailByMasterId);
+            }
+        });
+
+        function ajaxGetDocumentMasterById(response) {
+            $("#documentCategoryId").val(response.documentCategoryId);
+            $("#documentName").val(response.documentName);
+            $("#documentNo").val(response.documentNo);
+            $("#docCreateDate").val(getPurchaseDate(response.docCreateDate));
+            $("#docCreateBy").val(response.docCreateBy);
+
+            $("#employeeInfoId").val(response.employeeInfoId);
+            $("#employeeName").val(response.employeeInfo.nameEnglish + "(" + response.employeeInfo.employeeCode + ")");
+            $("#leadsId").val(response.leadsId);
+            $("#leadName").val(response.leads.leadName);
+        }
+
+        //function Edit(documentMasterId, documentCategoryId, documentName, documentNo) {
+        //    $("#documentMasterId").val(documentMasterId);
+        //    $("#documentCategoryId").val(documentCategoryId);
+        //    $("#documentName").val(documentName);
+        //    $("#documentNo").val(documentNo);
+
+        //    Common.Ajax('GET', '/global/api/DocumentUploadController/GetDocumentDetailByMasterId/' + documentMasterId, [], 'json', ajaxGetDocumentDetailByMasterId);
+        //}
+
+       
+
+        function ajaxGetDocumentDetailsByDocType(response) {
+
+            //var ifExistIndex = window.localStorage.getItem("holdIndex");
+            //var index = "0";
+            //if (ifExistIndex == "null" || ifExistIndex == null) {
+            //    index = $("#tblfuelDetails tbody>tr").length;
+            //}
+            //else {
+            //    index = ifExistIndex;
+            //    tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            //}
+
+            $("#tblfuelDetails thead>tr").empty();
+            $("#tblfuelDetails tbody>tr").empty();
+            index = $("#tblfuelDetails tbody>tr").length;
+            var dtTable = $("#tblfuelDetails");
+            var tableHead = dtTable.find('thead');
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr>' +
+                '<td width="20%">Field Name</td>' +
+                '<td width="70%">Field Value</td>' +
+                '<td width="10%">Action</td>' +
+                '</tr>';
+            tableHead.append(trHtml);
+
+            $.each(response, function (id, option) {
+                var dynamicField = "";
+               
+                if (option.fieldType.fieldTypeName == "Numeric") {
+                    dynamicField = "number";
+                }
+                if (option.fieldType.fieldTypeName == "Textbox") {
+                    dynamicField = "text";
+                }
+                if (option.fieldType.fieldTypeName == "Datetime") {
+                    dynamicField = "date";                    
+                }
+
+                var trHtml = '<tr id="0">' +
+                    '<td> <input readonly="readonly" class="form-control clsId" id="headAll" name="headAll" value="' + option.fieldName + '" /> <input type="hidden" name="headIdAll" value="' + option.Id + '" class="clsId" id="headIdAll" /></td>' +
+                    //'<td> <input type="' + dynamicField + '" type="' + option.fieldType.fieldTypeName + '" name="amountAll"  class="form-control clsId" id="amountAll" style="width:100%;"/></td>' +
+                    '<td> <input type="' + dynamicField + '" name="amountAll" class="form-control clsId" id="amountAll" style="width:100%;"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '</tr>';
+
+                //if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+                //}
+                //else {
+                //    var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                //    rowUpdate.replaceWith(trHtml);
+                //    window.localStorage.setItem("holdIndex", null);
+                //    ifExistIndex = null;
+                //}
+            });
+        }        
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblfuelDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function ajaxGetDocumentDetailByMasterId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            $("#tblfuelDetails thead>tr").empty();
+            $("#tblfuelDetails tbody>tr").empty();
+            index = $("#tblfuelDetails tbody>tr").length;
+            var dtTable = $("#tblfuelDetails");
+            var tableHead = dtTable.find('thead');
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr>' +
+                '<td width="20%">Field Name</td>' +
+                '<td width="70%">Field Value</td>' +
+                '<td width="10%">Action</td>' +
+                '</tr>';
+            tableHead.append(trHtml);
+
+            $.each(response, function (key, value) {
+
+                var dynamicField = "";
+
+                if (value.fieldSetting.fieldType.fieldTypeName == "Numeric") {
+                    dynamicField = "number";
+                }
+                if (value.fieldSetting.fieldType.fieldTypeName == "Textbox") {
+                    dynamicField = "text";
+                }
+                if (value.fieldSetting.fieldType.fieldTypeName == "Datetime") {
+                    dynamicField = "date";
+                }
+
+                index = $("#tblfuelDetails tbody>tr").length;
+                var dtTable = $("#tblfuelDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.fieldSetting.fieldName + '<input type="hidden" id="headAll' + index + '" name="headAll" class="form-control clsId" value="' + value.fieldSetting.fieldName + '"></td> <input type="hidden" id="headIdAll' + index + '" name="headIdAll" class="clsId" value="' + value.fieldSetting.Id + '"></td>' +                    
+                    '<td> <input type="' + dynamicField + '" value="' + value.fileldValue + '" id="amountAll' + index + '" name="amountAll" class="form-control clsId" style="width:100%;"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+        }
+
+        function ajaxGetAllLeads(response) {
+            var GetLeadList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.leadName;
+                GetLeadList[GetLeadList.length] = obj;
+            });
+            $('#leadName').autocomplete({
+                source: GetLeadList,
+                select: function (event, ui) {
+                    $("#leadName").val(ui.item.value);
+                    $("#leadsId").val(ui.item.key);
+                }
+            });
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+    </script>
+}

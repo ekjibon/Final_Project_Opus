@@ -1,0 +1,153 @@
+﻿@model IEnumerable<OPUSERP.SCM.Data.Entity.Requisition.RequisitionDetail>
+@{
+    ViewData["Title"] = "SKUSummerSheetReport";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+
+}
+
+<style>
+    body {
+        color: black;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    .pb_before {
+        page-break-before: always !important;
+    }
+
+    /***Always insert a page break after the element***/
+    .pb_after {
+        page-break-after: always !important;
+    }
+
+    /***Avoid page break before the element (if possible)***/
+    .pb_before_avoid {
+        page-break-before: avoid !important;
+    }
+
+    /***Avoid page break after the element (if possible)***/
+    .pb_after_avoid {
+        page-break-after: avoid !important;
+    }
+</style>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-3" style="height:115px; margin-left:30px;">
+                    @*<img src="@Model.companies.LastOrDefault().filePath" style="height:95px;width: inherit;" />**@
+                    <img src="/Upload/logo/bnblogo.png" style="height:130px;width:55%; padding-bottom:20px;" />
+                </div>
+                <div class="col-6" style="padding-left:40px;">
+                    <h4 style="font-size: 25px; font-weight: 900; font-family: sans-serif; margin-top: 5px; margin-bottom: 0px;">POLICE STORE MANAGEMENT SYSTEM</h4>
+                    @*<h4 style="font-size: 25px; font-weight: 900; font-family: sans-serif; margin-top: 5px; margin-bottom: 0px;">@Model.companies.LastOrDefault().companyName </h4>*@
+                    <h6 style="font-weight:900;font-family: sans-serif;padding-top:0px;">Evergreen Plaza (2nd Floor), 260/B, Tejgaon Industrial Area, Dhaka-1208. Tel: 02 9124010  email : bricksbridges@gmail.com</h6>
+                    @*<h6 style="font-weight:900;font-family: sans-serif;padding-top:0px;">@Model.companies.LastOrDefault().addressLine</h6>*@
+                    <h5 style="font-weight:900;font-family: sans-serif;padding-top:25px; text-align:center">Sku Summury Report</h5>
+
+                </div>
+                <div class="col-3" style="padding-left:40px;">
+                    <h6 style="font-weight:900;font-family: sans-serif;padding-top:25px;">Print date:@DateTime.Now.ToString("dd MMM yyyy") </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*<div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col" style="height:125px;">
+                        <h1 class="text-center card-header">Issue Details Report</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3" style="padding-left:40px;">
+                        <p>Form Date</p>
+                    </div>
+                    <div class="col-6" style="padding-left:40px;">
+                        <p>TO Date</p>
+                    </div>    <div class="col-3" style="padding-left:40px;">
+                        <p>Printing Date: @DateTime.Now.ToShortDateString()</p>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+
+
+    <div class="row" style="padding: 10px 12px 0px 12px;">
+
+
+        <table class="table-bordered-grey" style="width:100%;">
+            <thead>
+                <tr style="background-color:lightgray;">
+                    <th style="text-align:center;width:10%;">SKU Code</th>
+                    <th style="text-align:center;width:15%;">SKU Name</th>
+                    <th style="text-align:center;width:30%;">Item Name</th>
+                    <th style="text-align:center;width:10%;">Unit</th>
+                    <th style="text-align:center;width:10%;">Unit of measurement(Unm)</th>
+                    <th style="text-align:center;width:16%;">Opening Balance (A) </th>
+                    <th style="text-align:center;width:10%;">Stock IN (B)</th>
+                    <th style="text-align:center;width:10%;">Stock out (C)</th>
+                    <th style="text-align:center;width:10%;">Purchase Return (D)</th>
+                    <th style="text-align:center;width:10%;">Issue Return (E )</th>
+                    <th style="text-align:center;width:10%;">Damages/Faulty (F)</th>
+                    <th style="text-align:center;width:10%;">Obsolete (G)</th>
+                    <th style="text-align:center;width:15%;">Closing Balance </th>
+
+                </tr>
+            </thead>
+            <tbody style="min-height:400px;">
+
+                @{
+                    var i = 1;
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="text-align:center;width:10%;">@i</td>
+                            <td style="text-align:center;width:15%;">@item.itemSpecification.SKUNumber</td>
+                            <td style="text-align:center;width:40%;">@item.itemSpecification.specificationName</td>
+                            <td style="text-align:center;width:40%;">@item.itemSpecification.itemId</td>
+                            <td style="text-align:center;width:40%;">@item.reqQty</td>
+                            <td style="text-align:center;width:16%;">52745</td>
+                            <td style="text-align:center;width:40%;">564</td>
+                            <td style="text-align:center;width:40%;">675</td>
+                            <td style="text-align:center;width:40%;">56756</td>
+                            <td style="text-align:center;width:40%;">5674</td>
+                            <td style="text-align:center;width:40%;">45646</td>
+                            <td style="text-align:center;width:40%;">54645</td>
+                            <td style="text-align:center;width:15%;">546565</td>
+                        </tr>
+                        i++;
+                    }
+                }
+
+            </tbody>
+            <tfoot>
+
+            </tfoot>
+        </table>
+
+    </div>
+</div>
+
+<div class="pb_after"></div>
+

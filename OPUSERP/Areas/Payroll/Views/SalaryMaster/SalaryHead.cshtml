@@ -1,0 +1,231 @@
+﻿@model SalaryHeadViewModel
+@{
+    ViewData["Title"] = "SalaryHead";
+    Layout = "~/Areas/Payroll/Views/Shared/_SalaryMasterForm.cshtml";
+}
+
+
+@section StyleMD{
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Salary Head</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="SalaryMaster" asp-action="SalaryHead" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="salaryHeadName" class="col-sm-3 col-form-label">Head Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="salaryHeadName" value="" name="salaryHeadName" data-parsley-required="true">
+                                <input type="hidden" id="editId" name="editId" value=0>
+                                <input type="hidden" id="headShortName" name="headShortName">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="salaryHeadCode" class="col-sm-3 col-form-label">Head Code</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="salaryHeadCode" value="" name="salaryHeadCode">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="salaryHeadType" class="col-sm-3 col-form-label">Head Type <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="salaryHeadType" name="salaryHeadType" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="Addition">Addition</option>
+                                    <option value="Deduction">Deduction</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isArrear" class="col-sm-3 col-form-label">Is Arrear? <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="isArrear" name="isArrear" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isBonus" class="col-sm-3 col-form-label">Is Bonus?</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="isBonus" name="isBonus">
+                                    <option value="">Select</option>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isLoan" class="col-sm-3 col-form-label">Is Loan?</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="isLoan" name="isLoan">
+                                    <option value="">Select</option>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="sortOrder" class="col-sm-5 col-form-label">Sort Order </label>
+                            <div class="col-sm-7">
+                                <input type="number" class="form-control" id="sortOrder" name="sortOrder">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="isIncomeTax" class="col-sm-5 col-form-label">Is Income Tax? <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="isIncomeTax" name="isIncomeTax" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="isInvestments" class="col-sm-5 col-form-label">Is Investments? <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="isInvestments" name="isInvestments" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isAdvance" class="col-sm-5 col-form-label">Is Advance? <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="isAdvance" name="isAdvance" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isAdvance" class="col-sm-5 col-form-label">Is Monthly Allowance? <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select class="form-control" id="isMonthlyAllowance" name="isMonthlyAllowance" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Salary Head List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Head Name</th>
+                            <th>Head Code</th>
+                            <th>Head Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.salaryHeadsList)
+                        {
+                            <tr>
+                                <td>@data.salaryHeadName</td>
+                                <td>@data.salaryHeadCode</td>
+                                <td>@data.salaryHeadType</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.salaryHeadName','@data.salaryHeadCode','@data.salaryHeadType','@data.sortOrder','@data.isIncomeTax','@data.isInvestments','@data.isAdvance','@data.isArrear','@data.isBonus','@data.isMonthlyAllowance','@data.headShortName','@data.isLoan')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#startDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#endDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $("#salaryHead").addClass("active");
+            $('#educationalTable').DataTable();
+        });
+
+
+        function Edit(Id, salaryHeadName, salaryHeadCode, salaryHeadType, sortOrder, isIncomeTax, isInvestments, isAdvance, isArrear, isBonus, isMonthlyAllowance, headShortName, isLoan) {
+            $('#editId').val(Id);
+            $('#salaryHeadName').val(salaryHeadName);
+            $('#salaryHeadCode').val(salaryHeadCode);
+            $('#salaryHeadType').val(salaryHeadType);
+            $('#sortOrder').val(sortOrder);
+            $('#isIncomeTax').val(isIncomeTax);
+            $('#isInvestments').val(isInvestments);
+            $('#isAdvance').val(isAdvance);
+            $('#isArrear').val(isArrear);
+            $('#isBonus').val(isBonus);
+            $('#isMonthlyAllowance').val(isMonthlyAllowance);
+            $('#headShortName').val(headShortName);
+            $('#isLoan').val(isLoan);
+        }
+
+         function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteSalaryHeadById", "SalaryMaster")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Payroll/SalaryMaster/SalaryHead";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}
+
+
+
+
+
+
+

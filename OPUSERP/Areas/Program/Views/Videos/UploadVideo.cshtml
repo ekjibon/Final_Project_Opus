@@ -1,0 +1,118 @@
+﻿@model ProgramVideoViewModel
+@{
+    ViewData["Title"] = "Upload Video";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <a class="btn btn-success btn-sm" id="backBtn" style="float:right;color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+        <h5 class="card-title" style="color: black; font-weight:bold">Upload Program Video</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Program" asp-controller="Videos" asp-action="UploadVideo" method="post" data-parsley-validate="parsley" enctype="multipart/form-data">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="travelPurposeId" id="travelPurposeId" value="0" />
+                    <label for="title" class="col-sm-3 col-form-label">Video Title<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="title" id="title" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="file" class="col-sm-3 col-form-label">Upload Video File </label>
+                    <div class="col-sm-9">
+                        <input type="file" class="form-control" name="file" id="file" required>
+                    </div>
+                </div>
+
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success" style="float:right; margin-top:5px;">Save</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 style="font-weight:bold; color:black">Upload Program Video List</h5>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Video</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.programViews)
+                        {
+                            <tr>
+                                <td>@data.title</td>
+                                <td>@data.url</td>
+                                <td>
+                                    <a class="btn btn-danger" href="#" onclick="Remove(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#departmentTable').DataTable();
+
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+        });
+
+        function Edit(Id, purposeName, purposeNameBn, purposeShortName) {
+            $("#travelPurposeId").val(Id);
+            $("#purposeName").val(purposeName);
+            $("#purposeNameBn").val(purposeNameBn);
+            $("#purposeShortName").val(purposeShortName);
+        }
+
+        function Remove(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                location.replace("/Program/Videos/Delete/" + Id);
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+    </script>
+}

@@ -1,0 +1,284 @@
+﻿@model RequisitionRaiserDashViewModel
+@{
+    ViewData["Title"] = "StoreKeeper";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-foundation.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+@*<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js" type="text/javascript"></script>*@
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+@*<script src="~/highcharts/highcharts.js"></script>*@
+@*<script src="~/js/chart.js"></script>*@
+
+<style>
+    .aaa {
+        width: 24.3%;
+      
+    }
+
+        .aaa button {
+            height: 120px !important;
+        }
+
+    .btn {
+        border-radius: 0 !important
+    }
+
+    .a_color {
+        background-color: #ddd;
+        color: #134684 !important;
+    }
+
+    .bbb {
+        width: 32%;
+    }
+
+
+    ul {
+        overflow: hidden !important;
+    }
+
+        ul li {
+            list-style: none;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+
+    .btn {
+        background-color: DodgerBlue;
+        border: none;
+        color: white;
+        padding: 12px 16px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        /* Darker background on mouse-over */
+        .btn:hover {
+            background-color: RoyalBlue;
+        }
+
+
+    /* Top Counter */
+    .leftImgBox {
+        width: 20%;
+        height: 100%;
+        float: left;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .leftImgBox img {
+            width: 100%;
+        }
+
+    .counterBox {
+        float: right;
+        text-align: center;
+    }
+
+    .counter {
+        font-size: 33px;
+        margin-bottom: 0;
+    }
+
+    .title {
+        font-size: 17px;
+    }
+
+    a {
+        color: white !important;
+    }
+
+        a:hover {
+            color: white;
+        }
+</style>
+
+<div class="container-fluid mt-4" id="storekeeper">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+
+
+                <div class="aaa" style="margin-right:10px">
+                    <a href="/SCMRequisition/RequisitionNew/Index"
+                       style="text-decoration:none; float:right; background-color:#012350"
+                       class="btn  w-100 pr-0 pl-2 pr-0 mr-0">
+                        <i class="fa fa-circle-notch" style="font-size:40px; float:left"></i>
+                        <b style="font-size:30px">@Model.ApprovedRequisition</b><br /> Approved Requisition
+                    </a>
+                    <a class="p-2 a_color d-block">View Details <span class="oi float-right p-2 text-success" data-glyph="arrow-circle-right"></span></a>
+                </div>
+
+                <div class="aaa" style="margin-right:10px">
+                    <a href="/SCMRequisition/RequisitionApprove/ReqApprovelist" class="btn w-100 pr-0 pl-2 text-light" style="float:right; background-color:#68B902">
+                        <span class="fa fa-location-arrow" style="font-size:40px;float:left"></span>
+						<b style="font-size:30px;">@Model.OnGoingRequisition</b><br />
+                        On Going Requisition
+                    </a>
+                    <a class="p-2 a_color d-block">View Details <span class="oi float-right p-2 text-info" data-glyph="arrow-circle-right"></span></a>
+                </div>
+
+                <div class="aaa"  style="margin-right:10px">
+                    <a href="/SCMRequisition/RequisitionNew/Index"
+                       style="text-decoration:none; float:right"
+                       class="btn bg-danger w-100 pr-0 pl-2">
+                        <i class="fa fa-check" style="font-size:40px; float:left"></i>
+						<b style="font-size:30px">@Model.CompleteRequisition</b><br /> Complete Requisition
+                    </a>
+                    <a class="p-2 a_color d-block">View Details <span class="oi float-right p-2 text-primary" data-glyph="arrow-circle-right"></span></a>
+                </div>
+
+
+                <div class="aaa">
+                    <a href="/SCMRequisition/RequisitionNew/Index"
+                       style="text-decoration:none; float:right"
+                       class="btn bg-warning w-100 pr-0 pl-2 mr-0">
+                        <i class="fa fa-close" style="font-size:40px; float:left">
+                        </i><b style="font-size:30px">@Model.RejectRequisition</b><br />Reject Requisition
+                    </a>
+                    <a class="p-2 a_color d-block">View Details <span class="oi float-right p-2 text-warning" data-glyph="arrow-circle-right"></span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl- 12 col-lg-12 col-md-12 col-12 mt-4">
+            <div class="row">
+
+
+                <div class="col-3 py-1 box" style="background-color: #012350; color: white; border: 5px solid white;">
+                    <a href="#" id="department-btn">
+                        <div class="leftImgBox">
+                            <img src="~/Assets/RequisitionNew/shopping-bag.png" alt="">
+                        </div>
+                        <div class="counterBox">
+                            <p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 2).FirstOrDefault()?.qty</p>
+                            <p class="title">Departmental Store</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-3 py-1 box" style="background-color: #68B902; color: white; border: 5px solid white;">
+                    <a href="#" id="computer-btn">
+                        <div class="leftImgBox">
+                            <img src="~/Assets/RequisitionNew/desktop.png" alt="">
+                        </div>
+                        <div class="counterBox">
+							<p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 3).FirstOrDefault()?.qty</p>
+                            <p class="title">Computer Store</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-3 py-1 box" style="background-color: #F84D5D; color: white; border: 5px solid white;">
+                    <a href="#" id="clothing-btn">
+                        <div class="leftImgBox">
+                            <img src="~/Assets/RequisitionNew/clothing.png" alt="">
+                        </div>
+                        <div class="counterBox">
+							<p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 4).FirstOrDefault()?.qty</p>
+                            <p class="title">Clothing Store</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-3 py-1 box" style="background-color: #F0B801; color: white; border: 5px solid white;">
+                    <a href="#" id="stationary-btn">
+                        <div class="leftImgBox">
+                            <img src="~/Assets/RequisitionNew/stationary.png" alt="">
+                        </div>
+                        <div class="counterBox">
+							<p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 5).FirstOrDefault()?.qty</p>
+                            <p class="title">Stationary Store</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-xl- 12 col-lg-12 col-md-12 col-12 mt-4">
+            <div class="row">
+                <div class="bbb" style=" margin-right:14px;">
+
+                    <div class="mb-4">
+                        <p class="pl-2 pt-1 pb-1 badge-danger mb-2 d-block" href="#">Most recent Product</p>
+                    </div>
+
+                    <div class="bbb border w-100" style="overflow: scroll; height: 350px">
+
+						<ul>
+							@foreach (var item in Model.MostRecent)
+							{
+								<li class="pt-3"><img src="../../SKUImages/@item.specImageUrl" width="40" /> <span class="pt-1 pr-2"> @item.specificationName</span> </li>
+							}
+							@*<li class="pt-3"><img src="~/images/994570.png" width="30" /> <span class="pt-1 pr-2"> Tessue Box</span> </li>
+							<li class="pt-3"><img src="~/images/download.png" width="30" /> <span class="pt-1 pr-2"> Pen Drive</span> </li>
+							<li class="pt-3"><img src="~/images/unnamed.png" width="30" /> <span class="pt-1 pr-2"> Lesar Tonar</span> </li>
+							<li class="pt-3"><img src="~/images/tissuebox.png" width="30" /> <span class="pt-1 pr-2"> Tessue Box</span> </li>*@
+
+						</ul>
+                    </div>
+                </div>
+                <div class="bbb" style=" margin-right:14px;">
+                    <div class="mb-4">
+                        <p class="pl-2 pt-1 pb-1 badge-info mb-2 d-block" href="#">Top 10 Item</p>
+                    </div>
+
+                    <div class="bbb border w-100" style="overflow: scroll; height: 350px">
+						<ul>
+							@foreach (var item in Model.TopTen)
+							{
+								<li class="pt-3"><img src="../../SKUImages/@item.specImageUrl" width="40" /> <span class="pt-1 pr-2"> @item.specificationName (@item.total.ToString("#"))</span> </li>
+							}
+							@*<li class="pt-3"><img src="~/images/mineralWater.png" width="30" /> <span class="pt-1 pr-2"> Mineral Water</span> </li>
+							<li class="pt-3"><img src="~/images/Airfreshner.png" width="30" /> <span class="pt-1 pr-2"> Air Freshner</span> </li>
+							<li class="pt-3"><img src="~/images/994570.png" width="30" /> <span class="pt-1 pr-2"> Tessue Box</span> </li>
+							<li class="pt-3"><img src="~/images/GlueStick.png" width="30" /> <span class="pt-1 pr-2"> Dry Glue Stick</span> </li>*@
+
+						</ul>
+                    </div>
+                </div>
+                <div class="bbb">
+                    <div class="mb-4">
+                        <p class="pl-2 pt-1 pb-1 badge-primary mb-2 d-block" href="#">Feature Items</p>
+                    </div>
+
+                    <div class="bbb border w-100" style="overflow: scroll; height: 350px">
+						<ul>
+							@foreach (var item in Model.Featured)
+							{
+								<li class="pt-3"><img src="../../SKUImages/@item.specImageUrl" width="40" /> <span class="pt-1 pr-2"> @item.specificationName</span> </li>
+							}
+							@*<li class="pt-3"><img src="~/images/994570.png" width="30" /> <span class="pt-1 pr-2"> Tessue Box</span> </li>
+							<li class="pt-3"><img src="~/images/mineralWater.png" width="30" /> <span class="pt-1 pr-2"> Mineral Water</span> </li>
+							<li class="pt-3"><img src="~/images/unnamed.png" width="30" /> <span class="pt-1 pr-2"> Lesar Tonar</span> </li>
+							<li class="pt-3"><img src="~/images/tissuebox.png" width="30" /> <span class="pt-1 pr-2"> Tessue Box</span> </li>*@
+
+						</ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
+

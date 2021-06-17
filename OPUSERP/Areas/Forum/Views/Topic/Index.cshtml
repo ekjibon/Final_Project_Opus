@@ -1,0 +1,110 @@
+﻿@model ForumViewModel
+@{
+    ViewData["Title"] = "List of Topic";
+}
+
+@section Style{
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card">
+            <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="col-10">
+                    <h6 class="m-0 font-weight-bold text-primary">List of Topic</h6>
+                </div>
+                <div class="col-2 text-right">
+                    <a class="btn btn-success btn-sm" title="Edit" href="~/Forum/Topic/Create">Add Topic</a>
+                </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="topicListTable">
+                    <thead>
+                        <tr>
+                            <th>Sl</th>
+                            <th>Topic Title</th>
+                            <th>Member</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                            @foreach (var data in Model.topics)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.topic</td>
+                                    <td>@data.member.nameEnglish</td>
+                                    <td>
+                                        <a class="btn btn-success" title="Edit" href="~/Forum/Topic/Comments/@data.Id"><i class="fa fa-comments"></i></a>                                  
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+        $(document).ready(function () {
+            $('#topicListTable').DataTable({
+                colReorder: true,
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: 'List of Topic',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: 'List of Topic',
+                        messageTop: '',
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: 'List of Topic',
+                        messageTop: '',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+
+        });
+
+
+</script>
+}
+
+

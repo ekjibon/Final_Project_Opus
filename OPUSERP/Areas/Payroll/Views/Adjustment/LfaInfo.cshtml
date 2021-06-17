@@ -1,0 +1,293 @@
+﻿@model LfaInfoViewModel
+@{
+    ViewData["Title"] = "LfaInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Lfa Info</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="Adjustment" asp-action="LfaInfo" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="lfaInfoId" name="lfaInfoId" value=0>
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="salaryPeriodId" class="col-sm-4 col-form-label">Salary Period Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select name="salaryPeriodId" id="salaryPeriodId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select Salary Period</option>
+                                    @foreach (var data in Model.salaryPeriods)
+                                    {
+                                        <option value="@data.Id">@data.periodName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-sm-4 col-form-label">Employee's Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Designation </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="department" class="col-sm-4 col-form-label">Department</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="department" name="department" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="JoiningDate" class="col-sm-4 col-form-label">Joining Date </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="JoiningDate" name="JoiningDate" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="ConfirmDate" class="col-sm-4 col-form-label">Confirmation Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="ConfirmDate" name="ConfirmDate" readonly>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="LastYearBasic" class="col-sm-4 col-form-label">Last Year Basic</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="LastYearBasic" name="LastYearBasic" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lfaAmount" class="col-sm-4 col-form-label">LFA Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="lfaAmount" name="lfaAmount" data-parsley-required="true" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="LastLfaYearNo" class="col-sm-4 col-form-label">Last LFA Year No</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="LastLfaYearNo" name="LastLfaYearNo" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="currentLfaYearNo" class="col-sm-4 col-form-label">Current LFA Year No</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="currentLfaYearNo" name="currentLfaYearNo">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lfaStartDate" class="col-sm-4 col-form-label">From Date <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="lfaStartDate" name="lfaStartDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lfaEndDate" class="col-sm-4 col-form-label">To Date <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="lfaEndDate" name="lfaEndDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Save" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of LFA</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="leaveTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>Employee Name</th>
+                            <th>Designation</th>
+                            <th>Salary Month</th>
+                            <th>No of Days</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.lfaInfos)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td>@data.employeeInfo.employeeCode</td>
+                                    <td>@data.employeeInfo.nameEnglish</td>
+                                    <td>@data.employeeInfo.designation</td>
+                                    <td>@data.salaryPeriod.periodName</td>
+                                    <td>@data.lfaAmount</td>
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edit(@data.Id,@data.employeeInfoId,'@data.employeeInfo.nameEnglish','@data.employeeInfo.employeeCode','@data.employeeInfo.designation',@data.salaryPeriodId,'@data.lfaAmount','@data.lfaStartDate','@data.lfaEndDate','@data.currentLfaYearNo')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#lfaStartDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1960:2040" }).datepicker("setDate", new Date());
+            $("#lfaEndDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1960:2040" }).datepicker("setDate", new Date());
+
+            $('#leaveTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+
+            $("#installmentAmount").keyup(function () {
+                GetInstallment();
+            });
+
+            $("#noOfInstallment").keyup(function () {
+                GetMonthly();
+            });
+
+        });
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.joiningDatePresentWorkstation = option.joiningDatePresentWorkstation;
+                obj.dateOfPermanent = option.dateOfPermanent;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#JoiningDate").val(getPurchaseDate(ui.item.joiningDatePresentWorkstation.toString("dd-MMM-yyyy")));
+                    $("#ConfirmDate").val(getPurchaseDate(ui.item.dateOfPermanent.toString("dd-MMM-yyyy")));
+                    $("#employeeInfoId").val(ui.item.key);
+
+                    Common.Ajax('GET', '/Payroll/Adjustment/GetLastYearBasic/?empId=' + ui.item.key + '&periodId=' + parseInt($('#salaryPeriodId').val()), [], 'json', ajaxGetLastYearBasic);
+
+                    Common.Ajax('GET', '/Payroll/Adjustment/GetLfaInfoByEmpId/?empId=' + ui.item.key, [], 'json', ajaxGetLfaInfoByEmpId);
+                }
+            });
+        }
+
+        function ajaxGetLastYearBasic(response) {
+            console.log(response);           
+            $("#LastYearBasic").val(response.amount); 
+            $("#lfaAmount").val(response.amount);
+        }
+
+        function ajaxGetLfaInfoByEmpId(response) {
+            console.log(response);
+            $("#LastLfaYearNo").val(response.currentLfaYearNo ? response.currentLfaYearNo : 0);
+            $("#currentLfaYearNo").val(response.currentLfaYearNo ? response.currentLfaYearNo : 0);
+        }
+
+        function Edit(Id, employeeInfoId, nameEnglish, employeeCode, designation, salaryPeriodId, salaryHeadId, advanceAmount, installmentAmount, noOfInstallment, purpose, isContinue) {
+            $('#lfaInfoId').val(Id);
+            $('#employeeInfoId').val(employeeInfoId);
+            $('#employeeName').val(nameEnglish + '(' + (employeeCode) + ')');
+            $('#Designation').val(designation);
+            $('#salaryPeriodId').val(salaryPeriodId);
+            $('#salaryHeadId').val(salaryHeadId);
+            $('#advanceAmount').val(advanceAmount);
+            $('#installmentAmount').val(installmentAmount);
+            $('#noOfInstallment').val(noOfInstallment);
+            $('#purpose').val(purpose);
+            $('#isContinue').val(isContinue);
+        }
+
+        function GetInstallment() {
+            var totalAmount = $("#advanceAmount").val();
+            var monthlyAmount = $("#installmentAmount").val();
+            if ($("#advanceAmount").val() == '' || $("#installmentAmount").val() == '') {
+                totalAmount = 0;
+                monthlyAmount = 0;
+            }
+            $("#noOfInstallment").val(parseFloat(totalAmount / monthlyAmount).toFixed(0));
+        }
+
+        function GetMonthly() {
+            var totalAmount = $("#advanceAmount").val();
+            var noOfInstal = $("#noOfInstallment").val();
+            if ($("#advanceAmount").val() == '' || $("#noOfInstallment").val() == '') {
+                totalAmount = 0;
+                noOfInstal = 0;
+            }
+            $("#installmentAmount").val(parseFloat(totalAmount / noOfInstal).toFixed(2));
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

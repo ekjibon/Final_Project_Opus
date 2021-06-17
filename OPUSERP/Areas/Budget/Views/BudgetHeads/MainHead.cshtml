@@ -1,0 +1,136 @@
+﻿@model BudgetMainHeadViewModel
+@{
+    ViewData["TitleMD"] = "Budget Heads";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+        <h5 class="card-title" style="color: black; font-weight:bold">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <form id="myForm" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="code" class="col-sm-2 col-form-label">@Model.fLang.code<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="code" id="code">
+                        <input type="hidden" name="headId" id="headId" value="0" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="code" class="col-sm-2 col-form-label">@Model.fLang.codeBn</label>
+                    <div class="col-sm-10">
+                        <input type="text"  data-parsley-trigger="keyup" class="form-control" name="codeBN" id="codeBN">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">@Model.fLang.headEn<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="name" id="name">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">@Model.fLang.headBn</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="nameBN" id="nameBN">
+                    </div>
+                </div>
+                <hr />
+                <input type="button" id="saveForm" value="Submit" class="btn btn-success" style="float:right; margin-top:5px;">
+            </form>
+        </div>
+    </div>
+</div>
+<br /><br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 style="font-weight:bold; color:black">@Model.fLang.list</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="budgetHeadTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.code</th>
+                            <th>@Model.fLang.codeBn</th>
+                            <th>@Model.fLang.headEn</th>
+                            <th>@Model.fLang.headBn</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.budgetMainHeads)
+                        {
+                            <tr>
+                                <td>@data.code</td>
+                                <td>@data.codeBN</td>
+                                <td>@data.name</td>
+                                <td>@data.nameBN</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.code','@data.codeBN', '@data.name','@data.nameBN')" href="#"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#budgetHeadTable').DataTable();
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+            $("#saveForm").click(function () {
+                var data = $("#myForm").serialize();
+                let code = $('#code').val();
+                let codeBN = $('#codeBN').val();               
+                let name = $('#name').val(); 
+                if (code == "") {
+                    swal('Warning', 'Code can not be null', 'warning');
+                    return false;
+                }
+                if (name == "") {
+                    swal('Warning', 'Subhead can not be null', 'warning');
+                    return false;
+                }                
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        url: "/Budget/BudgetHeads/MainHead",
+                        type: "POST",
+                        data: data,
+                        success: function () {
+                            swal('', 'Saved Successfully!', 'success')
+                            location.reload(true);
+                        }
+                    });
+                });
+            });
+        });
+
+        function Edit(Id, code,codeBn, name,nameBn) {
+            $("#headId").val(Id);
+            $("#code").val(code);
+            $("#codeBN").val(codeBn);
+            $("#name").val(name);
+            $("#nameBN").val(nameBn);
+        }
+    </script>
+}

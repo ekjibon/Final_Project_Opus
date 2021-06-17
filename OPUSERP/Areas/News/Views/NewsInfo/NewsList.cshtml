@@ -1,0 +1,120 @@
+﻿@model NewsInfoViewModel
+@{
+    ViewData["Title"] =Model.fLang.list;
+}
+
+@section Style{
+    <style>
+        p {
+            color: black;
+        }
+
+        h6 {
+            color: black;
+        }
+
+        b {
+            color: black;
+        }
+        .card-img-top{
+            height:200px;
+        }
+    </style>
+}
+
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="card">
+                <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <div class="col-10">
+                        <h4 class="m-0 font-weight-bold text-primary">@Model.fLang.upcoming</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    @foreach (var data in Model.newsInfos)
+                    {
+                        <!-- Blog Post -->
+                        <div class="col-4" style="padding:10px">
+                            <div class="card ">
+                                <img class="card-img-top" src="~/@data.url" alt="Card image cap">
+                                <div class="card-body">
+                                    <h6 class="card-title">@data.title</h6>
+                                    <h6>@Model.fLang.date : @data.date?.ToString("yyyy-MM-dd")</h6>
+                                    <a href="~/News/NewsInfo/Details/@data.Id" class="btn btn-warning">Read More &rarr;</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <br />
+    </div>
+
+
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/Key-Club-International-Logo.jpg" style="height:50px; width:50px;" />
+                    </div>
+                    <div class="col-8">
+                        <h5 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px;">@Model.fLang.list</h5>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form asp- method="post" asp-area="Event" asp-controller="EventInfo" asp-action="Register" id="logoutForm" class="navbar-right">
+                <div class="modal-body">
+                    <h4 class="text-center text-success">@Model.fLang.newsRegister</h4>
+                    <hr />
+                    <input type="hidden" name="eventId" id="eventId" value="" />
+                    <div class="form-group row">
+                        <label for="transectionId" class="col-sm-3 col-form-label">@Model.fLang.transaction</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="transectionId" value="" name="transectionId">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">@Model.fLang.cancel</button>
+                    <button type="submit" class="btn btn-success">@Model.fLang.register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            //$('#batchCreateDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $(".card-title").each(function (i) {
+                len = $(this).text().length;
+                if (len > 30) {
+                    $(this).text($(this).text().substr(0, 30) + '...');
+                }
+            }); 
+        });
+
+        function TransferId(id) {
+            $('#eventId').val(id)
+        }
+
+
+    </script>
+}

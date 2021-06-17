@@ -1,0 +1,635 @@
+﻿@model InfoViewModel
+@{
+    ViewData["Title"] = "Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <img src="~/images/Key-Club-International-Logo.jpg" style="height:85px" />
+                </div>
+                <div class="col-6 text-center">
+                    <h3 class="card-title" style="color: black;margin-top: 25px;">Member's Profile</h3>
+                    <h6 class="identity-box-center">(@Model.employeeNameCode)</h6>
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-info" data-toggle='tooltip' title='Print' target='_blank' href='/MemberInfo/InfoView/pdspdf/@Model.employee.Id' style="float:right;margin-top: 25px;"><i class="fa fa-print"></i></a>
+                </div>
+
+            </div>
+
+        </div>
+        <hr>
+        <div class="container">
+
+            <!--Employee Info-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">@Model.fLang.employeeInfoLn.memberTitle</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.memberID</th>
+                                <td>@Model.employee.employeeCode</td>
+                                <td rowspan="3" style="height: 140px;width: 140px;">
+                                    <img id="user_img_current" style="width:110px;height:110px" src="~/@Model.photograph.url" alt="" class="img-thumbnail">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.name (@Model.fLang.employeeInfoLn.english)</th>
+                                <td>@Model.employee.nameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.name (@Model.fLang.employeeInfoLn.bangla)</th>
+                                <td>@Model.employee.nameBangla</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.fatherName (@Model.fLang.employeeInfoLn.english)</th>
+                                <td colspan="2">@Model.employee.fatherNameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.fatherName (@Model.fLang.employeeInfoLn.bangla)</th>
+                                <td colspan="2">@Model.employee.fatherNameBangla</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.motherName (@Model.fLang.employeeInfoLn.english)</th>
+                                <td colspan="2">@Model.employee.motherNameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.motherName (@Model.fLang.employeeInfoLn.bangla)</th>
+                                <td colspan="2">@Model.employee.motherNameBangla</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.nationality</th>
+                                <td colspan="2">@Model.employee.nationality</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.nationalID</th>
+                                <td colspan="2">@Model.employee.nationalID</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.dateOfBirth</th>
+                                <td colspan="2">@Model.employee.dateOfBirth?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.birthPlace</th>
+                                <td colspan="2">@Model.employee.birthPlace</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.gender</th>
+                                <td colspan="2">@Model.employee.gender</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.maritalStatus</th>
+                                <td colspan="2">@Model.employee.maritalStatus</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.religion</th>
+                                <td colspan="2">@Model.employee.religion?.name</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.bloodGroup</th>
+                                <td colspan="2">@Model.employee.bloodGroup</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.freedomFighterNo</th>
+                                <td colspan="2">@Model.employee.freedomFighterNo</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.telephoneOffice</th>
+                                <td colspan="2">@Model.employee.telephoneOffice</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.telephoneResidence</th>
+                                <td colspan="2">@Model.employee.telephoneResidence</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.emailAddress</th>
+                                <td colspan="2">@Model.employee.emailAddress</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.emailAddressPersonal</th>
+                                <td colspan="2">@Model.employee.emailAddressPersonal</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.mobileNumberOffice</th>
+                                <td colspan="2">@Model.employee.mobileNumberOffice</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.mobileNumberPersonal</th>
+                                <td colspan="2">@Model.employee.mobileNumberPersonal</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.memberType</th>
+                                <td colspan="2">@Model.employee.memberType.memberType</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.gpfAcNo</th>
+                                <td colspan="2">@Model.employee.gpfAcNo</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.skill</th>
+                                <td colspan="2">@Model.employee.spacialSkills</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <!--Present Address-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="address">@Model.fLang.addressLn.present</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.HouseVillage</th>
+                                <td>@Model.addressPresent.houseVillage</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.BlockSector</th>
+                                <td>@Model.addressPresent.blockSector</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.roadNo</th>
+                                <td>@Model.addressPresent.roadNumber</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.PostOffice</th>
+                                <td>@Model.addressPresent.postOffice</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.PostCode</th>
+                                <td>@Model.addressPresent.postCode</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.Upazila</th>
+                                <td>@Model.addressPresent?.thana?.thanaName</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.District</th>
+                                <td>@Model.addressPresent?.district?.districtName</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.Division</th>
+                                <td>@Model.addressPresent?.division?.divisionName</td>
+                            <tr>
+
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <!--Permanent Address-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.addressLn.permanent</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.HouseVillage</th>
+                                <td>@Model.addressPermanent.houseVillage</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.BlockSector</th>
+                                <td>@Model.addressPermanent.blockSector</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.roadNo</th>
+                                <td>@Model.addressPermanent.roadNumber</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.PostOffice</th>
+                                <td>@Model.addressPermanent.postOffice</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.PostCode</th>
+                                <td>@Model.addressPermanent.postCode</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.Upazila</th>
+                                <td>@Model.addressPermanent?.thana?.thanaName</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.District</th>
+                                <td>@Model.addressPermanent?.district?.districtName</td>
+                            <tr>
+
+                            <tr>
+                                <th>@Model.fLang.addressLn.Division</th>
+                                <td>@Model.addressPermanent?.division?.divisionName</td>
+                            <tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <!--Education-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.educationalQualificationLn.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                @*<th>@Model.fLang.educationalQualificationLn.levelOfEducation</th>*@
+                                <th>@Model.fLang.educationalQualificationLn.degree</th>
+                                <th>@Model.fLang.educationalQualificationLn.subject</th>
+                                <th>@Model.fLang.educationalQualificationLn.organization</th>
+                                <th>@Model.fLang.educationalQualificationLn.instritution</th>
+                                @*<th>@Model.fLang.educationalQualificationLn.result</th>*@
+                                <th>@Model.fLang.educationalQualificationLn.grade</th>
+                                <th>@Model.fLang.educationalQualificationLn.passingYear</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.educationalQualifications)
+                            {
+                                <tr>
+                                    @*<td>@data.degree.levelofeducation.levelofeducationName</td>*@
+                                    <td>@data.degree.degreeName</td>
+                                    <td>@data.reldegreesubject.subject.subjectName</td>
+                                    <td>@data.organization.organizationName</td>
+                                    <td>@data.institution</td>
+                                    @*<td>@data.result.resultName</td>*@
+                                    <td>@data.grade</td>
+                                    <td>@data.passingYear</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Spouse-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.spouseLn.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.spouseLn.spouseName</th>
+                                <th>@Model.fLang.spouseLn.spouseNameBN</th>
+                                <th>@Model.fLang.spouseLn.dateOfBirth</th>
+                                <th>@Model.fLang.spouseLn.homeDistrict</th>
+                                <th>@Model.fLang.spouseLn.gender</th>
+                                <th>@Model.fLang.spouseLn.bloodGroup</th>
+                                <th>@Model.fLang.spouseLn.occupation</th>
+                                <th>@Model.fLang.spouseLn.nid</th>
+                                <th>@Model.fLang.spouseLn.contact</th>
+                                <th>@Model.fLang.spouseLn.emailAddress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.spouses)
+                            {
+                                <tr>
+                                    <td>@data.spouseName</td>
+                                    <td>@data.spouseNameBN</td>
+                                    <td>@data.dateOfBirth?.ToString("yyyy-MM-dd")</td>
+                                    <td>@data.homeDistrict</td>
+                                    <td>@data.gender</td>
+                                    <td>@data.bloodGroup</td>
+                                    <td>@data.occupation</td>
+                                    <td>@data.nid</td>
+                                    <td>@data.contact</td>
+                                    <td>@data.email</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Child-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.childrenLn.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.childrenLn.childName</th>
+                                <th>@Model.fLang.childrenLn.childNameBN</th>
+                                <th>@Model.fLang.childrenLn.dateOfBirth</th>
+                                <th>@Model.fLang.childrenLn.gender</th>
+                                <th>@Model.fLang.childrenLn.occupation</th>
+                                <th>@Model.fLang.childrenLn.bin</th>
+                                <th>@Model.fLang.childrenLn.nid</th>
+                                <th>@Model.fLang.childrenLn.bloodGroup</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.childrens)
+                            {
+                                <tr>
+                                    <td>@data.childName</td>
+                                    <td>@data.childNameBN</td>
+                                    <td>@data.dateOfBirth?.ToString("yyyy-MM-dd")</td>
+                                    <td>@data.gender</td>
+                                    <td>@data.occupation</td>
+                                    <td>@data.bin</td>
+                                    <td>@data.nid</td>
+                                    <td>@data.bloodGroup</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Language-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.languageLn.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.languageLn.language</th>
+                                <th>@Model.fLang.languageLn.reading</th>
+                                <th>@Model.fLang.languageLn.writing</th>
+                                <th>@Model.fLang.languageLn.speaking</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.employeeLanguages)
+                            {
+                                <tr>
+                                    <td>@data.language.languageName</td>
+                                    <td> <i class="fa @(data.reading == "reading"?"fa-check-circle":"fa-times")"></i></td>
+                                    <td> <i class="fa @(data.writing == "writing"?"fa-check-circle":"fa-times")"></i></td>
+                                    <td> <i class="fa @(data.speaking == "speaking"?"fa-check-circle":"fa-times")"></i></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Award-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang?.awardLn?.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang?.awardLn?.awardName</th>
+                                <th>@Model.fLang?.awardLn?.perpose</th>
+                                <th>@Model.fLang?.awardLn?.txtAwardDate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.employeeAwards)
+                            {
+                                <tr>
+                                    <td>@data.awardName</td>
+                                    <td>@data.purpose</td>
+                                    <td>@data.awardDate?.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Publication-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.publicationLn.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.publicationLn.publicationType</th>
+                                <th>@Model.fLang.publicationLn.publicationNubmer</th>
+                                <th>@Model.fLang.publicationLn.publicationName</th>
+                                <th>@Model.fLang.publicationLn.publicationPlace</th>
+                                <th>@Model.fLang.publicationLn.publicationDate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var data in Model.publications)
+                            {
+                                <tr>
+                                    <td>@data.publicationType</td>
+                                    <td>@data.publicationNubmer</td>
+                                    <td>@data.publicationName</td>
+                                    <td>@data.publicationPlace</td>
+                                    <td>@data.publicationDate?.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @*<!--Passport-->
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.passportLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.passportLn.passPortNumber</th>
+                                    <th>@Model.fLang.passportLn.place</th>
+                                    <th>@Model.fLang.passportLn.dateOfIssue</th>
+                                    <th>@Model.fLang.passportLn.dateOfExpair</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.passportDetails)
+                                {
+                                    <tr>
+                                        <td>@data.passportNumber</td>
+                                        <td>@data.placeOfIssue</td>
+                                        <td>@data.dateOfIssue?.ToString("yyyy-MM-dd")</td>
+                                        <td>@data.dateOfExpair?.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!--License-->
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.licenseLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.licenseLn.licenseNumber</th>
+                                    <th>@Model.fLang.licenseLn.licenseCategory</th>
+                                    <th>@Model.fLang.licenseLn.place</th>
+                                    <th>@Model.fLang.licenseLn.dateOfIssue</th>
+                                    <th>@Model.fLang.licenseLn.dateOfExpair</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var data in Model.drivingLicenses)
+                                {
+                                    <tr>
+                                        <td>@data.licenseNumber</td>
+                                        <td>@data.category</td>
+                                        <td>@data.placeOfIssue</td>
+                                        <td>@data.dateOfIssue?.ToString("yyyy-MM-dd")</td>
+                                        <td>@data.dateOfExpair?.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>*@
+
+            <!--Service/Transfar-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.transferLogLn.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered" id="transferTable">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.transferLogLn.organization</th>
+                                <th>@Model.fLang.transferLogLn.fromDate</th>
+                                <th>@Model.fLang.transferLogLn.toDate</th>
+                                <th>@Model.fLang.transferLogLn.designation</th>
+                                <th>@Model.fLang.transferLogLn.address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.transferLogs)
+                            {
+                                <tr>
+                                    <td>@data.workStation</td>
+                                    <td>@data.from?.ToString("yyyy-MM-dd")</td>
+                                    <td>@data.to?.ToString("yyyy-MM-dd")</td>
+                                    <td>@data.designation</td>
+                                    <td>@data.department</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Training-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.trainingLn.title</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered" id="trainingTable">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.trainingLn.trainingType</th>
+                                <th>@Model.fLang.trainingLn.country</th>
+                                <th>@Model.fLang.trainingLn.trainingTitle</th>
+                                <th>@Model.fLang.trainingLn.institute</th>
+                                @*<th>@Model.fLang.trainingLn.country</th>*@
+                                <th>@Model.fLang.trainingLn.trFromDate</th>
+                                <th>@Model.fLang.trainingLn.trToDate</th>
+                                <th>@Model.fLang.trainingLn.remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.traningLogs)
+                            {
+                                <tr>
+                                    <td>@data.trainingCategory.trainingCategoryName</td>
+                                    @if (data.country != null)
+                                    {
+                                        <td>@data.country.countryName</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+
+                                    <td>@data.trainingTitle</td>
+                                    <td>@data.trainingInstitute.trainingInstituteName</td>
+                                    @*<td>@data.country.countryName</td>*@
+                                    <td>@data.fromDate?.ToString("yyyy-MM-dd")</td>
+                                    <td>@data.toDate?.ToString("yyyy-MM-dd")</td>
+                                    <td>@data.remarks</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+        });
+    </script>
+}
+
+

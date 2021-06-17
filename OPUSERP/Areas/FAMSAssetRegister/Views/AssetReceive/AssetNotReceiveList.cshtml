@@ -1,0 +1,168 @@
+﻿@model AssetReceiveViewModel
+@{
+    ViewData["Title"] = "AssetNotReceiveList";
+}
+
+@section Style{
+    <style>
+        #assetReceiveTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+        
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary"></h4>
+                <a href="/FAMSAssetRegister/AssetReceive/AssetReceiveList" style="margin-left: 780px" class="btn btn-success btn-sm pull-right">Back To Receive List</a>
+                <a href="/FAMSAssetRegister/AssetReceive/AssetRejectList"  class="btn btn-success btn-sm pull-right">Back To Reject List</a>
+            </div>
+
+      
+            <div class="card-body">
+                <div class="row">
+                    <h5 style="color:#0062cc">Asset Not Receive List</h5>
+                </div>
+                <table class="table table-striped table-bordered" id="assetReceiveTable">
+                    <thead>
+                        <tr>
+                            <th>Purchase No</th>
+                            <th>Receive Date</th>
+                            <th>Purchase Date</th>
+                            <th>Supplier Name</th>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.assetRegistrations)
+                        {
+                            <tr>
+
+                                <td><span style="display:none">-@data.Id-</span>@data.purchaseInfo.purchaseNo</td>
+                                <td>@data.purchaseInfo.receiveDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.purchaseInfo.purchaseDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.purchaseInfo.supplier.organizationName</td>
+                                <td>@data.assetNo</td>
+                                <td>@data.assetValue</td>
+                                <td>
+                                    <a class="btn btn-info" data-toggle="tooltip" title="Receive" href="javascript:void(0)" onclick="AssetReceiveSave(@data.Id)"><i class="fa fa-receipt"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-warning" data-toggle="tooltip" title="Reject" href="javascript:void(0)" onclick="AssetRejectSave(@data.Id)"><i class="fa fa-undo"></i></a>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <hr />
+            <div class="card-body">
+                <div class="row">
+                    <h5 style="color:#0062cc">Asset Receive List</h5>
+                </div>
+                <table class="table table-striped table-bordered" id="assetReceiveTable">
+                    <thead>
+                        <tr>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Receive Date</th>
+                            <th>Receive By</th>
+                            @*<th>Action</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.assetReceives)
+                        {
+                            <tr>
+                                <td><span style="display:none">-@data.Id-</span>@data.assetRegistration.assetNo</td>
+                                <td>@data.assetRegistration.assetValue</td>
+                                <td>@data.receiveDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.receiveBy</td>
+                               
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <hr/>
+            <div class="card-body">
+                <div class="row">
+                    <h5 style="color:#0062cc">Asset Reject List</h5>
+                </div>
+                <table class="table table-striped table-bordered" id="assetRejectTable">
+                    <thead>
+                        <tr>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Reject Date</th>
+                            <th>Reject By</th>
+                            @*<th>Action</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.assetRejects)
+                        {
+                            <tr>
+                                <td><span style="display:none">-@data.Id-</span>@data.assetRegistration.assetNo</td>
+                                <td>@data.assetRegistration.assetValue</td>
+                                <td>@data.rejectDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.rejectBy</td>
+                                @*<td>
+                            <a class="btn btn-success" data-toggle="tooltip" title="Edit" href="/FAMSAssetRegister/AssetReceive/AssetReceive/?id=@data.Id&assetId=@data.assetRegistrationId"><i class="fa fa-edit"></i></a>
+                        </td>*@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#assetReceiveTable').DataTable();
+
+           
+        });
+
+        function AssetReceiveSave(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Receive this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Receive it!'
+            }).then(function () {
+                window.location.href = "/FAMSAssetRegister/AssetReceive/SaveAssetReceive/?id=" + Id;
+                swal({
+                    title: '', text: 'Received Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                });
+            });
+        }
+
+        function AssetRejectSave(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Reject this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Reject it!'
+            }).then(function () {
+                window.location.href = "/FAMSAssetRegister/AssetReceive/SaveAssetReject/?id=" + Id;
+                swal({
+                    title: '', text: 'Reject Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                });
+            });
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+

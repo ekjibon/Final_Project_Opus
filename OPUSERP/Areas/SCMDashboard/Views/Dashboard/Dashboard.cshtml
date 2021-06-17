@@ -1,0 +1,378 @@
+﻿
+@{
+    ViewData["TitleMD"] = "SCM Dashboard";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="row bg-success" style="padding-top:10px;padding-bottom:10px;margin-bottom:20px;">
+    <div class="col-sm-12">
+        <h5 class="text-center" style="color:white;">SCM Dashboard </h5>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="requisition_stage" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="requisition_status" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="requisition_amount" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="requisition_amount_year" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="department_wo" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="amount_wo" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="item_wo" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="yearly_wo" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="supplier" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="voluam_supplier" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="item_purchase" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="item_money" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <canvas id="item_requsition" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+@section ScriptsMD{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="~/js/palette.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#activityStatus").addClass("active");
+            $('#departmentTable').DataTable();
+            Common.Ajax('GET', '/SCMDashboard/Dashboard/DashboardValue', [], 'json', chart1, false);
+        });
+
+        function chart1(response) {
+            console.log(response);
+
+            var ctx = document.getElementById('requisition_stage');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: response.sCMDashboardcountViewModel.deptotalrequisition,
+                        label: 'Requisition',
+                        backgroundColor: 'rgba(255, 20, 100, 0.5)',
+                    }, {
+                        data: response.sCMDashboardcountViewModel.deptotalrequisitionpending,
+                        label: 'Pending',
+                        backgroundColor: 'rgba(0,255,0, 0.5)',
+                    }, {
+                        data: response.sCMDashboardcountViewModel.deptotalwoinprogress,
+                        label: 'Wo process',
+                        backgroundColor: 'blue',
+                    }, {
+                        data: response.sCMDashboardcountViewModel.deptotalwogenerated,
+                        label: 'Wo generated',
+                        backgroundColor: 'gray',
+                    }],
+                    labels: response.sCMDashboardcountViewModel.departments
+                },
+                options: {
+                }
+            });
+
+            var requisition_status = document.getElementById('requisition_status').getContext('2d');
+            var chart = new Chart(requisition_status, {
+                type: 'pie',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.statsinfo,
+                    datasets: [{
+                        label: "Requisition Status",
+                        backgroundColor: palette('tol', response.sCMDashboardcountViewModel.statsinfo.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.sCMDashboardcountViewModel.statuswisecount,
+                    }]
+                },
+            });
+
+            var requisition_amount = document.getElementById('requisition_amount');
+            var myChart2 = new Chart(requisition_amount, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.departments,
+                    datasets: [{
+                        label: 'Amount wise requsition',
+                        data: response.sCMDashboardcountViewModel.deptotalamount,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var requisition_amount_year = document.getElementById('requisition_amount_year');
+            var myChart2 = new Chart(requisition_amount_year, {
+                type: 'line',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.departments,
+                    datasets: [{
+                        label: 'Amount of requsition in a year',
+                        data: response.sCMDashboardcountViewModel.deptotalamountbyyear,
+                        //backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+
+            var department_wo = document.getElementById('department_wo').getContext('2d');
+            var chart = new Chart(department_wo, {
+                type: 'pie',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.departments,
+                    datasets: [{
+                        label: "Department wise work order",
+                        backgroundColor: palette('tol', response.sCMDashboardcountViewModel.depworkorderpercent.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.sCMDashboardcountViewModel.depworkorderpercent,
+                    }]
+                },
+            });
+
+            var amount_wo = document.getElementById('amount_wo');
+            var myChart2 = new Chart(amount_wo, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.departments,
+                    datasets: [{
+                        label: 'Volume amount of work order',
+                        data: response.sCMDashboardcountViewModel.depworkordervolume,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var item_wo = document.getElementById('item_wo').getContext('2d');
+            var chart = new Chart(item_wo, {
+                type: 'doughnut',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.topfiveItem,
+                    datasets: [{
+                        label: "Work order wise top 5 Item",
+                        backgroundColor: palette('tol', response.sCMDashboardcountViewModel.topfiveitempercentwo.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.sCMDashboardcountViewModel.topfiveitempercentwo,
+                    }]
+                },
+            });
+
+            var yearly_wo = document.getElementById('yearly_wo');
+            var myChart2 = new Chart(yearly_wo, {
+                type: 'line',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.years,
+                    datasets: [{
+                        label: 'Yarly work order',
+                        data: response.sCMDashboardcountViewModel.yearlywocount,
+                        //backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+
+            var supplier = document.getElementById('supplier').getContext('2d');
+            var chart = new Chart(supplier, {
+                type: 'pie',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.suppliers,
+                    datasets: [{
+                        label: "Top 5 Supplier",
+                        backgroundColor: palette('tol', response.sCMDashboardcountViewModel.supplierswisepercent.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.sCMDashboardcountViewModel.supplierswisepercent,
+                    }]
+                },
+            });
+
+            var voluam_supplier = document.getElementById('voluam_supplier');
+            var myChart2 = new Chart(voluam_supplier, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.suppliers,
+                    datasets: [{
+                        label: 'Volume wise top 5 supplier',
+                        data: response.sCMDashboardcountViewModel.supplierswiseAmount,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var item_purchase = document.getElementById('item_purchase').getContext('2d');
+            var chart = new Chart(item_purchase, {
+                type: 'pie',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.itemspurchase,
+                    datasets: [{
+                        label: "Purchase wise Top 5 Item",
+                        backgroundColor: palette('tol', response.sCMDashboardcountViewModel.itemwisepurchasepercent.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.sCMDashboardcountViewModel.itemwisepurchasepercent,
+                    }]
+                },
+            });
+
+            var item_money = document.getElementById('item_money');
+            var myChart2 = new Chart(item_money, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.itemspurchase,
+                    datasets: [{
+                        label: 'Amount wise top 5 Item',
+                        data: response.sCMDashboardcountViewModel.itemwisepurchaseAmount,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var item_requsition = document.getElementById('item_requsition').getContext('2d');
+            var chart = new Chart(item_requsition, {
+                type: 'doughnut',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.itemsrequisition,
+                    datasets: [{
+                        label: "Most Requisition Item",
+                        backgroundColor: palette('tol', response.sCMDashboardcountViewModel.itemwiserequisitionpercent.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.sCMDashboardcountViewModel.itemwiserequisitionpercent,
+                    }]
+                },
+            });
+
+        }
+
+
+
+    </script>
+}
+
+

@@ -1,0 +1,115 @@
+﻿@model AllHrReportViewModel
+@{
+    ViewData["Title"] = "HR Dept. Summary Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 14px;
+        }
+
+        table {
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div class="fa-pull-right">
+                <p style="font-size:smaller;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+            </div>
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <div style="color:black;text-align:center;">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                        <h5>Department Wise Summary HR Information</h5>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-2">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid" style="color:black;">
+
+            <div class="row" style="padding: 0px 15px 0px 15px;">
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr style="background-color:lightgray;">
+                            <th style="text-align:center;width:10%;">Sl#</th>
+                            <th style="text-align:center;width:60%;">Department</th>
+                            <th style="text-align:center;width:15%;">Number</th>
+                            <th style="text-align:center;width:15%;">Ratio (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+
+                            @foreach (var data in @Model.hrSummaryReportViewModels)
+                            {
+                                <tr>
+                                    <td style="text-align:center;">@data.rowSlNo</td>
+                                    <td>@data.deptName</td>
+                                    <td style="text-align:center;">@data.totalNumber</td>
+                                    <td style="text-align:center;">@data.ratio</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+}
+
+
+

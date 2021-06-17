@@ -1,0 +1,192 @@
+﻿@model PatientContactViewModel
+@{
+    ViewData["Title"] = "Recipient's Contacts";
+    Layout = "~/Areas/Patient/Views/Shared/_PatientForm.cshtml";
+}
+
+@section StylePatient{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">        
+        <div class="row">
+            <div class="col-6">
+                <h6 class="card-title" style="color: black">Recipient's Contacts</h6>
+            </div>
+            <div class="col-6">
+                <a href='/Patient/Patient/Index/@ViewBag.patientId' style="text-decoration:none;"><h6 class="identity-box"><span id="leadNameCode" name="leadNameCode"></span></h6></a>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Patient" asp-controller="Patient" asp-action="PatientContacts" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <input type="hidden" id="contactId" name="contactId" value="0">
+                        <input type="hidden" id="resourceId" name="resourceId" value="0">
+                        <input type="hidden" id="patientInfoId" name="patientInfoId" value="@ViewBag.patientId">
+                        <div class="form-group row">
+                            <label for="contactName" class="col-sm-4 col-form-label">Contact Name <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" id="contactName" name="contactName">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="gender" class="col-sm-4 col-form-label">Gender</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="contactRelation" class="col-sm-4 col-form-label">Relation With Recipient's <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="contactRelation" name="contactRelation" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="">Select Relation</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Brother">Brother</option>
+                                    <option value="Sister">Sister</option>
+                                    <option value="Spouse">Spouse</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="professionTypeId" class="col-sm-4 col-form-label">Profession <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="professionTypeId" id="professionTypeId" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="">Select profession</option>
+                                    @foreach (var data in Model.professionTypes)
+                                    {
+                                        <option value="@data.Id">@data.professionName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="contactMobile" class="col-sm-4 col-form-label">Mobile</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="contactMobile" name="contactMobile">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="contactEmail" class="col-sm-4 col-form-label">Email</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="contactEmail" name="contactEmail">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <label for="contactAddress" class="col-sm-2 col-form-label">Address</label>
+                            <div class="col-sm-10">
+                                <textarea type="text" class="form-control" id="contactAddress" name="contactAddress"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Recipient's Contact List</h6>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="contactsTable">
+                    <thead>
+                        <tr>
+                            <th>Contact Name</th>
+                            <th>Relation</th>
+                            <th>Mobile</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.patientContacts)
+                        {
+                            <tr>
+                                <td>@data?.resource?.resourceName</td>
+                                <td>@data?.resource?.contactRelation</td>
+                                <td>@data?.resource?.mobile</td>
+                                <td>@data?.resource?.email</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,@data.leadsId,@data?.resource?.professionTypeId,'@data.resource.resourceName','@data.resource.mobile','@data.resource.email','@data.resource.contactRelation','@data.resource.gender','@data.resourceId','@data.resource.organizationName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id,@data.leadsId)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsPatient{
+    <script>
+        $(document).ready(function () {
+
+            $("#contacts").addClass("active");
+            $('#contactsTable').DataTable();
+            Common.Ajax('GET', '/Patient/Patient/GetLeadNameAndCodeById/?id=' + @ViewBag.patientId, [], 'json', ajaxGetLeadNameAndCodeById);
+        });
+
+        function ajaxGetLeadNameAndCodeById(response) {
+            $("#leadNameCode").html(response);
+        }
+
+        function Edit(contactId, patientInfoId, professionTypeId, contactName, contactMobile, contactEmail, contactRelation, gender, resourceId, contactAddress) {
+            $('#contactId').val(contactId);
+            $('#resourceId').val(resourceId);
+            $('#patientInfoId').val(patientInfoId);
+            $('#professionTypeId').val(professionTypeId);
+            $('#contactName').val(contactName);
+            $('#contactMobile').val(contactMobile);
+            $('#contactEmail').val(contactEmail);
+            $('#contactAddress').val(contactAddress);
+            $('#contactRelation').val(contactRelation);
+            $('#gender').val(gender);
+        }
+
+        function DeleteMaster(Id, patientInfoId) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/Patient/Patient/DeletePatientContactById?Id=" + Id + '&patientInfoId=' + patientInfoId;;
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+        }
+
+    </script>
+}
+
+
+

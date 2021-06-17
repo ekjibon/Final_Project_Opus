@@ -1,0 +1,286 @@
+﻿@model PatientViewModel
+@{
+    ViewData["Title"] = "Recipient's List";
+}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<style>
+    #clientTable tbody tr {
+        cursor: pointer;
+    }
+</style>
+
+
+
+
+<div class="container">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h4 class="m-0 font-weight-bold text-primary">Service Recipient's List</h4>
+        <a href="/Patient/Patient/Index?Id=0" class="btn btn-success btn-sm pull-right">Add New</a>
+    </div>
+    <ul class="nav nav-pills">
+        <li class="active"><a data-toggle="pill" href="#home">All List</a></li>
+        <li><a data-toggle="pill" href="#menu1">Running List</a></li>
+        <li><button class="btn btn-outline-primary mt-1" id="complete">Complete List</button></li>
+      
+    </ul>
+
+  
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <h3>Running List</h3>
+            <table class="table table-striped table-bordered" id="clientTable" style="width:100%;"></table>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <h3>All List</h3>
+            <table class="table table-striped table-bordered" id="clientTable2" style="width:100%;"></table>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+
+        $(document).ready(function () {
+
+            GetAllGetReceipantsList();
+            GetAllGetRunningList();
+            GetAllListComplete();
+            //$("#completebtn").click(function () {
+
+            //    $("#clientTable").show();
+            //    $("#clientTable2").hide();
+
+            //});
+
+            //$("#completebtn2").click(function () {
+
+            //    $("#clientTable").hide();
+            //   $("#clientTable2").show();
+
+            //});
+
+            $('#complete').click(function () {
+        document.location = '@Url.Action("PatientListC", "Patient")';
+    });
+
+
+        });
+
+        function GetAllGetReceipantsList() {
+            $('#clientTable').DataTable({
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            stripHtml: false,
+                            columns: [1, 2, 3, 4]
+                        },
+                        title: 'Priyojon Healthcare Ltd',
+                        messageTop: 'Complete List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        title: 'Priyojon Healthcare Ltd',
+                        titleAttr: 'Print',
+
+                        messageTop: 'List Of Customers',
+
+                        exportOptions: {
+                            stripHtml: false,
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ],
+
+                ajax: {
+                    url: '@Url.Action("GetReceipantsList", "Patient")',
+                    dataSrc: "",
+                    data: {}
+                },
+                destroy: true,
+                columns: [
+                    { data: "patientName", title: "Receipant's Name", "width": "10%" },
+                    { data: "patientMobile", title: "Mobile", "width": "10%" },
+                    { data: "serviceName", title: "Mother Service", "width": "10%" },
+                    { data: "contactName", title: "Contact Name", "width": "10%" },
+                    { data: "contactMobile", title: "Contact Mobile", "width": "10%" },
+                    { data: "representativeName", title: "Rep. Name", "width": "15%" },
+                    {
+                        title: "Action", "width": "6%",
+                        "render": function (data, type, e, meta) {
+
+                            if (e.serviceName == null)
+                            {
+                                return '<a class="btn btn-info" href="/Patient/Patient/Index/?Id=' + e.Id + '" title="Edit/Update"><i class="fa fa-edit"></i></a>';
+                            }
+                            else
+                            {
+                                return '<a class="btn btn-info" href="/Patient/Patient/Index/?Id=' + e.Id + '" title="Edit/Update"><i class="fa fa-edit"></i></a>&nbsp;<a class="btn btn-info" href="/OtherSales/SalesInvoice/PatIndex/?Id=' + 0 + '&&agreementId=' + e.Id + '" title="Generate Invoice"><i class="fa fa-plane"></i></a>&nbsp;<a class="btn btn-info" href="/Patient/Patient/UpdateIndex/?Id=' + e.Id + '" title="Complete"><i class="fa fa-window-close"></i></a>';
+                            }
+
+                        }
+                    },
+                ]
+            });
+        }
+        function GetAllGetRunningList() {
+            $('#clientTable2').DataTable({
+
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            stripHtml: false,
+                            columns: [1, 2, 3, 4]
+                        },
+                        title: 'Priyojon Healthcare Ltd',
+                        messageTop: 'List Of Customers',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        title: 'Priyojon Healthcare Ltd',
+                        titleAttr: 'Print',
+
+                        messageTop: 'Running List',
+
+                        exportOptions: {
+                            stripHtml: false,
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ],
+                ajax: {
+                    url: '@Url.Action("GetReceipantsListR", "Patient")',
+                    dataSrc: "",
+                    data: {}
+                },
+                destroy: true,
+                columns: [
+                    { data: "patientName", title: "Receipant's Name", "width": "10%" },
+                    { data: "patientMobile", title: "Mobile", "width": "10%" },
+                    { data: "serviceName", title: "Mother Service", "width": "10%" },
+                    { data: "contactName", title: "Contact Name", "width": "10%" },
+                    { data: "contactMobile", title: "Contact Mobile", "width": "10%" },
+                    { data: "representativeName", title: "Rep. Name", "width": "15%" },
+                    {
+                        title: "Action", "width": "6%",
+                        "render": function (data, type, e, meta) {
+
+                            if (e.serviceName == null)
+                            {
+                                return '<a class="btn btn-info" href="/Patient/Patient/Index/?Id=' + e.Id + '" title="Edit/Update"><i class="fa fa-edit"></i></a>';
+                            }
+                            else
+                            {
+                                return '<a class="btn btn-info" href="/Patient/Patient/Index/?Id=' + e.Id + '" title="Edit/Update"><i class="fa fa-edit"></i></a>&nbsp;<a class="btn btn-info" href="/OtherSales/SalesInvoice/PatIndex/?Id=' + 0 + '&&agreementId=' + e.Id + '" title="Generate Invoice"><i class="fa fa-plane"></i></a>&nbsp;<a class="btn btn-info" href="/Patient/Patient/UpdateIndex/?Id=' + e.Id + '" title="Complete"><i class="fa fa-window-close"></i></a>';
+                            }
+
+                        }
+                    },
+                ]
+            });
+        }
+
+ function GetAllListComplete() {
+     $('#clientTable3').DataTable({
+
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            stripHtml: false,
+                            columns: [1, 2, 3, 4]
+                        },
+                        title: 'Priyojon Healthcare Ltd',
+                        messageTop: 'List Of Complete Customer',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        title: 'Priyojon Healthcare Ltd',
+                        titleAttr: 'Print',
+
+                        messageTop: 'Running List',
+
+                        exportOptions: {
+                            stripHtml: false,
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ],
+                ajax: {
+                    url: '@Url.Action("GetReceipantsListC", "Patient")',
+                    dataSrc: "",
+                    data: {}
+                },
+                destroy: true,
+                columns: [
+                    { data: "patientName", title: "Receipant's Name", "width": "10%" },
+                    { data: "patientMobile", title: "Mobile", "width": "10%" },
+                    { data: "serviceName", title: "Mother Service", "width": "10%" },
+                    { data: "contactName", title: "Contact Name", "width": "10%" },
+                    { data: "contactMobile", title: "Contact Mobile", "width": "10%" },
+                    { data: "representativeName", title: "Rep. Name", "width": "15%" },
+                    {
+                        title: "Action", "width": "6%",
+                        "render": function (data, type, e, meta) {
+
+                            if (e.serviceName == null)
+                            {
+                                return '<a class="btn btn-info" href="/Patient/Patient/Index/?Id=' + e.Id + '" title="Edit/Update"><i class="fa fa-edit"></i></a>';
+                            }
+                            else
+                            {
+                                return '<a class="btn btn-info" href="/Patient/Patient/Index/?Id=' + e.Id + '" title="Edit/Update"><i class="fa fa-edit"></i></a>&nbsp;<a class="btn btn-info" href="/OtherSales/SalesInvoice/PatIndex/?Id=' + 0 + '&&agreementId=' + e.Id + '" title="Generate Invoice"><i class="fa fa-plane"></i></a>&nbsp;<a class="btn btn-info" href="/Patient/Patient/UpdateIndex/?Id=' + e.Id + '" title="Complete"><i class="fa fa-window-close"></i></a>';
+                            }
+
+                        }
+                    },
+                ]
+            });
+        }
+
+</script>
+
+

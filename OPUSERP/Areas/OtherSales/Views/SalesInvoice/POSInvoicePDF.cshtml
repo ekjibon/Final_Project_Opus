@@ -1,0 +1,162 @@
+﻿@model SalesInvoiceViewModel
+@{
+    ViewData["Title"] = "POS Invoice";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    .table-bordered {
+        border-collapse: collapse !important;
+    }
+
+        .table-bordered th {
+            border: 1px solid gray !important;
+        }
+
+        .table-bordered td {
+            border: 1px solid gray !important;
+        }
+
+    table td, table th {
+        padding: 0px !important;
+    }
+</style>
+
+<div>
+    <div>
+        <div>
+            <div>
+                <div>
+                    <br />
+                    <center>
+                        @*<img src="~/images/bKashLogo.png" class="p-0 m-0" height="50" width="180" />*@
+                        <img src="@Model.companies?.FirstOrDefault()?.filePath" alt="OPUS ERP" style="height:80px;" />
+                    </center>
+                    <div style="color:black;text-align:center;">
+                        <span style="text-align:center;font-size:1.3em">@Model.companies?.FirstOrDefault()?.companyName</span><br />
+                        <span style="text-align:center;width:50%">@Model.companies?.FirstOrDefault()?.addressLine</span><br />
+                        <span style="text-align:center;width:50%">@Model.companies?.FirstOrDefault()?.officeTelephone</span>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            @*<br />*@
+
+            <div style="color:black;text-align:center">
+                <span><u>POS Invoice</u></span><br />
+                <span>Invoice No : @Model.salesInvoiceMaster.invoiceNumber</span><br />
+                <span>Invoice Date : @Model.salesInvoiceMaster.invoiceDate?.ToString("dd-MMM-yyyy")</span><br />
+
+            </div>
+            @*<br />*@
+        </div>
+
+        <div style="text-align:center">
+            <table class="table table-responsive" id="voucherList" style="text-align:center;padding-left:10%">
+                <thead>
+                    <tr>
+                        <th>Item </th>
+                        @*<th>Price</th>*@
+                        <th>Qty</th>
+                        @*<th>Disc.(%)</th>*@
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.salesInvoiceDetails)
+                    {
+                        decimal lineTot = 0; decimal lineDisc = 0; decimal lineVAT = 0;
+
+                        lineTot = (Convert.ToDecimal(@item.rate) * Convert.ToDecimal(@item.quantity));
+                        if (@item.disAmount != null)
+                        {
+                            lineDisc = (Convert.ToDecimal(@item.rate) * Convert.ToDecimal(@item.quantity) * Convert.ToDecimal(@item.disAmount) / 100);
+                        }
+                        if (@item.vatAmount != null)
+                        {
+                            lineVAT = (Convert.ToDecimal(@item.rate) * Convert.ToDecimal(@item.quantity) * Convert.ToDecimal(@item.vatAmount) / 100);
+                        }
+                        decimal lineTotal = lineTot - lineDisc + lineVAT;
+
+                        <tr>
+                            <td>@item.itemSpecication.specificationName</td>
+                            @*<td style="text-align:right">@item.itemPriceFixing.price?.ToString("0.00")</td>*@
+                            <td style="text-align:right">@item.quantity?.ToString("0.00")</td>
+                            @*<td style="text-align:right">@item.itemPriceFixing.discountPersent?.ToString("0.00")</td>*@
+                            <td style="text-align:right;">&nbsp;&nbsp;&nbsp;@lineTotal.ToString("0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Gross Total</th>
+                        <td style="text-align:right;">&nbsp;&nbsp;&nbsp;@Model.salesInvoiceMaster.totalAmount?.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Discount(%)</th>
+                        <td style="text-align:right;">&nbsp;&nbsp;&nbsp;@Model.salesInvoiceMaster.DiscountOnTotal?.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">VAT(%)</th>
+                        <td style="text-align:right;">&nbsp;&nbsp;&nbsp;@Model.salesInvoiceMaster.VATOnTotal?.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Net Total</th>
+                        <td style="text-align:right;">&nbsp;&nbsp;&nbsp;@Model.salesInvoiceMaster.NetTotal?.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Given Amount</th>
+                        <td style="text-align:right;">&nbsp;&nbsp;&nbsp;@Model.salesInvoiceMaster.givenAmount?.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Changes</th>
+                        <td style="text-align:right;">&nbsp;&nbsp;&nbsp;@Model.salesInvoiceMaster.change?.ToString("0.00")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <hr />
+        <div>
+            <div style="text-align:left;width:100%;">
+                <span style="color:black"><span style="font-weight:600">Amount In Word:</span>&nbsp; &nbsp;@ViewBag.InWord</span>
+            </div>
+        </div>
+
+        <br /><br /><br /><br /><br /><br />
+
+        <div>
+            <div>
+                <div style="float:left">
+                    <span style="color:black"></span>
+                    <br />
+                    <span style="color:black">-----------------</span>
+                    <br />
+                    <span style="color:black;padding-left:20px">Approved By</span>
+                </div>
+
+                <div style="float:right">
+                    <span style="color:black;text-align:center;">@Model.salesInvoiceMaster.createdBy</span>
+                    <br />
+                    <span style="color:black">------------------</span>
+                    <br />
+                    <span style="color:black;padding-left:20px">Create By</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

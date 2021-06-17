@@ -1,0 +1,151 @@
+﻿@model BalanceSheetMasterViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Cash Flow (Indirect) Account Master</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Accounting" asp-controller="BalanceSheet" asp-action="CFSMasterND" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="balanceSheetMasterId" name="balanceSheetMasterId" value=0>
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <label for="fsLineName" class="col-sm-2 col-form-label">Line Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="fsLineName" name="fsLineName" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="noteNo" class="col-sm-2 col-form-label">Note No </label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="noteNo" name="noteNo">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="serialNo" class="col-sm-2 col-form-label">Serial No <span style="color:red;">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="serialNo" name="serialNo" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="groupNaturesId" class="col-sm-2 col-form-label">Main Group <span style="color:red;">*</span></label>
+                            <div class="col-sm-10">
+                                <select name="groupNaturesId" id="groupNaturesId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select Nature</option>
+                                    @foreach (var data in Model.groupNatures)
+                                    {
+                                        <option value="@data.Id">@data.natureName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="accountGroupId" class="col-sm-2 col-form-label">Sub Group <span style="color:red;">*</span></label>
+                            <div class="col-sm-10">
+                                <select name="accountGroupId" id="accountGroupId" class="form-control"  data-parsley-required="true"></select>
+                            </div>
+                        </div>                       
+                    </div>                   
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Cash Flow (Indirect) Account Master List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Main Group</th>
+                            <th>Sub Group</th>
+                            <th>Line Name</th>
+                            <th>Note No</th>
+                            <th>Serial No</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.balanceSheetMasters.Where(a=>a.fsLineFor == "CFSIND"))
+                        {
+                        <tr>
+                            <td>@data?.accountGroup?.nature?.natureName</td>
+                            <td>@data?.accountGroup?.groupName</td>
+                            <td>@data?.fsLineName</td>
+                            <td>@data?.noteNo</td>
+                            <td>@data?.serialNo</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id,`@data.fsLineName`,`@data.noteNo`,'@data.serialNo',@data?.accountGroupId,@data?.accountGroup?.natureId)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#educationalTable').DataTable();
+            $("#groupNaturesId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/Accounting/BalanceSheet/GetAccountGroupByNatureId/?natureId=' + id, [], 'json', ajaxGetGroup);
+            });
+        });
+
+        function ajaxGetGroup(response) {
+            var options = '<option value="">Select One</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.groupName + '</option>';
+            });           
+            $('#accountGroupId').empty();
+            $('#accountGroupId').append(options);
+        }      
+
+        function Edit(id, fsLineName, noteNo, serialNo, accountGroupId, groupNaturesId) {
+            $('#balanceSheetMasterId').val(id);            
+            $('#fsLineName').val(fsLineName);
+            $('#noteNo').val(noteNo);
+            $('#serialNo').val(serialNo);
+            $('#groupNaturesId').val(groupNaturesId);
+            Common.Ajax('GET', '/Accounting/BalanceSheet/GetAccountGroupByNatureId/?natureId=' + groupNaturesId, [], 'json', ajaxGetGroup, false);
+            $('#accountGroupId').val(accountGroupId);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    url: '@Url.Action("DeleteBalanceSheetMaster", "BalanceSheet")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Accounting/BalanceSheet/CFSMasterIND";
+                    })
+                    .fail(function () {
+                        alert("Unable to Delete. Please Try Again");
+                    });
+            });
+        }
+    </script>
+}

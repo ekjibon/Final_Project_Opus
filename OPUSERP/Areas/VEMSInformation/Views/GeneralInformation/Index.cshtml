@@ -1,0 +1,281 @@
+﻿@model  GeneralInformationViewModel
+@{
+    ViewData["Title"] = "Profile Info";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4" style="margin: 0 80px 0 80px;">
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h4 class="m-0 font-weight-bold text-primary">Profile Info</h4>
+                </div>
+                <div class="col-md-2">
+                    @*<a class="btn btn-sm btn-info" style="float:right;" href="/VEMSMasterData/RequiredDoc/Create/">Add New</a>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="generalInfoTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th><h5>General Information</h5></th>
+                            <th><a class="btn btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/EditGI/@Model?.registrationForm?.Id"><i class="fa fa-edit"></i> Edit</a></th>
+                        </tr>
+                        <tr>
+                            <th style="width:30%">Field Name</th>
+                            <th style="width:70%">Information</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th style="width:30%">Company Name</th>
+                            <td style="width:70%">@Model?.registrationForm?.companyName</td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%">Email</th>
+                            <td style="width:70%">@Model?.registrationForm?.companyEmail</td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%">Alternative Email</th>
+                            <td style="width:70%">@Model?.registrationForm?.alternativeEmail</td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%">e-Tin Number</th>
+                            <td style="width:70%">@Model?.registrationForm?.eTinNumber</td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%">Trade Licence Number</th>
+                            <td style="width:70%">@Model?.registrationForm?.tradeLicenseNumber</td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%">VAT Registration Number</th>
+                            <td style="width:70%">@Model?.registrationForm?.vatNumber</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered" id="companyInfoTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th colspan="3"><h5>Company Information</h5></th>
+                            <th><a class="btn btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/CompanyInfo/@Model?.registrationForm?.Id"><i class="fa fa-edit"></i> Edit</a></th>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">Field Name</th>
+                            <th style="width:30%">Information</th>
+                            <th style="width:20%">Field Name</th>
+                            <th style="width:30%">Information</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th style="width:20%">Type Of Vendor</th>
+                            <td style="width:30%">@Model?.companyInformation?.typeOfVendor</td>
+                            <th style="width:20%">Permanent Employee</th>
+                            <td style="width:30%">@Model?.companyInformation?.permanentEmployee</td>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">Investment BDT</th>
+                            <td style="width:30%">@Model?.companyInformation?.investment</td>
+                            <th style="width:20%">Turnover</th>
+                            <td style="width:30%">@Model?.companyInformation?.turnover</td>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">Liquidity Ratio</th>
+                            <td style="width:30%">@Model?.companyInformation?.liquidityRatio</td>
+                            <th style="width:20%">Date of Establishment</th>
+                            <td style="width:30%">@Model?.companyInformation?.dateOfEstablishment?.ToString("dd-MMM-yyyy")</td>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">Business Nature</th>
+                            <td style="width:30%">@Model?.companyInformation?.businessNature</td>
+                            <th style="width:20%">Office Telephone</th>
+                            <td style="width:30%">@Model?.companyInformation?.officeTelephone</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered" id="bankInfoTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th colspan="5"><h5>Bank Information</h5></th>
+                            <th><a class="btn btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/BankInfo?id=0&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i> Add New</a></th>
+                        </tr>
+                        <tr>
+                            <th style="width:15%">Account Name</th>
+                            <th style="width:20%">Account No.</th>
+                            <th style="width:20%">Bank Name</th>
+                            <th style="width:20%">Branch Name</th>
+                            <th style="width:15%">Routing No.</th>
+                            <th style="width:10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.bankInformation)
+                        {
+                            <tr>
+                                <td>@item.accountName</td>
+                                <td>@item.accountNumber</td>
+                                <td>@item.bankName</td>
+                                <td>@item.branchName</td>
+                                <td>@item.routingNumber</td>
+                                <td>
+                                    <a class="btn btn-info" href="/VEMSInformation/GeneralInformation/BankInfo?id=@item.Id&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered" id="authorizedPersonInfoTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th colspan="5"><h5>Authorized Person's Information</h5></th>
+                            <th><a class="btn btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/AuthPersonInfo?id=0&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i> Add New</a></th>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">Name</th>
+                            <th style="width:15%">Designation</th>
+                            <th style="width:15%">Department</th>
+                            <th style="width:20%">Contact Number</th>
+                            <th style="width:20%">Email</th>
+                            <th style="width:10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.authorizedPerson)
+                        {
+                            <tr>
+                                <td>@item.name</td>
+                                <td>@item.designation</td>
+                                <td>@item.department</td>
+                                <td>@item.contactNumber</td>
+                                <td>@item.email</td>
+                                <td>
+                                    <a class="btn btn-info" href="/VEMSInformation/GeneralInformation/AuthPersonInfo?id=@item.Id&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered" id="topOfficialInfoTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th colspan="5"><h5>Top Official Information</h5></th>
+                            <th><a class="btn btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/TopOffInfo?id=0&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i> Add New</a></th>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">Name</th>
+                            <th style="width:15%">Designation</th>
+                            <th style="width:15%">Department</th>
+                            <th style="width:20%">Contact Number</th>
+                            <th style="width:20%">Email</th>
+                            <th style="width:10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.topOfficials)
+                        {
+                            <tr>
+                                <td>@item.name</td>
+                                <td>@item.designation</td>
+                                <td>@item.department</td>
+                                <td>@item.contactNumber</td>
+                                <td>@item.email</td>
+                                <td>
+                                    <a class="btn btn-info" href="/VEMSInformation/GeneralInformation/TopOffInfo?id=@item.Id&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered" id="addressTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th colspan="5"><h5>Address List</h5></th>
+                            <th><a class="btn btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/AddressInfo?id=0&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i> Add New</a></th>
+                        </tr>
+                        <tr>
+                            <th style="width:15%">Type</th>
+                            <th style="width:15%">Division</th>
+                            <th style="width:20%">District</th>
+                            <th style="width:20%">Thana</th>
+                            <th style="width:20%">Post Office</th>
+                            <th style="width:10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.vendorAddresses)
+                        {
+                            <tr>
+                                <td>@item.addressType?.typeName</td>
+                                <td>@item.division?.divisionName</td>
+                                <td>@item.district?.districtName</td>
+                                <td>@item.thana?.thanaName</td>
+                                <td>@item.postOffice</td>
+                                <td>
+                                    <a class="btn btn-info" href="/VEMSInformation/GeneralInformation/AddressInfo?id=@item.Id&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered" id="attachmentTable">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th colspan="5"><h5>Attachment List</h5></th>
+                            <th><a class="btn btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/AttachmentInfo?id=0&cId=@Model?.registrationForm?.Id"><i class="fa fa-edit"></i> Add New</a></th>
+                        </tr>
+                        <tr>
+                            <th style="width:15%">SL#</th>
+                            <th style="width:20%">File Name</th>
+                            <th style="width:15%">File For</th>
+                            <th style="width:20%">Preview</th>
+                            <th style="width:20%">File Type</th>
+                            <th style="width:10%">Show File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+
+                            @foreach (var item in Model.vendorAttachments)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.fileNmae</td>
+                                    <td>@item.fileFor</td>
+                                    <td><a href="@item.filePath" target="_blank" class="btn btn-primary"><i class="fa fa-eye"></i></a></td>
+                                    <td>@item.fileType</td>
+                                    <td>
+                                        <img src="@item.filePath" alt="File" height="100" width="100"/>
+                                        @*<a class="btn btn-danger" onclick="Remove(@item.Id)" href="/VEMSInformation/GeneralInformation/AttachmentInfo/@item.Id"><i class="fa fa-trash-alt"></i></a>*@
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Remove(index) {
+        swal({
+            title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+        }).then(function () {
+            window.location.href = "/VEMSInformation/GeneralInformation/AttachmentInfoDelete?Id=" + index;
+            swal('', 'Deleted Successfully!', 'success')
+        });
+        return false;
+    }
+</script>

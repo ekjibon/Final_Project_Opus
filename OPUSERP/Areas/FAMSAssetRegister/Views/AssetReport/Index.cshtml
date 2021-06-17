@@ -1,0 +1,243 @@
+﻿@{
+    ViewData["Title"] = "Fixed Asset Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }        
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Fixed Asset Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label for="report" class="col-sm-3 col-form-label">Select Report Name <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="report" name="report" required>
+                                <option value="">Select One</option>
+                                <option value="FAREGSTR">Fixed Asset Register</option>
+                                <option value="FARGROUPWISE">Fixed Asset Register (Sub Group Wise)</option>
+                                <option value="FASUMMARY">Fixed Asset Register Summary</option>
+                                <option value="FAMNTHDEPRE">Monthly Fixed Asset Depreciation</option>
+                                <option value="FASCHDL">Fixed Asset Schedule</option>
+                                <option value="FATRANSFER">Fixed Asset Transfer</option>
+                                <option value="FARETIRMT">Fixed Asset Disposal</option>
+                                <option value="FAADDITION">Fixed Asset Addition</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="CategorySelect">
+                        <label for="itemCategoryId" class="col-sm-3 col-form-label">Select Category <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="itemCategoryId" name="itemCategoryId" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DepRateSelect">
+                        <label for="depRateId" class="col-sm-3 col-form-label">Select Depreciation Name <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="depRateId" name="depRateId" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="PeriodSelect">
+                        <label for="depPeriodId" class="col-sm-3 col-form-label">Select Depreciation Period <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="depPeriodId" name="depPeriodId" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" readonly />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            @*<br />
+                                <button type="button" onclick="Refresh()" title="Load" style="float:right" class="btn btn-info btn-xs">Load</button>&nbsp;&nbsp;&nbsp;*@
+                            <button id="SubmitButton" class="btn btn-success btn-xs fa-pull-right" title="Preview">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#toDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+            $('#fromDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            Common.Ajax('GET', '/global/api/patentItemCategory/', [], 'json', ajaxGetItemCategory, false);
+            Common.Ajax('GET', '/global/api/AssetDepreciationController/GetAllDepriciationPeriod/', [], 'json', ajaxGetAllDepriciationPeriod, false);
+            Common.Ajax('GET', '/global/api/AssetDepreciationController/GetAllDepriciationRate/', [], 'json', ajaxGetAllDepriciationRate, false);
+
+            $('#CategorySelect').hide();
+            $('#DateRangeSelect').hide();
+            $('#PeriodSelect').hide();
+            $('#DepRateSelect').hide();
+
+            $('#report').change(function () {
+
+                let rptType = $('#report').val();
+                if (rptType == "FAREGSTR" || rptType == "FARGROUPWISE" || rptType == "FATRANSFER" || rptType == "FARETIRMT" || rptType == "FAADDITION") {
+                    $('#DateRangeSelect').show();
+                    $('#CategorySelect').show();
+                    $('#PeriodSelect').hide();
+                    $('#DepRateSelect').hide();
+                }
+                else if (rptType == "FASUMMARY" || rptType == "FASCHDL") {
+                    $('#DateRangeSelect').show();
+                    $('#CategorySelect').hide();
+                    $('#PeriodSelect').hide();
+                    $('#DepRateSelect').hide();
+                }
+                else if (rptType == "FAMNTHDEPRE") {
+                    $('#DateRangeSelect').hide();
+                    $('#CategorySelect').hide();
+                    $('#PeriodSelect').show();
+                    $('#DepRateSelect').show();
+                }
+                else {
+                    $('#DateRangeSelect').hide();
+                    $('#CategorySelect').hide();
+                    $('#PeriodSelect').hide();
+                    $('#DepRateSelect').hide();
+                }
+            });
+
+            $("#SubmitButton").click(function (e) {
+                let rptType = $('#report').val();
+                if (rptType == '' || rptType == 0) {
+                    swal('Warning', 'Please Select Report', 'warning');
+                    return false;
+                }
+                let itemCategoryId = $('#itemCategoryId').val();
+                let depPeriodId = $('#depPeriodId').val();
+                let depRateId = $('#depRateId').val();
+
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+
+                if (rptType == "FAREGSTR" || rptType == "FARGROUPWISE" || rptType == "FAADDITION") {
+                    if (itemCategoryId == '') {
+                        swal('Warning', 'Select Category', 'warning');
+                        return false;
+                    }
+                    else if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/FAMSAssetRegister/AssetReport/AssetRegisterData?rptType=' + rptType + "&itemCategoryId=" + itemCategoryId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (rptType == "FASUMMARY") {
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/FAMSAssetRegister/AssetReport/AssetRegisterSummaryData?rptType=' + rptType + "&fromDate="+ fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (rptType == "FAMNTHDEPRE") {
+                    if (depRateId == '') {
+                        swal('Warning', 'Select Depreciation Name', 'warning');
+                        return false;
+                    }
+                    else if (depPeriodId == 0) {
+                        swal('Warning', 'Select Depreciation Period', 'warning');
+                        return false;
+                    }
+                    window.open('/FAMSAssetRegister/AssetReport/AssetDepreciationReportByPeriodId?rptType=' + rptType + "&periodId=" + depPeriodId + "&itemCatId=" + depRateId, '_blank');
+                }
+                else if (rptType == "FASCHDL") {
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/FAMSAssetRegister/AssetReport/AssetScheduleData?rptType=' + rptType + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (rptType == "FATRANSFER") {
+                    if (itemCategoryId == '') {
+                        swal('Warning', 'Select Category', 'warning');
+                        return false;
+                    }
+                    else if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/FAMSAssetRegister/AssetReport/AssetTransferData?rptType=' + rptType + "&itemCategoryId=" + itemCategoryId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (rptType == "FARETIRMT") {
+                    if (itemCategoryId == '') {
+                        swal('Warning', 'Select Category', 'warning');
+                        return false;
+                    }
+                    else if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/FAMSAssetRegister/AssetReport/AssetRetirementData?rptType=' + rptType + "&itemCategoryId=" + itemCategoryId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+            });
+        });
+
+        function ajaxGetItemCategory(response) {
+            var options = '<option value="0">All</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.categoryName + '</option>';
+            });
+            $('#itemCategoryId').empty();
+            $('#itemCategoryId').append(options);
+        }
+
+        function ajaxGetAllDepriciationPeriod(response) {
+            var options = '<option value="">Select Depreciation Period</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.PeriodName + '</option>';
+            });
+            $('#depPeriodId').empty();
+            $('#depPeriodId').append(options);
+        }
+
+        function ajaxGetAllDepriciationRate(response) {
+            var options = '<option value="0">All</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.depreciationName + '</option>';
+            });
+            $('#depRateId').empty();
+            $('#depRateId').append(options);
+        }
+
+    </script>
+}

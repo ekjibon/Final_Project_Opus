@@ -1,0 +1,1304 @@
+﻿
+@model ProgramMasterView
+
+@{
+    ViewData["Title"] = "ProgramMaster";
+    //Layout = "/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <style>
+        div.justified {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+}
+
+<br />
+<section>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                <h5 style="font-weight:bold; color:black">Program Master</h5>
+            </div>
+            <div class="card-body">
+                <form id="myForm" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Number <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="number" id="number" class="form-control" readonly required value="@Model.number" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Program Impact</label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="programImpactId" id="programImpactId" class="form-control">
+                                <option value="">----Select Impact----</option>
+                                @foreach (var item in Model.programImpacts)
+                                {
+                                    <option value="@item.Id">@item.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Program Year</label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="programYearId" id="programYearId" class="form-control">
+                                <option value="">----Select Year----</option>
+                                @foreach (var item in Model.programYears)
+                                {
+                                    <option value="@item.Id">@item.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Date <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="date" id="date" class="form-control" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">IsDiscussion</label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="isDiscussion" id="isDiscussion" class="form-control">
+                                <option value="">----Select ----</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Subject <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="subject" id="subject" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Main Category Type <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="programMainCategoryId" id="programMainCategoryId" class="form-control">
+                                <option value="">----Select Main Category Type----</option>
+                                @foreach (var item in Model.programMainCategories)
+                                {
+                                    <option value="@item.Id">@item.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Category Type <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="programCategoryId" id="programCategoryId" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Division<span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select type="text" class="form-control" id="txtorgDivision" name="divisionId">
+                                <option value="">----Select Division-----</option>
+                                @foreach (var item in Model.divisions)
+                                {
+                                    <option value="@item.Id">@item.divisionName</option>
+                                }
+                            </select>
+                            <input type="hidden" id="txtorgAddressID" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">District <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="districtId" id="txtorgDistrict" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Thana <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="thanaId" id="txtorgUpazila" class="form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Place</label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="place" id="place" class="form-control" />
+                        </div>
+                    </div>
+
+                    @*Today*@
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="font-weight:bold; color:black">Program Details</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Headline</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type headline name" class="form-control" id="headlineName" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddItemInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Program Details List</h5>
+                                            <table class="table table-bordered" id="tblfuelDetails" data-parsley-required="true">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Headline</th>
+                                                        <th><span>Action</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="font-weight:bold; color:black">Program Subject</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Subject</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type subject name" class="form-control" id="subjectNameAll" autocomplete="off" />
+                                                <input type="hidden" id="customerItemInfoId" name="customerItemInfoId" />
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddSubjectInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Program Subject List</h5>
+                                            <table class="table table-bordered" id="tblSubjectInfo" data-parsley-required="true">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Subject</th>
+                                                        <th><span>Action</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="font-weight:bold; color:black">Program Address</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Program Address</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type program name" class="form-control" id="programNameAll" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddProgramInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Program Address List</h5>
+                                            <table class="table table-bordered" id="tblProgramAddress">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Program Address</th>
+                                                        <th><span>Action</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="font-weight:bold; color:black">People in Discussion</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label"> Type </label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type name" class="form-control" id="discussionNameAll" autocomplete="off" />
+                                                <input type="hidden" id="customerItemInfoId" name="customerItemInfoId" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Quantity</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="number" placeholder="please type quantity" class="form-control" id="discussionQuantity" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddDiscussionInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Discussion List</h5>
+
+                                            <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                                            <table class="table table-bordered" id="tblDiscussionInfo">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Quantity</th>
+                                                        <th><span>Action</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="font-weight:bold; color:black">Program Attendee</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Name</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type attendee name" class="form-control" id="attendeeNameAll" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Address</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type attendee address" class="form-control" id="attendeeAddressAll" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Contact</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type attendee contact" class="form-control" id="attendeeContactAll" autocomplete="off" />
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Type</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type attendee type" class="form-control" id="attendeeTypeAll" autocomplete="off" />
+
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddProgramAttendeeInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Program Attendee List</h5>
+
+                                            <table class="table table-bordered" id="tblProgramAttendee">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Address</th>
+                                                        <th>Contact</th>
+                                                        <th>Type</th>
+                                                        <th><span>Action</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="font-weight:bold; color:black">Program Viewer</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Viewer Type</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="text" placeholder="please type viewer name" class="form-control" id="viewerNameAll" autocomplete="off" />
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Quantity</label>
+                                            <div class="col-md-8 col-sm-8">
+                                                <input type="number" placeholder="please type number of quantity" class="form-control" id="viewerQuantityAll" autocomplete="off" />
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddProgramViewerInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Program Viewer List</h5>
+                                            <table class="table table-bordered" id="tblProgramViewerInfo" data-parsley-required="true">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Viewer Type</th>
+                                                        <th>Quantity</th>
+                                                        <th><span>Action</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 style="font-weight:bold; color:black">Program Attachment  </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div id="fileDiv">
+                                            <div class="form-group row">
+                                                <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Caption</label>
+                                                <div class="col-md-8 col-sm-8">
+                                                    <textarea type="text" placeholder="please type caption" class="form-control" name="captionAll" id="captionAll" autocomplete="off" required></textarea>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group row" id="fileAppend">
+                                                <label for="itemId" class="col-md-4 col-sm-4 col-form-label">Attachment File</label>
+                                                <div class="col-md-8 col-sm-8">
+                                                    <input type="file" placeholder="please type program name" class="form-control" name="attachmentFileAll" id="attachmentFileAll" autocomplete="off" required />
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddProgramAttachmentInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+
+                                            </div>
+
+                                        </div>
+                                        @*<div class="row">
+                                                <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Program Attendee List</h5>
+
+                                                <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                                                <table class="table table-bordered" id="tblProgramAttachment" data-parsley-required="true">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Caption</th>
+                                                            <th>File</th>
+                                                            <th><span>Action</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12" row>
+                            <div class="row card">
+                                <div class="card-header row">
+                                    <h5 style="font-weight:bold; color:black">Program Overflow</h5>
+                                    &nbsp;&nbsp;&nbsp;<button type="button" value="Add" title="Add" id="btnpedit" onclick="AddImpact()" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                                </div>
+                                <div class="card-body row">
+                                    <div class="row col-sm-12 tabcontent justified">
+                                        <div class="row col-sm-4">
+                                            <h5>Outcome</h5>
+                                        </div>
+                                        <div class="row col-sm-4">
+                                            <h5>Output</h5>
+                                        </div>
+                                        <div class="row col-sm-4">
+                                            <h5>Indicator</h5>
+                                        </div>
+                                    </div>
+                                    <div id="programflow" class="row col-sm-12 tabcontent justified">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <input type="button" id="saveForm" value="Submit" class="btn btn-success ml-1" style="float:right; margin-top:5px;" />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+    <script>
+
+        let orgDivision = $('#txtorgDivision').val();
+        let txtorgDivision = $('#txtorgDivision option:selected').text();
+        function AddImpact() {
+            var id = 0;
+            var count = 0;
+            $('#programflow').find('textarea[type="hidden"]').each(function () {
+                count += 1
+                //alert(count);
+                $('#Lg' + count + '').prop("disabled", true);
+                $('#Lg' + count + '').prop("text-align", "justify");
+            });
+            id = count + 1;
+            $('#programflow').append('<div id="Impact' + id + '" class="col-sm-4 row"><div class="col-sm-11 row"><textarea type="hidden" style="width:100%" class="form-control"   id="Lg' + id + '"></textarea></div><div class="col-sm-1 row"><span class="spanClass" id="LgId' + id + '" ><a class="btn btn-success m-1" href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + id + "'" + ')"><i class="fas fa-minus"></i></span></a><br/><a class="btn btn-success m-1" href="javascript:void(0)"><span class="crossButton" onclick="AddOutCome(' + id + ')"><i class="fas fa-plus"></i></span></a></span></div></div><div id="outcome' + id + '" class="col-sm-8 row"></div>');
+
+        }
+
+        function AddOutCome(id) {
+            var ids = 0;
+
+            var count = 0;
+            $('#outcome' + id + '').find('textarea[type="hidden"]').each(function () {
+                count += 1
+                //alert(count);
+                $('#LgIs' + count + '').prop("disabled", true);
+
+            });
+            ids = count + 1;
+            var impacttext = $('#Lg' + id + '').val();
+            $('#outcome' + id + '').append('<div id="outcomes' + ids + '" class="col-sm-6 row"><div class="col-sm-10 row"><input type="hidden" id="impacttext' + ids + '"  class="clsitemSpecificationName" value="' + impacttext + '"/><textarea type="text"  style="width:100%" id="LgIs' + ids + '" class="form-control" ></textarea></div><div class="col-sm-2><span class="spanClass" id="LgId' + ids + '" ><a class="btn btn-success m-1" href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + ids + "'" + ')"><i class="fas fa-minus"></i></span></a><br/><a class="btn btn-success m-1" href="javascript:void(0)"><span class="crossButton" onclick="AddOutput(' + ids + ')"><i class="fas fa-plus"></i></span></a></span></div></div>&nbsp;<div id="output' + ids + '" class="col-sm-6 row"></div>');
+           // $('#output' + id + '').append('<div id="outputs' + ids + '" class="col-sm-12 row"></div>');
+
+
+
+
+
+        }
+        function AddOutput(id) {
+            var ids = 0;
+
+            var count = 0;
+            $('#output' + id + '').find('textarea[type="hidden"]').each(function () {
+                count += 1
+                //alert(count);
+                $('#LgIss' + count + '').prop("disabled", true);
+
+            });
+            ids = count + 1;
+            var impacttext = $('#impacttext' + id + '').val();
+            var outcometext = $('#LgIs' + id + '').val();
+            $('#output' + id + '').append('<div id="outputs' + ids + '" class="col-sm-12 row"><input type="hidden" id="impacttexts' + ids + '" name="outcome" class="clsitemSpecificationName" value="' + impacttext + '"/><input type="hidden" id="outputtexts' + ids + '" name="output" class="clsitemSpecificationName" value="' + outcometext + '"/><textarea class="form-control"  style="width:100%" type="text" name="indicator" id="LgIss' + ids + '" value=""></textarea></div>');
+           
+
+
+
+
+
+        }
+        $(document).ready(function () {
+
+
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+
+            $('#programCategoryTable').DataTable();
+
+            $('#date').datepicker({ uiLibrary: 'bootstrap4' });
+
+            $("#txtorgDivision").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', orgDistrict);
+            });
+
+            $("#txtorgDistrict").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', orgThana);
+            });
+
+            $("#programMainCategoryId").change(function () {
+                let rptType = $('#programMainCategoryId').val();
+                Common.Ajax('GET', '/global/api/getsubcategory/' + rptType, [], 'json', orgSub);
+
+            });
+
+            //Form submit
+
+            $("#saveForm").click(function () {
+
+
+
+                var data = $("#myForm").serialize();
+                let number = $('#number').val();
+                let date = $('#date').val();
+                let subject = $('#subject').val();
+
+                let programMainCategoryId = $('#programMainCategoryId').val();
+                let programCategoryId = $('#programCategoryId').val();
+                let txtorgDivision = $('#txtorgDivision').val();
+                let txtorgDistrict = $('#txtorgDistrict').val();
+                let txtorgUpazila = $('#txtorgUpazila').val();
+
+                if (number == "") {
+                    swal('Warning', 'Number can not be null', 'warning');
+                    return false;
+                }
+
+                if (date == "") {
+                    swal('Warning', 'Please select a start date', 'warning');
+                    return false;
+                }
+                if (subject == "") {
+                    swal('Warning', 'Please select a subject date', 'warning');
+                    return false;
+                }
+
+
+                if (programMainCategoryId == "") {
+                    swal('Warning', 'Please select a main category', 'warning');
+                    return false;
+                }
+
+                if (programCategoryId == "") {
+                    swal('Warning', 'Please select a category', 'warning');
+                    return false;
+                }
+
+                if (txtorgDivision == "") {
+                    swal('Warning', 'Please select a division', 'warning');
+                    return false;
+                }
+
+                if (txtorgDistrict == "") {
+                    swal('Warning', 'Please select a district', 'warning');
+                    return false;
+                }
+
+                if (txtorgUpazila == "") {
+                    swal('Warning', 'Please select a thana', 'warning');
+                    return false;
+                }
+
+
+
+
+
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Program/ProgramCategory/ProgramMaster",
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            location.reload(true);
+                            //window.location.href = ";
+                        }
+                    });
+                });
+
+                return false;
+            });
+
+        });
+
+        //end of form submit
+
+
+
+        function orgSub(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.name + '</option>';
+            });
+            $('#programCategoryId').empty();
+            $('#programCategoryId').append(options);
+
+        }
+
+        function orgDistrict(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#txtorgDistrict').empty();
+            $('#txtorgDistrict').append(options);
+
+            if ($('#IsEditadd').val() == 1) {
+                $('#txtorgDistrict').val($('#distId').val());
+            }
+        }
+
+        function orgThana(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#txtorgUpazila').empty();
+            $('#txtorgUpazila').append(options);
+            if ($('#IsEditadd').val() == 1) {
+                $('#txtorgUpazila').val($('#thanaId').val());
+            }
+        }
+
+
+
+
+        // Program Details
+
+        function AddItemInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $('#headlineName').val();
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblfuelDetails tbody>tr").length;
+
+
+            if (fuelTypeName == null || fuelTypeName == '') {
+                swal('Warning', 'Please you must be enter Headline Name!', 'warning');
+                return false;
+            }
+
+            for (i = 0; i < RowCount; i++) {
+
+                var _itemId = $('#headlineAll' + i + '').val();
+                if (_itemId == fuelTypeName && editOption == 0) {
+                    //alert('You have already added this Headline!');
+                    swal('Warning', 'You have already added this Headline!', 'warning');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblfuelDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="headlineAll' + index + '" name="headlineAll"class="clsId" value="' + fuelTypeName + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+                $("#headlineName").val(null);
+            }
+            else {
+                var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+                $("#headlineName").val(null);
+            }
+        }
+        function Delete(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblfuelDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success');
+                $("#headlineName").val(null);
+            });
+            return false;
+        }
+
+        //  Program Subject
+
+
+        function AddSubjectInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblSubjectInfo tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblSubjectInfo tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $('#subjectNameAll').val();
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblSubjectInfo tbody>tr").length;
+
+            if (fuelTypeName == null || fuelTypeName == '') {
+                swal('Warning', 'Please you must be enter Subject Name!', 'warning');
+                return false;
+            }
+
+            for (i = 0; i < RowCount; i++) {
+
+                var _itemId = $('#subjectNameAll' + i + '').val();
+                if (_itemId == fuelTypeName && editOption == 0) {
+                    //alert('You have already added this Headline!');
+                    swal('Warning', 'You have already added this Subject Name!', 'warning');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblSubjectInfo");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="subjectNameAll' + index + '" name="subjectNameAll"class="clsId" value="' + fuelTypeName + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteSubjectInfo(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;'
+            '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+                $("#subjectNameAll").val(null);
+            }
+            else {
+                var rowUpdate = $("#tblSubjectInfo tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+                $("#subjectNameAll").val(null);
+            }
+
+        }
+        function DeleteSubjectInfo(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblSubjectInfo #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+
+        // Program Address
+
+        function AddProgramInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblProgramAddress tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblProgramAddress tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $('#programNameAll').val();
+
+
+            if (fuelTypeName == null || fuelTypeName == '') {
+                swal('Warning', 'Please you must be enter Program Name!', 'warning');
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblProgramAddress tbody>tr").length;
+
+            for (i = 0; i < RowCount; i++) {
+
+                var _itemId = $('#programNameAll' + i + '').val();
+                if (_itemId == fuelTypeName && editOption == 0) {
+                    //alert('You have already added this Headline!');
+                    swal('Warning', 'You have already added this Program Name!', 'warning');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblProgramAddress");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="programNameAll' + index + '"  name="programNameAll"class="clsId" value="' + fuelTypeName + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="DeleteProgrammAddress" class="btn btn-danger btn-xs" onclick="DeleteProgrammAddress(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+                $("#programNameAll").val(null);
+            }
+            else {
+                var rowUpdate = $("#tblProgramAddress tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+                $("#programNameAll").val(null);
+            }
+            //Refresh();
+        }
+        function DeleteProgrammAddress(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblProgramAddress #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        //  Program Discussion
+
+
+        function AddDiscussionInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblDiscussionInfo tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblDiscussionInfo tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $('#discussionNameAll').val();
+            let fuelTypeQuantity = $('#discussionQuantity').val();
+
+
+            if (fuelTypeName == null || fuelTypeName == '') {
+                swal('Warning', 'Please you must be enter Discussion Name!', 'warning');
+                return false;
+            }
+            if (fuelTypeQuantity == null || fuelTypeQuantity == '') {
+                swal('Warning', 'Please you must be enter Number of Quantity!', 'warning');
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblDiscussionInfo tbody>tr").length;
+
+            for (i = 0; i < RowCount; i++) {
+
+                var _itemId = $('#discussionNameAll' + i + '').val();
+                if (_itemId == fuelTypeName && editOption == 0) {
+                    //alert('You have already added this Headline!');
+                    swal('Warning', 'You have already added this Discussion Name!', 'warning');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblDiscussionInfo");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="discussionNameAll' + index + '" name="discussionNameAll"class="clsId" value="' + fuelTypeName + '"><input type="hidden" name="itemidall"  id="txtitemId' + index + '" class="clsitemId"value="' + itemId + '"/></td>' +
+                '<td>' + fuelTypeQuantity + '<input type="hidden" name="discussionQuantityAll"class="clsId" value="' + fuelTypeQuantity + '"><input type="hidden" name="itemidall"  id="txtitemId' + index + '" class="clsitemId"value="' + itemId + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteDiscussionInfo(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+                $("#discussionNameAll").val(null);
+                $("#discussionQuantity").val(null);
+            }
+            else {
+                var rowUpdate = $("#tblDiscussionInfo tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+                $("#discussionNameAll").val(null);
+                $("#discussionQuantity").val(null);
+            }
+            //Refresh();
+        }
+        function DeleteDiscussionInfo(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblDiscussionInfo #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+
+        // Program Attendee
+
+        function AddProgramAttendeeInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblProgramAttendee tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblProgramAttendee tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $('#attendeeNameAll').val();
+            let fuelTypeAddress = $('#attendeeAddressAll').val();
+            let fuelTypeContact = $('#attendeeContactAll').val();
+            let fuelTypeType = $('#attendeeTypeAll').val();
+
+
+            if (fuelTypeName == null || fuelTypeName == '') {
+                swal('Warning', 'Please you must be enter Attendee Name!', 'warning');
+                return false;
+            }
+            if (fuelTypeContact == null || fuelTypeContact == '') {
+                swal('Warning', 'Please you must be enter Contact Number!', 'warning');
+                return false;
+            }
+            if (fuelTypeType == null || fuelTypeType == '') {
+                fuelTypeType = 'N/A';
+
+            }
+            if (fuelTypeAddress == null || fuelTypeAddress == '') {
+                fuelTypeAddress = 'N/A';
+
+            }
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblProgramAttendee tbody>tr").length;
+
+            for (i = 0; i < RowCount; i++) {
+
+                var _itemId = $('#attendeeNameAll' + i + '').val();
+                var _itemIdC = $('#attendeeContactAll' + i + '').val();
+                if (_itemId == fuelTypeName && editOption == 0 && _itemIdC == fuelTypeContact) {
+                    //alert('You have already added this Headline!');
+                    swal('Warning', 'You have already added this Attendee Name!', 'warning');
+                    return false
+                }
+            }
+
+
+            var dtTable = $("#tblProgramAttendee");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="attendeeNameAll' + index + '" name="attendeeNameAll"class="clsId" value="' + fuelTypeName + '"></td>' +
+                '<td>' + fuelTypeAddress + '<input type="hidden" name="attendeeAddressAll"class="clsId" value="' + fuelTypeAddress + '"></td>' +
+                '<td>' + fuelTypeContact + '<input type="hidden" id="attendeeContactAll' + index + '" name="attendeeContactAll"class="clsId" value="' + fuelTypeContact + '"></td>' +
+                '<td>' + fuelTypeType + '<input type="hidden" name="attendeeTypeAll"class="clsId" value="' + fuelTypeType + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeletetblAttendeeInfo(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+                $("#attendeeNameAll").val(null);
+                $("#attendeeAddressAll").val(null);
+                $("#attendeeContactAll").val(null);
+                $("#attendeeTypeAll").val(null);
+            }
+            else {
+                var rowUpdate = $("#tblProgramAttendee tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+                $("#attendeeNameAll").val(null);
+                $("#attendeeAddressAll").val(null);
+                $("#attendeeContactAll").val(null);
+                $("#attendeeTypeAll").val(null);
+            }
+            //Refresh();
+        }
+        function DeletetblAttendeeInfo(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblProgramAttendee #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+
+        // Program Viewer
+
+        function AddProgramViewerInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblProgramViewerInfo tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblProgramViewerInfo tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $('#viewerNameAll').val();
+            let fuelTypeType = $('#viewerQuantityAll').val();
+
+
+            if (fuelTypeName == null || fuelTypeName == '') {
+                swal('Warning', 'Please you must be enter Viewer Name!', 'warning');
+                return false;
+            }
+
+            if (fuelTypeType == null || fuelTypeType == '') {
+                swal('Warning', 'Please you must be enter number of Quantity!', 'warning');
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblProgramViewerInfo tbody>tr").length;
+
+            for (i = 0; i < RowCount; i++) {
+
+                var _itemId = $('#viewerNameAll' + i + '').val();
+                if (_itemId == fuelTypeName && editOption == 0) {
+                    //alert('You have already added this Headline!');
+                    swal('Warning', 'You have already added this Viewer Name!', 'warning');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblProgramViewerInfo");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="viewerNameAll' + index + '" name="viewerNameAll"class="clsId" value="' + fuelTypeName + '"></td>' +
+                '<td>' + fuelTypeType + '<input type="hidden" name="viewerQuantityAll"class="clsId" value="' + fuelTypeType + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeletetblProgramViewerInfo(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+                $("#viewerNameAll").val(null);
+                $("#viewerQuantityAll").val(null);
+            }
+            else {
+                var rowUpdate = $("#tblProgramViewerInfo tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+                $("#viewerNameAll").val(null);
+                $("#viewerQuantityAll").val(null);
+            }
+            //Refresh();
+        }
+        function DeletetblProgramViewerInfo(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblProgramViewerInfo #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        // Program Attachment
+        var Click = 0;
+        function AddProgramAttachmentInfo() {
+
+            var newField = '<div id="div' + Click + '"> <a  onclick="DeleteAttachment(' + Click + ')" style="float:right" class="text-danger">X</a><div class="form-group row"><label for="itemId" class= "col-md-4 col-sm-4 col-form-label">Caption</label><div class="col-md-8 col-sm-8"><textarea type="text" placeholder="please type caption" class="form-control" name="captionAll" id="captionAll" autocomplete="off" required></textarea></div></div ><div class="form-group row" id="fileAppend"><label for="itemId" class="col-md-4 col-sm-4 col-form-label">Attachment File</label><div class="col-md-6 col-sm-6"><input type="file" placeholder="please type program name" class="form-control" name="attachmentFileAll" id="attachmentFileAll" autocomplete="off" required /></div></div></div>';
+            Click = Click + 1;
+            $("#fileDiv").append(newField);
+        }
+
+        function DeleteAttachment(Click) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#div" + Click).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+
+            // Program Attachment
+
+            //function AddProgramAttachmentInfo() {
+            //    var ifExistIndex = window.localStorage.getItem("holdIndex");
+            //    var index = "0";
+            //    if (ifExistIndex == "null" || ifExistIndex == null) {
+            //        index = $("#tblProgramAttachment tbody>tr").length;
+            //    }
+            //    else {
+            //        index = ifExistIndex;
+            //        tdRID = $("#tblProgramAttachment tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            //    }
+
+            //    let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            //    let itemId = $('#itemId').val();
+            //    let fuelTypeName = $('#captionAll').val();
+            //    let fuelAttachment = $('#attachmentFileAll').val();
+
+            //    if (fuelTypeName == null || fuelTypeName == '') {
+
+            //        swal('Warning', 'Please you must be enter Caption!', 'warning');
+            //        return false;
+            //    }
+
+            //    if (fuelAttachment == null || fuelAttachment == '') {
+
+            //        swal('Warning', 'Please you must be select a file!', 'warning');
+            //        return false;
+            //    }
+
+            //    var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            //    var RowCount = $("#tblProgramAttachment tbody>tr").length;
+
+
+            //    for (i = 0; i < RowCount; i++) {
+
+            //        var _itemId = $('#captionAll' + i + '').val();
+            //        if (_itemId == fuelTypeName && editOption == 0) {
+            //            //alert('You have already added this Headline!');
+            //            swal('Warning', 'You have already added this Caption!', 'warning');
+            //            return false
+            //        }
+            //    }
+
+            //    var dtTable = $("#tblProgramAttachment");
+            //    var tableBody = dtTable.find('tbody');
+            //    var trHtml = '<tr id=' + index + '>' +
+            //        '<td>' + fuelTypeName + '<input type="hidden"  id="captionAll' + index +'"  name="captionAll"class="clsId" value="' + fuelTypeName + '"></td>' +
+            //        '<td>' + fuelAttachment + '<input type="hidden" name="attachmentFileAll"class="clsId" value="' + fuelAttachment + '"></td>' +
+            //        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeletetblAttachmentInfo(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+            //        '</tr>';
+
+            //    if (ifExistIndex == null || ifExistIndex == "null") {
+            //        tableBody.append(trHtml);
+            //    }
+            //    else {
+            //        var rowUpdate = $("#tblProgramAttachment tbody >tr:eq(" + ifExistIndex + ")");
+            //        rowUpdate.replaceWith(trHtml);
+            //        window.localStorage.setItem("holdIndex", null);
+            //        ifExistIndex = null;
+            //    }
+            //    //Refresh();
+            //}
+            //function DeletetblAttachmentInfo(index) {
+
+            //    swal({
+            //        title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            //    }).then(function () {
+            //        //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+            //        $("#tblProgramAttachment #" + index).remove();
+
+            //        swal('', 'Deleted Successfully!', 'success')
+            //    });
+            //    return false;
+            //}
+
+
+
+    </script>
+}
+
+
+
+
+

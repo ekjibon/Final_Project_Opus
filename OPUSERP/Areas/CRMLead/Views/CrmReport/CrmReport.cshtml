@@ -1,0 +1,261 @@
+﻿@model CRMReportViewModel
+@{
+    ViewData["Title"] = "Crm Report";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black;text-align:center;">CRM Report</h5>
+        <hr>
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <div class="form-group row" id="forReportType">
+                        <label for="reportTypeId" class="col-sm-3 col-form-label">Report Type<span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="reportTypeId" id="reportTypeId">
+                                <option class="form-control" value="">Please Select</option>
+                                <option class="form-control" value="1">Sector Wise Lead Report</option>
+                                <option class="form-control" value="2">Organization Wise Lead Report</option>
+                                <option class="form-control" value="3">Lead Source Wise Report</option>
+                                <option class="form-control" value="4">Lead Owner Wise Lead Report</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forSector">
+                        <label for="Sector" class="col-sm-3 col-form-label">Sector</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="Sector" name="Sector">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.sectors)
+                                {
+                                    <option value="@data.Id">@data.sectorName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forSource">
+                        <label for="source" class="col-sm-3 col-form-label">Lead Source</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="source" name="source">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.sources)
+                                {
+                                    <option value="@data.Id">@data.sourceName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forOrganization">
+                        <label for="organizationType" class="col-sm-3 col-form-label">Organization Type</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="organizationType" name="organizationType">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.fITypes)
+                                {
+                                    <option value="@data.Id">@data.fiTypeName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forTransfer">
+                        <label for="employeeName" class="col-sm-3 col-form-label">
+                            Employee Name<span style="color:red">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="hidden" id="employeeId" name="employeeId" value="0">
+                            <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-trigger="keyup">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row" id="forButton">
+                        <label class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input type="button" value="Export To PDF" id="btnPrint" class="btn btn-success btn-sm" style="width:120px;" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" value="Export To Excel" id="btnExcel" class="btn btn-success btn-sm" style="width:120px;" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" id="btnRefresh" value="Refresh" class="btn btn-info btn-sm" style="width:80px;" />
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);            
+
+            $("#forTransfer").hide();
+            $("#forSector").hide();
+            $("#forSource").hide();
+            $("#forOrganization").hide();            
+
+            $("#reportTypeId").change(function () {
+                let rptType = $('#reportTypeId').val();
+                if (rptType == 1) {
+                    $("#forTransfer").hide();
+                    $("#forSector").show();
+                    $("#forSource").hide();
+                    $("#forOrganization").hide(); 
+
+                    $('#employeeId').val('0');
+                    $('#source').val(0);
+                    $('#organizationType').val(0);
+                }
+                else if (rptType == 2) {
+                    $("#forTransfer").hide();
+                    $("#forSector").hide();
+                    $("#forSource").hide();
+                    $("#forOrganization").show(); 
+
+                    $('#employeeId').val('0');
+                    $('#Sector').val(0);
+                    $('#source').val(0);
+                }
+                else if (rptType == 3) {
+                    $("#forTransfer").hide();
+                    $("#forSector").hide();
+                    $("#forSource").show();
+                    $("#forOrganization").hide(); 
+
+                    $('#employeeId').val('0');
+                    $('#Sector').val(0);
+                    $('#organizationType').val(0);
+                }
+                else if (rptType == 4) {
+                    $("#forTransfer").show();
+                    $("#forSector").hide();
+                    $("#forSource").hide();
+                    $("#forOrganization").hide();
+
+                    $('#Sector').val(0);
+                    $('#source').val(0);
+                    $('#organizationType').val(0);
+                }
+                else
+                {
+                    $("#forTransfer").hide();
+                    $("#forSector").hide();
+                    $("#forSource").hide();
+                    $("#forOrganization").hide();
+
+                    $('#employeeId').val('0');
+                    $('#Sector').val(0);
+                    $('#source').val(0);
+                    $('#organizationType').val(0);
+                }
+            });
+
+            $("#btnRefresh").click(function (e) {
+                $('#employeeId').val('0');
+                $("#employeeName").val('');
+            });
+
+            $("#btnPrint").click(function (e) {
+                let rptType = $('#reportTypeId').val();
+                let leadOwner = $('#employeeId').val();
+                let sectorId = $('#Sector').val();
+                let sourceId = $('#source').val();
+                let fitypeId = $('#organizationType').val();
+
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }
+                if (rptType == 4) {
+                    if (employeeId == "") {
+                        swal('Warning', 'Select Employee Name', 'warning');
+                        return false;
+                    }
+                }               
+
+                if (rptType == '1' || rptType == '2' || rptType == '3' || rptType == '4') {
+                    window.open('/CRMLead/CrmReport/CrmReportData?rptType=' + rptType + '&sectorId=' + sectorId + '&fitypeId=' + fitypeId + '&sourceId=' + sourceId + '&leadOwner=' + leadOwner, '_blank');
+                }
+               
+            });
+
+            $("#btnExcel").click(function (e) {
+                let rptType = $('#reportTypeId').val();
+                let leadOwner = $('#employeeId').val();
+                let sectorId = $('#Sector').val();
+                let sourceId = $('#source').val();
+                let fitypeId = $('#organizationType').val();
+
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }
+                if (rptType == 4) {
+                    if (employeeId == "") {
+                        swal('Warning', 'Select Employee Name', 'warning');
+                        return false;
+                    }
+                }      
+
+                if (rptType == '1' || rptType == '2' || rptType == '3' || rptType == '4') {
+                    Common.Ajax('GET', '/CRMLead/CrmReport/CrmReportDataExcel?rptType=' + rptType + '&sectorId=' + sectorId + '&fitypeId=' + fitypeId + '&sourceId=' + sourceId + '&leadOwner=' + leadOwner, [], 'json', normalword);
+                }                
+
+            });
+        });
+
+        function normalword(response) {
+            console.log(response);
+            window.open('/pdf/' + response);
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.emailAddress;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#employeeId").val(ui.item.key);
+                }
+            });
+        }
+
+
+
+
+
+
+
+
+    </script>
+}
+
+

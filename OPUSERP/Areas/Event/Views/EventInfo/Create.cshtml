@@ -1,0 +1,249 @@
+﻿@model EventViewModel
+@{
+    ViewData["Title"] = Model.fLang.create;
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">@Model.fLang.create</h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Event" asp-controller="EventInfo" asp-action="Create" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="category" class="col-sm-2 col-form-label">Event Category</label>
+                    <span style="float:left;" class="col-sm-1 redStar">*</span>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">Select</option>
+                            @foreach (var data in Model.eventCategories)
+                            {
+                                <option value="@data.Id">@data.name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                @*<div class="form-group row">
+            <label for="paymentHead" class="col-sm-2 col-form-label">Payment Head</label>
+            <span style="float:left;" class="col-sm-1 redStar">*</span>
+            <div class="col-sm-9">
+                <select class="form-control" id="paymentHead" name="paymentHead" required>
+                    <option value="">Select</option>
+                    @foreach (var data in Model.paymentHeads)
+                    {
+                        <option value="@data.Id">@data.name</option>
+                    }
+                </select>
+            </div>
+        </div>*@
+
+                <div class="form-group row">
+                    <label for="title" class="col-sm-2 col-form-label">@Model.fLang.eventTitle</label>
+                    <span style="float:left;" class="col-sm-1 redStar">*</span>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="title" value="" name="title" required>
+                        <input type="hidden" id="Id" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="title" class="col-sm-3 col-form-label">@Model.fLang.evtPic</label>
+
+                    <div class="col-6">
+                        <img id="user_img" style="width:300px;height:200px" src="~/images/event-management-placeholder.jpg" alt="" class="img-thumbnail float-left">
+                        <input type="file" title="Photo Upload" id="imagePath" name="empPhoto" class="btn btn-default btn-sm pull-right" />
+
+                    </div>
+                    <div class="col-3">
+                        <img id="user_img_current" style="width:200px;height:200px; display:none;" src="" alt="" class="img-thumbnail float-left">
+                        <input type="hidden" id="hiddenFile" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="description" class="col-sm-2 col-form-label">@Model.fLang.description</label>
+                    <span style="float:left;" class="col-sm-1 redStar">*</span>
+                    <div class="col-sm-9">
+                        <textarea type="text" rows="5" class="form-control" id="description" name="description" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="venue" class="col-sm-2 col-form-label">@Model.fLang.venue</label>
+                    <span style="float:left;" class="col-sm-1 redStar">*</span>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="venue" value="" name="venue" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="participantLimit" class="col-sm-3 col-form-label">@Model.fLang.participant</label>
+                    <div class="col-sm-9">
+                        <input type="number" class="form-control" id="participantLimit" value="" name="participantLimit">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="date" class="col-sm-2 col-form-label">@Model.fLang.evtDate</label>
+                    <span style="float:left;" class="col-sm-1 redStar">*</span>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="date" value="" name="date" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="deadline" class="col-sm-3 col-form-label">@Model.fLang.daylong</label>
+                    <div class="col-sm-9">
+                        <input type="checkbox" class="form-control" id="dayLong" value="" name="dayLong">
+                        <input type="hidden" class="form-control" id="containsDayLong" value="" name="containsDayLong">
+                    </div>
+                </div>
+
+                <div class="form-group row" id="startTime">
+                    <label for="stime" class="col-sm-3 col-form-label">@Model.fLang.evtStatrtTime</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="stime" value="" name="stime">
+                    </div>
+                </div>
+
+                <div class="form-group row" id="endTime">
+                    <label for="etime" class="col-sm-3 col-form-label">@Model.fLang.evtEndTime</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="etime" value="" name="etime">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="deadline" class="col-sm-3 col-form-label">@Model.fLang.evtRegDeadline</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="deadline" value="" name="deadline">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="type" class="col-sm-2 col-form-label">@Model.fLang.evtType</label>
+                    <span style="float:left;" class="col-sm-1 redStar">*</span>
+                    <div class="col-sm-9">
+                        <select type="text" class="form-control" id="type" value="" name="type" required>
+                            <option value="">Select One</option>
+                            <option value="paid">Payable</option>
+                            <option value="free">Free</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row" id="amountField">
+                    <label for="amount" class="col-sm-3 col-form-label"> Event Payment </label>
+                    <div class="col-sm-9 row">
+                        @foreach (var data in Model.participantHeads)
+                        {
+                            <div class="col-6">
+                                <div class="custom-control custom-checkbox mb-3">
+                                    <input type="checkbox" class="custom-control-input" id="@data.Id" onclick="AddQuantity(this,@data.Id);">
+                                    <label class="custom-control-label" for="@data.Id" style="font-size:15px;">
+                                        @data.name
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-6" id="div-@data.Id">
+
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(document).ready(function () {
+
+            $("#date").change(function () {
+                $('#deadline').flatpickr({ dateFormat: "m/d/Y", minDate: "@DateTime.Now.ToString("MM/dd/yyyy")", maxDate: $("#date").val()});
+            });
+
+            $("#stime").change(function () {
+                $('#etime').flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", minTime: $("#stime").val()});
+            });
+
+            $("#imagePath").change(function () {
+                readURL(this);
+            });
+            $('#date').flatpickr({ dateFormat: "m/d/Y", minDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('#deadline').flatpickr({ dateFormat: "m/d/Y", minDate: "@DateTime.Now.ToString("MM/dd/yyyy")", maxDate:"@DateTime.Now.ToString("MM/dd/yyyy")" });
+            
+            $('#stime').flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", });
+            $('#etime').flatpickr({ enableTime: true, noCalendar: true, dateFormat: "H:i", });
+
+            $("#dayLong").change(function () {
+                if (this.checked) {
+                    $('#startTime').hide();
+                    $('#endTime').hide();
+                    $('#startTime').val('');
+                    $('#endTime').val('');
+                    $('#containsDayLong').val(1);
+                } else {
+                    $('#startTime').show();
+                    $('#endTime').show();
+                    $('#containsDayLong').val(0);
+                }
+            });
+
+
+            $('#amountField').hide();
+            $('#type').change(function () {
+                if ($('#type').val() == "paid") {
+                    $('#amountField').show();
+                } else {
+                    $('#amountField').val("");
+                    $('#amountField').hide();
+                }
+            });
+
+        });
+
+        function AddQuantity(arg, headId) {
+            var id = arg.getAttribute('id');
+            if (document.getElementById(id).checked == true) {
+                $('#div-' + headId).append('<input type="text" min="0" required placeholder="Enter Price" class="form-control" name="qntPrice[]" id="txt' + headId + '"> <input type="hidden" name="head[]" value="' + headId + '" id="head' + headId + '">');
+            } else {
+                $('#txt' + headId).remove();
+                $('#head' + headId).remove();
+            }
+        }
+    </script>
+}
+
+

@@ -1,0 +1,118 @@
+﻿@model MeetingDocumentViewModel
+@{
+    ViewData["Title"] = "Meeting Opinion";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <form asp-area="Meeting" asp-controller="MeetingDocument" asp-action="MeetingOpinion" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="card" style="width: 100%; margin-bottom: 10px;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: blue"> @Model.docs.subject </h5>
+                <a style="float: right; margin-top: -43px;" class="btn btn-primary" target="_blank" href="/Meeting/MeetingDocument/DocPreView/@Model.docs.Id"><i class="fas fa-eye"></i> View </a>
+                <hr>
+                <div class="container-fluid">
+                    <div class="col-12">
+                        <div class="card" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: black">Summery of the Proposal</h5>
+                                <hr>
+                                <div class="container">
+
+                                    <textarea name="summery" class="form-control" rows="5" required></textarea>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="container-fluid">
+                    <div class="col-12">
+                        <div class="card" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: black">Opinion of the Proposal</h5>
+                                <hr>
+                                <div class="container">
+
+                                    <input type="hidden" name="meetingId" value="@Model.meetingInfo.Id">
+                                    <input type="hidden" name="docId" value="@Model.docs.Id">
+
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#sl</th>
+                                                <th> Name</th>
+                                                <th> Comment</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+
+                                                int i = 1;
+                                                foreach (var data in Model.meetingAttendancesPresents)
+                                                {
+                                                    <tr>
+                                                        <td>@i</td>
+                                                        <td>@data?.employee?.nameEnglish</td>
+                                                        <td>
+                                                            <input type="hidden" name="user[]" value="@data?.employeeId">
+                                                            <textarea name="comment[]" rows="5" cols="10" class="form-control" required>No Comment</textarea>
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="container-fluid">
+                    <div class="col-12">
+                        <div class="card" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: black">Decision of the Proposal</h5>
+                                <hr>
+                                <div class="container">
+
+                                    <textarea name="decision" class="form-control" rows="5" required></textarea>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="submit" value="Submit Comment" class="btn btn-primary"
+               style="float: right;">
+    </form>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#departmentTable').DataTable();
+            $('#departmentTable1').DataTable();
+        });
+    </script>
+}

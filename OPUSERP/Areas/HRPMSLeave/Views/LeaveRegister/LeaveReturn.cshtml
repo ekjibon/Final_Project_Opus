@@ -1,0 +1,128 @@
+﻿@model LeaveRegisterViewModel
+
+@{
+    ViewData["Title"] = "Leave Return List";
+    //Layout = "~/Areas/HRPMSLeave/Views/Shared/_LeaveForm.cshtml";
+}
+
+@section Style{
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Leave Return List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="leaveApplyTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.employeeName</th>
+                            <th>@Model.fLang.leaveFrom</th>
+                            <th>@Model.fLang.leaveTo</th>
+                            <th>@Model.fLang.totalDays</th>
+                            <th>@Model.fLang.leavePurpose</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var data in Model.leaveRegisterslist)
+                        {
+                            <tr>
+                                <td>@data.employee.nameEnglish</td>
+                                <td>@data.leaveFrom?.ToString("yyyy-MM-dd")</td>
+                                <td>@data.leaveTo?.ToString("yyyy-MM-dd")</td>
+                                <td>@data.daysLeave</td>
+                                <td>@data.purposeOfLeave</td>
+                                <td>
+                                    @*<a class="btn btn-success" onclick="Edit(@data.Id,'@data.employeeId','@data.whenLeave','@data.leaveTypeId','@data.leaveFrom','@data.leaveTo','@data.daysLeave','@data.address','@data.purposeOfLeave','@data.emergencyContactNo')" data-toggle="tooltip" title="Edit" href="#"><i class="fa fa-edit"></i></a>*@
+                                    <a class="btn btn-info" data-toggle="modal" data-target="#ValidatModal" onclick="GetStatus(@data.Id)" title="View" href="#"><i class="fa fa-eye"></i></a>
+
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ValidatModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="width:1040px;">
+            <div class="modal-header">
+                <label class="modal-title pull-left" id="myModalLabel" style="color:rgb(9, 7, 161);font-size:1em;">
+                    View Leave Status
+                </label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <br />
+            </div>
+            <div class="modal-body">
+                <table id="statusTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Leave From Date</th>
+                            <th>Leave To Date</th>
+                            <th>Leave Type</th>
+                            <th>Person</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        function GetStatus(id) {
+            Common.Ajax('GET', '/global/api/GetAllLeaveStatusLogByLeaveId/' + id, [], 'json', AjaxGetStatus);
+        }
+
+        function AjaxGetStatus(response) {
+            var dtTable = $("#statusTable");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            $.each(response, function (key, value) {
+                var trHtml = '<tr>' +
+                    '<td>' + formatDate(response[0].leaveRegister.leaveFrom) + '</td>' +
+                    '<td>' + formatDate(response[0].leaveRegister.leaveTo) + '</td>' +
+                    '<td>' + response[0].leaveRegister.leaveType.nameEn + '</td>' +
+                    '<td>' + value.employee.nameEnglish + '</td>' +
+                    '<td>' + value.remarks + '</td>' +
+                    '<td>' + formatDate(value.date) + '</td>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+        }
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            date = new Date(date);
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+
+            return day + ' ' + monthNames[monthIndex] + ' ' + year;
+        }
+    </script>
+}

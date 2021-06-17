@@ -1,0 +1,145 @@
+﻿@model StockInViewModel
+@{
+    ViewData["Title"] = "Stock Balance Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Stock Balance Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label for="report" class="col-sm-3 col-form-label">Item Name <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="itemName" name="itemName" placeholder="Select Item" />
+                            <input type="hidden" class="form-control" id="itemId" name="itemId" required />                            
+                        </div>
+                    </div>
+                    <div class="form-group row" id="BankSelect">
+                        <label for="bankId" class="col-sm-3 col-form-label">Item Specification</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="itemSpecName" name="itemSpecName" placeholder="Select Item Specification" />
+                            <input type="hidden" class="form-control" id="itemSpecId" name="itemSpecId"  />
+                        </div>
+                    </div>  
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" autocomplete="off"/>                           
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" autocomplete="off"/>                           
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <button id="PrintButton" class="btn btn-success btn-sm" title="Print Preview" style="width:80px;">Preview</button>
+                            <button id="Refreshbutton" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-sm">Refresh</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            @*$('#toDate').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('#fromDate').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });*@
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker();
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker();
+            Common.Ajax('GET', '/global/api/GetAllItemForRequisition', [], 'json', ajaxGetAllItem);
+            $('#report').change(function () {
+                let report = $('#report').val();
+                if (report == 1) {
+                    $('#MobileBankSelect').hide();
+                    $('#BankSelect').show();
+                } else {
+                    $('#MobileBankSelect').show();
+                    $('#BankSelect').hide();
+                }
+            });
+
+            $("#PrintButton").click(function (e) {
+                let id = $('#itemSpecId').val();
+                let tid = $('#itemId').val();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                if (tid == 0) {
+                    swal('Warning', 'Select Item', 'warning');
+                    return false;
+                }
+                else if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                }
+                else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                if (id == "") {
+                    id = 0;
+                }
+                window.open('/Inventory/Stock/StockBalanceReportViewpdf?tid=' + tid + '&itemspecid=' + id + '&fromDate=' + fromDate + '&toDate=' + toDate, '_blank');
+            });
+        });
+
+        function ajaxGetAllItem(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                obj.unitName = option.unit.unitName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#itemId").val(ui.item.key);    
+                    Common.Ajax('GET', '/global/api/ItemSpec/' + ui.item.key, [], 'json', ajaxGetItemSpacification);
+                }
+            });
+        }
+
+        function ajaxGetItemSpacification(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecId").val(ui.item.key);                   
+                }
+            });
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+    </script>
+}

@@ -1,0 +1,74 @@
+﻿
+
+@model NoticeInfoViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+@section Style{
+    <style>
+        p {
+            color: black;
+            font-size: 15px;
+        }
+
+        h6 {
+            color: black;
+        }
+
+        h4 {
+            color: black;
+        }
+
+        h5 {
+            padding: 20px 0 0 20px;
+            color: black;
+        }
+
+        b {
+            color: black;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="col-12">
+        <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        </div>
+
+        <div class="row">
+            <!-- Blog Post -->
+            <div class="col-12" style="padding:10px">
+                <div class="card ">
+                    <h5 class="card-title">@Model.noticeInfo.subject</h5>
+                    <div class="card-body">
+                        <iframe src="~/Notice/Notice/pdspdf/@Model.Id" style="width: 100%; height: 80vh;"></iframe>
+                    </div>
+                    @if (Model.noticeInfo.url != null)
+                    {
+                        <a class="btn btn-success" title="View Attachment" target="_blank" href="~/@Model.noticeInfo.url"><i class="fa fa-file-download"></i>@Model.fLang.viewAttachment</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            //$('#batchCreateDate').datepicker({ uiLibrary: 'bootstrap4' });
+        });
+
+        function TransferId(id) {
+            $('#eventId').val(id)
+        }
+
+
+    </script>
+}
+
+

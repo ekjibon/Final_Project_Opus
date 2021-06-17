@@ -1,0 +1,242 @@
+﻿@{
+    ViewData["Title"] = "CcWiseReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+        .numericCol {
+            text-align: right;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Cost Center Wise Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="SBUSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">SBU</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="sbuId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerProject">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Project</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="projectId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="costCenterSelect">
+                        <label for="supplier" class="col-sm-3 col-form-label">Select Cost Centre<span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="centreName" id="centreName" />
+                            <input type="hidden" class="form-control" name="centreNameId" id="centreNameId" value="0" />
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" readonly />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <br />                            
+                            <button type="button" onclick="Refresh()" title="Load" style="float:right" class="btn btn-info btn-xs">Load</button>&nbsp;&nbsp;&nbsp;
+                            <button id="SubmitButton" style="margin-left: 160px;" class="btn btn-success btn-xs" title="Preview">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row" id="COATable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblCOA">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Voucher No.</th>
+                            <th>Account Code</th>
+                            <th>Account Name</th>
+                            <th>Centre Name</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#toDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+            $('#fromDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+
+            Common.Ajax('GET', '/global/api/GetCostCentres', [], 'json', ajaxGetCostCentres);
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+            $("#sbuId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', GetProject, false);
+            });
+
+            $("#SubmitButton").click(function (e) {
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                let centreNameId = $('#centreNameId').val();
+                let sbuId = $('#sbuId').val();
+                let projectId = $('#projectId').val();
+                if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                window.open('/Accounting/AccountingReport/CCReportDataViewpdf?costcentreId=' + centreNameId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&sbuId=" + sbuId + "&projectId=" + projectId, '_blank');
+            });
+        });
+
+        function Refresh() {           
+            let ccId = $('#centreNameId').val();           
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+            if ($('#centreName').val() == "") {
+                ccId = 0;
+            }
+            if (ccId == '' || ccId == 0) {
+                swal('Warning', 'Please Select Cost Centre', 'warning');
+                return false;
+            } else if (fromDate == '') {
+                swal('Warning', 'Select From Date', 'warning');
+                return false;
+            } else if (toDate == '') {
+                swal('Warning', 'Select To Date', 'warning');
+                return false;
+            }
+            let sbuId = $('#sbuId').val();
+            let projectId = $('#projectId').val();            
+            GetLedgerBookReportEx(ccId, fromDate, toDate, sbuId, projectId);
+        }
+
+        function GetLedgerBookReportEx(ccId, fromDate, toDate, sbuId, projectId) {
+            $('#tblCOA').DataTable().destroy();
+            table = $('#tblCOA').DataTable({
+                ajax: {
+                    url: "/global/api/GetCCWiseReport/" + ccId + "/" + fromDate + "/" + toDate + "/" + sbuId + "/" + projectId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [                    
+                    {
+                        data: "vDate",                       
+                    },
+                    { data: "voucherNo" },                
+                    { data: "accountCode" },
+                    { data: "particular" },
+                    { data: "centreName" },
+                    {
+                        data: "debit",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol"
+                    },
+                    {
+                        data: "credit",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol"
+                    },
+                    { data: "action" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Ledger Book",
+                        messageTop: 'Ledger Book Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Ledger Book",
+                        messageTop: 'Ledger Book Report'
+                    }
+                ]
+            });
+        }        
+
+        function ajaxGetCostCentres(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.centreName;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#centreName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#centreNameId').val(ui.item.key);
+                    $("#centreName").val(ui.item.value);
+                }
+            });
+        }
+
+        function GetSBU(response) {
+            $('#sbuId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+            });
+            $('#sbuId').append(options);
+        }
+
+        function GetProject(response) {
+            $('#projectId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+            });
+            $('#projectId').append(options);
+        }    
+    </script>
+}

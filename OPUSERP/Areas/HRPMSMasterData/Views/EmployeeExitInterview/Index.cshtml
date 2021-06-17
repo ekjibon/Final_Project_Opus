@@ -1,0 +1,111 @@
+﻿
+@model EmployeeExitInterviewViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">Reason For Leaving</h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="EmployeeExitInterview" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <input type="hidden" id="reasonId" name="reasonId" value="0">
+
+                <div class="form-group row">
+                    <label for="ContractStartDate" class="col-sm-2 col-form-label">Reason Name<i class="redStar col-sm-1">*</i></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="reasonName" name="reasonName" autocomplete="off" data-parsley-required="true">
+                    </div>
+                </div>
+
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">List of Reason For Leaving</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="reasonForLeavingTable">
+                    <thead>
+                        <tr>
+                            <th>Reason Name</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.reasonForLeavings)
+                        {
+                            <tr>
+                                <td>@data.reasonName</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.reasonName')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+
+    <script>
+        $(document).ready(function () {
+
+            $('#reasonForLeavingTable').DataTable();
+
+        });
+
+        function Edit(Id, reasonName) {
+
+            $('#reasonId').val(Id);
+            $('#reasonName').val(reasonName);
+        }
+
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/HRPMSMasterData/EmployeeExitInterview/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+    </script>
+}
+
+

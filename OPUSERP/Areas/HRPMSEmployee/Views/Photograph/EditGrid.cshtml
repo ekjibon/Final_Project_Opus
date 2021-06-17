@@ -1,0 +1,424 @@
+﻿@model PhotographViewModel
+@{
+    ViewData["Title"] = "Edit Grid";
+    //Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+<style>
+    .redStar {
+        color: red;
+    }
+</style>
+
+<div class="card" style="width: 100%;">
+    <div class="card-header row">
+        <div class="col-8">
+            <h5 class="card-title" style="color: black">Employee's Personal Information</h5>
+        </div>
+        <div class="col-4">
+            @*<h6 class="identity-box">@Model.employeeNameCode</h6>*@
+        </div>
+    </div>
+
+    <div class="card-body row">
+        <div class="col-2">
+            <img id="user_img_current" style="width: 180px;height: 165px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            <i class="fa fa-camera" data-toggle="modal" data-target="#updateEmpPhotoModal" style="position:relative;margin-top:120px;margin-left:-22px"></i>
+            <input type="hidden" id="hiddenFile" />
+        </div>
+        <div class="col-9" style="color: black; font-size: 15px; padding-top: 24px;">
+            <span style="font-weight:bold;">@Model.visualEmpCodeName : </span><span>@Model.employeeInfo?.employeeCode</span><br />
+            <span style="font-weight:bold;">Employee Name : </span><span>@Model.employeeInfo?.nameEnglish</span><br />
+            <span style="font-weight:bold;">Designation : </span><span>@Model.employeeInfo?.designation</span><br />
+            <span style="font-weight:bold;">Contact : </span><span>@Model.employeeInfo?.mobileNumberPersonal</span><br />
+            <span style="font-weight:bold;">Email : </span><span>@Model.employeeInfo?.emailAddressPersonal</span><br />
+        </div>
+        <div class="col-1">
+            <a class='btn btn-info' style="float:right;" data-toggle='tooltip' title='Print' target='_blank' href='/HRPMSEmployee/InfoView/pdspdf/@Model.employeeInfo.Id'><i class='fa fa-print'></i></a>
+        </div>
+    </div>
+
+    <div class="card-body row" style="padding-top: 0;">
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Info", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-tie fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Basic</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Address", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-map-marker-alt fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Address</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Spouse", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-female fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Spouse</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Children", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-child fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Children</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "EmergencyContact", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-blender-phone fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Emergency Contact</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Nominee", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-sitemap fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Nominee</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("EmployeeInsurance", "Nominee", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-university fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Insurance</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "EducationalQualification", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-graduation-cap fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Education</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "ProfessionalQualifications", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-chalkboard-teacher fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Prof. Qualification</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "OtherQualifications", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-book-reader fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Other Qualification</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Training", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-clipboard-list fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Training History</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "TransferLog", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-stream fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Service</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "PromotionLog", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-chart-line fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Promotion</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "ACRLog", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-clipboard-check fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">PMS History</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Disciplinary", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-times fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Disciplinary Action</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Supervisor", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-shield fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Supervisor</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "License", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-id-badge fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Driving License</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Passport", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-passport fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Passport</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Travel", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-suitcase-rolling fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Travel</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Membership", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-tag fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Membership</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Award", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-medal fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Award</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Publication", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-atlas fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Publication</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Language", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-language fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Language</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "OtherActivities", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-skating fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Other Activities</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "BankInfo", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-university fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Bank Acounts</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Belongings", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-bold fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Belongings</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "PreviousEmployment", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-th-list fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Prev. Employment</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "FreedomFighter", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-check fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Freedom Fighter</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Reference", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-clock fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Reference</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "OfficeAssign", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-map-marker-alt fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Office Assign</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "Photograph", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-circle fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Picture</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Signature", "Photograph", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-user-circle fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Signature</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "EmployeeContractInfo", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-file-signature fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Contract</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "EmployeeProjectActivity", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fa fa-sitemap fa-3x "></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Project Activity</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "FinanceCode", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fas fa-code-branch fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Financial Code</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("Index", "EmployeeAttachment", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fas fa-file fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Attachment</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("ProjectAssign", "EmployeeProjectActivity", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fas fa-air-freshener fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Project Assign</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("EmployeeOtherInfo", "EmployeeProjectActivity", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fas fa-info-circle fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Other Info</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("EmployeeCostCentre", "EmployeeProjectActivity", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fas fa-dollar-sign fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Cost Centre</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group text-center card" style="background-color:#efecee;border-color:lightgray;">
+                <a class="text-center btn btn-default" href="@Url.Action("EmployeeGrade", "EmployeeProjectActivity", new { id = @ViewBag.employeeID })" style="text-decoration:none;">
+                    <i class="fab fa-glide-g fa-3x"></i>
+                    <br /><span style="color: black; font-size: 10pt; font-weight: 400;">Employee Grade</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateEmpPhotoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<img src="~/images/Aloha New Logo.png" style="height:50px;" />*@
+                <h5 class="modal-title" id="exampleModalLabel">Update Photo</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-area="HRPMSEmployee" asp-controller="Photograph" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="form-group row">
+                        <div class="col-5">
+                            <img id="user_img_current" style="width:200px;height:200px" src="~/@Model.photograph.url" alt="" class="img-thumbnail float-left">
+                            <input type="hidden" id="hiddenFile" />
+                        </div>
+                        <div class="col-7">
+                            <img id="user_img" style="width:200px;height:200px" src="~/images/user.png" alt="" class="img-thumbnail float-left">
+                            <input type="hidden" name="employeeID" value="@Model.employeeInfo.Id" />
+                            <input type="hidden" name="photographID" value="@Model.photograph.Id" />
+                            <input type="file" title="Photo Upload" id="imagePath" data-parsley-required="true" name="empPhoto" class="btn btn-default btn-sm pull-right" />
+                            <span style="float:left;" class="redStar">*</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(document).ready(function () {
+            //$("#photo").addClass("active");
+            //$("#imagePath").change(function () {
+            //    readURL(this);
+            //});
+        });
+    </script>
+}
+

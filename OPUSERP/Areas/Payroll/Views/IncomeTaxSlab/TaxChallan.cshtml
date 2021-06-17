@@ -1,0 +1,181 @@
+﻿@model IncomeTaxChallanViewModel
+@{
+    ViewData["Title"] = "Tax Challan";
+    Layout = "~/Areas/Payroll/Views/Shared/_TaxMasterForm.cshtml";
+}
+
+@section StyleMD{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Income Tax Challan</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="IncomeTaxSlab" asp-action="TaxChallan" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="taxYearId" class="col-sm-3 col-form-label">Salary Period<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="periodId" name="periodId" data-parsley-required="true">
+                                    <option value="">Select Period</option>
+                                    @foreach (var data in Model.salaryPeriods)
+                                    {
+                                        <option value="@data.Id">@data.periodName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        
+
+
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+
+
+                        <div class="form-group row">
+                            <label for="exemptionRule" class="col-sm-3 col-form-label">Challan No<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="hidden" class="form-control" id="IncomeTaxchallanId" name="IncomeTaxchallanId">
+                                <input type="text" class="form-control" id="challanNo" name="challanNo">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="exemptionRule" class="col-sm-3 col-form-label">Challan Date<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="challanDate" name="challanDate">
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Calculate" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Tax Challan List</h6>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="row col-md-12">
+                    <div class="col-12">
+                    
+                        <table class="table table-striped table-bordered" id="taxslabTable">
+                            <thead>
+                                <tr>
+                                    <th>Serial</th>
+                                    <th>Tax Year</th>
+                                    <th>Salary Period</th>
+                                    <th>Challan No</th>
+                                    <th>Challan Date</th>
+                                   
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int a = 1;
+                                    @foreach (var data in Model.taxChallans)
+                                    {
+                                <tr>
+                                    <td>@a</td>
+                                    <td>@data.salaryPeriod.taxYear.taxYearName</td>
+                                    <td>@data.salaryPeriod.periodName</td>
+                                    <td>@data.taxChallanNo</td>
+                                    <td>@data.challanDate</td>
+                                    
+
+
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edittaxslab(@a,@data.salaryPeriodId,'@data.taxChallanNo','@data.challanDate',@data.Id)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                        a++;
+                                    }
+                                }
+                            </tbody>
+                           
+                        </table>
+                    </div>
+                  
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- View Service Reminders Modal-->
+
+
+@section ScriptsMD{
+    <script>
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        $(document).ready(function () {
+            $("#taxChallan").addClass("active");
+            $('#taxslabTable').DataTable();
+            $('#challanDate').datepicker({ uiLibrary: 'bootstrap4' });
+           
+        });
+
+        //function addCommas(x) {
+        //    var parts = x.toString().split(".");
+        //    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        //    return parts.join(".");
+        //}
+        function Edittaxslab(i, salaryPeriodId, taxChallanNo, challanDate, Id) {
+            $('#IncomeTaxchallanId').val(Id);
+            $('#periodId').val(salaryPeriodId);
+            $('#challanNo').val(taxChallanNo);
+            $('#challanDate').val(challanDate);
+          
+
+        }
+      
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,456 @@
+﻿@model FDRRenewalViewModel
+@{
+    ViewData["Title"] = "Reinvestment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Investment & Govt.Securities Reinvestment</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="FTInstructionNo" class="col-sm-4 col-form-label">Old FT No</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="FTInstructionNo" name="FTInstructionNo" value="@Model.fDRMaturityStatusForRenewalViewModels?.ftInstructionNo" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="NewFTInstructionNo" class="col-sm-4 col-form-label">New FT No.</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="NewFTInstructionNo" name="NewFTInstructionNo" readonly>
+                                <input type="hidden" id="ID" />
+                            </div>
+                        </div>
+                        <div class="form-group row" hidden>
+                            <label for="FTSendTo" class="col-sm-4 col-form-label">FT Ins. Send To</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="FTSendTo" name="FTSendTo" value="@Model.fDRMaturityStatusForRenewalViewModels?.ftSendTo" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="BankName" class="col-sm-4 col-form-label">Debit Bank</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="BankName" name="BankName" value="@Model.fDRMaturityStatusForRenewalViewModels?.bankName" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="BranchName" class="col-sm-4 col-form-label">Debit Branch</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="BranchName" name="BranchName" value="@Model.fDRMaturityStatusForRenewalViewModels?.branchName" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="FTDate" class="col-sm-4 col-form-label">FT Date <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control dpdatepicker" id="FTDate" name="FTDate" value="@Model.fDRMaturityStatusForRenewalViewModels?.ftDate" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="NOI" class="col-sm-4 col-form-label">Nature of Invest</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="NOI" name="NOI" value="@Model.fDRMaturityStatusForRenewalViewModels?.nOI" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="AccountNo" class="col-sm-4 col-form-label">Debit Bank A/C</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="AccountNo" name="AccountNo" value="@Model.fDRMaturityStatusForRenewalViewModels?.accountNumber" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="SOF" class="col-sm-4 col-form-label">Source Of Fund</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="SOF" name="SOF" value="@Model.fDRMaturityStatusForRenewalViewModels?.sOF" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <h6 style="color:black;">FDR Details Information</h6>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="RefNo" class="col-sm-4 col-form-label">Investment No <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="RefNo" id="RefNo" value="@Model.fDRMaturityStatusForRenewalViewModels?.accountName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Amount" class="col-sm-4 col-form-label">Amount<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="Amount" name="Amount" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="OpenDate" class="col-sm-4 col-form-label">Open Date <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control dpdatepicker interest" id="OpenDate" name="OpenDate" value="@Model.fDRMaturityStatusForRenewalViewModels?.openDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="FormulaType" class="col-sm-4 col-form-label">Calculation Method <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="typeText" value="@Model.fDRMaturityStatusForRenewalViewModels?.typeText" readonly>
+                                <input type="hidden" id="FormulaType" value="@Model.fDRMaturityStatusForRenewalViewModels?.formulaType" />
+                            </div>
+                        </div>
+                        <div class="form-group row" hidden>
+                            <label for="EncashBankCharge" class="col-sm-4 col-form-label">Bank Charge</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="EncashBankCharge" name="EncashBankCharge" value="@Model.fDRMaturityStatusForRenewalViewModels?.encashBankCharge" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="DestinationType" class="col-sm-4 col-form-label">Investment To</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="DestinationType" name="DestinationType" value="@Model.fDRMaturityStatusForRenewalViewModels?.destinationType" readonly>
+                            </div>
+                        </div>
+                        @if (@Model.fDRMaturityStatusForRenewalViewModels?.destinationType != "Same Bank")
+                        {
+                            <div class="clsdivdbank">
+                                <div class="form-group row">
+                                    <level class="col-sm-4 col-form-label">Bank</level>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="DesitinatioBank" name="DesitinatioBank" value="@Model.fDRMaturityStatusForRenewalViewModels?.desitinationBank" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <level class="col-sm-4 col-form-label">Cheque No</level>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="SOF" name="SOF" value="@Model.fDRMaturityStatusForRenewalViewModels?.chequeNo" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="Rate" class="col-sm-4 col-form-label">Interest Rate(%)<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control interest" id="Rate" name="Rate" value="@Model.fDRMaturityStatusForRenewalViewModels?.rate" style="text-align:right" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="MaturityDate" class="col-sm-4 col-form-label">Maturity Date <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control interest dpdatepicker" id="MaturityDate" value="@Model.fDRMaturityStatusForRenewalViewModels?.maturityDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Tenure" class="col-sm-4 col-form-label">Tenure <span style="color:red">*</span></label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="Tenure" value="@Model.fDRMaturityStatusForRenewalViewModels?.tenure" readonly>
+                            </div>
+                            <div class="col-sm-4">
+                                <select id="TenureType" class="form-control interest">
+                                    <option value="">Tenure Type</option>
+                                    <option value="Days">Days</option>
+                                    <option value="Month">Month</option>
+                                    <option value="Year">Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="TotalInterest" class="col-sm-4 col-form-label">Interest</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="TotalInterest" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="DestinationBranch" class="col-sm-4 col-form-label">Investment Branch</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="DestinationBranch" name="DestinationBranch" value="@Model.fDRMaturityStatusForRenewalViewModels?.destinationBranch" readonly>
+                            </div>
+                        </div>
+                        @if (@Model.fDRMaturityStatusForRenewalViewModels?.destinationType != "Same Bank")
+                        {                            
+                            <div class="clsdivdbank">
+                                <div class="form-group row">
+                                    <level class="col-sm-4 col-form-label">Address</level>
+                                    <div class="col-sm-8">
+                                        <input id="NPBAddress" name="NPBAddress" class="form-control" value="@Model.fDRMaturityStatusForRenewalViewModels?.npbAddress" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                        }                       
+                    </div>
+                </div>
+                <br />                
+                <input type="button" id="btnProcess" class="btn btn-success btn-sm" style="float:right;" value="Process" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $(".dpdatepicker").datepicker({ dateFormat: "dd M yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2040" });            
+            
+            $('#TenureType').val('@Model.fDRMaturityStatusForRenewalViewModels?.tenureType');
+            $('#Amount').val('@Model.fDRMaturityStatusForRenewalViewModels?.amount').number(true, 2);
+            $('#TotalInterest').val('@Model.fDRMaturityStatusForRenewalViewModels?.totalInterest').number(true, 2);
+
+            $(".interest").change(function () {
+                InterestCalculator();
+                GetTenure();
+            });
+            $(".interest").keyup(function () {
+                InterestCalculator();
+            });
+
+            $("#TenureType").change(function () {
+                GetTenure();
+            });
+
+            $("#FTDate").change(function () {
+                $('#OpenDate').val($(this).val());
+                var id = $('#ID').val() ? $('#ID').val() : '';
+                if (id == '') {
+                    var bankName = $('#BankName').val();
+                    var accNo = $("#AccountNo").val();
+                    var ftSendTo = $('#FTSendTo').val();
+                    GetFTNO(bankName, $(this).val(), accNo, ftSendTo);
+                }
+                GetTenure();
+            });
+
+            GetFTNO(`@Model.fDRMaturityStatusForRenewalViewModels.bankName`, `@Model.fDRMaturityStatusForRenewalViewModels.ftDate`, `@Model.fDRMaturityStatusForRenewalViewModels.accountNumber`, `@Model.fDRMaturityStatusForRenewalViewModels.destinationType`)           
+
+            $("#btnProcess").on("click", function () {
+                SaveRenewFDR();
+            });
+        });        
+
+        function GetFTNO(bankName, ftdate, accNo, desType) {
+            $("#NewFTInstructionNo").val('');
+
+            $.ajax({
+                url: "/Accounting/FDRRenewal/GetFdrAutoNo?bnkName=" + bankName + "&ftDate=" + ftdate + "&accountNo=" + accNo + "&destinationType=" + desType + "&ftType=" + 'Renew',
+                type: "GET",
+                dataType: "json",
+                success: function (records) {
+                    $("#NewFTInstructionNo").val(records);
+                },
+                failure: function () {
+                    $.alert.open("error", "Failed!");
+                }
+            });
+        }
+
+        function leapYear(year) {
+            return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+        }
+
+        function GetDayMonthYear(openDate, maturityDate) {
+            var Tenure = {};
+            var odate = Date.parse(openDate);
+            var mdate = Date.parse(maturityDate);
+            var diff_date = mdate - odate;
+            var dt = new Date(maturityDate);
+            let isLeapY = leapYear(dt.getYear());
+            var num_years = diff_date / 31536000000;
+            var num_months = (diff_date % 31536000000) / 2628000000;
+            var num_days = ((diff_date % 31536000000) % 2628000000) / 86400000;
+
+            var MWOD = diff_date / 2628000000;
+            var tDay = diff_date / 86400000;
+
+            Tenure.Year = Math.floor(num_years);
+            Tenure.TMonth = Math.floor(MWOD);
+            Tenure.FracMonth = Math.floor(num_months);
+            if (isLeapY) {
+                Tenure.TDay = Math.floor(tDay) - 1;
+                Tenure.FracDay = Math.floor(num_days) - 1;
+            } else {
+                Tenure.TDay = Math.floor(tDay);
+                Tenure.FracDay = Math.floor(num_days);
+            }
+            return Tenure;
+        }
+
+        function GetTenure() {
+            var type = $('#TenureType').val();
+            var odate = $('#OpenDate').val();
+            var mdate = $('#MaturityDate').val();
+            var Tenure = GetDayMonthYear(odate, mdate);
+            if (type == 'Days') {
+                $('#Tenure').val(Tenure.TDay + ' Days');
+            } else if (type == 'Month') {
+                let month = '';
+                if (Tenure.FracDay > 0) {
+                    month = `${Tenure.TMonth} Month ${Tenure.FracDay} Days`;
+                } else if (Tenure.FracDay == 0) {
+                    month = `${Tenure.TMonth} Month`;
+                } else {
+                    month = `${Tenure.TMonth} Month`;
+                }
+                $('#Tenure').val(month);
+            } else if (type == 'Year') {
+                let year = '';
+                if (Tenure.FracMonth > 0 && Tenure.FracDay > 0) {
+                    year = `${Tenure.Year} Year ${Tenure.FracMonth} Month ${Tenure.FracDay} Days`;
+                } else if (Tenure.FracMonth == 0 && Tenure.FracDay > 0) {
+                    year = `${Tenure.Year} Year ${Tenure.FracDay} Days`;
+                } else if (Tenure.FracMonth > 0 && Tenure.FracDay == 0) {
+                    year = `${Tenure.Year} Year ${Tenure.FracMonth} Month`;
+                } else {
+                    year = `${Tenure.Year} Year`;
+                }
+                $('#Tenure').val(year);
+            } else {
+                $('#Tenure').val();
+            }
+        }
+
+        function InterestCalculator() {
+            var totalInterest = 0;
+            var amount = parseFloat($('#Amount').val().replace(/,/g, '')) ? parseFloat($('#Amount').val().replace(/,/g, '')) : 0;
+            var rate = parseFloat($('#Rate').val()) ? parseFloat($('#Rate').val()) : 0;
+            var formulaType = $('#FormulaType').val();
+
+            var openDate = $('#OpenDate').val();
+            var maturityDate = $('#MaturityDate').val();
+
+            if (formulaType == 'Amount*Rate*30/360') {
+                totalInterest = Formula1Cal(amount, rate, openDate, maturityDate);
+            } else if (formulaType == '(Amount*Rate*31 or 30 or 28)/360') {
+                totalInterest = Formula2Cal(amount, rate, openDate, maturityDate);
+            } else {
+                totalInterest = 0;
+            }
+            $('#TotalInterest').val(totalInterest).number(true, 2);
+        }
+
+        function Formula1Cal(amount, rate, odate, mdate) {
+            rate = parseFloat(rate) / 100;
+            var openDate = new Date(odate);
+            var maturityDate = new Date(mdate);
+            var interest = 0;
+            var fracopen = 0;
+            var fracmature = 0;
+            var totalDay = 0;
+
+            var totalMonth = totalMonths(openDate, maturityDate);
+
+            if (totalMonth <= 0) {
+                totalDay = totalDays(openDate, maturityDate);
+                interest = ((amount * rate) / 360) * totalDay;
+            }
+
+            else {
+                fracopen = 30 - new Date(openDate).getDate() + 1;
+                fracmature = new Date(maturityDate).getDate() - 1;
+                totalDay = fracopen + fracmature;
+                interest = ((amount * rate) / 360) * (totalMonth - 1) * 30 + ((amount * rate) / 360) * totalDay;//((amount*rate)/360)*(((totalMonth-1)*30)+totalDay);
+            }
+            return interest;
+        }
+
+        function Formula2Cal(amount, rate, odate, mdate) {
+            rate = parseFloat(rate) / 100;
+            var openDate = new Date(odate);
+            var maturityDate = new Date(mdate);
+            var interest = 0;
+            var fracopen = 0;
+            var fracmature = 0;
+            var totalDay = 0;
+
+            var totalMonth = totalMonths(openDate, maturityDate);
+            totalDay = totalDays(openDate, maturityDate);
+            interest = ((amount * rate) / 360) * totalDay;
+            return interest;
+        }
+
+        function totalDays(openDate, maturityDate) {
+            var timeDiff = maturityDate.getTime() - openDate.getTime();
+            var tdays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            return tdays;
+        }
+        function totalMonths(d1, d2) {
+            var months;
+            months = (d2.getFullYear() - d1.getFullYear()) * 12;
+            months -= d1.getMonth();
+            months += d2.getMonth();
+            return months <= 0 ? 0 : months;
+        }
+        function totalyears(d1, d2) {
+            var months;
+            months = (d2.getFullYear() - d1.getFullYear()) * 12;
+            months -= d1.getMonth();
+            months += d2.getMonth();
+            return months <= 0 ? 0 : months;
+        }
+
+
+        function SaveRenewFDR() {
+        if ($('#Rate').val() == '' || $('#Rate').val() == 0) {
+            alert('Select Source Of Fund!!');
+            return false;
+        } else if ($('#BankAccountNumber').val() == '') {
+            swal('Attention', 'Please entered rate', 'warning');
+            return false;
+        } else if ($('#Tenure').val() == '') {
+            swal('Attention', 'Tenure is empty!!!', 'warning');
+            return false;
+        } else if ($('#TenureType').val() == '') {
+            swal('Attention', 'Please select tenure type!!!', 'warning');
+            return false;
+        }
+        else if ($('#RefNo').val() == '') {
+            swal('Attention', 'Please insert Investment No!!!', 'warning');
+            return false;
+        }
+
+        var fdr = {};
+            fdr.ftno = $('#NewFTInstructionNo').val();
+            fdr.FDRID = parseInt(@Model.fDRMaturityStatusForRenewalViewModels.renewfdrDetailsId)? parseInt(@Model.fDRMaturityStatusForRenewalViewModels.renewfdrDetailsId):0;
+            fdr.FTID = parseInt(@Model.fDRMaturityStatusForRenewalViewModels.renewfdrMasterId)?parseInt(@Model.fDRMaturityStatusForRenewalViewModels.renewfdrMasterId):0;
+            fdr.ParentFDRID = @Model.fDRMaturityStatusForRenewalViewModels.fdrDetailsId;
+            fdr.ParentFTID = @Model.fDRMaturityStatusForRenewalViewModels.fdrInvesmentMasterId;
+            fdr.rate = $('#Rate').val();
+            fdr.interestAmt = $('#TotalInterest').val().replace(/,/g, '');
+            fdr.openDate = $('#OpenDate').val();
+            fdr.maturityDate = $('#MaturityDate').val();
+            fdr.ftDate = $('#FTDate').val();
+            fdr.Tenure = $('#Tenure').val();
+            fdr.TenureType = $('#TenureType').val();            
+            fdr.EncashBankCharge = parseFloat($('#EncashBankCharge').val()) ? parseFloat($('#EncashBankCharge').val()) : 0;
+            fdr.bankAccNo = $('#AccountNo').val();
+            fdr.bankBranch = $('#BranchName').val();
+            fdr.fdrNo = $('#RefNo').val();
+            fdr.amount = parseFloat($('#Amount').val()) ? parseFloat($('#Amount').val()) : 0;
+            fdr.fdrDate = $('#OpenDate').val();
+        //var json = JSON.stringify(fdr);
+        swal({
+            title: 'Are you sure?', text: 'save this!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, save it!'
+        }).then(function () {
+            $.ajax({
+                url: "/Accounting/FDRRenewal/SaveFDRRenew",
+                type: "post",
+                dataType: 'json',
+                data: fdr,
+                success: function (data) {
+                    swal("Success", "Saved Successfully !!", "success");
+                    window.location = '@Url.Action("FdrRenewalList", "FDRRenewal")';
+                },
+                error: function () {
+                    alert("Fail to save");
+                }
+            });
+        });
+    }
+
+    </script>
+}

@@ -1,0 +1,187 @@
+﻿
+@model HRPMSAttachmentViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo?.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo?.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo?.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo?.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo?.activityStatus == 1 ? "Active" : "Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">Employee Attachment</u></h5>
+            </div>
+        </div>
+        <hr>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="EmployeeAttachment" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+
+                    <input type="hidden" name="attachmentId" id="attachmentId" value="0" />
+
+                    <label for="attachmentCategory" class="col-sm-3 col-form-label">Attachment Group <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="atttachmentGroupId" id="atttachmentGroupId" data-parsley-required="true">
+                            <option value="">Select Group</option>
+                            @foreach (var data in Model.atttachmentGroups)
+                            {
+                                <option value="@data.Id">@data.groupName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <input type="hidden" name="attachmentId" id="attachmentId" value="0" />
+
+                    <label for="attachmentCategory" class="col-sm-3 col-form-label">Attachment Category Type <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <select name="atttachmentCategoryId" id="atttachmentCategoryId" class="form-control" data-parsley-required="true"></select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="fileUrl" class="col-sm-3 col-form-label">File Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="fileTitle" id="fileTitle">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="attachmentDate" class="col-sm-3 col-form-label">Effective Date</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="attachmentDate" id="attachmentDate" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="fileUrl" class="col-sm-3 col-form-label">Select File<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="file" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="fileUrl" id="fileUrl">
+                        <input type="hidden" name="employeeId" value="@ViewBag.employeeID" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="fileUrl" class="col-sm-3 col-form-label">Remarks</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="remarks" id="remarks">
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Employee Attachment List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="attachmentTable">
+                    <thead>
+                        <tr>
+                            <th>Attachment Group</th>
+                            <th>Attachment Category Name</th>
+                            <th>Attachment Name</th>
+                            <th>Action</th>
+</thead>
+                    <tbody>
+                        @foreach (var data in Model.hRPMSAttachments)
+                        {
+                        <tr>
+                            <td>@data?.atttachmentCategory?.atttachmentGroup?.groupName</td>
+                            <td>@data?.atttachmentCategory?.categoryName</td>
+                            <td>@data.fileTitle</td>
+                            <td>
+                                <a class="btn btn-success" href="~/@data.fileUrl" target="_blank"><i class="fa fa-eye"></i></a>
+                                <a class="btn btn-danger" href="#" onclick="Remove(@data.Id,@data.employeeId)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+
+            $("#attachmentDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+
+            $('#attachmentTable').DataTable();
+
+            $("#atttachmentGroupId").change(function () {
+                var atttachmentGroupId = $('#atttachmentGroupId').val();               
+                Common.Ajax('GET', '/HRPMSEmployee/EmployeeAttachment/GetAllAttachmentCategoryByGroupId/?masterId=' + atttachmentGroupId, [], 'json', ajaxGetAllAttachmentCategoryByGroupId);
+            });
+        });
+        
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/HRPMSEmployee/EmployeeAttachment/Delete/" + Id + "?empId=" + employeeId);
+            } else {
+                return false;
+            }
+        }
+
+        function ajaxGetAllAttachmentCategoryByGroupId(response) {
+            var options = '<option value="">Select Category</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.categoryName + '</option>';
+            });
+            $('#atttachmentCategoryId').empty();
+            $('#atttachmentCategoryId').append(options);
+        }
+        
+    </script>
+}
+
+
+

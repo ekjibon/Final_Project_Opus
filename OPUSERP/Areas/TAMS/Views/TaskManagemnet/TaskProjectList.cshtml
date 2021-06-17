@@ -1,0 +1,94 @@
+﻿@model TaskManagemnetViewModel
+@{
+    ViewData["Title"] = "Section";
+}
+
+@section Style{
+
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Project List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var data in Model.taskProjects)
+                    {
+                        <div class="col-sm-3 ml-1">
+                            <div class="card">
+                                <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                    <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;@data.name</label>
+                                </div>
+                                <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                    <h6 class="text-info">@data.shortDescription</h6>
+                                    <b class="text-success">@data.satrtDate?.ToString("dd-MMM-yyyy h:mm tt")</b><br />
+                                    <a href="/TAMS/TaskManagemnet/ProjectView/@data.Id" class="btn btn-success" style="color:white;float:right">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            $('#departmentTable').DataTable();
+        });
+
+        function Edit(Id, name, taskProjectId ) {
+            $("#projectId").val(Id);
+            $("#name").val(name);
+            $("#taskProjectId").val(taskProjectId);
+        }
+        
+    </script>
+}
+
+
+
+
+
+
+

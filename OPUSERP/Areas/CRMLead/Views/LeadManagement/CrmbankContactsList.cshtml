@@ -1,0 +1,572 @@
+﻿@model ContactsViewModel
+@{
+    ViewData["Title"] = "Contacts";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h4 class="m-0 font-weight-bold text-primary">Contacts</h4>
+
+        </div>
+
+        <hr>
+        <div class="container">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-8 row border" style="border:solid;">
+
+                        <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdBdPerson" value="3" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">BD Person</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="bdPerson" name="bdPerson" placeholder="BD Person" style="width:96%;" />
+                                    <input type="hidden" id="bdPersonasp" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdbkName" value="5" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Bank Name</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="bkName" name="bkName" placeholder="Bank Name" style="width:96%;" />
+                                    <input type="hidden" id="bkasp" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdbrName" value="6" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Branch Name</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="brName" name="brName" placeholder="Branch Name" style="width:96%;" />
+                                    <input type="hidden" id="brasp" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdTlName" value="1" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Contact Name</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="tlName" name="tlName" placeholder="Contact Name" style="width:96%;" />
+                                    <input type="hidden" id="tlasp" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdFaName" value="2" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Designation</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="faName" name="faName" placeholder="Designation Name" style="width:96%;" />
+                                    <input type="hidden" id="faasp" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 row">
+                        <div class="col-lg-12 col-sm-4 col-md-4">
+
+
+                            <img id="xxxx" class="loading-image" src="~/Upload/logo/load.gif" alt="loading.." style="display:none">
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Account Name</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="accName1" name="accName1" placeholder="Account Name" style="width:96%;" />
+
+                                    <input type="hidden" id="accName1asp" />
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-lg-2 col-md-2 col-sm-2" style="padding-right:0;">
+
+                    </div>
+                    <div class="col-lg-7 col-md-5 col-sm-5">
+
+                    </div>
+
+                    <div class="col-lg-3">
+                        <input type="button" id="AllSearch" value="Search" class="btn-sm btn btn-info" />&nbsp;&nbsp;
+                        @*<input type="button" id="allrefresh" value="Export To Excel" class="btn-sm btn btn-danger " />*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="card-title" style="color:black;text-align:center;">Contacts List</h5>
+            </div>
+            <br />
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-bordered table-responsive" id="contactsTable" style="width:100%;"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function ajaxGetFIById(response) {
+
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankName;
+
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#bkName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#bkName").val(ui.item.value);
+                    $("#bkasp").val(ui.item.key);
+                    Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + ui.item.key, [], 'json', ajaxGetBranchByBankId);
+                }
+            });
+        }
+        function ajaxGetBranchByBankId(response) {
+           
+            console.log(response);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankBranch.branchName;
+                
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#brName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#brName").val(ui.item.value);
+                    $("#brasp").val(ui.item.key);
+
+                }
+            });
+        }
+        function ajaxGetCRMEmployees(response) {
+            console.log();
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.nameEnglish;
+                obj.emailAddress = option.emailAddress;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#bdPerson').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#bdPerson").val(ui.item.value);
+                    $("#bdPersonasp").val(ui.item.emailAddress);
+
+                }
+            });
+        }
+        function ajaxGetDesignation(response) {
+           
+            console.log(response);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.designationName;
+              
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#faName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#faName").val(ui.item.value);
+                    $("#faasp").val(ui.item.key);
+
+                }
+            });
+        }
+        $(document).ready(function () {
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBankByFIId/?Id=' + 0, [], 'json', ajaxGetFIById, false);
+            Common.Ajax('GET', '/global/api/GetEmployeeInfoCRMAnalyst', [], 'json', ajaxGetCRMEmployees, false);
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetAllDesignation', [], 'json', ajaxGetDesignation, false);
+            $("#imagePath").change(function () {
+                readURL(this);
+            });
+            $("#imagePath_Vcard_Font").change(function () {
+                readURLVcard_Font(this);
+            });
+            $("#imagePath_Vcard_Back").change(function () {
+                readURLVcard_Back(this);
+            });
+
+
+           // Common.Ajax('GET', '/global/api/getAllLeadsByUserId', [], 'json', ajaxGetAllLeadsByUserId);
+            GetAllContactsList("NoData", "NoData", "NoData", "NoData", "NoData", "NoData");
+           // GetAllContactsList(@ViewBag.leadId);
+            $("#accName1").keydown(function () {
+                // alert("bb");
+                $("#rdTlName").prop("checked", false);
+                $("#rdFaName").prop("checked", false);
+                $("#rdBdPerson").prop("checked", false);
+                $("#rdbkName").prop("checked", false);
+                $("#rdbrName").prop("checked", false);
+
+                $("#tlName").val('');
+                $("#tlasp").val('');
+                $("#faName").val('');
+                $("#faasp").val('');
+                $("#bkName").val('');
+                $("#bkasp").val('');
+                $("#brName").val('');
+                $("#brasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+
+            });
+        
+            $("#rdTlName").change(function () {
+
+                if ($("input[Id='rdTlName']:checked").val() != 1) {
+                    $("#tlName").val('');
+                    $("#tlasp").val('');
+
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdbkName").change(function () {
+
+                if ($("input[Id='rdbkName']:checked").val() != 5) {
+                    $("#bkName").val('');
+                    $("#bkasp").val('');
+
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdbrName").change(function () {
+
+                if ($("input[Id='rdbrName']:checked").val() != 6) {
+                    $("#brName").val('');
+                    $("#brasp").val('');
+
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdFaName").change(function () {
+
+
+                if ($("input[Id='rdFaName']:checked").val() != 2) {
+                    $("#faasp").val('');
+                    $("#faName").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdBdPerson").change(function () {
+
+                if ($("input[Id='rdBdPerson']:checked").val() != 3) {
+                    $("#bdPerson").val('');
+                    $("#bdPersonasp").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+
+
+
+            $("#AllSearch").click(function () {
+
+                var TeamLeader = $("#tlName").val();
+
+                if (TeamLeader == "") {
+                    TeamLeader = "NoData"
+                }
+                if ($("input[Id='rdTlName']:checked").val() == 1) {
+                    if (TeamLeader == "NoData") {
+                        swal("Please Enter Contact Name.");
+                        return false;
+                    }
+
+                }
+                var bank = $("#bkasp").val();
+
+                if (bank == "") {
+                    bank = "NoData"
+                }
+                if ($("input[Id='rdbkName']:checked").val() == 5) {
+                    if (bank == "NoData") {
+                        swal("Please Enter Bank Name.");
+                        return false;
+                    }
+
+                }
+                var branch = $("#brasp").val();
+
+                if (branch == "") {
+                    branch = "NoData"
+                }
+                if ($("input[Id='rdbrName']:checked").val() == 6) {
+                    if (branch == "NoData") {
+                        swal("Please Enter Branch Name.");
+                        return false;
+                    }
+
+                }
+                var Fa = $("#faasp").val();
+                if (Fa == "") {
+                    Fa = "NoData"
+                }
+                if ($("input[Id='rdFaName']:checked").val() == 2) {
+                    if (Fa == "NoData") {
+                        swal("Please Enter Designation Name.");
+                        return false;
+                    }
+
+                }
+                var BD = $("#bdPersonasp").val();
+                if (BD == "") {
+                    BD = "NoData"
+                }
+                if ($("input[Id='rdBdPerson']:checked").val() == 3) {
+
+                    if (BD == "NoData") {
+                        swal("Please Enter BD Person.");
+                        return false;
+                    }
+
+                }
+                var LeadId = $("#accName1").val();
+
+
+                if (LeadId == "") {
+                    LeadId = "NoData"
+                }
+
+                //Common.Ajax('GET', '/CRMLead/LeadManagement/GetAllContactsfilter/'  + TeamLeader + "/" + Fa + "/" + BD + "/" + LeadId , [], 'json', ajaxGetMaster);
+                GetAllContactsList(TeamLeader, Fa, BD, LeadId,bank,branch);
+
+
+            });
+
+        });
+
+        function ajaxGetAllLeadsByUserId(response) {
+            var GeLeadsList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.leadName;
+                GeLeadsList[GeLeadsList.length] = obj;
+            });
+            $('#leadName').autocomplete({
+                source: GeLeadsList,
+                select: function (event, ui) {
+                    //$("#leadName").val(ui.item.value);
+                    $("#leadId").val(ui.item.key);
+                }
+            });
+        }
+
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function readURLVcard_Font(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img_Vcard_Font').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function readURLVcard_Back(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img_Vcard_Back').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+       
+
+       
+
+        function GetAllContactsList(TeamLeader, Fa, BD, LeadId, bank, branch) {
+            $('#contactsTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetAllbankContactsfilter", "LeadManagement")',
+                    dataSrc: "",
+                    data: { TeamLeader: TeamLeader, Fa: Fa, BD: BD, LeadId: LeadId, bank: bank, branch: branch }
+                },
+                //scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "leadName", title: "Lead Name", width: "30%" },
+                    { data: "resourceName", title: "Resource Name", width: "30%" },
+                    { data: "designationName", title: "Designation Name", width: "30%" },
+                    { data: "bankName", title: "Bank Name", width: "30%" },
+                    { data: "branchName", title: "Branck Name", width: "30%" },
+                    //{ data: "phone", title: "Phone", width: "20%" },
+                    { data: "mobile", title: "Mobile", width: "20%" },
+                    { data: "email", title: "Email", width: "20%" },
+
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4,5,6]
+                        },
+                        title: "Contacts",
+                        messageTop: 'Contacts List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: "Contacts",
+                        messageTop: 'Contacts List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Contacts",
+                        messageTop: 'Contacts List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        
+
+    </script>
+}
+@section Style{
+
+    <style>
+        /*#clientTable tbody tr {
+            cursor: pointer;
+        }*/
+
+        .loading-image {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+        }
+
+        .loader {
+            display: none;
+            width: 200px;
+            height: 200px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            margin-left: -50px;
+            margin-top: -100px;
+            z-index: 2;
+            overflow: auto;
+        }
+    </style>
+}
+

@@ -1,0 +1,67 @@
+TeamViewer 
+CRAB-    856777023 Pass: 123456  
+GREY-	701222671  Pass: 9965
+PFIL-    897685697 Pass: 123456
+
+HM6NR-QXX7C-DFW2Y-8B82K-WTYJV   Product Key
+
+AnyDesk
+GDL- 532637246 Psss: gdi@4321
+ABL- 401255570 Psss: AblOpus#$    192.168.187.33  P@ssw0rd   192.168.187.27  Abl12   192.168.187.46  Admin@123
+LINUX- 420077554 Psss:root@123
+
+Remote :
+FDL=  202.84.44.78         User:Administrator  Pass:  #R$3rv3r!&
+BNB=  119.148.9.154:59595  User:Administrator  Pass:  *bnb@dm1n#
+ECRL= 45.115.115.46  	   User:Administrator  Pass:  Mobin@1234
+MIR=103.134.88.13	   User:Administrator  Pass:  Opus@123456
+
+software login:
+GDL- 90000@gdic.com
+Agrani- 299739957 Pass: 123456
+CRM- 
+
+http://localhost/PublishAgrani/Home/EmployeeDetailsInformation
+
+UDACITY: Udacity@gmail.com
+
+Github:
+UserId: RuhulRico
+Pass: Ruhul@git3
+UserId: opustechnology
+Pass: Opus%1234
+
+Super@321`
+Gitlab: Ruhul@gitlab321`
+Trello: Trello@321`
+
+CsharpCorner: ruhul.rico@gmail.com Ruhul@123`
+Code Project: ruhul.rico@gmail.com Ruhul@123`
+
+ID # SEID-277947
+ID # SEID-278535
+
+----#################################################
+git pull
+dotnet reload
+dotnet publish
+dotnet ef migrations add MyFirstMigration
+dotnet ef database update
+dotnet clean
+dotnet publish
+
+----################### For Port Add to Linus Firewall
+sudo -i
+ufw status
+ufw add 96/tcp
+ufw allow 96/tcp
+ufw reload
+
+---###### Port restart
+service nginx restart
+
+--adroll 3182480
+--pin 633504
+
+
+

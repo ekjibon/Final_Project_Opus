@@ -1,0 +1,122 @@
+﻿@model BillReceiveViewModel
+@{
+    ViewData["Title"] = "Bill Receive Pdf";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+        #example1 {
+            box-sizing: content-box;
+            width: 95%;
+            height: 100px;
+            padding: 30px;
+            border: 2px solid black;
+        }
+    </style>
+
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div style="margin-left:5px">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+                    </div>
+
+                    <div style="margin-left:260px">
+                        <span style="font-size:28px;font-weight:700;color:black;margin-right:22px;">Payment Acknowledgement</span><br /><br />
+                        <span style="font-size:26px;font-weight:700;color:black;margin-left:40px;">Account Payable Copy</span>
+                    </div>
+                
+                    <div style="margin-top:10px;margin-left:42px;color:black">
+                        <textarea name="text" rows="4" cols="30" wrap="soft" style="text-align:center;margin-left:92px;font-weight:400;font-size:20px;">@Model.companies.FirstOrDefault().addressLine</textarea>
+                    </div>
+                </div><br /><br />
+
+                <div class="row">
+                    <div style="margin-bottom:30px;color:black">
+                        <span style="font-weight:600;font-size:25px;"><i>Invoice Received and Payment Confirmation</i></span><br /><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:40px;font-weight:600;">From Supplier</label>: @Model.dailyBillReceive?.supplier?.organizationName</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:22px;font-weight:600;">Invoice Number</label>: @Model.dailyBillReceive?.InvoiceNo</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:13px;font-weight:600;">Process Number</label>: @Model.dailyBillReceive?.ProcessNo</span>
+                    </div>
+                    <div style="margin-bottom:30px;color:black;margin-left:200px;">
+                        <span>&nbsp;</span><br /><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:220px;font-weight:600;">Invoice Amount</label>: @Model.dailyBillReceive?.GBamount?.ToString("0,0.00")</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:57px;font-weight:600;">Expected Invoice Payment Date</label>: @Model.dailyBillReceive?.PaymentDate?.ToString("dd-MMM-yyyy")</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:8px;font-weight:600;">Expected Bill Return to Finance Date</label>: @Model.dailyBillReceive?.BillReturnDate?.ToString("dd-MMM-yyyy")</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:169px;font-weight:600;">Invoice Receive Date</label>: @Model.dailyBillReceive?.BillReceiveDate?.ToString("dd-MMM-yyyy")</span>
+                        <br /><br /><br />
+                        <span style="font-weight:400;font-size:22px;"><i>Accounts Payable, bKash Finance</i></span>
+                    </div>
+
+                </div><br />
+                <div class="row">
+                    <div style="margin-bottom:30px;color:black;">
+                        <span style="font-weight:400;font-size:22px;color:black;margin-left:150px;">Tear of accross the dotted line, provide the portion below to vendor and attach this section with bill</span>
+                        <br /><br /><br />
+                        <hr style="border:1px dashed black;" />
+                        <span style="font-weight:400;font-size:22px;color:black;margin-left:100px;text-align:justify;"><i>Please bring this section for any query, check collection for further reference of the bill. Please submit this section with acknowledgement to Accounts Payable on receiving the payment.</i></span>
+                        <hr style="border:1px dashed black;" />
+                    </div>
+                </div><br /><br />
+                <div class="row">
+                    <div style="margin-left:5px">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+                    </div>
+                    <div style="margin-left:330px">
+                        <span style="font-size:28px;font-weight:700;color:black;margin-right:22px;"><u><i>Supplier's Copy</i></u></span><br /><br />
+                    </div>
+                    <div style="margin-top:10px;margin-left:132px;color:black">
+                        <textarea name="text" rows="4" cols="30" wrap="soft" style="text-align:center;margin-left:92px;font-weight:400;font-size:20px;">@Model.companies.FirstOrDefault().addressLine</textarea>
+                    </div>
+
+                    @*<div style="margin-top:10px;color:black;margin-left:155px;">
+                        <span style="font-weight:400;font-size:20px;">Shadhinata Tower, Birsrestha Shaheed Jahangir Gate</span><br />
+                        <span style="font-weight:400;font-size:20px;">1, Dhaka Cantonment, Dhaka-1206.</span><br />
+                        <span style="font-weight:400;font-size:20px;">Mobile: +88-01833329994</span>
+                    </div>*@
+                </div><br /><br />
+                <div class="row">
+                    <div style="margin-bottom:30px;color:black">
+                        <span style="font-weight:600;font-size:25px;"><i>Bill Received &amp; Payment Confirmation</i></span><br /><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:40px;font-weight:600;">From Supplier</label>: @Model.dailyBillReceive?.supplier?.organizationName</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:22px;font-weight:600;">Invoice Number</label>: @Model.dailyBillReceive?.InvoiceNo</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:13px;font-weight:600;">Process Number</label>: @Model.dailyBillReceive?.ProcessNo</span>
+                    </div>
+                    <div style="margin-bottom:30px;color:black;margin-left:260px;">
+                        <span>&nbsp;</span><br /><br /><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:220px;font-weight:600;">Invoice Amount</label>: @Model.dailyBillReceive?.GBamount?.ToString("0,0.00")</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:57px;font-weight:600;">Expected Invoice Payment Date</label>: @Model.dailyBillReceive?.PaymentDate?.ToString("dd-MMM-yyyy")</span><br />  
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:169px;font-weight:600;">Invoice Receive Date</label>: @Model.dailyBillReceive?.BillReceiveDate?.ToString("dd-MMM-yyyy")</span>
+                        <br /><br /><br />
+                        <span style="font-weight:400;font-size:22px;"><i>Accounts Payable, bKash Finance</i></span>
+                    </div>
+                </div><br />
+                <div class="row" id="example1">
+                    <div style="margin-bottom:30px;color:black">
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:150px;font-weight:600;">Acknowledged by</label>: @Model.dailyBillReceive?.ResposneemployeeInfo?.nameEnglish</span><br />
+                        <span style="font-weight:400;font-size:22px;"><label style="margin-right:22px;font-weight:600;">Receive the above payment on</label>: @Model.dailyBillReceive?.BillReceiveDate?.ToString("dd-MMM-yyyy")</span>
+                    </div>
+                    <div style="margin-bottom:30px;color:black;margin-left:300px;padding-top:25px;">
+                        <br />
+                        <span style="font-weight:400;font-size:22px;">Authorized Signature on behalf of Vendor</span>
+                    </div>
+                </div><br /><br />
+                <span style="font-weight:400;font-size:22px;color:black;">This is computer generated report. No signature required. Please note that the actual payment may differ from the above amount due to VAT &amp; income Tax deduction at sources where applicable. Also the amount mentioned above may vary which is subject to further checking by accounts payable of bKash.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

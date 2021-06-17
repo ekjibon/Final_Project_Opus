@@ -1,0 +1,119 @@
+﻿@model LedgerBookViewModel
+@{
+    ViewData["Title"] = "Day Book Reports";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+        .vartical-table th {
+            width: 25%;
+        }
+        .vartical-table td {
+            width: 25%;
+        }
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+        table {
+            page-break-inside: auto
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+        thead {
+            display: table-header-group
+        }
+        tfoot {
+            display: table-footer-group
+        }
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+@{
+    decimal? Sumdebit = 0;
+    decimal? Sumcredit = 0;
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-2">
+                        <img src="@Model.Company.filePath" alt="OPUS ERP" style="height:50px;" />
+                    </div>
+                    <div class="col-8" style="color:black;text-align:center">
+                        <h3>@Model.Company.companyName</h3>
+                        <p style="text-align:center;">@Model.Company.addressLine</p>
+                        <h5 style="text-align:center;">Day Book</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid" style="color:black;">
+                <hr style="border:1px solid grey;">
+                <div class="row" style="padding: 5px 0px 5px 0px;">
+                    <div class="col-6">
+                        <span style="font-weight:bold;font-size: 15px;">Voucher Type Name: @Model?.VoucherTypeName</span>                       
+                    </div>                   
+                    <div class="col-6 text-right">
+                        <span style="font-weight:bold;font-size: 15px;">Date: <i>@ViewBag.FromDate?.ToString("dd-MMM-yyyy")</i>&nbsp;&nbsp; to &nbsp; <i>@ViewBag.ToDate?.ToString("dd-MMM-yyyy")</i></span>                       
+                    </div>                   
+                </div>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr>
+                                <th width="10%">Date</th>
+                                <th width="10%">Voucher No.</th>
+                                <th width="10%">Voucher Type</th>
+                                <th width="10%">Account Code</th>
+                                <th width="20%">Account Name</th>
+                                <th width="20%">Subledger Name</th>
+                                <th width="10%" style="text-align:center">Debit</th>
+                                <th width="10%" style="text-align:center">Credit</th>
+                            </tr>
+                        </thead>
+                        @if (Model.ledgerBookReportViewModels.Count() > 0)
+                        {
+                            @foreach (var data in Model.ledgerBookReportViewModels)
+                            {
+                                <tr>
+                                    <td>@data.voucherDate</td>
+                                    <td>@data.voucherNo</td>
+                                    <td>@data.voucherType</td>
+                                    <td>@data.accountCode</td>
+                                    <td>@data.accountName</td>
+                                    <td>@data.subledgerName</td>
+                                    <td style="text-align:right;">@data.debit?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;">@data.credit?.ToString("0,0.00")</td>
+                                </tr>
+                                Sumdebit = Sumdebit + data.debit;
+                                Sumcredit = Sumcredit + data.credit;
+                            }
+                        }
+                                <thead style="background-color:lightgray;border-bottom:groove;">
+                                    <tr>
+                                        <th colspan="6" style="text-align:right;">Total Amount </th>
+                                        <th style="text-align:right">@Sumdebit?.ToString("0,0.00")</th>
+                                        <th style="text-align:right">@Sumcredit?.ToString("0,0.00")</th>
+                                    </tr>                                   
+                                </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts{
+}

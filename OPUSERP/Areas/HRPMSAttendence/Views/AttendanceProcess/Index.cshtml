@@ -1,0 +1,143 @@
+﻿@model EmployeePunchCardInfoViewModel
+@{
+    ViewData["Title"] = "Attendance Process";
+}
+
+@section Style{
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label for="processType" class="col-sm-5 col-form-label">Process Type <span style="color:red;">*</span></label>
+                        <div class="col-sm-7">
+                            <select type="text" class="form-control" id="processType" name="processType">
+                                <option class="form-control" value="0">Please Select</option>
+                                <option class="form-control" value="1">From Machine</option>
+                                <option class="form-control" value="2">From Login</option>
+                                <option class="form-control" value="3">From Excel</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label for="sbuId" class="col-sm-4 col-form-label">SBU <span style="color:red;">*</span></label>
+                        <div class="col-sm-8">
+                            <select type="text" class="form-control" id="sbuId" name="sbuId"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label for="attendanceProcessDate" class="col-sm-5 col-form-label">Process Date <span style="color:red;">*</span></label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="attendanceProcessDate" value="" name="attendanceProcessDate" autocomplete="off">
+                            <input type="hidden" class="form-control" id="branchId" value="" name="branchId">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <button data-toggle="tooltip" title="Process" class="btn btn-success btn-sm" id="btnProcess" style="width: 100px;float:right"><i class="fas fa-chart-line"></i> Process</button>
+        </div>
+    </div>
+</div>
+@*<div class="row clearfix">
+        <div class="col-12">
+            <div class="card mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold">Process List</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered" id="licenseTable">
+                        <thead>
+                            <tr>
+                                <th>Emp Name</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Work Date</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Working Hour</th>
+                                <th>Status</th>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+
+            $("#attendanceProcessDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            $("#btnProcess").on("click", Processattendance);
+            $("#attnprocess").addClass("active");
+        });
+
+        function Processattendance() {
+            let sbuId = $('#sbuId').val();
+            let attendanceProcessDate = $('#attendanceProcessDate').val();
+            let processType = $('#processType').val();
+            if (sbuId == 0) {
+                swal('Warning', 'Select Sbu', 'warning');
+                return false;
+            }
+            else if (attendanceProcessDate == '') {
+                swal('Warning', 'Select Process Date', 'warning');
+                return false;
+            } 
+            else if (processType == '') {
+                swal('Warning', 'Select Process Type', 'warning');
+                return false;
+            }
+            
+            $.ajax({
+                type: 'Post',
+                url: '@Url.Action("ProcessAttendance", "AttendanceProcess")',
+                data: { startDate: attendanceProcessDate, sbuId: sbuId, processType: processType },
+            })
+                .done(function () {                    
+                    swal('', 'Process Successfully!', 'success');
+                })
+                .fail(function () {
+                    swal('Cancelled', 'Not processed. Please try again later !!!', 'error');
+                });
+        }
+
+        function GetSBU(response) {
+            $('#sbuId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+            });
+            $('#sbuId').append(options);
+        }
+
+    </script>
+}

@@ -1,0 +1,128 @@
+﻿
+@model AgreementViewModel
+@{
+    ViewData["Title"] = "Agreement List";
+    Layout = "~/Areas/CRMLead/Views/Shared/_LeadFormPersonal.cshtml";
+
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Agreement List</h4>
+                <a href="javascript:void(0)"  onclick="AddAgreement()" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Add New</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-responsive" id="agreementTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Lead Name</th>
+                            <th>Agreement No</th>
+                            <th>Agreement Type</th>
+                            <th>Agreement Date</th>
+                            <th>Expired Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.agreements)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.leads.leadName</td>
+                                    <td>@data.agreementNo</td>
+                                    <td>@data.agreementType?.agreementTypeName</td>
+                                    <td>@data.agreementDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.expiredDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.agreementStatus?.agreementStatusName</td>
+                                    <td>
+                                        <a class="btn btn-success" href="javascript:void(0)"  onclick="EditAgreement(@data.Id,@data.leadsId,'@data.leads.leadName')" title="Edit"><i class="fa fa-edit"></i></a>
+                                        <a class="btn btn-success" href="/CRMLead/Agreement/AgreementPdfAction?AgreementId=@data.Id" target="_blank" title="Print"><i class="fa fa-print"></i></a>
+                                        @if (data.agreementStatusId == 3)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            <a id="btnVerificationDetails' + @i + '" class="btn btn-info" href="javascript:void(0)" onclick="SendForVerification(@data.Id)" title="Send For Verification"><i class="fa fa-paper-plane"></i></a>
+                                        }
+                                    </td>
+                                </tr>
+                                i++;
+
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsLead{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#AgreementList").addClass("active");
+            $('#agreementTable').DataTable();
+
+
+            //var table = $('#BOMList').DataTable();
+
+            //$('#BOMList tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[1];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var vid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/Production/BOM/BOMDetail/?id=" + vid;
+            //});
+            //$('#BOMList tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+
+        });
+        function SendForVerification(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Send For Verification this Agreement!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Send it!'
+            }).then(function () {
+                window.location.href = "/CRMLead/Agreement/UpdateForAgreementVerificationLead?Id=" + Id + '&statusId=' + 2 + '&leadId=' + @ViewBag.leadId + '&leadName=' + '@ViewBag.leadName';
+                swal('', 'Send Successfully!', 'success');
+               
+                
+
+            });
+        }
+        function EditAgreement(Id, leadsId, leadName) {
+            window.location.href = "/CRMLead/Agreement/AgreementNewLeadPersonal?id=" + Id + '&leadId=' + leadsId + '&leadName=' + leadName;
+            
+        }
+        function AddAgreement() {
+            window.location.href = "/CRMLead/Agreement/AgreementNewLeadPersonal?id=" + 0 + '&leadId=' + @ViewBag.leadId + '&leadName=' + '@ViewBag.leadName';
+
+        }
+    </script>
+}
+
+
+@*@section Style{
+    <style>
+        /*#BOMList tbody tr {
+            cursor: pointer;
+        }*/
+    </style>
+}*@
+
+
+
+
+

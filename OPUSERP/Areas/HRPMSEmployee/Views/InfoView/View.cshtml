@@ -1,0 +1,979 @@
+﻿@model InfoViewModel
+@{
+    ViewData["Title"] = "Employee Information View";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:85px" />
+                </div>
+                <div class="col-6 text-center">
+                    <h3 class="card-title" style="color: black;margin-top: 25px;">Personal Data System</h3>
+                    <h6 class="identity-box-center">(@Model.employeeNameCode)</h6>
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-info" data-toggle='tooltip' title='Print' target='_blank' href='/Employee/InfoView/pdspdf/@Model.employee.Id' style="float:right;margin-top: 25px;"><i class="fa fa-print"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+
+            @if (ViewBag.section == "info")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary" id="personal">@Model.fLang.employeeInfoLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.employeeID</th>
+                                    <td>@Model.employee.employeeCode</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.name (@Model.fLang.employeeInfoLn.english)</th>
+                                    <td>@Model.employee.nameEnglish</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.name (@Model.fLang.employeeInfoLn.bangla)</th>
+                                    <td>@Model.employee.nameBangla</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.fatherName (@Model.fLang.employeeInfoLn.english)</th>
+                                    <td>@Model.employee.fatherNameEnglish</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.fatherName (@Model.fLang.employeeInfoLn.bangla)</th>
+                                    <td>@Model.employee.fatherNameBangla</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.motherName (@Model.fLang.employeeInfoLn.english)</th>
+                                    <td>@Model.employee.motherNameEnglish</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.motherName (@Model.fLang.employeeInfoLn.bangla)</th>
+                                    <td>@Model.employee.motherNameBangla</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.nationality</th>
+                                    <td>@Model.employee.nationality</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.nationalID</th>
+                                    <td>@Model.employee.nationalID</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.dateOfBirth</th>
+                                    <td>@Model.employee.dateOfBirth.Value.ToShortDateString()</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.birthPlace</th>
+                                    <td>@Model.employee.birthPlace</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.homeDistrict</th>
+                                    <td>@Model.employee.homeDistrict</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.disability</th>
+                                    <td>@Model.employee.disability</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.gender</th>
+                                    <td>@Model.employee.gender</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.maritalStatus</th>
+                                    <td>@Model.employee.maritalStatus</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.religion</th>
+                                    <td>@Model.employee.religion.name</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.bloodGroup</th>
+                                    <td>@Model.employee.bloodGroup</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.tin</th>
+                                    <td>@Model.employee.tin</td>
+                                </tr>
+                                @*<tr>
+                                    <th>@Model.fLang.employeeInfoLn.batch</th>
+                                    <td>@Model.employee.batch</td>
+                                </tr>*@
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.freedomFighterNo</th>
+                                    <td>@Model.employee.freedomFighterNo</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.telephoneOffice</th>
+                                    <td>@Model.employee.telephoneOffice</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.telephoneResidence</th>
+                                    <td>@Model.employee.telephoneResidence</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.emailAddress</th>
+                                    <td>@Model.employee.emailAddress</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.emailAddressPersonal</th>
+                                    <td>@Model.employee.emailAddressPersonal</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.mobileNumberOffice</th>
+                                    <td>@Model.employee.mobileNumberOffice</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.mobileNumberPersonal</th>
+                                    <td>@Model.employee.mobileNumberPersonal</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.employeeType</th>
+                                    <td>@Model.employee.employeeType.empType</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.natureOfRequitment</th>
+                                    <td>@Model.employee.natureOfRequitment</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.joiningDateGovtService</th>
+                                    <td>@Model.employee.joiningDateGovtService.Value.ToShortDateString()</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.dateOfLPR</th>
+                                    <td>@Model.employee.LPRDate</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.PRLStartDate</th>
+                                    <td>@Model.employee.PRLStartDate</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.PRLEndDate</th>
+                                    <td>@Model.employee.PRLEndDate</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.joiningDesignation</th>
+                                    <td>@Model.employee.joiningDesignation</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.designation</th>
+                                    <td>@Model.employee.designation</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.dateofregularity</th>
+                                    <td>@Model.employee.dateofregularity.Value.ToShortDateString()</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.dateOfPermanent</th>
+                                    <td>@Model.employee.dateOfPermanent.Value.ToShortDateString()</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.specialSkill</th>
+                                    <td>@Model.employee.specialSkill</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.seniorityNumber</th>
+                                    <td>@Model.employee.seniorityNumber</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.gpfNomineeName</th>
+                                    <td>@Model.employee.gpfNomineeName</td>
+                                </tr>
+                                <tr>
+                                    <th>@Model.fLang.employeeInfoLn.gpfAcNo</th>
+                                    <td>@Model.employee.gpfAcNo</td>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "address")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary" id="address">@Model.fLang.addressLn.present</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.Division</th>
+                                    <td>@Model.addressPresent.division.divisionName</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.District</th>
+                                    <td>@Model.addressPresent.district.districtName</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.Upazila</th>
+                                    <td>@Model.addressPresent.thana.thanaName</td>
+                                <tr>
+                                    @*<tr>
+                                    <th>@Model.fLang.addressLn.Union</th>
+                                    <td>@Model.addressPresent.union</td>
+                                <tr>*@
+
+                                <tr>
+                                    <th>@Model.fLang.addressLn.PostOffice</th>
+                                    <td>@Model.addressPresent.postOffice</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.PostCode</th>
+                                    <td>@Model.addressPresent.postCode</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.BlockSector</th>
+                                    <td>@Model.addressPresent.blockSector</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.HouseVillage</th>
+                                    <td>@Model.addressPresent.houseVillage</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.roadNo</th>
+                                    <td>Road No.</td>
+                                <tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.addressLn.permanent</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.Division</th>
+                                    <td>@Model.addressPermanent.division.divisionName</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.District</th>
+                                    <td>@Model.addressPermanent.district.districtName</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.Upazila</th>
+                                    <td>@Model.addressPermanent.thana.thanaName</td>
+                                <tr>
+                                    @*<tr>
+                                    <th>@Model.fLang.addressLn.Union</th>
+                                    <td>@Model.addressPermanent.union</td>
+                                <tr>*@
+
+                                <tr>
+                                    <th>@Model.fLang.addressLn.PostOffice</th>
+                                    <td>@Model.addressPermanent.postOffice</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.PostCode</th>
+                                    <td>@Model.addressPermanent.postCode</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.BlockSector</th>
+                                    <td>@Model.addressPermanent.blockSector</td>
+                                <tr>
+                                <tr>
+                                    <th>@Model.fLang.addressLn.HouseVillage</th>
+                                    <td>@Model.addressPermanent.houseVillage</td>
+                                <tr>
+
+                                <tr>
+                                    <th>@Model.fLang.addressLn.roadNo</th>
+                                    <td>Road No.</td>
+                                <tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "education")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.educationalQualificationLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.educationalQualificationLn.levelOfEducation</th>
+                                    <th>@Model.fLang.educationalQualificationLn.degree</th>
+                                    <th>@Model.fLang.educationalQualificationLn.subject</th>
+                                    <th>@Model.fLang.educationalQualificationLn.organization</th>
+                                    <th>@Model.fLang.educationalQualificationLn.instritution</th>
+                                    <th>@Model.fLang.educationalQualificationLn.result</th>
+                                    <th>@Model.fLang.educationalQualificationLn.grade</th>
+                                    <th>@Model.fLang.educationalQualificationLn.passingYear</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.educationalQualifications)
+                                {
+                                    <tr>
+                                        <td>@data.degree.levelofeducation.levelofeducationName</td>
+                                        <td>@data.degree.degreeName</td>
+                                        <td>@data.reldegreesubject.subject.subjectName</td>
+                                        <td>@data.organization.organizationName</td>
+                                        <td>@data.institution</td>
+                                        <td>@data.result.resultName</td>
+                                        <td>@data.grade</td>
+                                        <td>@data.passingYear</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "spouse")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.spouseLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.spouseLn.spouseName</th>
+                                    <th>@Model.fLang.spouseLn.spouseNameBN</th>
+                                    <th>@Model.fLang.spouseLn.dateOfBirth</th>
+                                    <th>@Model.fLang.spouseLn.homeDistrict</th>
+                                    <th>@Model.fLang.spouseLn.gender</th>
+                                    <th>@Model.fLang.spouseLn.bloodGroup</th>
+                                    <th>@Model.fLang.spouseLn.occupation</th>
+                                    <th>@Model.fLang.spouseLn.nid</th>
+                                    <th>@Model.fLang.spouseLn.contact</th>
+                                    <th>@Model.fLang.spouseLn.emailAddress</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.spouses)
+                                {
+                                    <tr>
+                                        <td>@data.spouseName</td>
+                                        <td>@data.spouseNameBN</td>
+                                        <td>@data.dateOfBirth.Value.ToShortDateString()</td>
+                                        <td>@data.homeDistrict</td>
+                                        <td>@data.gender</td>
+                                        <td>@data.bloodGroup</td>
+                                        <td>@data.occupation</td>
+                                        <td>@data.nid</td>
+                                        <td>@data.contact</td>
+                                        <td>@data.email</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "children")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.childrenLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.childrenLn.childName</th>
+                                    <th>@Model.fLang.childrenLn.childNameBN</th>
+                                    <th>@Model.fLang.childrenLn.dateOfBirth</th>
+                                    <th>@Model.fLang.childrenLn.gender</th>
+                                    <th>@Model.fLang.childrenLn.occupation</th>
+                                    <th>@Model.fLang.childrenLn.bin</th>
+                                    <th>@Model.fLang.childrenLn.nid</th>
+                                    <th>@Model.fLang.childrenLn.bloodGroup</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.childrens)
+                                {
+                                    <tr>
+                                        <td>@data.childName</td>
+                                        <td>@data.childNameBN</td>
+                                        <td>@data.dateOfBirth.Value.ToShortDateString()</td>
+                                        <td>@data.gender</td>
+                                        <td>@data.occupation</td>
+                                        <td>@data.bin</td>
+                                        <td>@data.nid</td>
+                                        <td>@data.bloodGroup</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "language")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.languageLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.languageLn.language</th>
+                                    <th>@Model.fLang.languageLn.reading</th>
+                                    <th>@Model.fLang.languageLn.writing</th>
+                                    <th>@Model.fLang.languageLn.speaking</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.employeeLanguages)
+                                {
+                                <tr>
+                                    <td>@data.language.languageName</td>
+                                    <td> <i class="fa @(data.reading == "reading"?"fa-check-circle":"fa-times")"></i></td>
+                                    <td> <i class="fa @(data.writing == "writing"?"fa-check-circle":"fa-times")"></i></td>
+                                    <td> <i class="fa @(data.speaking == "speaking"?"fa-check-circle":"fa-times")"></i></td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "award")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.awardLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.awardLn.awardName</th>
+                                    <th>@Model.fLang.awardLn.perpose</th>
+                                    <th>@Model.fLang.awardLn.txtAwardDate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.employeeAwards)
+                                {
+                                    <tr>
+                                        <td>@data.awardName</td>
+                                        <td>@data.purpose</td>
+                                        <td>@data.awardDate.Value.ToShortDateString()</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "publication")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.publicationLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.publicationLn.publicationType</th>
+                                    <th>@Model.fLang.publicationLn.publicationName</th>
+                                    <th>@Model.fLang.publicationLn.publicationPlace</th>
+                                    <th>@Model.fLang.publicationLn.publicationDate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var data in Model.publications)
+                                {
+                                    <tr>
+                                        <td>@data.publicationType</td>
+                                        <td>@data.publicationName</td>
+                                        <td>@data.publicationPlace</td>
+                                        <td>@data.publicationDate.Value.ToShortDateString()</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "disciplinary")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.disciplinaryLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.disciplinaryLn.offense</th>
+                                    <th>@Model.fLang.disciplinaryLn.naturalPunishment</th>
+                                    <th>@Model.fLang.disciplinaryLn.punishmentDate</th>
+                                    <th>@Model.fLang.disciplinaryLn.goWithDate</th>
+                                    <th>@Model.fLang.disciplinaryLn.startFrom</th>
+                                    <th>@Model.fLang.disciplinaryLn.endTo</th>
+                                    <th>@Model.fLang.disciplinaryLn.remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.disciplinaries)
+                                {
+                                    <tr>
+                                        <td>@data.Offense.name</td>
+                                        <td>@data.naturalPunishment.name</td>
+                                        <td>@data.punishmentDate.ToShortDateString()</td>
+                                        <td>@data.goNumberWithDate</td>
+                                        <td>@data.startingDate.ToShortDateString()</td>
+                                        <td>@data.endDate.ToShortDateString()</td>
+                                        <td>@data.remarks</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "promotion")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.promotionLogLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered" id="promotionTable">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.promotionLogLn.designation</th>
+                                    <th>@Model.fLang.promotionLogLn.dateOfPromotion</th>
+                                    <th>@Model.fLang.promotionLogLn.promotedPayScale</th>
+                                    <th>@Model.fLang.promotionLogLn.goNumber</th>
+                                    <th>@Model.fLang.promotionLogLn.goDate</th>
+                                    @*<th>@Model.fLang.promotionLogLn.natureOfPromotion</th>
+                                <th>@Model.fLang.promotionLogLn.rank</th>*@
+                                    <th>@Model.fLang.promotionLogLn.remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.promotionLogs)
+                                {
+                                    <tr>
+                                        <td>@data.designation</td>
+                                        <td>@data.date.ToShortDateString()</td>
+                                        <td>@data.payScale</td>
+                                        <td>@data.goNumber</td>
+                                        <td>@data.goDate.Value.ToShortDateString()</td>
+                                        @*<td>@data.nature</td>
+                                    <td>@data.rank</td>*@
+                                        <td>@data.remark</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "passport")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.passportLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.passportLn.passPortNumber</th>
+                                    <th>@Model.fLang.passportLn.place</th>
+                                    <th>@Model.fLang.passportLn.dateOfIssue</th>
+                                    <th>@Model.fLang.passportLn.dateOfExpair</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.passportDetails)
+                                {
+                                    <tr>
+                                        <td>@data.passportNumber</td>
+                                        <td>@data.placeOfIssue</td>
+                                        <td>@data.dateOfIssue.Value.ToShortDateString()</td>
+                                        <td>@data.dateOfExpair.Value.ToShortDateString()</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "travel")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.travelLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.travelLn.type</th>
+                                    <th>@Model.fLang.travelLn.purpose</th>
+                                    <th>@Model.fLang.travelLn.location</th>
+                                    <th>@Model.fLang.travelLn.country</th>
+                                    <th>@Model.fLang.travelLn.sponsoringAgency</th>
+                                    <th>@Model.fLang.travelLn.startDate</th>
+                                    <th>@Model.fLang.travelLn.endDate</th>
+                                    <th>@Model.fLang.travelLn.goNumber</th>
+                                    <th>@Model.fLang.travelLn.goDate</th>
+                                    <th>@Model.fLang.travelLn.remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.traveInfos)
+                                {
+                                    <tr>
+                                        <td>@data.travelPurpose.purposeName</td>
+                                        <td>@data.purpose</td>
+                                        <td>@data.location</td>
+                                        <td>@data.country.countryName</td>
+                                        <td>@data.sponsoringAgency</td>
+                                        <td>@data.startDate.Value.ToShortDateString()</td>
+                                        <td>@data.endDate.Value.ToShortDateString()</td>
+                                        <td>@data.goNumber</td>
+                                        <td>@data.goDate</td>
+                                        <td>@data.remarks</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "license")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.licenseLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.licenseLn.licenseNumber</th>
+                                    <th>@Model.fLang.licenseLn.licenseCategory</th>
+                                    <th>@Model.fLang.licenseLn.place</th>
+                                    <th>@Model.fLang.licenseLn.dateOfIssue</th>
+                                    <th>@Model.fLang.licenseLn.dateOfExpair</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var data in Model.drivingLicenses)
+                                {
+                                    <tr>
+                                        <td>@data.licenseNumber</td>
+                                        <td>@data.category</td>
+                                        <td>@data.placeOfIssue</td>
+                                        <td>@data.dateOfIssue.Value.ToShortDateString()</td>
+                                        <td>@data.dateOfExpair.Value.ToShortDateString()</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "transfer")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.transferLogLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered" id="transferTable">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.transferLogLn.workStation</th>
+                                    <th>@Model.fLang.transferLogLn.fromDate</th>
+                                    <th>@Model.fLang.transferLogLn.toDate</th>
+                                    <th>@Model.fLang.transferLogLn.grade</th>
+                                    <th>@Model.fLang.transferLogLn.designation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.transferLogs)
+                                {
+                                    <tr>
+                                        <td>@data.workStation</td>
+                                        <td>@data.from?.ToString("yyyy-MM-dd")</td>
+                                        <td>@data.to?.ToString("yyyy-MM-dd")</td>
+                                        <td>@data.salaryGrade.gradeName</td>
+                                        <td>@data.designation</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "traning")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.trainingLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered" id="trainingTable">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.trainingLn.trainingType</th>
+                                    <th>@Model.fLang.trainingLn.trainingTitle</th>
+                                    <th>@Model.fLang.trainingLn.institute</th>
+                                    @*<th>@Model.fLang.trainingLn.country</th>*@
+                                    <th>@Model.fLang.trainingLn.trFromDate</th>
+                                    <th>@Model.fLang.trainingLn.trToDate</th>
+                                    <th>@Model.fLang.trainingLn.remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.traningLogs)
+                                {
+                                    <tr>
+                                        <td>@data.trainingCategory.trainingCategoryName</td>
+                                        <td>@data.trainingTitle</td>
+                                        <td>@data.trainingInstitute.trainingInstituteName</td>
+                                        @*<td>@data.country.countryName</td>*@
+                                        <td>@data.fromDate.Value.ToShortDateString()</td>
+                                        <td>@data.toDate.Value.ToShortDateString()</td>
+                                        <td>@data.remarks</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "photo")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <div class="card mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Photograph</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body text-center">
+                                <img id="user_img_current" style="width:200px;height:200px" src="~/@Model.photograph.url" alt="" class="img-thumbnail float-left">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "bank")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.bankLn.title</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.bankLn.bankName</th>
+                                    <th>@Model.fLang.bankLn.branchName</th>
+                                    <th>@Model.fLang.bankLn.accountNumber</th>
+                                    <th>@Model.fLang.bankLn.ibus</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.bankInfos)
+                                {
+                                    <tr>
+                                        <td>@data?.bank?.bankName</td>
+                                        <td>@data.branchName</td>
+                                        <td>@data.accountNumber</td>
+                                        <td>@data.ibus</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "acr")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.aCRLn.title</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.aCRLn.year</th>
+                                    <th>@Model.fLang.aCRLn.startDate</th>
+                                    <th>@Model.fLang.aCRLn.endDate</th>
+
+                                    @*<th>@Model.fLang.aCRLn.startDate</th>
+                                <th>@Model.fLang.aCRLn.endDate</th>
+                                <th>@Model.fLang.aCRLn.supervisorName</th>
+                                <th>@Model.fLang.aCRLn.supervisorDesignation</th>
+                                <th>@Model.fLang.aCRLn.signatoryName</th>
+                                <th>@Model.fLang.aCRLn.signatoryDesignation</th>
+                                <th>@Model.fLang.aCRLn.remarks</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.acrInfos)
+                                {
+                                    <tr>
+                                        <td>@data.year</td>
+                                        <td>@data.startDate</td>
+                                        <td>@data.endDate</td>
+                                        @*<td>@data.startDate</td>
+                                    <td>@data.endDate</td>
+                                    <td>@data.supervisorName</td>
+                                    <td>@data.supervisorDesg</td>
+                                    <td>@data.signatoryName</td>
+                                    <td>@data.signatoryDesg</td>
+                                    <td>@data.remarks</td>*@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "book")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.bookLn.title</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.bookLn.bookName</th>
+                                    <th>@Model.fLang.bookLn.borrowDate</th>
+                                    <th>@Model.fLang.bookLn.returnDate</th>
+                                    <th>@Model.fLang.bookLn.noOfCopy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.borrowerInfos)
+                                {
+                                    <tr>
+                                        <td>@data.bookEntry.bookName</td>
+                                        <td>@data.dateOfBorrow?.ToString("yyyy-MM-dd")</td>
+                                        <td>@data.dateOfReturn?.ToString("yyyy-MM-dd")</td>
+                                        <td>@data.noOfCopy</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.section == "leave")
+            {
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.leaveLogLn.title</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.leaveLogLn.type</th>
+                                    <th>@Model.fLang.leaveLogLn.purpose</th>
+                                    <th>@Model.fLang.leaveLogLn.from</th>
+                                    <th>@Model.fLang.leaveLogLn.to</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.leaveLogs)
+                                {
+                                    <tr>
+                                        <td>@data.leaveType.nameEn</td>
+                                        <td>@data.purposeOfLeave</td>
+                                        <td>@data.leaveFrom?.ToString("MM/dd/yyyy")</td>
+                                        <td>@data.leaveTo?.ToString("MM/dd/yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            
+        });
+    </script>
+}
+
+
+

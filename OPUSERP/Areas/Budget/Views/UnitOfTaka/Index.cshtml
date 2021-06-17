@@ -1,0 +1,118 @@
+﻿@model UnitOfTakaViewModel
+@{
+    ViewData["TitleMD"] = "Unit of Taka";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+        <h5 class="card-title" style="color: black; font-weight:bold">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <form id="myForm">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="UnitName" class="col-sm-2 col-form-label">@Model.fLang.unitName<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="UnitName" id="UnitName">
+                        <input type="hidden" name="UnitId" id="UnitId" value="0" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="value" class="col-sm-2 col-form-label">@Model.fLang.value<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="value" id="value">
+                    </div>
+                </div>      
+                <hr />
+                <input type="button" id="saveForm" value="Submit" class="btn btn-success" style="float:right; margin-top:5px;">
+            </form>
+        </div>
+    </div>
+</div>
+<br /><br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 style="font-weight:bold; color:black">@Model.fLang.list</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="unitofTakaTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.unitName</th>
+                            <th>@Model.fLang.value</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.unitOfTakas)
+                        {
+                            <tr>
+                                <td>@data.UnitName</td>
+                                <td>@data.value</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.UnitName', '@data.value')" href="#"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#unitofTakaTable').DataTable();
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+
+            $("#saveForm").click(function () {
+                var data = $("#myForm").serialize();
+                let UnitName = $('#UnitName').val();
+                let value = $('#value').val();
+                if (UnitName == "") {
+                    swal('Warning', 'Name can not be null', 'warning');
+                    return false;
+                }
+                if (value == "") {
+                    swal('Warning', 'Program Main Category can not be null', 'warning');
+                    return false;
+                }
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        url: "/Budget/UnitOfTaka/Index",
+                        type: "POST",
+                        data: data,
+                        success: function () {
+                            swal('', 'Saved Successfully!', 'success')
+                            location.reload(true);
+                        }
+                    });
+                });
+            });
+        });
+
+        function Edit(Id, UnitName, value) {
+            $("#UnitId").val(Id);
+            $("#UnitName").val(UnitName);
+            $("#value").val(value);
+        }
+    </script>
+}

@@ -1,0 +1,472 @@
+﻿@model TaxCertificateViewModel
+@{
+    ViewData["Title"] = "Payment Details";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="row" style="padding-top:5px;padding-bottom:0px;">
+                <a class="btn btn-success" href="/Payroll/PayrollReport/TaxCalculationReportAction?employeeInfoId=@ViewBag.employeeId&&taxYearId=@ViewBag.taxyearId&&periodId=@ViewBag.periodId" target="_blank" title="Tax Calculation Report"><i class="fa fa-print"></i>Print Preview</a>
+            </div>
+
+            <div style="height:5px;"></div>
+        </div>
+    </div>
+</div>
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2">
+                    @*<img src="~/images/bKashLogo.png" style="margin:0px 0px 0px 0px;" height="100" width="180" />*@
+                    @*<img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />*@
+                    <img src="@Model.company.filePath" alt="OPUS ERP" style="height:50px;" />
+                </div>
+                <div class="col-8" style="color:black;text-align:center">
+                    <p style="font-size:25px;font-weight:500; margin-top:10px;">@Model.company.companyName</p>
+                    <p style="font-size:20px;width:100%;margin-top:-15px;"><h5>CALCULATION OF TAX ON SALARIES AND PAYMENT CERTIFICATE</h5></p>
+
+                </div>
+            </div>
+        </div><br />
+
+        <div class="container-fluid" style="color:black;">
+            <hr style="border:1px solid grey;">
+
+            <br />
+            <br />
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <table class="table table-bordered" style="border-color:black;">
+
+
+                        <tr>
+                            <td style="border:solid 1px;">Name of Employee</td>
+                            <td style="border:solid 1px;">@Model?.employeeInfo.nameEnglish</td>
+                        </tr>
+                        <tr>
+                            <td style="border:solid 1px;">Gender</td>
+                            <td style="border:solid 1px;">@Model?.employeeInfo.gender</td>
+                        </tr>
+                        <tr>
+                            <td style="border:solid 1px;">Date of Joining</td>
+                            <td style="border:solid 1px;">@Model?.employeeInfo?.joiningDateGovtService?.ToString("dd-MMM-yyyy")</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-sm-6">
+                    <table class="table table-bordered" style="border-color:black;">
+
+
+                        <tr>
+                            <td style="border:solid 1px;">Income Year</td>
+                            <td style="border:solid 1px;">@Model?.taxYear.taxYearName</td>
+                        </tr>
+                        @*<tr>
+                                <td style="border:solid 1px;">Calculation Period</td>
+                                <td style="border:solid 1px;">@Model?.salaryPeriod.periodName</td>
+                            </tr>*@
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-bordered" style="border-color:black;">
+                        <thead>
+                            <tr>
+                                <td class="text-center" style="font-weight:bold">Account Name</td>
+                                <td class="text-center" style="font-weight:bold">Exemp Rule</td>
+                                <td class="text-center" style="font-weight:bold">Amount</td>
+                                <td class="text-center" style="font-weight:bold">Exemp Amount</td>
+                                <td class="text-center" style="font-weight:bold">Taxable Amount</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.taxableamountViewModels)
+                            {
+                                <tr>
+                                    <td>@data.accountName</td>
+                                    <td>@data.exemtedrule</td>
+                                    <td style="text-align:right">@data.amount</td>
+                                    <td style="text-align:right">@data.exemAmount</td>
+                                    <td style="text-align:right">@data.taxableAmount</td>
+                                </tr>
+                            }
+                            <tr>
+
+                                <td colspan="2">Total:</td>
+                                <td style="text-align:right">@Model.taxableamountViewModels.Sum(x => x.amount)</td>
+                                <td style="text-align:right">@Model.taxableamountViewModels.Sum(x => x.exemAmount)</td>
+                                <td style="text-align:right">@Model.taxableamountViewModels.Sum(x => x.taxableAmount)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-bordered" style="border-color:black;">
+                        <thead>
+                            <tr>
+                                <td class="text-center" style="font-weight:bold">Calculation of Tax</td>
+                                <td class="text-center" style="font-weight:bold">Rate(%)</td>
+                                <td class="text-center" style="font-weight:bold">Slab Amount</td>
+                                <td class="text-center" style="font-weight:bold">Tax Amount</td>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.taxableSlabViewModels)
+                            {
+                                <tr>
+                                    <td>@data.calculationOfInvestment</td>
+                                    <td>@data.rate</td>
+                                    <td style="text-align:right">@data.slabamount?.ToString("0,0.00")</td>
+                                    <td style="text-align:right">@data.taxAmount?.ToString("0,0.00")</td>
+
+                                </tr>
+                            }
+                            <tr>
+
+                                <td colspan="2">Total:</td>
+                                <td style="text-align:right">@Model.taxableSlabViewModels.Sum(x => x.slabamount)?.ToString("0,0.00")</td>
+                                <td style="text-align:right">@Model.taxableSlabViewModels.Sum(x => x.taxAmount)?.ToString("0,0.00")</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-bordered" style="border-color:black;">
+                        <thead>
+                            <tr>
+                                <td class="text-center" style="font-weight:bold">Calculation of Investments</td>
+                                <td class="text-center" style="font-weight:bold">Invest Amount</td>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.taxablePFViewModels)
+                            {
+                                <tr>
+                                    <td>@data.accountName</td>
+
+                                    <td style="text-align:right">@data.investmentAmount?.ToString("0,0.00")</td>
+
+
+                                </tr>
+                            }
+                            <tr>
+
+                                <td>Total Investments:</td>
+                                <td style="text-align:right">@Model.taxablePFViewModels.Sum(x => x.investmentAmount)?.ToString("0,0.00")</td>
+
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    @{
+                        decimal? totaltax = Model.taxableamountViewModels.Sum(x => x.taxableAmount);
+                        decimal? totalivs = Model.taxablePFViewModels.FirstOrDefault().investmentAmount;
+                        //decimal? result = totaltax - totalivs;
+                        decimal? result = totaltax;
+                        decimal? dataresult = result * Model.InvestmentRebateSettings?.FirstOrDefault()?.allowableInvestment / 100;
+                        decimal? investmetrebatepercent = 0;
+                        decimal? orinvestmetrebatepercent = 0;
+                        int i = 0;
+                        foreach (var invrebate in Model.InvestmentRebateSettings)
+                        {
+
+                            if (i == 0)
+                            {
+                                if (invrebate.orInvestmentRebate >= totaltax)
+                                {
+                                    investmetrebatepercent = invrebate.investmentRebate;
+                                    orinvestmetrebatepercent = invrebate.orInvestmentRebate;
+                                    i = 1;
+                                }
+                            }
+
+                        }
+
+                        if (i == 0)
+                        {
+                            investmetrebatepercent = Model.InvestmentRebateSettings?.LastOrDefault()?.investmentRebate;
+                            orinvestmetrebatepercent = Model.InvestmentRebateSettings?.LastOrDefault()?.orInvestmentRebate;
+                        }
+                        decimal? dataresultten = dataresult * investmetrebatepercent / 100;
+                        decimal? taxpayable = Model.taxableSlabViewModels.Sum(x => x.taxAmount) - dataresultten;
+                        if (taxpayable <= 5000)
+                        {
+                            if(taxpayable<=0)
+                            {
+                                taxpayable = 0;
+                            }
+                            else
+                            {
+                                taxpayable = 5000;
+                            }
+
+
+                        }
+
+
+                        decimal? permonth = taxpayable / Model.taxableamountViewModels?.FirstOrDefault()?.monthNo;
+                        <table class="table table-bordered" style="border-color:black;">
+                            <thead>
+                                <tr>
+                                    <td class="text-left" style="font-weight:bold">Rebatable Tax</td>
+                                    <td class="text-center" style="font-weight:bold">Amount</td>
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                <tr>
+                                    <td>
+                                        @Model.InvestmentRebateSettings?.FirstOrDefault()?.allowableInvestment % of Allowable Investment(@totaltax)=@result?.ToString("0,0")
+                                    </td>
+
+                                    <td style="text-align:right">@dataresult?.ToString("0,0")</td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>Investment Rebate (@investmetrebatepercent %)</td>
+
+                                    <td style="text-align:right">@dataresultten?.ToString("0,0")</td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Net Tax Payable (@Model.taxableSlabViewModels.Sum(x => x.taxAmount)?.ToString("0,0") - @dataresultten?.ToString("0,0")) or TK. 5000.00 whichever is higher
+                                    </td>
+
+                                    <td style="text-align:right">@taxpayable?.ToString("0,0")</td>
+
+
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+
+                        <table class="table table-bordered" style="border-color:black;">
+                            <thead>
+                                <tr>
+                                    <td class="text-left" style="font-weight:bold">Monthly Deduction of Tax</td>
+                                    <td class="text-center" style="font-weight:bold">Amount</td>
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                <tr>
+                                    <td>Actual Tax Deducted (0 month(s))</td>
+
+                                    <td style="text-align:right">0</td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Tax to be deducted this income year
+                                    </td>
+
+                                    <td style="text-align:right">@taxpayable?.ToString("0,0")</td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Number of Month Remaining
+                                    </td>
+
+                                    <td style="text-align:right">@Model.taxableamountViewModels?.FirstOrDefault()?.monthNo</td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        This Month Deducted Tax
+                                    </td>
+
+                                    <td style="text-align:right">@permonth?.ToString("0,0")</td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Tax to be deducted per month - 100.00%
+                                    </td>
+
+                                    <td style="text-align:right">@permonth?.ToString("0,0")</td>
+
+
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsV{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+        });
+
+
+    </script>
+}
+<style>
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 3px 25px 3px 25px;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+    .heading {
+        text-align: right;
+    }
+
+
+
+    .project-tab #tabs .nav-tabs .nav-link.show, .nav-tabs .nav-link.active {
+        color: #0062cc;
+        background-color: transparent;
+        border-color: transparent transparent #f3f3f3;
+        border-bottom: 3px solid !important;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .project-tab .nav-link {
+        border: 1px solid transparent;
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+        color: gray;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+        .project-tab .nav-link:hover {
+            border: none;
+        }
+
+    .project-tab a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .dot {
+        height: 25px;
+        width: 25px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .photoDot {
+        height: 25px;
+        width: 25px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+        padding-bottom: 0px;
+    }
+
+    .dropdown-menu > a:hover {
+        background-color: #79d180;
+        background-image: none;
+    }
+
+    .vehicleLogo {
+        background-color: gray;
+        color: white;
+        font-size: 1.9em;
+        font-weight: 600;
+        padding: 0px 0px 0px 0px;
+        height: 50px;
+        width: 60px;
+        text-align: center;
+        margin: 0px 0px 0px 0px;
+        border-radius: 8%;
+    }
+
+    .statuscolor {
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+        padding-bottom: 0px;
+    }
+</style>
+
+
+
+
+
+

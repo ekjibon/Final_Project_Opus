@@ -1,0 +1,180 @@
+﻿@model OrganizationViewModel
+@{
+    ViewData["TitleMD"] = Model.fLang.title;
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="Organization" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="organizationId" id="organizationId" value="0" />
+
+                    <label for="organizationType" class="col-sm-3 col-form-label">@Model.fLang.organizationType <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="organizationType" name="organizationType" data-parsley-required="true">
+                            <option value="">Select Organization Type</option>
+                            <option value="University">University</option>
+                            <option value="Board">Board</option>
+                            <option value="Institute">Institute</option>
+                            @*<option value="GovtOrg">Govt. Organization</option>*@
+                            @*<option value="PrivateOrg">Private Organization</option>*@
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="organizationName" class="col-sm-3 col-form-label">@Model.fLang.organizationName <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="organizationName" id="organizationName">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="organizationNameBn" class="col-sm-3 col-form-label">@Model.fLang.organizationNameBn</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="organizationNameBn" id="organizationNameBn">
+                    </div>
+                </div>
+
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="organizationTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.organizationType</th>
+                            <th>@Model.fLang.organizationName</th>
+                            <th>@Model.fLang.organizationNameBn</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.organizations)
+                        {
+                            <tr>
+                                <td>@data.organizationType</td>
+                                <td>@data.organizationName</td>
+                                <td>@data.organizationNameBn</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.organizationType', '@data.organizationName', '@data.organizationNameBn')" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#organization').addClass("active");
+            $('#organizationTable').DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Employee Training'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+
+        });
+
+        function Edit(Id, organizationType, organizationName, organizationNameBn) {
+            $("#organizationId").val(Id);
+            $("#organizationType").val(organizationType);
+            $("#organizationName").val(organizationName);
+            $("#organizationNameBn").val(organizationNameBn);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteOrganizationById", "Organization")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/HRPMSMasterData/Organization/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+    </script>
+}

@@ -1,0 +1,196 @@
+﻿@model NavbarViewModel
+
+<link href="~/css/sb-admin-2.min.css" rel="stylesheet" />
+
+<script src="~/js/sb-admin-2.min.js"></script>
+<script type="text/javascript">
+    var value = document.cookie;
+    var lang = value.slice(5, 8);
+    if (lang == 'bn') {
+        $('#dashboard').text('ড্যাশবোর্ড');
+    } else {
+        $('#dashboard').text('Home');
+    }
+</script>
+
+<div id="menu">
+    <ul class="navbar-nav sidebar sidebar-dark accordion" style="font-weight: bolder; background:#333333;" id="accordionSidebar">
+        <li class="nav-item">
+            <a class="nav-link" id="HomeIcon">
+                <i class="fas fa-fw fa-home"></i>
+                <span style="color:white;" id="dashboard">Home</span>
+            </a>
+        </li>
+        @foreach (var item in Model.ERPModules)
+        {
+            <li class="nav-item" id="accordionSidebar_@item.moduleName.Replace(" ", "")">
+                <a class="nav-link collapsed" href="javascript:void(0)" data-toggle="collapse" data-target="#collapse_@item.moduleName.Replace(" ", "")" aria-expanded="true" aria-controls="collapse__@item.moduleName.Replace(" ", "")">
+                    <i class="fa fa-laptop"></i>
+                    <span style="color:white;" id="Setting_@item.moduleName.Replace(" ", "")">@item.moduleName</span>
+                </a>
+                @foreach (var itemchid in Model.navbars.Where(x => x.moduleId == item.Id && x.parentID == 0))
+                {
+                    if (itemchid.isParent == 0)
+                    {
+                        if (itemchid.nameOption == "Dashboard")
+                        {
+                            if (item.moduleName.Replace(" ", "") == "SCM")
+                            {
+                                <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+
+                                    <a class="nav-link" href="/SCMDashboard/Dashboard/Dashboard?"><i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span></a>
+
+                                </div>
+
+                            }
+                            else if (item.moduleName.Replace(" ", "") == "CRM")
+                            {
+                                <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+
+                                    <a class="nav-link" href="/CRMLead/Dashboard/Index?"><i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span></a>
+
+                                </div>
+                            }
+                            else if (item.moduleName.Replace(" ", "") == "HRM")
+                            {
+                                <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+
+                                    <a class="nav-link" href="/HRPMSEmployee/Dashboard/Index?"><i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span></a>
+
+                                </div>
+                            }
+                            else if (item.moduleName.Replace(" ", "") == "Payroll")
+                            {
+                                <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+
+                                    <a class="nav-link" href="/Payroll/Dashboard/Index?"><i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span></a>
+
+                                </div>
+                            }
+                            else if (item.moduleName.Replace(" ", "") == "FixedAsset")
+                            {
+                                <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+
+                                    <a class="nav-link" href="/FAMSAssetRegister/Dashboard/Index?"><i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span></a>
+
+                                </div>
+                            }
+
+                        }
+                        else
+                        {
+                            <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <a class="nav-link" onclick="LocalSet(@itemchid.moduleId,@itemchid.Id)" href="@Url.Action("GridMenuPage", "Home", new { moduleId = @itemchid.moduleId, perentId = @itemchid.Id  })">
+                                    <i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span>
+                                </a>
+                            </div>
+
+                        }
+
+
+
+
+
+                        @*<div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <a class="nav-link" asp-area="@itemchid.area" asp-controller="@itemchid.controller" asp-action="@itemchid.action">
+                                <i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span>
+                            </a>
+                        </div>*@
+                    }
+                    else
+                    {
+                        @*if (itemchid.Id == 3720)
+                        {
+                            <div id="collapse_@item.moduleName.Replace(" ", "")-@itemchid.Id" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <a class="nav-link" href="@Url.Action("Dashboard/Dashboard", "SCMDashboard")">
+                                    <i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span>
+                                </a>
+                            </div>
+
+                        }*@
+                        @*<div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <a class="nav-link" href="@Url.Action("GridMenuPage", "Home", new { moduleId = @itemchid.moduleId, perentId = @itemchid.Id  })">
+                                <i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span>
+                            </a>
+                        </div>*@
+                    }
+
+
+                }
+
+
+                <div>
+                    @*@foreach (var itemchid in Model.navbars.Where(x => x.moduleId == item.Id && x.parentID == 0))
+                    {
+
+                        if (itemchid.isParent == false)
+                        {
+                            <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <a class="nav-link" asp-area="@itemchid.area" asp-controller="@itemchid.controller" asp-action="@itemchid.action">
+                                    <i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div id="collapse_@item.moduleName.Replace(" ", "")" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <a class="nav-link collapsed" href="javascript:void(0)" data-toggle="collapse" data-target="#collapse_@itemchid.nameOption.Replace(" ", "")" aria-expanded="true" aria-controls="collapse_1">
+                                    <i class="@itemchid.imageClass"></i><span>@itemchid.nameOption</span>
+                                </a>
+                                <ul class="navbar-nav accordion p-0 m-0" style="font-weight: bolder;">
+                                    <li class="nav-item">
+                                        <div id="collapse_@itemchid.nameOption.Replace(" ", "")" class="collapse p-0 m-0" aria-labelledby="headingTwo" data-parent="#accordionSidebar_@item.moduleName.Replace(" ", "")">
+                                            <div class="py-2 collapse-inner rounded" style="background: #dcdfe5;">
+                                                @foreach (var itemchidchid in Model.navbars.Where(x => x.parentID == itemchid.Id))
+                                                {
+                                                    <a class="collapse-item" asp-area="@itemchidchid.area" asp-controller="@itemchidchid.controller" asp-action="@itemchidchid.action">@itemchidchid.nameOption</a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        }
+                    }*@
+                </div>
+            </li>
+        }
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    function LocalSet(modelId, parentId) {
+        window.localStorage.setItem("modelId", modelId);
+        window.localStorage.setItem("parentId", parentId);
+        //if (parentId == 3720) {
+        //    $("#btnHome_SCM").prop('href', '/SCMDashboard/Dashboard/Dashboard');
+        //}
+    }
+
+    $(document).ready(function () {
+        var modelId = window.localStorage.getItem('modelId');
+        var parentId = window.localStorage.getItem('parentId');
+        
+        if (modelId != null) {
+            //alert(parentId);
+            //alert(modelId);
+            if (parentId == 3720) {
+                $("#HomeIcon").prop('href', '/SCMDashboard/Dashboard/Dashboard?');
+            }
+            else {
+                $("#HomeIcon").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            }
+
+        } else {
+            $("#HomeIcon").prop('href', '/Home/GridMenuPage?moduleId=' + 3 + '&perentId=' + 202);
+        }
+    });
+</script>
+
+
+

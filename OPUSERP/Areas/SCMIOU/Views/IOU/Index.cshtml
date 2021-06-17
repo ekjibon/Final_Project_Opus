@@ -1,0 +1,434 @@
+﻿@model IOUViewModel
+@{
+    ViewData["Title"] = "PR List";
+}
+@section Style{
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-10">
+                <h5 class="m-0 font-weight-bold text-primary">REQUISITION LIST</h5>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("IOUList", "IOU")'">IOU List</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table class="table table-striped table-bordered table-responsive" id="requisitionListTable" style="width:100%">
+            <thead>
+                <tr>
+                    <th style="width:5%">Select</th>
+                    <th style="width:20%">Requisition No</th>
+                    <th style="width:20%">Project</th>
+                    <th style="width:10%">Requisition Owner</th>
+                    <th style="width:10%">Requisition Date</th>
+                    <th style="width:10%">Subject</th>
+                    <th style="width:10%">Target Delivery Date</th>
+                    <th style="width:10%">Status</th>
+                    <th style="width:5%">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.requisitionForCSViewModels)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="checkbox_@data.Id" style="height:20px; width:20px;" onclick="AddInfo(@data.Id, '@data.reqNo', '@data.projectName',4, @data.projectId, this)" />
+                        </td>
+                        <td>@data.reqNo</td>
+                        <td>@data.projectName</td>
+                        <td></td>
+                        <td>@data.reqDate</td>
+                        <td>@data.subject</td>
+                        <td>@data.targetDate</td>
+                        <td>@data.csStatus</td>
+                        <td>
+                            <a class="btn btn-info" title="Print PR" target='_blank' href="/SCMReport/ReportMaster/PurchaseRequisitionPdf/?reqId=@data.Id"><i class='fa fa-print'></i></a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<br />
+
+<form id="myForm">
+
+    <div class="card">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Purchase Process Information</label>
+        </div>
+        <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="processBy" class="col-sm-4 col-form-label">Process By</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="processBy" name="processBy" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="expectedDeliveryDate" class="col-sm-4 col-form-label">Expected Delivery Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="expectedDeliveryDate" name="expectedDeliveryDate" readonly />
+                                <input type="hidden" id="requisitionId" name="requisitionId" value="@ViewBag.reqId" />
+                                <input type="hidden" id="projectId" name="projectId" value="0" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="iouNo" class="col-sm-4 col-form-label">IOU No.</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="iouNo" name="iouNo" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="attentionTo" class="col-sm-4 col-form-label">Attention To</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="attentionTo" name="attentionTo" />
+                                <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <div class="card">
+        <div class="card-header">
+            <h5 class="m-0 font-weight-bold text-primary">SELECTED REQUISITION LIST </h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-responsive" id="selectedListTable">
+                <thead style="background:whitesmoke; text-align:center">
+                    <tr>
+                        <th>Req NO.</th>
+                        <th>Item Code</th>
+                        <th>Item Name</th>
+                        <th>Deli. Location</th>
+                        <th>Req Qty</th>
+                        <th>Unor. Qty</th>
+                        <th>Rate</th>
+                        <th>Ordered Qty</th>
+                        <th>Unit Rate</th>
+                        <th>VAT (%) </th>
+                        <th>Sub Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="10" style="text-align: right">Grand Total : </td>
+                        <td id="grandTotal"></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="card-footer">
+            <input type="button" id="submitBtn" class="btn btn-success btn-lg" style="float: right" value="Submit" />
+        </div>
+    </div>
+
+</form>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+
+            $('#requisitionListTable').DataTable();
+            $('#selectedListTable').DataTable();
+            //$('#expectedDeliveryDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#expectedDeliveryDate').flatpickr({ dateFormat: "d-M-Y" });
+
+            $("#iouNo").val('@ViewBag.IOUNO');
+            $("#processBy").val('@ViewBag.EmpName');
+            $("#attentionTo").val('@ViewBag.AttentionTo');
+
+
+            $("#submitBtn").click(function () {
+                $('#submitBtn').prop('disabled', true);
+                let rowCount = $("#selectedListTable tbody>tr").length;
+                if (rowCount < 1) {
+                    swal('Attention.!!', 'Please Select Minimum One Requisition!!', 'warning');
+                    $('#submitBtn').removeAttr('disabled', false);
+                    return false;
+                }
+                if ($("#expectedDeliveryDate").val() == "") {
+                    swal('Attention.!!', 'Please select Expected Delivery Date.', 'warning');
+                    $('#submitBtn').prop('disabled', false);
+                    return false;
+                }
+
+                var myData = $("#myForm").serialize();
+
+                $.ajax({
+                    url: "/SCMIOU/IOU/CreateIOU",
+                    type: "post",
+                    data: myData,
+                    success: function(response) {
+                        swal('Success!', 'Saved Successfully!!!', 'success');
+                        window.location.href = "@Url.Action("IOUList", "IOU")";
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        swal('Warning!', 'Something went wrong!!!', 'warning');
+                        $('#submitBtn').prop('disabled', false);
+                    }
+                });
+            });
+
+
+        });
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish;
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#attentionTo').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#attentionTo").val(ui.item.value);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+
+        function AddInfo(Id, reqNo, projectName, reqBy, projectId, arg) {
+
+            var dtTable = $("#selectedListTable");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = "";
+            var trId = 0;
+            var isValid = true;
+            var id = arg.getAttribute('id');
+
+            if (arg.checked) {
+
+                // Validation
+                $(".projectName").each(function () {
+
+                    var pName = $(this).val();
+
+                    if (projectName != pName) {
+
+                        swal({
+                            title: 'Invalid Project Type Selected', text: 'Different Project Type Is Not Allowed!', type: 'warning', confirmButtonColor: '#3085d6'
+                        });
+
+                        isValid = false;
+                        return false;
+                    }
+
+                });
+
+                $(".reqBy").each(function () {
+
+                    var reQBy = $(this).val();
+
+                    if (reqBy != reQBy) {
+
+                        swal({
+                            title: 'Invalid Requsition User Selected', text: 'Different  Requsition User Is Not Allowed!', type: 'warning', confirmButtonColor: '#3085d6'
+                        });
+
+                        isValid = false;
+                        return false;
+                    }
+                });
+
+
+                if (!isValid) {
+
+                    swal({
+                        title: 'Invalid Requsition User Selected', text: 'Different  Requsition User Is Not Allowed!', type: 'warning', confirmButtonColor: '#3085d6'
+                    });
+
+                    $("#" + id).prop('checked', false);
+
+                    return false;
+                }
+
+
+
+                //  Get Attention To Information
+                $.ajax({
+                    url: "/SCMIOU/IOU/GetEmployeeInfo",
+                    type: "Get",
+                    data: { id: Id },
+                    success: function(response) {
+
+                        $("#attentionTo").val(response);
+                    }
+                });
+
+                // Add New Item in the List
+                $.ajax({
+                    url: "/SCMIOU/IOU/GetRequisitionDetailsInfo",
+                    type: "Get",
+                    data: { id: Id },
+                    success: function (response) {
+                        console.log(response.requisitionDetailViews);
+                        $.each(response.requisitionDetailViews,function (i, e) {
+
+                                trId = e.Id;
+                                var locationList = "";
+
+                                var index = $("#selectedListTable tbody>tr").length;
+                                trHtml = '<tr class=' + Id +' id=' + index +"_" +Id +
+                                    '>' +
+                                    '<td>' + reqNo +
+                                    '<input type="hidden" name="reqDetailsall"  id="reqNoAll_' + i + '" value="' + e.Id + '"/>' +
+                                    '<input type="hidden"  class="projectName" value="' + projectName + '"/>' +
+                                    '<input type="hidden"  class="reqBy" name="" value="' + reqBy + '"/>' +
+                                     '</td>' +
+                                    '<td>' + e.itemCode +'<input type="hidden" name="reqIdAll"  id="reqIdAll_' +i +'" value="' + Id +'"/></td>' +
+                                    '<td>' + e.itemName +'</td>' +'<td>'+
+                                    '<select name="txtLocationall" id="txtLocationall_ '+ trId +'" class="form-control">' +
+                                    //'<option value="0">Select Location</option>' +
+                                        $.each(response.deliveryLocations,
+                                        function (i, e) {
+                                            locationList += '<option value=' + e.Id + '>' + e.locationName + '</option>';
+
+                                        }) +
+                                    locationList+
+                                    '</select>' +
+                                    '</td>' + '<td>' + e.reqQty + '</td>' +
+                                    '<td>' + e.unOrderQty + '</td>' +
+                                    '<td>' + e.reqRate + '</td>' +
+                                    '<td>' + '<input type="text"  name="poQntall" id="orderedQty' + e.Id + '" onkeyup="Quantity(' + e.Id + ')" class="form-control"/><input type="hidden"  name="" id="unorderedQty' + e.Id + '"  value="' + e.unOrderQty+'" class="form-control"/>' +'</td>' +
+                                    '<td>' + '<input type="text"  style="width: 100px;" name="txtUnitRateall" id="unitRate' + e.Id +'" onkeyup="UnitRate(' +e.Id +')" class="form-control"/>' +'</td>' +
+                                    '<td>' + '<input type="text" name="txtVatall" id="vatAmt' + e.Id +'" onkeyup=Vat('+e.Id+') class="form-control"/>' +'</td>' +
+                                    '<td>' +'<input type="text" style="width: 100px;" name="subTotal" id="subTotal'+e.Id +'" class="form-control grandTotalCalculation" readonly/>' +'</td>' +
+                                    '<td style="text-align:center"><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' +
+                                    "'" +index + "_" +Id +"'" +')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                                    '</tr>';
+
+                                tableBody.append(trHtml);
+
+                            });
+
+                    }
+                });
+
+            } else {
+                DeleteMultiple(Id);
+
+            }
+
+
+            $("#projectId").val(projectId);
+
+        }
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#selectedListTable #" + index).remove();
+                $("#selectedListTable ." + index).remove();
+                swal('', 'Deleted Successfully!', 'success');
+            });
+
+            return false;
+        }
+
+        function DeleteMultiple(index) {
+            //swal({
+            //    title: 'Are you sure?', text: 'Do you want to Uncheck this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, uncheck it!'
+            //}).then(function () {
+
+                $("#selectedListTable ." + index).remove();
+                swal('', 'Uncheck Successfully!', 'success');
+            //});
+
+            return false;
+        }
+
+        function Quantity(id) {
+            var qq = parseFloat($("#orderedQty" + id).val()) ? parseFloat($("#orderedQty" + id).val()) : 0.00;
+            var uqq = parseFloat($("#unorderedQty" + id).val()) ? parseFloat($("#unorderedQty" + id).val()) : 0.00;
+            if (qq > uqq)
+            {
+                swal({
+                    title: 'Invalid Quantity', text: 'Quantity exit!', type: 'warning', confirmButtonColor: '#3085d6'
+                });
+                $("#orderedQty" + id).val('')
+                $("#subTotal" + id).val(0);
+                return false;
+
+            }
+            subTotalCount(id);
+        }
+
+
+        function UnitRate(id) {
+
+            subTotalCount(id);
+        }
+
+
+        function Vat(id) {
+
+            subTotalCount(id);
+        }
+
+        function subTotalCount(id) {
+
+            var qq = parseFloat($("#orderedQty" + id).val()) ? parseFloat($("#orderedQty" + id).val()) : 0.00;
+
+            var ur = parseFloat($("#unitRate" + id).val()) ? parseFloat($("#unitRate" + id).val()) : 0.00;
+
+            var va = parseFloat($("#vatAmt" + id).val()) ? parseFloat($("#vatAmt" + id).val()) : 0.00;
+
+
+            va = (qq * ur)*(va / 100.00);
+
+            $("#subTotal" + id).val((qq * ur) + va);
+
+            TotalAmt();
+
+        }
+
+        function TotalAmt() {
+
+            var sum = 0;
+
+            $(".grandTotalCalculation").each(function () {
+                sum += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            });
+            $('#grandTotal').html(sum);
+        }
+
+
+    </script>
+}
+

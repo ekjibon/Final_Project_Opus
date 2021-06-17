@@ -1,0 +1,338 @@
+﻿
+@model ActivityMasterViewModel
+@{
+    ViewData["Title"] = "Client Activity";
+    Layout = "~/Areas/CRMClient/Views/Shared/_ClientForm.cshtml";
+}
+
+@section StyleClient{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        @*<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h4 class="m-0 font-weight-bold text-primary">Activities</h4>
+            <a href="/CRMClient/Client/Index" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Back to List</a>
+        </div>*@
+      
+        <hr>
+        <div class="container">
+            <form asp-area="CRMLead" asp-controller="Activity" asp-action="ClientActivity" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Activity Category</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" name="Id" id="Id" value="0" />
+                                <input type="hidden" name="leadsID" id="leadsID" value="@ViewBag.leadId" />
+                                <select class="form-control" name="category" id="category" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.ActivityCategories)
+                                    {
+                                        <option value="@data.Id">@data.activityCategoryName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Activity Session</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="session" id="session" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.ActivitySessions)
+                                    {
+                                        <option value="@data.Id">@data.activitySessionName</option>
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="form-group row" style="display:none">
+
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Lead name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="LeadName" id="LeadName">
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group row">
+
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Priority</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="priority" id="priority" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Activity Type</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="typeId" id="typeId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.ActivityTypes)
+                                    {
+                                        <option value="@data.Id">@data.activityTypeName</option>
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="form-group row" id="relationwith" style="display:none">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Relation With</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="parentID" id="parentID">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.activityMasters)
+                                    {
+                                        <option value="@data.Id">@data.subject (@data.Id)</option>
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label" id="lblsubject">Subject</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="subject" id="subject">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label" id="lbldescription">Description</label>
+                            <div class="col-sm-8">
+                                <textarea type="text" class="form-control" id="description" name="description"></textarea>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label" id="lblcontact">Contact  Name</label>
+                            <div class="col-sm-5">
+                                <select class="form-control" id="contactsId" name="contactsId">
+                                    <option>-Select-</option>
+                                    @foreach (var data in Model.contacts)
+                                    {
+                                        <option value="@data.Id">@data.resource.resourceName</option>
+                                    }
+                                </select>
+
+                            </div>
+                            <a href="#" class="btn  btn-default" onclick="AddContact()" style="float:right;"><i class="fas fa-plus"></i></a>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+
+                            </div>
+                            <div class="col-sm-4" id="contactdivId">
+
+                            </div>
+                            <div class="col-sm-1" id="contactdivIdbtn">
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Activity list</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="ActivityMasterTable">
+                    <thead>
+                        <tr>
+                            <th>Lead Name</th>
+                            <th>Subject</th>
+                            <th>Category</th>
+                            @*<th>Start Date</th>
+                                <th>End Date</th>*@
+                            <th>Priority</th>
+                            <th>Description</th>
+                            <th>action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.activityMasters)
+                        {
+                            <tr>
+                                <td>@data.leads.leadName</td>
+                                <td>@data.subject</td>
+                                <td>@data.activityCategory.activityCategoryName</td>
+
+                                <td>@data.priority</td>
+                                <td>@data.description</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,@data.leadsId,'@data.leads.leadName','@data.subject','@data.activityCategoryId','@data.priority','@data.description')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="javascript:void(0)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsClient{
+    <script>
+        $(document).ready(function () {
+            $("#activityMasters").addClass("active");
+            //$('#startDate').datepicker({ uiLibrary: 'bootstrap4' });
+            //$('#endDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#ActivityMasterTable').DataTable();
+
+            $('#type').change(function () {
+                if ($('#type').val() == "2") {
+                    $('#relationwith').show();
+
+                }
+                else {
+                    $('#relationwith').hide();
+                }
+
+            });
+            $('#category').change(function () {
+                alert($('#category option:selected').text());
+                if ($('#category option:selected').text() == "Email") {
+
+                    $('#lblsubject').text("Email Subject");
+                    $('#lblcontact').text("Mail To");
+                    $('#lbldescription').text("Mail Descrioption");
+
+                }
+                if ($('#category option:selected').text() == "phone call") {
+
+                    $('#lblsubject').text("Phone Call Reason");
+                    $('#lblcontact').text("Call To");
+                    $('#lbldescription').text("Discussion");
+
+                }
+                if ($('#category option:selected').text() == "Client Visit") {
+
+                    $('#lblsubject').text("Visit Reason");
+                    $('#lblcontact').text("Visit To");
+                    $('#lbldescription').text("Meeting Minutes");
+
+                }
+                if ($('#category option:selected').text() == "Meeting") {
+
+                    $('#lblsubject').text("Meeting Agenda");
+                    $('#lblcontact').text("Meeting With");
+                    $('#lbldescription').text("Meeting Minutes");
+
+                }
+                if ($('#category option:selected').text() == "Team Meeting") {
+
+                    $('#lblsubject').text("Meeting Agenda");
+                    $('#lblcontact').text("Meeting With");
+                    $('#lbldescription').text("Meeting Minutes");
+
+                }
+                if ($('#category option:selected').text() == "Others") {
+
+                    $('#lblsubject').text("Subject");
+                    $('#lblcontact').text("Contact");
+                    $('#lbldescription').text("Remarks");
+
+                }
+                if ($('#category option:selected').text() == "Offer Letter") {
+
+                    $('#lblsubject').text("Subject");
+                    $('#lblcontact').text("Offer To");
+                    $('#lbldescription').text("Remarks");
+
+                }
+            });
+
+        });
+
+        function Edit(Id, leadsID, leadName, subject, activityCategoryId, priority, description) {
+            $("#Id").val(Id);
+            $("#leadsID").val(leadsID);
+            $("#LeadName").val(leadName);
+            $("#subject").val(subject);
+            $("#category").val(activityCategoryId);
+
+            $("#priority").val(priority);
+            $("#description").val(description);
+        }
+        Common.Ajax('GET', '/global/api/GetLeadsByLeadOwner', [], 'json', ajaxGetLeadsByLeadOwner);
+        function AddContact() {
+            var comvalue = $('#contactsId option:selected').text();
+            var comvalueId = $('#contactsId').val();
+            $('#contactdivId').append('<input class="form-control" type="text" id="' + comvalueId + '" name="' + comvalue + '" readonly value="' + comvalue + '" />');
+            $('#contactdivId').append('<input type="hidden" name="contactlist[]" value="' + comvalueId + '" />');
+            $('#contactdivIdbtn').append('<a href="#" class="btn  btn-default form-control" onclick="hideelement(' + comvalue + ')" style="float:right;"><i class="fas fa-minus"></i></a>');
+        }
+        function hideelement(name) {
+
+
+            var element = document.getElementById(name);
+            var child = document.getElementById(name);
+            element.removeChild(child);
+
+        }
+        function ajaxGetLeadsByLeadOwner(response) {
+            var GetLeadList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.id;
+                obj.value = option.leadName;
+                GetLeadList[GetLeadList.length] = obj;
+            });
+            //console.log(GetLeadList);
+            $('#LeadName').autocomplete({
+                source: GetLeadList,
+                select: function (event, ui) {
+                    $("#LeadName").val(ui.item.value);
+                    $("#leadsID").val(ui.item.key);
+                }
+            });
+        }
+    </script>
+}
+
+
+
+
+
+
+

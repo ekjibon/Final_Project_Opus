@@ -1,0 +1,534 @@
+﻿@model BillCollectionViewModel
+@{
+    ViewData["Title"] = "Bill Collection";
+}
+<link href="~/SweetAlert/sweetalert2.css" rel="stylesheet" />
+
+@section Style{
+    <style>
+    </style>
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="card-title" style="color:black;text-align:center;">New Collection</h5>
+                <a href="/CRMLead/BillCollection/BillCollectionList" class="btn btn-success btn-sm pull-right">Collection List</a>
+            </div>
+            <hr>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-bordered table-responsive table-sm" id="InvoiceTable" style="width:100%;"></table>
+                    </div>
+                </div>
+                <hr />
+
+                <h5 class="card-title" style="color: black">Invoice Information</h5>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="leadName" class="col-sm-4 col-form-label">Lead Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="leadName" name="leadName" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="agreementNo" class="col-sm-4 col-form-label">Agreement No</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="agreementNo" name="agreementNo" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="invoiceNumber" class="col-sm-4 col-form-label">Invoice Number</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="invoiceNumber" name="invoiceNumber" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="billDate" class="col-sm-4 col-form-label">Bill Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="billDate" name="billDate" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="advanceAmount" class="col-sm-4 col-form-label">Rating Type</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="ratingType" name="ratingType" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="clientBankName" class="col-sm-4 col-form-label">Client's Bank Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="clientBankName" name="clientBankName" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="billAmount" class="col-sm-4 col-form-label">Bill Amount</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="billAmount" name="billAmount" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="vatType" class="col-sm-4 col-form-label">VAT Type</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="vatType" name="vatType" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="vatAmount" class="col-sm-4 col-form-label">VAT Amount</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="vatAmount" name="vatAmount" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="collectedAmount" class="col-sm-4 col-form-label">Collected Amount</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="collectedAmount" name="collectedAmount" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="dueAmount" class="col-sm-4 col-form-label">Due Amount</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="dueAmount" name="dueAmount" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="vatAmount" class="col-sm-4 col-form-label">Client's Bank Branch</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="clientBranch" name="clientBranch" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <form id="frmCollection" method="post" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" id="billCollectionId" name="billCollectionId" value=0>
+                    <input type="hidden" id="billGenerateId" name="billGenerateId">
+                    <h5 class="card-title" style="color: black">Collection Information</h5>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="paymentModeId" class="col-sm-4 col-form-label">Payment Type  <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select name="paymentModeId" id="paymentModeId" value="0" class="form-control" data-parsley-required="true">
+                                        <option value="">Select Payment Mode</option>
+                                        @foreach (var data in Model.paymentModes)
+                                        {
+                                            <option value="@data.Id">@data.paymentModeName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="bankBranchDetailsId" class="col-sm-4 col-form-label">Deposit Bank</label>
+                                <div class="col-sm-8">
+                                    <select name="bankBranchDetailsId" id="bankBranchDetailsId" class="form-control">
+                                        <option value="">Select Bank</option>
+                                        @foreach (var data in Model.bankBranchDetails)
+                                        {
+                                            <option value="@data?.Id">@data?.bank?.bankName / @data?.bankBranch?.branchName / @data?.accountNo</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                           
+                            <div class="form-group row">
+                                <label for="chequeNo" class="col-sm-4 col-form-label">Cheque/Pay Order/Ref No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="chequeNo" name="chequeNo">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="receivedDate" class="col-sm-4 col-form-label">Receive Date <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="receivedDate" name="receivedDate">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="discount" class="col-sm-4 col-form-label">Discount</label>
+                                <div class="col-sm-8">
+                                    <input data-parsley-type="number" class="form-control" id="discount" name="discount" style="text-align:right">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="moneyReceipt" class="col-sm-4 col-form-label">Money Receipt No.</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="moneyReceipt" name="moneyReceipt">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="challanReceiptVat" class="col-sm-4 col-form-label">Challan receipt VAT</label>
+                                <div class="col-sm-8">
+                                    <input data-parsley-type="number" class="form-control" id="challanReceiptVat" name="challanReceiptVat" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="challanReceiptTax" class="col-sm-4 col-form-label">Challan receipt AIT</label>
+                                <div class="col-sm-8">
+                                    <input data-parsley-type="number" class="form-control" id="challanReceiptTax" name="challanReceiptTax" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="payOrderAmount" class="col-sm-4 col-form-label">Pay Order Amount</label>
+                                <div class="col-sm-8">
+                                    <input data-parsley-type="number" class="form-control" id="payOrderAmount" name="payOrderAmount" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="bankAmount" class="col-sm-4 col-form-label">Cheque Amount</label>
+                                <div class="col-sm-8">
+                                    <input data-parsley-type="number" class="form-control" id="bankAmount" name="bankAmount" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="cashAmount" class="col-sm-4 col-form-label">Cash Amount</label>
+                                <div class="col-sm-8">
+                                    <input data-parsley-type="number" class="form-control" id="cashAmount" name="cashAmount" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobileBankAmount" class="col-sm-4 col-form-label">Mobile Amount</label>
+                                <div class="col-sm-8">
+                                    <input data-parsley-type="number" class="form-control" id="mobileBankAmount" name="mobileBankAmount" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="totalAmount" class="col-sm-4 col-form-label">Total Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="totalAmountShow" name="totalAmountShow" style="text-align:right" readonly>
+                                    <input type="hidden" id="totalAmount" name="totalAmount"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" title="Save" id="btnSave" class="btn btn-success btn-sm" style="float:right; margin-top:5px;" onclick="SaveCollection()">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/SweetAlert/sweetalert2.common.js"></script>
+    <script src="~/SweetAlert/sweetalert2.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#receivedDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            GetAllPendingData();
+
+            $("#paymentModeId").change(function () {
+                //PayOrder
+                if ($("#paymentModeId").val() == 3) {
+                    $("#payOrderAmount").attr('readonly', false);
+                    $("#chequeNo").attr('readonly', false);
+                    $("#bankBranchDetailsId").attr('readonly', false);
+
+                    $("#bankAmount").attr('readonly', true);
+                    $("#cashAmount").attr('readonly', true);
+                    $("#mobileBankAmount").attr('readonly', true);
+                    $("#challanReceiptVat").attr('readonly', true);
+                    $("#challanReceiptTax").attr('readonly', true);
+
+                    $("#bankAmount").val(0);
+                    $("#cashAmount").val(0);
+                    $("#mobileBankAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                }
+                //Cheque
+                if ($("#paymentModeId").val() == 1) {
+                    $("#chequeNo").attr('readonly', false);
+                    $("#bankAmount").attr('readonly', false);
+                    $("#bankBranchDetailsId").attr('readonly', false);
+
+                    $("#payOrderAmount").attr('readonly', true);
+                    $("#cashAmount").attr('readonly', true);
+                    $("#mobileBankAmount").attr('readonly', true);
+                    $("#challanReceiptVat").attr('readonly', true);
+                    $("#challanReceiptTax").attr('readonly', true);
+
+                    $("#payOrderAmount").val(0);
+                    $("#cashAmount").val(0);
+                    $("#mobileBankAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                }
+                //"Cash"
+                if ($("#paymentModeId").val() == 6) {
+                    $("#cashAmount").attr('readonly', false);
+
+                    $("#chequeNo").attr('readonly', true);
+                    $("#bankAmount").attr('readonly', true);
+                    $("#bankBranchDetailsId").attr('readonly', true);
+                    $("#payOrderAmount").attr('readonly', true);
+                    $("#mobileBankAmount").attr('readonly', true);
+                    $("#challanReceiptVat").attr('readonly', true);
+                    $("#challanReceiptTax").attr('readonly', true);
+
+                    $("#payOrderAmount").val(0);
+                    $("#bankAmount").val(0);
+                    $("#mobileBankAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                }
+                //Both
+                if ($("#paymentModeId").val() == 5) {
+                    $("#chequeNo").attr('readonly', false);
+                    $("#bankAmount").attr('readonly', false);
+                    $("#cashAmount").attr('readonly', false);
+                    $("#bankBranchDetailsId").attr('readonly', false);
+
+                    $("#mobileBankAmount").attr('readonly', true);
+                    $("#challanReceiptVat").attr('readonly', true);
+                    $("#challanReceiptTax").attr('readonly', true);
+
+                    $("#payOrderAmount").val(0);
+                    $("#cashAmount").val(0);
+                    $("#mobileBankAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                }
+                //OnlineBank
+                if ($("#paymentModeId").val() == 7) {
+                    $("#chequeNo").attr('readonly', false);
+                    $("#bankBranchDetailsId").attr('readonly', false);
+                    $("#cashAmount").attr('readonly', false);
+
+                    $("#payOrderAmount").attr('readonly', true);
+                    $("#bankAmount").attr('readonly', true);
+                    $("#challanReceiptVat").attr('readonly', true);
+                    $("#challanReceiptTax").attr('readonly', true);
+                    $("#mobileBankAmount").attr('readonly', true);
+
+                    $("#bankAmount").val(0);
+                    $("#cashAmount").val(0);
+                    $("#mobileBankAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                }
+                //Challan receipt Vat
+                if ($("#paymentModeId").val() == 4) {
+                    $("#challanReceiptVat").attr('readonly', false);
+
+                    $("#chequeNo").attr('readonly', true);
+                    $("#bankAmount").attr('readonly', true);
+                    $("#payOrderAmount").attr('readonly', true);
+                    $("#cashAmount").attr('readonly', true);
+                    $("#bankBranchDetailsId").attr('readonly', true);
+                    $("#discount").attr('readonly', true);
+                    $("#challanReceiptTax").attr('readonly', true);
+                    $("#mobileBankAmount").attr('readonly', true);
+
+                    $("#discount").val(0);
+                    $("#bankAmount").val(0);
+                    $("#cashAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                    $("#payOrderAmount").val(0);
+                    $("#challanReceiptTax").val(0);
+                    $("#mobileBankAmount").val(0);
+                }
+                //Challan receipt AIT
+                if ($("#paymentModeId").val() == 2) {
+                    $("#challanReceiptTax").attr('readonly', false);
+
+                    $("#chequeNo").attr('readonly', true);
+                    $("#bankAmount").attr('readonly', true);
+                    $("#payOrderAmount").attr('readonly', true);
+                    $("#cashAmount").attr('readonly', true);
+                    $("#bankBranchDetailsId").attr('readonly', true);
+                    $("#discount").attr('readonly', true);
+                    $("#challanReceiptVat").attr('readonly', true);
+                    $("#mobileBankAmount").attr('readonly', true);
+
+                    $("#discount").val(0);
+                    $("#bankAmount").val(0);
+                    $("#cashAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                    $("#payOrderAmount").val(0);
+                    $("#challanReceiptVat").val(0);
+                    $("#mobileBankAmount").val(0);
+                }
+                //Challan receipt Vat & Challan receipt AIT
+                if ($("#paymentModeId").val() == 9) {
+                    $("#challanReceiptVat").attr('readonly', false);
+                    $("#challanReceiptTax").attr('readonly', false);
+
+                    $("#chequeNo").attr('readonly', true);
+                    $("#bankAmount").attr('readonly', true);
+                    $("#payOrderAmount").attr('readonly', true);
+                    $("#cashAmount").attr('readonly', true);
+                    $("#bankBranchDetailsId").attr('readonly', true);
+                    $("#discount").attr('readonly', true);
+                    $("#mobileBankAmount").attr('readonly', true);
+
+                    $("#discount").val(0);
+                    $("#bankAmount").val(0);
+                    $("#cashAmount").val(0);
+                    $("#totalAmount").val(0);
+                    $("#totalAmountShow").val(0);
+                    $("#payOrderAmount").val(0);
+                    $("#mobileBankAmount").val(0);
+                }
+
+            })
+
+
+            $('#cashAmount').keyup(function () {
+                let cashAmount = parseFloat($('#cashAmount').val()) ? parseFloat($('#cashAmount').val()) : 0;
+                let discount = parseFloat($("#discount").val()) ? parseFloat($('#discount').val()) : 0;
+                tt = parseFloat(cashAmount) + parseFloat(discount);
+                $('#totalAmount').val(cashAmount.toFixed(0));
+                $('#totalAmountShow').val(tt.toFixed(0));
+            });
+
+            $('#discount').keyup(function () {
+                let cashAmount = parseFloat($('#cashAmount').val()) ? parseFloat($('#cashAmount').val()) : 0;
+                let discount = parseFloat($("#discount").val()) ? parseFloat($('#discount').val()) : 0;
+                tt = parseFloat(cashAmount) + parseFloat(discount);
+                $('#totalAmount').val(cashAmount.toFixed(0));
+                $('#totalAmountShow').val(tt.toFixed(0));
+            });
+
+            $('#bankAmount').keyup(function () {
+                let bankAmount = parseFloat($('#bankAmount').val()) ? parseFloat($('#bankAmount').val()) : 0;
+                let discount = parseFloat($("#discount").val()) ? parseFloat($('#discount').val()) : 0;
+                tt = parseFloat(bankAmount) + parseFloat(discount);
+                $('#totalAmount').val(bankAmount.toFixed(0));
+                $('#totalAmountShow').val(tt.toFixed(0));
+            });
+
+            $('#payOrderAmount').keyup(function () {
+                let payOrderAmount = parseFloat($('#payOrderAmount').val()) ? parseFloat($('#payOrderAmount').val()) : 0;
+                let discount = parseFloat($("#discount").val()) ? parseFloat($('#discount').val()) : 0;
+                tt = parseFloat(payOrderAmount) + parseFloat(discount);
+                $('#totalAmount').val(payOrderAmount.toFixed(0));
+                $('#totalAmountShow').val(tt.toFixed(0));
+            });
+
+            $('#challanReceiptVat').keyup(function () {
+                let challanReceiptVat = parseFloat($('#challanReceiptVat').val()) ? parseFloat($('#challanReceiptVat').val()) : 0;
+                let challanReceiptTax = parseFloat($("#challanReceiptTax").val()) ? parseFloat($('#challanReceiptTax').val()) : 0;
+                tt = challanReceiptVat + challanReceiptTax;
+                $('#totalAmount').val(challanReceiptVat.toFixed(0));
+                $('#totalAmountShow').val(tt.toFixed(0));
+            });
+
+            $('#challanReceiptTax').keyup(function () {
+                let challanReceiptVat = parseFloat($('#challanReceiptVat').val()) ? parseFloat($('#challanReceiptVat').val()) : 0;
+                let challanReceiptTax = parseFloat($("#challanReceiptTax").val()) ? parseFloat($('#challanReceiptTax').val()) : 0;
+                tt = challanReceiptVat + challanReceiptTax;
+                $('#totalAmount').val(challanReceiptTax.toFixed(0));
+                $('#totalAmountShow').val(tt.toFixed(0));
+            });
+        });
+
+        function GetAllPendingData() {
+            $('#InvoiceTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetBillCollectionPendingListFC", "BillCollection")',
+                    dataSrc: ""
+                },
+                destroy: true,
+                columns: [
+                    {
+                        title: "Action", width: "6%",
+                        "render": function (data, type, e, meta) {
+                            return '<a class="btn btn-info" href="javascript:void(0)" title="Add Collection" onclick="GetInvoiceinfo(' + e.Id + ',' + "'" + e.leadName + "'" + ',' + "'" + e.agreementNo + "'" + ',' + "'" + e.billNo + "'" + ',' + "'" + e.billDate + "'" + ',' + "'" + e.ratingTypeName + "'" + ',' + "'" + e.totalAmount + "'" + ',' + "'" + e.vatCategoryName + "'" + ',' + "'" + e.vatAmount + "'" + ',' + "'" + e.collectedAmount + "'" + ',' + "'" + e.dueAmount + "'" + ',' + "'" + e.bankName + "'" + ',' + "'" + e.branchName + "'" + ')"><i class="fa fa-plus-square"></i></a>';
+                        }
+                    },
+                    { data: "leadName", title: "Account Name", width: "20%" },
+                    { data: "bankName", title: "Bank Name", width: "20%" },
+                    { data: "branchName", title: "Branch Name", width: "20%" },
+                    { data: "leadOwner", title: "Owner", width: "20%" },
+                    { data: "agreementNo", title: "Agreement No", width: "10%" },
+                    { data: "billNo", title: "Invoice No", width: "5%" },
+                    { data: "ratingTypeName", title: "Rating Nature", width: "5%" },
+                    { data: "billDate", title: "Bill Date", width: "14%" },
+                    { data: "totalAmount", title: "Bill Amount", width: "14%" },
+                    { data: "discount", title: "discount", width: "14%" },
+                    { data: "receiveTotalAmount", title: "Collection", width: "14%" },
+                    { data: "dueAmount", title: "Dues", width: "14%" },
+                ]
+            });
+        }
+
+        function GetInvoiceinfo(bgId, leadName, agreementNo, billNo, billDate, ratingTypeName, totalAmount, vatCategoryName, vatAmount, collectedAmount, dueAmount, bankName, branchName) {
+
+            $('#billGenerateId').val(bgId);
+            $('#leadName').val(leadName);
+            $('#agreementNo').val(agreementNo);
+            $('#invoiceNumber').val(billNo);
+            $('#billDate').val(billDate);
+            $('#ratingType').val(ratingTypeName);
+            $('#billAmount').val(totalAmount);
+            $('#vatType').val(vatCategoryName);
+            $('#vatAmount').val(vatAmount);
+            $('#collectedAmount').val(collectedAmount);
+            $('#dueAmount').val(dueAmount);
+            $('#clientBankName').val(bankName);
+            $('#clientBranch').val(branchName);
+
+        }
+
+        function SaveCollection() {
+
+          
+            let billGenerateId = $('#billGenerateId').val();
+            //let discount = parseFloat($("#discount").val()) ? parseFloat($('#discount').val()) : 0;
+            let dueAmount = parseFloat($("#dueAmount").val()) ? parseFloat($('#dueAmount').val()) : 0;
+            let totalAmount = $('#totalAmountShow').val() ? parseFloat($('#totalAmountShow').val()) : 0;
+            if (billGenerateId == 0) {
+                swal("Please Select Invoice");
+                return false;
+            }
+            else if (totalAmount == 0) {
+                swal("Amount cannnot be 0");
+                return false;
+            }
+            else if ((totalAmount) > dueAmount) {
+                swal("Collection amount greater than due amount!");
+                return false;
+            }
+            $("#btnSave").attr("disabled", true);
+            swal({
+                title: 'Are you sure?', text: 'save this!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, save it!'
+            }).then(function () {
+            var form = $("#frmCollection");
+                $.ajax({
+                    url: '@Url.Action("SaveCollection", "BillCollection")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Save Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+                            $("#btnSave").attr("disabled", true);
+                           // window.location = '@Url.Action("Index", "BillCollection")';
+                        });
+
+                    }
+                });
+            });
+        }
+
+
+    </script>
+}
+
+

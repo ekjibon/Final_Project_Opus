@@ -1,0 +1,211 @@
+﻿@{
+    ViewData["Title"] = "Profit And Loss Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using OPUSERP.ERPServices.MasterData.Interfaces
+@inject IERPCompanyService eRPCompanyService
+@{
+    var companies = await eRPCompanyService.GetAllCompany();
+    var company = companies.FirstOrDefault().filePath;
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Profit And LossAccount</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="SBUSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">SBU</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="sbuId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerProject">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Project</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="projectId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-2">
+                            <input name="fromDate" id="fromDate" class="form-control input-group-sm" autocomplete="off" />
+                        </div>
+                        <label for="toDate" class="col-sm-1.5 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-2">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" autocomplete="off" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button id="SubmitButton" class="btn btn-success btn-sm" title="Print Preview" style="width:80px;">Print</button>
+                            <button id="btnLoad" class="btn btn-info btn-sm" title="Load" style="width:80px;">Load</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row" id="PLTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblPLItem">
+                    <thead>
+                        <tr>
+                            <th>SL</th>
+                            <th>Particulars</th>
+                            <th>Current Year</th>
+                            <th>Previous Year</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        $(document).ready(function () {
+            $('#toDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2050" });
+            $('#fromDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2050" });
+
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+            $("#sbuId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', GetProject, false);
+            });
+
+            var fromYear, toYear;
+            $("#SubmitButton").click(function (e) {
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                }
+                else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                var date = $('#fromDate').val().split("-");
+                //day = date[0];
+                //month = date[1];
+                fromYear = date[2];
+                var date = $('#toDate').val().split("-");
+                toYear = date[2];
+                if (fromYear != toYear) {
+                    swal('Warning', 'From date year and to date year should be same year!!!', 'warning');
+                    return false;
+                }
+                let sbuId = $('#sbuId').val();
+                let projectId = $('#projectId').val();
+                window.open('/Accounting/AccountingReport/PLReportDatapdf?fromDate=' + fromDate + "&toDate=" + toDate + "&sbuId=" + sbuId + "&projectId=" + projectId, '_blank');
+            });
+
+            $("#btnLoad").click(function (e) {
+                LoadPLData();
+            });
+        });
+
+        function LoadPLData() {
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+            let sbuId = parseInt($('#sbuId').val()) ? parseInt($('#sbuId').val()) : 0;
+            let projectId = parseInt($('#projectId').val()) ? parseInt($('#projectId').val()) : 0;
+            if (fromDate == '') {
+                swal('Warning', 'Select From Date', 'warning');
+                return false;
+            } else if (toDate == '') {
+                swal('Warning', 'Select To Date', 'warning');
+                return false;
+            }
+            Common.Ajax('GET', '/global/api/GetProfitLossACReportData/' + fromDate + '/' + toDate + '/' + sbuId + '/' + projectId, [], 'json', ajaxGetProfitLossACReportData);
+        }
+
+        function ajaxGetProfitLossACReportData(response) {
+            if (response == null) {
+                return false;
+            }
+            $("#tblPLItem").DataTable().destroy();
+            var table = $("#tblPLItem tbody");
+            table.empty();
+            var index = 0;
+            for (var i = 0; i < response.length; i++) {
+                index = i + 1;
+                table.append('<tr><td>' + index + '</td>'
+                    + '<td>' + response[i].noteName + '</td>'
+                    + '<td align="right">' + addCommas(response[i].currentAmount) + '</td>'
+                    + '<td align="right">' + addCommas(response[i].previousAmount) + '</td>'
+                    + '</tr >');
+            }
+            $("#tblPLItem").DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        title: "PL Statement",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        title: "PL Statement",
+                    }
+                ]
+            });
+        }
+
+        function GetSBU(response) {
+            $('#sbuId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+            });
+            $('#sbuId').append(options);
+        }
+
+        function GetProject(response) {
+            $('#projectId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+            });
+            $('#projectId').append(options);
+        }
+    </script>
+}

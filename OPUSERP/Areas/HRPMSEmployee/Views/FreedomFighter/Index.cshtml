@@ -1,0 +1,169 @@
+﻿@model FreedomFighterViewModel
+@{
+    ViewData["Title"] = "Freedom Fighter Information";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+@section StyleEmp{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo?.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo?.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo?.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo?.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo?.activityStatus == 1 ? "Active" : "Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">Freedom Fighter Information</u></h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="FreedomFighter" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="ffNo" class="col-sm-4 col-form-label">F.F No. <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="ffNo" name="ffNo" value="@Model.freedomFighter?.number" data-parsley-required="true" />
+                                <input type="hidden" id="employeeID" name="employeeID" value="@Model.employeeID">
+                                <input type="hidden" id="FFID" name="FFID" value="@Model.freedomFighter?.Id">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="owner" class="col-sm-4 col-form-label">Owner </label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="owner" name="owner">
+                                    <option value="">Select</option>
+                                    <option value="Own">Own</option>
+                                    <option value="Relative">Relative</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row" id="divRelationShip" style="display:none;">
+                            <label for="relationShip" class="col-sm-4 col-form-label">RelationShip </label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="relationShip" name="relationShip">
+                                    <option value="">Select</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="GrandFather">Grand Father</option>
+                                    <option value="GrandMother">Grand Mother</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="sectorNo" class="col-sm-4 col-form-label">Sector No </label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="sectorNo" name="sectorNo">
+                                    <option value="">Select</option>
+                                    <option value="1">Sector 1</option>
+                                    <option value="2">Sector 2</option>
+                                    <option value="3">Sector 3</option>
+                                    <option value="4">Sector 4</option>
+                                    <option value="5">Sector 5</option>
+                                    <option value="6">Sector 6</option>
+                                    <option value="7">Sector 7</option>
+                                    <option value="8">Sector 8</option>
+                                    <option value="9">Sector 9</option>
+                                    <option value="10">Sector 10</option>
+                                    <option value="11">Sector 11</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="remark" class="col-sm-4 col-form-label">Remark </label>
+                            <div class="col-sm-8">
+                                <textarea rows="3" class="form-control" id="remark" name="remark">@Model.freedomFighter?.remarks</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $("#freedomFighter").addClass("active");
+            //$('#startDate').flatpickr({ dateFormat: "d-M-Y" });
+            //$('#endDate').flatpickr({ dateFormat: "d-M-Y" });
+
+            //$('#otherQualificationsTable').DataTable();
+
+            $("#owner").change(function () {
+                if ($("#owner").val() == "Relative") {
+                    $("#divRelationShip").show();
+                }
+                else {
+                    $("#divRelationShip").hide();
+                    $("#relationShip").val('');
+                }                
+            });
+
+            $("#owner").val('@Model.freedomFighter?.owner');
+            $("#sectorNo").val('@Model.freedomFighter?.sectorNo');
+            if ($("#owner").val() == "Relative") {
+                $("#relationShip").val('@Model.freedomFighter?.relationship');
+                $("#divRelationShip").show();
+            }
+            else {
+                $("#relationShip").val('');
+                $("#divRelationShip").hide();
+            } 
+            
+        });
+
+        function Edit(Id, licenseNumber, placeOfIssue, dateOfIssue, dateOfExpair) {
+            $("#licenseId").val(Id);
+            $("#licenseNumber").val(licenseNumber);
+            $("#place").val(placeOfIssue);
+            $("#dateOfIssue").val(dateOfIssue);
+            $("#dateOfExpair").val(dateOfExpair);
+        }
+
+    </script>
+}
+
+
+

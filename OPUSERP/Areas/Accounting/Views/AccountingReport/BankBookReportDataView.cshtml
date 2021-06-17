@@ -1,0 +1,194 @@
+﻿@model LedgerBookViewModel
+@{
+    ViewData["Title"] = "Bank Book Reports";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+@{
+    decimal? Sumdebit = 0;
+    decimal? Sumcredit = 0;
+    decimal? TClosing = 0;
+
+    decimal? SumPayment = 0;
+    decimal? SumClosing = 0;
+
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-2">
+                        <img src="@Model.Company.filePath" alt="OPUS ERP" style="height:50px;" />
+                    </div>
+                    <div class="col-8" style="color:black;text-align:center">
+                        <p style="font-size:25px;font-weight:500; margin-top:10px;">@Model.Company.companyName</p>
+                        <p style="font-size:20px;width:100%;margin-top:-15px;">Bank Book Report</p>
+                        <p style="font-size:20px;width:100%;margin-top:-15px;">From @ViewBag.FromDate?.ToString("dd-MMM-yyyy")&nbsp;&nbsp; to &nbsp; @ViewBag.ToDate?.ToString("dd-MMM-yyyy")</p>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid" style="color:black;">
+                <hr style="border:1px solid grey;">
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <div class="col-6">
+                        <table class="table table-bordered" style="border-color:black;">
+                            <thead style="background-color:lightgray;border-bottom:groove;">
+                                <tr>
+                                    <th width="10%" style="text-align:center;">Voucher No.</th>
+                                    <th width="80%" style="text-align:center;">Particulars</th>
+                                    <th width="10%" style="text-align:center;">Amount</th>
+                                </tr>
+                            </thead>
+                            @if (Model.bankBookReportViewModels.Count() > 0)
+                            {
+                                @foreach (var data in Model.bankBookReportViewModels.Where(a => a.voucherType == "Received" || a.voucherType == "Contra" || a.voucherType == "OB"))
+                                {
+                                    <tr>
+                                        <td>@data.voucherNo</td>
+                                        <td>@data.accountName</td>
+                                        <td style="text-align:right;">@data.debit?.ToString("0,0.00")</td>
+                                    </tr>
+                                    Sumdebit = Sumdebit + data.debit;
+                                    Sumcredit = Sumcredit + data.credit;
+                                }
+                            }
+                            <tr>
+                                <th colspan="2" style="text-align:center">Total Receive </th>
+                                <th style="text-align:right">@Model.bankBookReportViewModels.Where(a => a.voucherType == "Received" || a.voucherType == "Contra").Sum(x => x.debit)?.ToString("0,0.00")</th>
+                            </tr>
+                            <thead style="background-color:lightgray;border-bottom:groove ;">
+                                <tr>
+                                    <th colspan="2" style="text-align:center">Total Amount </th>
+                                    <th style="text-align:right">@Sumdebit?.ToString("0,0.00")</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-bordered" style="border-color:black;">
+                            <thead style="background-color:lightgray;border-bottom:groove;">
+                                <tr>
+                                    <th width="10%" style="text-align:center;">Voucher No.</th>
+                                    <th width="80%" style="text-align:center;">Particulars</th>
+                                    <th width="10%" style="text-align:center;">Amount</th>
+                                </tr>
+                            </thead>
+                            @if (Model.bankBookReportViewModels.Count() > 0)
+                            {
+                                @foreach (var data in Model.bankBookReportViewModels.Where(a => a.voucherType == "Payment"))
+                                {
+                                    <tr>
+                                        <td>@data.voucherNo</td>
+                                        <td>@data.accountName</td>
+                                        <td style="text-align:right;">@data.credit?.ToString("0,0.00")</td>
+                                    </tr>                                   
+                                    SumPayment = SumPayment + data.credit;
+                                }
+                            }
+                            <thead style="border-bottom:groove;">
+                                <tr>
+                                    <th colspan="2" style="text-align:center">Total Payment </th>
+                                    <th style="text-align:right">@SumPayment?.ToString("0,0.00")</th>
+                                </tr>
+                                @foreach (var data2 in Model.bankBookReportViewModels.Where(a => a.voucherType == "OB"))
+                                {
+                                    <tr>
+                                        <td colspan="2" style="text-align:center;">@data2.accountName</td>
+                                        <td style="text-align:right">@data2.closing?.ToString("0,0.00")</td>
+                                    </tr>
+                                    SumClosing = SumClosing + data2.closing;
+                                }
+                                @*@foreach (var bank in Model.bankBookReportViewModels.Where(a => a.voucherType == "OB").Select(x => x.accountName).Distinct())
+                                    {
+                                        @foreach (var c in Model.bankBookReportViewModels.Where(x => x.accountName == bank))
+                                        {
+                                            <tr>
+                                                    <td colspan="2" style="text-align:center;">@c.accountName</td>
+                                                    <td style="text-align:right">@c.closing?.ToString("0,0.00")</td>
+
+                                            </tr>
+                                        }
+                                    }*@
+                                @*<tr>
+                                        @if (Sumdebit > Sumcredit)
+                                        {
+                                            TClosing = Sumdebit - Sumcredit;
+                                            <td colspan="2" style="text-align:center;">@Model.bankBookReportViewModels.Where(a => a.voucherType == "OB").FirstOrDefault().accountName </td>
+                                            <td style="text-align:right">@TClosing?.ToString("0,0.00")</td>
+                                        }
+                                        else if (Sumdebit < Sumcredit)
+                                        {
+                                            TClosing = Sumcredit - Sumdebit;
+                                            <td colspan="2" style="text-align:center;">@Model.bankBookReportViewModels.Where(a => a.voucherType == "OB").FirstOrDefault().accountName </td>
+                                            <td style="text-align:right">@TClosing?.ToString("0,0.00")</td>
+                                        }
+                                        else
+                                        {
+                                            <td colspan="2" style="text-align:center;">@Model.bankBookReportViewModels.Where(a => a.voucherType == "OB").FirstOrDefault().accountName </td>
+                                            <td style="text-align:right">0.00</td>
+                                        }
+                                    </tr>*@
+                                <tr style="background-color:lightgray;border-bottom:groove;">
+                                    @{
+                                        TClosing = SumPayment + SumClosing;
+                                        <th colspan="2" style="text-align:center">Total Amount </th>
+                                        <th style="text-align:right">@TClosing?.ToString("0,0.00")</th>
+                                    }
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts{
+}

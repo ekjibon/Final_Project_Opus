@@ -1,0 +1,68 @@
+﻿@model StockInViewModel
+@{
+    ViewData["Title"] = "Stock In";
+    
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+          
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Purchase List For Stock In</h4>
+                <a href="/Inventory/Stock/StockInList?id=0" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Stock In List</a>
+            </div>
+
+           
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="PurchaseList">
+                    <thead>
+                        <tr>
+                            <th width="15%">Purchase No</th>
+                            <th width="15%">Purchase Date</th>
+                            <th width="25%">Supplier Name</th>
+                            <th width="10%">Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.purchaseOrdersMasters)
+                        {
+                            <tr>
+                                <td>@data.poNo</td>
+                                <td>@data.poDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.supplier?.organizationName</td>
+                                <td>
+                                    <a class="btn btn-success" href="/Inventory/Stock/ItemListStockIn?id=@data.Id" title="Stock In"><i class="fa fa-store"></i></a>
+                                   
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#PurchaseList').DataTable();
+            var table = $('#PurchaseList').DataTable();
+        });
+    </script>
+}
+
+
+@section Style{
+    <style>
+        #PurchaseList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}

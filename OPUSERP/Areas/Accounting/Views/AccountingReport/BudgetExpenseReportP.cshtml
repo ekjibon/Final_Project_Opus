@@ -1,0 +1,173 @@
+﻿@model BudgetExpenseMasterViewModel
+@{
+    ViewData["Title"] = "Budget Expense Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using OPUSERP.ERPServices.MasterData.Interfaces
+@inject IERPCompanyService eRPCompanyService
+@{
+    var companies = await eRPCompanyService.GetAllCompany();
+    var company = companies.FirstOrDefault().filePath;   
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Budget Expense Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="SBUSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">SBU</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="sbuId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerProject">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Project</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="projectId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="display:none">
+                        <label for="year" class="col-sm-3 col-form-label text-left">Fiscal Year<span style="color:red;">*</span></label>
+                        <div class="col-sm-9">
+                            <select name="year" id="year" class="form-control input-group-sm" data-parsley-required="true">
+                                <option value="">Select One</option>
+                                @foreach (var data in Model.fiscalYears)
+                                {
+                                    <option value="@data.Id">@data.yearName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="year" class="col-sm-3 col-form-label text-left">Budget No</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="budgetName" />
+                            <input type="hidden" class="form-control" id="budgetId" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="year" class="col-sm-3 col-form-label text-left">Partner Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="partnerName" />
+                            <input type="hidden" class="form-control" id="partnerId"  />
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left"></label>
+                        <div class="col-sm-2"></div>
+                        <label for="toDate" class="col-sm-1.5 col-form-label text-left"></label>
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-1">
+                            <button id="SubmitButton" class="btn btn-success btn-sm" title="Print Preview" style="width:80px;">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        $(document).ready(function () {
+            $('#toDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2050" });
+            $('#fromDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2050" });
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+            $("#sbuId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', GetProject, false);
+            });
+            Common.Ajax('GET', '/global/api/GetBudget/', [], 'json', GetBudget);
+           
+            var fromYear, toYear, fromMonth, toMonth;
+            $("#SubmitButton").click(function (e) {
+                let budgetId = $('#budgetId').val();
+                if (budgetId == '') {
+                    swal('Warning', 'Select Budget', 'warning');
+                    return false;
+                }
+                let partnerId = $('#partnerId').val();
+                if (partnerId == '') {
+                    swal('Warning', 'Select Partner', 'warning');
+                    return false;
+                }
+                let sbuId = $('#sbuId').val();
+                let projectId = $('#projectId').val();
+                window.open('/Accounting/AccountingReport/BEReportDatapdfP?Id=' + budgetId + "&partnerId=" + partnerId + "&sbuId=" + sbuId + "&projectId=" + projectId, '_blank');
+            });
+        });
+        
+        function GetSBU(response) {
+            $('#sbuId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+            });
+            $('#sbuId').append(options);
+        }
+        
+        function GetBudget(response) {
+            console.log(response);
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.requsitionNo;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#budgetName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#budgetId").val(ui.item.key);
+                    Common.Ajax('GET', '/global/api/getAllpartnetBybudgetIdId/' + ui.item.key, [], 'json', ajaxAllpartners);
+                }
+            });
+        }
+        function ajaxAllpartners(response) {
+            console.log(response);
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.accountName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#partnerName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#partnerId").val(ui.item.key);
+                }
+            });
+        }
+     
+        function GetProject(response) {
+            $('#projectId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+            });
+            $('#projectId').append(options);
+        }
+    </script>
+}

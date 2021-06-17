@@ -1,0 +1,306 @@
+﻿@model OTSetaupViewModel
+@{
+    ViewData["TitleMD"] = "OT Setup";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">OT Setup</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSAttendence" asp-controller="OTSetup" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <div class="col-2"></div>
+                    <label for="name" class="col-sm-2 col-form-label"> Shift Group  Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-6">
+                        <select class="form-control" name="shiftGroupMasterId" id="shiftGroupMasterId" data-parsley-required="true">
+                            @foreach (var data in Model.shiftGroupMasters)
+                            {
+                                <option value="@data.Id">@data.shiftName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-2"></div>
+                    <label for="name" class="col-sm-2 col-form-label"> Buffer Time <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-6">
+                        <input type="hidden" name="IsEditSlot" id="IsEditSlot" value="0" />
+                        <input type="hidden" name="oTSetupMasterId" id="oTSetupMasterId" value="0" />
+                        <input type="number" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="bufferingmin" id="bufferingmin">
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+                <hr />
+                <div class="form-group row">
+                    <div class="col-sm-4 row">
+                        <label for="name" class="col-sm-4 col-form-label"> Slot Type <span style="float:right;" class="redStar">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="oTSlotTypeId" id="oTSlotTypeId">
+                                @foreach (var data in Model.oTSlotType)
+                                {
+                                    <option value="@data.Id">@data.slotName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 row">
+                        <label for="name" class="col-sm-4 col-form-label"> Description </label>
+                        <div class="col-sm-8">
+                            <input type="hidden" class="form-control" name="oTSetupDetailId" id="oTSetupDetailId">
+                            <input type="text" class="form-control" name="description" id="description">
+                        </div>
+                    </div>
+                    <div class="col-sm-4 row">
+                        <label for="name" class="col-sm-6 col-form-label">Basic Percent <span style="float:right;" class="redStar">*</span></label>
+                        <div class="col-sm-6">
+                            <input type="number" data-parsley-trigger="keyup" class="form-control" name="basicPercent" id="basicPercent">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-9 row">
+
+                    </div>
+                    <div class="col-sm-3 row" style="float:right">
+                        <button type="button" onclick="AddContactInfo()" value="Addcon" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                        <button type="button" onclick="RefreshContact()" value="Refreshcon" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Slot  Details</h5>
+
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-9">
+                        <input type="hidden" id="IsEditCon" name="IsEditCon" value="0" />
+                        <table class="table table-responsive col-form-label " id="tblcontactDetails" data-parsley-required="true">
+                            <thead style="width:100%">
+                                <tr>
+                                    <th width="30%">Slot Name</th>
+                                    <th width="30%">Description</th>
+                                    <th width="30%">Perchantage</th>
+
+                                    <th width="10%"><span>Action</span></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">OT Slot List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+
+                            <th>Shift Name</th>
+                            <th>Buffer Min</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.oTSetupMasters)
+                        {
+                            <tr>
+
+                                <td>@data.shiftGroupMaster.shiftName</td>
+                                <td>@data.bufferingmin</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, @data.shiftGroupMasterId,@data.bufferingmin)" href="#"><i class="fa fa-edit"></i></a>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#SpecialBranchUnit").addClass("active");
+            $('#departmentTable').DataTable();
+
+
+
+        });
+
+        function Edit(Id, shiftGroupMasterId, bufferingmin) {
+
+
+            $("#oTSetupMasterId").val(Id);
+            $("#shiftGroupMasterId").val(shiftGroupMasterId);
+            $("#bufferingmin").val(bufferingmin);
+
+
+
+
+            Common.Ajax('GET', '/global/api/OTSetup/GetSetupDetailbyMasterId/' + Id, [], 'json', ajaxGetContactId);
+
+
+        }
+        function RefreshContact() {
+            //alert("refresh")
+
+            $('#oTSetupDetailId').val('');
+            $('#basicPercent').val('');
+            $('#oTSlotTypeId').val('');
+
+            $('#description').val('');
+
+            $("#IsEditSlot").val(0);
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+        function AddContactInfo() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblcontactDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+
+
+            let id = parseInt($("#oTSetupDetailId").val()) ? parseInt($("#oTSetupDetailId").val()) : 0;
+
+            let basicPerchant = $('#basicPercent').val();
+            if (basicPerchant == null || basicPerchant == '') {
+                alert("Please entry Basic Percent");
+                return
+            }
+
+            let oTSlotTypeId = $('#oTSlotTypeId').val();
+            if (oTSlotTypeId == null || oTSlotTypeId == '') {
+                alert("Please entry Slot Type");
+                return
+            }
+
+            var SlotTypeName = $('#oTSlotTypeId').text();
+            var description = $('#description').val();
+            var editOption = parseInt($('#IsEditSlot').val()) ? parseInt($('#IsEditSlot').val()) : 0;
+            var RowCount = $("#tblcontactDetails tbody>tr").length;
+
+            var dtTable = $("#tblcontactDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + SlotTypeName + '<input type="hidden" name="oTSlotTypeIdall"  id="txtoTSlotTypeId" class="clsoTSlotTypeIdId" value="' + oTSlotTypeId + '"/></td>' +
+                '<td>' + description + '<input type="hidden"name="descriptionall" id="txtdescriptionall" class="clsdescriptionall"value="' + description + '"/></td>' +
+                '<td>' + basicPerchant + '<input type="hidden"name="basicPercentall" id="txtbasicPercentall" class="clsbasicPercentall"value="' + basicPerchant + '"/></td>'
+                +
+
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                //'<a onclick="EditconTbl(' + index + "', '" + phone + "','" + mobile + ", " + resouceid + ", " +id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            index = index + 1;
+            RefreshContact();
+        }
+        function DeleteContact(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblcontactDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+
+            return false;
+        }
+        function ajaxGetContactId(response) {
+            console.log(response);
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblcontactDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblcontactDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+                console.log(response);
+                index = $("#tblcontactDetails tbody>tr").length;
+                var dtTable = $("#tblcontactDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.oTSlotType.slotName + '<input type="hidden" name="oTSlotTypeIdall"  id="txtoTSlotTypeId" class="clsoTSlotTypeIdId" value="' + value.oTSlotTypeId + '"/></td>' +
+                    '<td>' + value.description + '<input type="hidden"name="descriptionall" id="txtdescriptionall" class="clsdescriptionall"value="' + value.description + '"/></td>' +
+                    '<td>' + value.basicPercent + '<input type="hidden"name="basicPercentall" id="txtbasicPercentall" class="clsbasicPercentall"value="' + value.basicPercent + '"/></td>'
+                    +
+
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                   
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+    </script>
+}
+

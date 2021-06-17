@@ -1,0 +1,219 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+
+    <style>
+
+        div.nav-tab {
+            border: 0;
+            margin-bottom: 15px;
+            margin-top: 30px;
+            border-radius: 6px;
+            color: rgba(0,0,0,.87);
+            background: #fff;
+            width: 100%;
+            /*box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);*/
+        }
+
+            div.nav-tab.card-plain {
+                background: transparent;
+                /*box-shadow: none;*/
+            }
+
+            div.nav-tab .card-header {
+                border-radius: 3px;
+                padding: 5px 5px;
+                margin-left: 15px;
+                margin-right: 15px;
+                margin-top: -30px;
+                border: 0;
+                /*background: linear-gradient(60deg,#eee,#bdbdbd);*/
+            }
+
+        .card-plain .card-header:not(.card-avatar) {
+            margin-left: 4px;
+            margin-right: 4px;
+        }
+
+        div.nav-tab .card-header-info {
+            border: 1px solid black;
+            /*background: #4e73df;*/
+            /*box-shadow: 0 5px 20px 0 rgba(0,0,0,.2), 0 13px 24px -11px rgba(244,67,54,.6);*/
+        }
+
+        .card-nav-tabs .card-header {
+            margin-top: -30px !important;
+        }
+
+        .nav-tab .card-header .nav-tabs {
+            padding: 0;
+        }
+
+        .nav-tabs {
+            border: 0;
+            border-radius: 3px;
+            padding: 0 15px;
+        }
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none;
+        }
+
+        .nav-tabs .nav-item {
+            margin-bottom: -1px;
+        }
+
+            .nav-tabs .nav-item .nav-link.active {
+                /*background-color: hsla(0,0%,100%,.2);*/
+                background: green;
+                transition: background-color .1s .1s;
+            }
+
+            .nav-tabs .nav-item .nav-link {
+                border: 0 !important;
+                color: #fff !important;
+                font-weight: 500;
+            }
+
+            .nav-tabs .nav-item .nav-link {
+                color: #fff;
+                border: 0;
+                margin: 0;
+                border-radius: 3px;
+                /*line-height: 24px;
+        text-transform: uppercase;*/
+                font-size: 12px;
+                font-weight: bold;
+                padding: 5px 16px !important;
+                background-color: transparent;
+                transition: background-color .1s 0s;
+            }
+
+        .nav-link {
+            display: block;
+        }
+
+        .nav-tabs .nav-item .material-icons {
+            margin: -1px 5px 0 0;
+            vertical-align: middle;
+        }
+
+        .nav .nav-item {
+            position: relative;
+            background: brown;
+            /*background-image: radial-gradient( circle 916px at -1.1% 50.2%, rgba(16,233,139,1) 13%, rgba(0,176,228,1) 100.2% );*/
+            margin: 2px 2px 2px 2px;
+            border-radius: 7px;
+        }
+
+        footer {
+            margin-top: 100px;
+            color: #555;
+            background: #fff;
+            padding: 25px;
+            font-weight: 300;
+        }
+
+        .footer p {
+            margin-bottom: 0;
+            font-size: 14px;
+            margin: 0 0 10px;
+            font-weight: 300;
+        }
+
+        footer p a {
+            color: #555;
+            font-weight: 400;
+        }
+
+            footer p a:hover {
+                color: #9f26aa;
+                text-decoration: none;
+            }
+    </style>
+
+    @RenderSection("StyleEmp", required: false)
+}
+
+<div id="content-wrapper" class="d-flex flex-column" style="border:none;">
+    <!-- Tab Heading -->
+    <div class="nav-tab card-nav-tabs card-plain" >
+        <div class="card-header card-header-info" style="border:none;">
+            <!-- colors: "header-primary", "header-info", "header-success", "header-warning", "header-danger" -->
+            <div class="nav-tabs-navigation" style="border:none;">
+                <div class="nav-tabs-wrapper">
+                    <ul class="nav nav-tabs" data-tabs="tabs" style="border:none;">
+                        <li class="nav-item">
+                            <a class="nav-link" id="personal" href="@Url.Action("Index", "Info", new { id = @ViewBag.employeeID })">Member Personal Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="address" href="@Url.Action("Index", "Address", new { id = @ViewBag.employeeID })">Address Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="education" href="@Url.Action("Index", "EducationalQualification", new { id = @ViewBag.employeeID })">Education</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="serviceHistory" href="@Url.Action("Index", "TransferLog", new { id = @ViewBag.employeeID })">Organization</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="trainingHistory" href="@Url.Action("Index", "Training", new { id = @ViewBag.employeeID })">Training History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="spouse" href="@Url.Action("Index", "Spouse", new { id = @ViewBag.employeeID })">Spouse Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="children" href="@Url.Action("Index", "Children", new { id = @ViewBag.employeeID })">Children Info</a>
+                        </li>
+                        @*<li class="nav-item">
+                                <a class="nav-link" id="license" href="@Url.Action("Index", "License", new { id = @ViewBag.employeeID })">Driving License Info</a>
+                            </li>*@
+                        @*<li class="nav-item">
+                                <a class="nav-link" id="passport" href="@Url.Action("Index", "Passport", new { id = @ViewBag.employeeID })">Passport Info</a>
+                            </li>*@
+                        <li class="nav-item" style="">
+                            <a class="nav-link" id="membership" href="@Url.Action("Index", "Membership", new { id = @ViewBag.employeeID })">Other Membership Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="language" href="@Url.Action("Index", "Language", new { id = @ViewBag.employeeID })">Language Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="photo" href="@Url.Action("Index", "Photograph", new { id = @ViewBag.employeeID })">Member Photo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="award" href="@Url.Action("Index", "Award", new { id = @ViewBag.employeeID })">Award Info</a>
+                        </li>
+                        <li class="nav-item" >
+                            <a class="nav-link" id="publication" href="@Url.Action("Index", "Publication", new { id = @ViewBag.employeeID })">Publication Info</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@RenderBody()
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".nav-item").hover(function () {
+                $(this).css("background-color", "#69e3ef");
+            },
+                function () {
+                    $(this).css("background-color", "#a72a2a");
+                }
+            );
+            
+        });
+    </script>
+    @RenderSection("ScriptsEmp", required: false)
+}
+

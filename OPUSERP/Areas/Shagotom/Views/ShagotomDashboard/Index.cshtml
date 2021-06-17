@@ -1,0 +1,194 @@
+﻿
+@model VisitorEntryViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    int i = 1;
+    int j = 1;
+}
+
+<br/>
+
+<section>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="font-weight-bold" style="color: black">NEW REQUESTING LIST</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="new_list_id">
+                    <thead>
+                    <tr>
+                        <th>#SL</th>
+                        <th>Meeting With</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.newRequstList)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.nameEnglish</td>
+                            <td>@item.department</td>
+                            <td>@item.designation</td>
+                            <td>@item.status</td>
+                            <td>
+                                <button type="button" onclick="showDetails(@item.Id)" class="btn btn-success"><i class="fa fa-eye"></i></button>
+                            </td>
+                        </tr>
+
+                        i++;
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<br/><br/>
+
+<section>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="font-weight-bold" style="color: black">CURRENTLY IN MEETING ROOM</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="in_meeting_room_id">
+                    <thead>
+                    <tr>
+                        <th>#SL</th>
+                        <th>Meeting With</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.inMeetingRoomList)
+                    {
+                        <tr>
+                            <td>@j</td>
+                            <td>@item.nameEnglish</td>
+                            <td>@item.department</td>
+                            <td>@item.designation</td>
+                            <td>
+                                <button type="button" onclick="showDetails(@item.Id)" class="btn btn-success"><i class="fa fa-eye"></i></button>
+                            </td>
+                        </tr>
+
+                        j++;
+
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal" tabindex="-1" role="dialog" id="myModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Details Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height: 400px; overflow: scroll">
+                <div class="container-fluid" id="modal_info_id">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+
+            $("#new_list_id").DataTable();
+            $("#in_meeting_room_id").DataTable();
+        });
+
+        function showDetails(id) {
+
+            var index = 1;
+
+            $.ajax({
+                url: "/Shagotom/ShagotomDashboard/ShowDetailsByMasterId/" + id,
+                type: "get",
+                success: function (res) {
+
+                    $("#modal_info_id").empty();
+
+                    if (res != null) {
+
+                        $.each(res.listOfDetailsInfoByMasterId,
+                            function(i, e) {
+
+                                if (index == 1) {
+
+                                    var emp = '<div class="card">' +
+                                        '<div class="card-header">' +
+                                        '<h5 class="font-weight-bold" style="color: black">Employee Information</h5>' +
+                                        '</div > ' +
+                                        '<div class="card-body">' +
+                                        '<div class="row">' +
+                                        '<div class="col-lg-6 col-md-6">' +
+                                        '<img src="/' + e.empImgUrl +'" height="160" width="160" />' +
+                                        '</div>' +
+                                        '<div class="col-lg-6 col-md-6">' +
+                                        '<p>' +
+                                        'Name: ' + e.nameEnglish +'<br />' +
+                                        'Email: ' + e.emailAddress +'<br/>' +
+                                        'Mobile: ' + e.mobileNumberPersonal +'<br/>' +
+                                        'Department: ' + e.department +'<br/>' +
+                                        'Designation: ' + e.designation +
+                                        '</p></div></div></div></div><br/>';
+
+                                    $("#modal_info_id").append(emp);
+
+                                    index++;
+                                }
+
+                                var visitor = '<div class="card">' +
+                                    '<div class="card-header">' +
+                                    '<h5 class="font-weight-bold" style="color: black">Visitor Information</h5>' +
+                                    '</div > ' +
+                                    '<div class="card-body">' +
+                                    '<div class="row">' +
+                                    '<div class="col-lg-6 col-md-6">' +
+                                    '<img src="' + e.imgUrl +'" height="160" width="160" />' +
+                                    '</div>' +
+                                    '<div class="col-lg-6 col-md-6">' +
+                                    '<p>' +
+                                    'Name: ' + e.name +'<br />' +
+                                    'Email: ' + e.email +'<br/>' +
+                                    'Mobile: ' + e.mobile +'<br/>' +
+                                    'Company: ' + e.company +'<br/>' +
+                                    'Status: ' + e.status +
+                                    '</p></div></div></div></div><br/>';
+
+                                $("#modal_info_id").append(visitor);
+                            });
+                    }
+
+                    $("#myModal").modal('show');
+                }
+            });
+        }
+
+    </script>
+}

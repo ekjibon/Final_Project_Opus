@@ -1,0 +1,192 @@
+﻿@model ReportMasterViewModel
+@{
+    ViewData["Title"] = "IOU View";
+    Layout = "~/Views/Shared/_PrintViewWN.cshtml";
+   
+    var status = string.Empty;
+    if (Model?.isCopy == 1)
+    {
+        status = "Copy";
+    }
+}
+
+<style>
+    body {
+        color: black;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    .pb_before {
+        page-break-before: always !important;
+    }
+
+    /***Always insert a page break after the element***/
+    .pb_after {
+        page-break-after: always !important;
+    }
+
+    /***Avoid page break before the element (if possible)***/
+    .pb_before_avoid {
+        page-break-before: avoid !important;
+    }
+
+    /***Avoid page break after the element (if possible)***/
+    .pb_after_avoid {
+        page-break-after: avoid !important;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-2" style="height:125px;">
+                   
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="Logo" style="height:85px;width:150px;" />
+                </div>
+                <div class="col-9" style="padding-left:40px;">
+                    
+                  
+                    <h3 style="font-size: 40px; font-weight: 900; font-family: sans-serif; margin-top: 16px;">@Model.companies.FirstOrDefault().companyName.ToUpper()</h3>
+                    <h3 style="font-weight:900;font-family: sans-serif;padding-left:215px;">IOU</h3>
+
+                </div>
+                <div class="col-1"><span style="text-align:right;padding-left:50%;font-size:20px;font-weight:200">@status</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6" style="padding-right:5px;">
+                    <div style="border:2px solid black;padding-left:10px;min-height:130px;max-height:130px;">
+                        <span>@Model.companies.FirstOrDefault().addressLine</span><br />
+                       
+                    </div>
+                </div>
+                <div class="col-6" style="padding-left:5px;">
+                    <div style="border:2px solid black;padding-left:10px;min-height:130px;max-height:130px;">
+                        <span style="font-weight:bolder;">IOU No : </span> @Model?.iOUDetails?.FirstOrDefault()?.IOU?.iouNo <br />
+                        <span style="font-weight:bolder;">IOU Date : </span> @Model?.iOUDetails?.FirstOrDefault()?.IOU?.iouDate?.ToString("dd-MMM-yyyy") <br />
+                       
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="padding-top:10px;">
+                <div class="col-6" style="padding-right:5px;">
+                    <div style="border:2px solid black;padding-left:10px;min-height:50px;max-height:50px;">
+                        <span style="font-weight:bolder;">IOU Owner : </span> @Model?.iouOwner <br />
+                    </div>
+                </div>
+                <div class="col-6" style="padding-left:5px;">
+                    <div style="border:2px solid black;padding-left:10px;min-height:50px;max-height:50px;">
+                        <span style="font-weight:bolder;">Project : </span> @Model?.iOUDetails?.FirstOrDefault()?.requisitionDetail?.requisitionMaster?.project?.projectName <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="font-size: 18px;padding-top:10px;">
+        <div class="col-12">
+            Dear Sir,<br />
+            With reference to your IOU please delivery the following at our "@Model?.iOUDetails?.FirstOrDefault()?.requisitionDetail?.requisitionMaster?.project?.projectName" Project.
+        </div>
+    </div>
+    <br/>
+   
+  
+    <div class="row" style="padding: 10px 12px 0px 12px;">
+        @{
+            decimal? Total = 0;
+            <table class="table-bordered-grey" style="width:100%;">
+                <thead>
+                    <tr style="background-color:lightgray;">
+                        <th style="text-align:center;width:5%;">Sl</th>
+                        <th style="text-align:center;width:15%;">PR No</th>
+                        <th style="text-align:center;width:5%;">Subject</th>
+                        <th style="text-align:center;width:10%;">Item Code</th>
+                        <th style="text-align:center;width:10%;">Item Name</th>
+                        <th style="text-align:center;width:20%;">Justification</th>
+                        <th style="text-align:center;width:5%;">UoM</th>
+                        <th style="text-align:center;width:10%;">Qty</th>
+                        <th style="text-align:center;width:10%;">Rate</th>
+                        <th style="text-align:center;width:12%;">IOU Value</th>
+                    </tr>
+                </thead>
+                <tbody style="min-height:400px;">
+                    @{ int index = 1;
+
+                        @foreach (var data in @Model.iOUDetails)
+                        {
+                            decimal? rate = data?.rate;
+                            if (rate == null)
+                            {
+                                rate = @data?.requisitionDetail?.reqRate;
+                            }
+                            decimal? IOUValue = (@data.qty * rate);
+
+                            <tr>
+                                <td style="text-align:center;width:5%;">@index</td>
+                                <td style="text-align:left;width:20%;">@data.requisitionDetail?.requisitionMaster?.reqNo</td>
+                                <td style="text-align:left;width:5%;">@data.requisitionDetail?.requisitionMaster?.subject</td>
+                                <td style="text-align:center;width:10%;">@data.requisitionDetail?.itemSpecification?.Item?.itemCode</td>
+                                <td style="text-align:center;width:10%;">@data.requisitionDetail?.itemSpecification?.Item?.itemName</td>
+                                <td style="text-align:left;width:20%;">@data.requisitionDetail.justification</td>
+                                <td style="text-align:center;width:5%;">@data.requisitionDetail?.itemSpecification?.Item?.unit?.unitName</td>
+                                <td style="text-align:right;width:10%;">@data.qty?.ToString("0.00")</td>
+                                <td style="text-align:right;width:10%;">@rate?.ToString("0.00")</td>
+                                <td style="text-align:right;width:12%;">@IOUValue?.ToString("0.00")</td>
+                            </tr>
+                            Total = Total + IOUValue;
+                            index++;
+                        }
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="9" style="text-align:right;">Total</th>
+                        <th style="text-align:right;">@Total?.ToString("0.00")</th>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+    </div>
+
+    <div class="row" style="padding: 15px 12px 0px 12px;">
+        <div class="col-12" style="font-size: 18px;font-weight:bolder;border:2px solid">
+            Amount In Word : @ViewBag.InWord
+        </div>
+    </div>
+
+    <div class="row" style="padding: 15px 12px 0px 12px;">
+        <div class="col-12" style="font-size: 18px;">
+            Thanking you<br />
+            Yours Faithfully<br /><br /><br /><br /><br /><br /><br />
+            Mostofa Muhammod Masud<br />
+            Authorize By<br />
+
+        </div>
+    </div>
+
+</div>
+
+<div class="pb_after"></div>

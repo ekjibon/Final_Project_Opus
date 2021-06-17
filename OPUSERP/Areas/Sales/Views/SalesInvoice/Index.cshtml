@@ -1,0 +1,558 @@
+﻿@model SalesInvoiceViewModel
+@{
+    ViewData["Title"] = "Sales Invoice";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Sales Invoice</h5>
+            </div>
+            <div class="col-6">
+                <a href="/Sales/SalesInvoice/InvoiceList" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Back To List</a>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+
+            <form asp-area="Sales" asp-controller="SalesInvoice" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                @*<div class="form-group row">
+            <label for="accountLedgerId" class="col-sm-2 col-form-label">Store Name</label>
+            <div class="col-sm-4">
+                <select class="form-control" name="storeId" id="storeId">
+
+                    @foreach (var data in Model.storeAssigns.Where(x => x.store.Id == ViewBag.storeId))
+                    {
+                        <option value="@data.storeId">@data.store.storeName</option>
+                    }
+                </select>
+            </div>
+        </div>*@
+                <div class="form-group row">
+                    <label for="salesInvoiceNo" class="col-sm-2 col-form-label">Sales Invoice No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="salesInvoiceNo" id="salesInvoiceNo" value="@Model.salesInvoiceMaster.invoiceNumber" readonly>
+                        <input type="hidden" name="masterId" id="masterId" value="0" />
+                    </div>
+                    <label for="invoiceDate" class="col-sm-2 col-form-label text-left">Invoice Date</label>
+                    <div class="col-sm-4 input-group">
+                        <input name="invoiceDate" id="invoiceDate" class="form-control input-group-sm" value="@Model.salesInvoiceMaster.invoiceDate?.ToString("dd-MMM-yyyy")" readonly />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="customerName" class="col-sm-2 col-form-label">Customer Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="customerName" id="customerName" value="@Model.salesInvoiceMaster?.leads?.leadName">
+                        <input type="hidden" name="customerId" id="customerId" value="@Model.salesInvoiceMaster?.leads" />
+                    </div>
+                    <label for="invoiceDate" class="col-sm-2 col-form-label text-left">Payment Date</label>
+                    <div class="col-sm-4 input-group">
+                        <input name="paymentDate" id="paymentDate" class="form-control input-group-sm" value="" />
+                        <div class="input-group-prepend">
+                            <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="customerName" class="col-sm-2 col-form-label">BIN</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control input-group-sm" id="binNo" name="binNo" readonly />
+                    </div>
+                    <label for="invoiceDate" class="col-sm-2 col-form-label text-left">Address</label>
+                    <div class="col-sm-4 input-group">
+                        <textarea name="address" id="address" class="form-control input-group-sm" readonly></textarea>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="form-group row">
+                    <label for="itemName" class="col-sm-2 col-form-label">Item Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="itemName" id="itemName">
+                        <input type="hidden" name="itemId" id="itemId" value="0" />
+                        @*<input type="hidden" name="VAT" id="VAT" value="0" />*@
+                        @*<input type="hidden" name="AIT" id="AIT" value="0" />*@
+                    </div>
+                    @*<label for="itemSpecification" class="col-sm-2 col-form-label">Item Specification<span style="float:right;" class="redStar">*</span></label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="itemSpecification" id="itemSpecification">
+                <input type="hidden" name="itemSpecificationId" id="itemSpecificationId" value="0" />
+            </div>*@
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">VAT Category<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-2">
+
+                        <input type="text" class="form-control" name="vatCategory" id="vatCategory" value="" readonly />
+                    </div>
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Tax Category<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-2">
+
+                        <input type="text" class="form-control" name="taxCategory" id="taxCategory" value="" readonly />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="price" class="col-sm-1 col-form-label">Price</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="price" id="price">
+                    </div>
+                    @*<label for="quantity" class="col-sm-1 col-form-label">Quantity </label>
+            <div class="col-sm-2">
+                <input type="number" min="1" class="form-control" name="quantity" id="quantity">
+            </div>*@
+                    <label for="quantity" class="col-sm-1 col-form-label">Vat</label>
+                    <div class="col-sm-2">
+                        <input type="number" min="1" class="form-control" name="VAT" id="VAT">
+                    </div>
+                    @*<label for="unit" class="col-sm-1 col-form-label">Unit </label>
+            <div class="col-sm-1">
+                <input type="text" class="form-control" name="unit" id="unit" readonly>
+            </div>*@
+                    <label for="quantity" class="col-sm-1 col-form-label">Tax</label>
+                    <div class="col-sm-2">
+                        <input type="number" min="1" class="form-control" name="AIT" id="AIT">
+                    </div>
+                    <label for="discount" class="col-sm-1 col-form-label">Discount</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="discount" id="discount">
+                    </div>
+                    @*<div style="display:none;">
+                <label for="vat" class="col-sm-1 col-form-label">VAT (%) </label>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" name="vat" id="vat" readonly>
+                </div>
+            </div>*@
+                </div>
+
+                <hr>
+
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <button type="button" onclick="AdditemDetails()" value="Add" title="Add" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="form-group row">
+                    <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped" id="tblitemDetails" data-parsley-required="true">
+                            <thead style="width:100%;background-color:lightgray;">
+                                <tr>
+                                    <th>Item</th>
+                                    @*<th>Item Spac.</th>*@
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>VAT</th>
+                                    <th>AIT</th>
+                                    <th>Discount</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-8">&nbsp;</div>
+                    <label for="grossTotal" class="col-sm-2 col-form-label" style="text-align:right;">Gross Total </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="grossTotal" id="grossTotal" value="@Model.salesInvoiceMaster.totalAmount?.ToString("0.00")" readonly style="text-align:right;">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-8">&nbsp;</div>
+                    <label for="grossDiscount" class="col-sm-2 col-form-label" style="text-align:right;">Discount </label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" max="100" onclick="CalculationNetTotal()" value="@Model.salesInvoiceMaster.DiscountOnTotal?.ToString("0.00")" name="grossDiscount" id="grossDiscount" style="text-align:right;" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-8">&nbsp;</div>
+                    <label for="grossVAT" class="col-sm-2 col-form-label" style="text-align:right;">VAT Amount </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" value="@Model.salesInvoiceMaster.VATOnTotal?.ToString("0.00")" name="grossVAT" id="grossVAT" style="text-align:right;" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-8">&nbsp;</div>
+                    <label for="grossTAX" class="col-sm-2 col-form-label" style="text-align:right;">TAX Amount </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" value="@Model.salesInvoiceMaster.TAXOnTotal?.ToString("0.00")" name="grossTAX" id="grossTAX" style="text-align:right;" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-8">&nbsp;</div>
+                    <label for="netTotal" class="col-sm-2 col-form-label" style="text-align:right;">Net Total </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="netTotal" id="netTotal" value="@Model.salesInvoiceMaster.NetTotal?.ToString("0.00")" readonly style="text-align:right;">
+                    </div>
+                </div>
+
+                <hr>
+
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#invoiceDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#paymentDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            if ($("#salesInvoiceNo").val() == "") {
+                $("#salesInvoiceNo").val('@ViewBag.SaleNo');
+            }
+            if (@Model.masterId > 0 || @Model.masterId != null) {
+                $("#masterId").val('@Model.masterId');
+            }
+            $("#invoiceDate").change(function () {
+                getInvoiceNo();
+            });
+            Common.Ajax('GET', '/global/api/getAllRelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomer);
+           
+            Common.Ajax('GET', '/global/api/getAllSalesInvoiceDetailByMasterId/' + @Model.masterId, [], 'json', ajaxitemDetailsForEdit);
+
+            $("#grossDiscount").keyup(function () {
+                CalculationNetTotal();
+            });
+            $("#grossVAT").keyup(function () {
+                CalculationNetTotal();
+            });
+            if ('@ViewBag.storeId'> 0)
+            {
+
+                $('#storeId').val(@ViewBag.storeId);
+            }
+        });
+
+    function ajaxAllActiveItem(response) {
+        console.log(response);
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.ratingYear.ratingTypeName;
+                obj.vat = option.vatAmount;
+                obj.ait = option.taxAmount;
+                obj.price = option.totalAmount;
+                obj.vatCategory = option.vatCategory.vatCategoryName;
+                obj.taxCategory = option.taxCategory.taxCategoryName;
+
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#itemId").val(ui.item.key);
+                    $("#VAT").val(ui.item.vat);
+                    $("#AIT").val(ui.item.ait);
+                    $("#price").val(ui.item.price);
+                    $("#vatCategory").val(ui.item.vatCategory);
+                    $("#taxCategory").val(ui.item.taxCategory);
+                    //Common.Ajax('GET', '/global/api/getAllPriceFixedItemSpacificationByItemId/' + ui.item.key, [], 'json', ajaxAllPriceFixedItemSpacification);
+                    //Common.Ajax('GET', '/global/api/ItemSpec/' + ui.item.key, [], 'json', ajaxAllPriceFixedItemSpacification);
+                }
+            });
+        }
+
+        function ajaxAllPriceFixedItemSpacification(response) {
+            console.log(response);
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemSpecificationName;
+                obj.price = option.price;
+                obj.VAT = option.VAT;
+                obj.discountPersent = option.discountPersent;
+                obj.unitName = option.unitName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecification').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecificationId").val(ui.item.key);
+                    $("#price").val(ui.item.price);
+                    $("#discount").val(ui.item.discountPersent);
+                    $("#unit").val(ui.item.unitName);
+                }
+            });
+        }
+
+        function ajaxAllCustomer(response) {
+            console.log(response);
+            var GetInStockItemSpacificationList = [];
+
+            $.each(response, function (id, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.leadName;
+                obj.bin = "";
+
+               // obj.orgId = option.resource.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#customerName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#binNo").val(ui.item.bin);
+                    //Common.Ajax('GET', '/global/api/customer/GetAddressListByResourceId/' + ui.item.orgId, [], 'json', ajaxAddress);
+                    Common.Ajax('GET', '/global/api/getAllActiveItemFromItemPricebyId/' + ui.item.key, [], 'json', ajaxAllActiveItem);
+                }
+            });
+        }
+        function ajaxAddress(response) {
+            $.each(response, function (key, rc) {
+
+                $("#address").val(rc.union + "," + rc.houseVillage + "," + rc.blockSector + "," + rc.postCode + "," + rc.postOffice + "," + rc.thana.thanaName + "," + rc.district.districtName + "," + rc.division.divisionName);
+            });
+
+
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/MasterData/Ledger/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+        var index = 1;
+        function AdditemDetails() {
+            if ($("#itemSpecificationId").val() == "" || $("#itemSpecificationId").val() == "0") {
+                alert("Plaese Select Valid Item Specification.");
+                return false
+            }
+
+            if ($("#quantity").val() == '' || parseFloat($("#quantity").val()) <= 0) {
+                alert("Plaese Enter Valid Quantity.");
+                return false
+            }
+
+            var itemName = $("#itemName").val();
+            var itemSpecification = $("#itemSpecification").val();
+            var itemSpecificationId = $("#itemId").val();
+            var price = parseFloat($("#price").val());
+            var quantity = parseFloat($("#quantity").val());
+            var vat = $("#VAT").val();
+            var ait = $("#AIT").val();
+            //vat = price * quantity * vat / 100;
+            //ait = price * quantity * ait / 100;
+            var discount = 0;
+            if ($("#discount").val() != "") {
+                discount = parseFloat($("#discount").val());
+            }
+            var totalAmount = price - discount;
+            var total = price * quantity;
+
+
+
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+
+            for (i = 1; i <= RowCount; i++) {
+                var _itemSpecificationId = $("#itemPriceFixingId" + i).val();
+                if (_itemSpecificationId == itemSpecificationId) {
+                    alert('You have already added this Item!');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + itemName + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + itemSpecificationId + '"/></td>' +
+                //'<td>' + itemSpecification + '<input type="hidden" id="itemPriceFixingId' + index +'" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + itemSpecificationId + '"/></td>' +
+                '<td>' + price.toFixed(2) + '<input type="hidden" id="price' + index +'" name="price" class="clsprice" value="' + price + '"/></td>' +
+                '<td>' + 1 + '<input type="hidden" id="quantity' + index + '" name="tblQuantity[]" class="clsquantity" value="' + 1 + '"/></td>' +
+                '<td style="text-align:right;">' + vat + '<input class="clsvatAmount" type="hidden" id="vat' + index + '" name="linevat[]"  value="' + vat + '"/></td>' +
+                '<td style="text-align:right;">' + ait + '<input class="clstaxAmount" type="hidden" id="tax' + index + '" name="linetax[]"  value="' + ait + '"/></td>' +
+                '<td>' + discount + '<input type="hidden" id="discount' + index +'" name="linediscount[]" class="clsdiscount" value="' + discount + '"/></td>' +
+                '<td>' + totalAmount.toFixed(2) + '<input type="hidden" id="totalAmount' + index +'" name="lineTotal[]" class="clstotalAmount" value="' + totalAmount + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>'
+                '</tr>';
+            tableBody.append(trHtml);
+            index = index + 1;
+            $("#rowCount").val(index);
+
+            ClearLineItem();
+            CalculateGrossTotal();
+            CalculateGrossVAT();
+        }
+
+        function ajaxitemDetailsForEdit(response) {
+            console.log(response);
+
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            if (response != null) {
+                $.each(response, function (i, item) {
+                    //var totalAmount = (item.itemPriceFixing.price * item.quantity) - ((item.itemPriceFixing.price * item.quantity) * item.itemPriceFixing.discountPersent / 100)
+                    var trHtml = '<tr id=' + index + '>' +
+                        '<td>' + item.agreementDetails.ratingYear.ratingTypeName + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + item.agreementDetails.Id + '"/></td>' +
+                        //'<td>' + item.itemPriceFixing.itemSpecification.specificationName + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + item.itemPriceFixing.Id + '"/></td>' +
+                        '<td>' + item.agreementDetails.totalAmount + '<input type="hidden" id="price' + index + '" name="price" class="clsprice" value="' + item.agreementDetails.totalAmount + '"/></td>' +
+                        '<td>' + 1 + '<input type="hidden" id="quantity' + index + '" name="tblQuantity[]" class="clsquantity" value="' + 1 + '"/></td>' +
+                        '<td style="text-align:right;">' + item.agreementDetails.vatAmount + '<input class="clsvatAmount" type="hidden" id="vat' + index + '" name="linevat[]"  value="' + item.agreementDetails.vatAmount + '"/></td>' +
+                        '<td style="text-align:right;">' + item.taxAmount + '<input class="clstaxAmount" type="hidden" id="tax' + index + '" name="linetax[]"  value="' + item.taxAmount + '"/></td>' +
+                        '<td>' + item.discountAmount + '<input type="hidden" id="discount' + index + '" name="linediscount[]" class="clsdiscount" value="' + item.discountAmount + '"/></td>' +
+                        '<td>' + item.unitPrice + '<input type="hidden" id="totalAmount' + index + '" name="lineTotal[]" class="clstotalAmount" value="' + item.unitPrice + '"/></td>' +
+                        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>'
+                    '</tr>';
+                    tableBody.append(trHtml);
+                    index = index + 1;
+                    $("#rowCount").val(index);
+                })
+            }
+            //ClearLineItem();
+            //CalculateGrossTotal();
+        }
+
+        function Delete(indx) {
+            $("#tblitemDetails #" + indx).remove();
+            CalculateGrossTotal();
+            CalculateGrossVAT();
+            return false;
+        }
+
+        function ClearLineItem() {
+            $("#itemName").val('');
+            $("#itemId").val('0');
+            $("#itemSpecification").val('');
+            $("#itemSpecificationId").val('0');
+            $("#price").val('');
+            $("#quantity").val('');
+            $("#discount").val('');
+            $("#unit").val('');
+            $("#VAT").val('');
+            $("#AIT").val('');
+            $("#discount").val('');
+            $("#vatCategory").val('');
+            $("#taxCategory").val('');
+        }
+
+        function CalculateGrossTotal() {
+            var grossTotal = 0;
+            var RowCount = parseInt($("#rowCount").val());
+            for (i = 1; i <= RowCount; i++) {
+                var _totalAmount = 0;
+                if (parseFloat($("#totalAmount" + i).val()) > 0 ) {
+                    _totalAmount = parseFloat($("#totalAmount" + i).val());
+                }
+                grossTotal = _totalAmount * _totalAmount;
+            }
+            $("#grossTotal").val(grossTotal.toFixed(2));
+            CalculationNetTotal();
+        }
+
+        function CalculateGrossVAT() {
+            var grossVAT = 0;
+            var grossTAX = 0;
+            var grossDiscount = 0;
+            var RowCount = parseInt($("#rowCount").val());
+            for (i = 1; i <= RowCount; i++) {
+                var _grossVAT = 0;
+                if (parseFloat($("#vat" + i).val()) > 0) {
+                    _grossVAT = parseFloat($("#vat" + i).val());
+                }
+                grossVAT = grossVAT + _grossVAT;
+            }
+            for (i = 1; i <= RowCount; i++) {
+                var _grossTAX = 0;
+                if (parseFloat($("#tax" + i).val()) > 0) {
+                    _grossTAX = parseFloat($("#tax" + i).val());
+                }
+                grossTAX = grossTAX + _grossTAX;
+            }
+            for (i = 1; i <= RowCount; i++) {
+                var _grossDiscount = 0;
+                if (parseFloat($("#discount" + i).val()) > 0) {
+                    _grossDiscount = parseFloat($("#discount" + i).val());
+                }
+                grossDiscount = grossDiscount + _grossDiscount;
+            }
+           // alert(grossTAX);
+            $("#grossVAT").val(grossVAT.toFixed(2));
+            $("#grossTAX").val(grossTAX.toFixed(2));
+            $("#grossDiscount").val(grossDiscount.toFixed(2));
+            CalculationNetTotal();
+        }
+
+        function CalculationNetTotal() {
+            var grossTotal = 0;
+            var grossDiscount = 0;
+            var grossVAT = 0;
+            var vatAmount = 0;
+            var taxAmount = 0;
+            if ($("#grossTotal").val() != "") {
+                grossTotal = parseFloat($("#grossTotal").val());
+            }
+
+            if ($("#grossDiscount").val() != "") {
+                grossDiscount = parseFloat($("#grossDiscount").val());
+            }
+
+            //if ($("#grossVAT").val() != "") {
+            //    grossVAT = parseFloat($("#grossVAT").val());
+            //}
+            $(".clsvatAmount").each(function () {
+                vatAmount += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+                $("#vatPercent").val(vatAmount);
+            });
+            $(".clstaxAmount").each(function () {
+                taxAmount += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+                $("#taxPercent").val(taxAmount);
+            });
+            var netAfterDisc = (grossTotal - (grossTotal * grossDiscount / 100));
+            alert(netAfterDisc);
+
+            //var netWithVAT = (netAfterDisc + (netAfterDisc * grossVAT / 100));
+            var netWithVAT = (netAfterDisc);
+
+            $("#netTotal").val(netWithVAT.toFixed(2));
+    }
+    function getInvoiceNo() {
+
+        let invoiceDate = $('#invoiceDate').val();
+        Common.Ajax('GET', '/api/global/getInvoiceNo/' + invoiceDate, [], 'json', setAutoNumber);
+    }
+
+    function setAutoNumber(response) {
+        $('#salesInvoiceNo').val(response);
+    }
+    </script>
+}
+
+

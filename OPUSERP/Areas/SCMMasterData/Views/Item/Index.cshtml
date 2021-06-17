@@ -1,0 +1,1174 @@
+﻿@model ItemViewModel
+@{
+    ViewData["Title"] = Model.fLang.title;
+    Layout = "~/Areas/Auth/Views/Shared/_MasterLayout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <style>
+        .ui-autocomplete {
+            cursor: pointer;
+            height: 400px;
+            width: 300px;
+            overflow-y: scroll;
+            background-color: white;
+            color: rgb(0,188,212);
+            z-index: 1050;
+        }
+        .node {
+            cursor: pointer;
+            width: 500px;
+        }
+            .node circle {
+                fill: #fff;
+                stroke: steelblue;
+                stroke-width: 2px;
+            }
+            .node text {
+                font: 14px sans-serif;
+                text-align: center;
+            }
+        .link {
+            fill: none;
+            stroke: #C80;
+            stroke-width: 2px;
+        }
+        /*dropdown*/
+        #header_inner {
+            background: #959595;
+        }
+            #header_inner .menu-header-container ul li {
+                display: block;
+                float: left;
+                position: relative;
+            }
+                #header_inner .menu-header-container ul li a {
+                    color: #393939;
+                    font-size: 15px;
+                    display: block;
+                    padding: 30px 20px;
+                    border-right: 1px solid #FFF;
+                }
+
+            #header_inner .menu-header-container .current-menu-item {
+                background: #c8c8c8;
+            }
+
+            #header_inner .menu-header-container ul li a:hover {
+                background: #c8c8c8;
+            }
+
+            #header_inner .menu-header-container ul li a.hover {
+                background: #c8c8c8;
+            }
+
+            #header_inner .menu-header-container ul li ul {
+                width: 290px;
+                position: absolute;
+                background: #c8c8c8;
+                display: none;
+                z-index: 1;
+            }
+                #header_inner .menu-header-container ul li ul li {
+                    width: 290px;
+                }
+                    #header_inner .menu-header-container ul li ul li a {
+                        font-size: 12px;
+                        padding: 17px;
+                        border: none;
+                        border-bottom: 1px dotted #fff;
+                    }
+                        #header_inner .menu-header-container ul li ul li a:hover {
+                            background: #d6d6d6;
+                        }
+                    #header_inner .menu-header-container ul li ul li ul {
+                        width: 290px;
+                        position: absolute;
+                        background: #c8c8c8;
+                        display: none;
+                        z-index: 1;
+                        left: 290px;
+                        top: 0;
+                    }
+
+        .has-search .form-control {
+            padding-left: 2.375rem;
+        }
+
+        .has-search .form-control-feedback {
+            position: absolute;
+            z-index: 2;
+            display: block;
+            width: 2rem;
+            height: 1.5rem;
+            line-height: 2rem;
+            text-align: center;
+            pointer-events: none;
+            color: #aaa;
+        }
+        .outer {
+            width: 700px;
+            height: 70px;
+            white-space: nowrap;
+            position: relative;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+            .outer div {
+                width: 100%;
+                background-color: #eee;
+                float: none;
+                height: 100%;
+                /*margin: 0 0.25%;*/
+                display: inline-block;
+                zoom: 1;
+            }
+        .outerd {
+            width: 700px;
+            height: 200px;
+            white-space: nowrap;
+            position: relative;
+            overflow-x: scroll;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+            .outerd div {
+                width: 700px;
+                background-color: #eee;
+                float: none;
+                height: auto;
+                border: 1px solid;
+                /*margin: 0 0.25%;*/
+                display: inline-grid;
+                zoom: 1;
+            }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="SCMMasterData" asp-controller="Item" enctype="multipart/form-data" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-9 row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label for="itemName" class="col-sm-4 col-form-label">Item Code</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" id="itemCode" value="@ViewBag.itemCode" name="itemCode" data-parsley-required="true" readonly>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" onchange="getItemCode()" id="NumType" name="NumType">
+                                        <option value="1">Default</option>
+                                        <option value="3">Free</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="itemName" class="col-sm-4 col-form-label">Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="150" class="form-control" id="itemName" value="" name="itemName" data-parsley-required="true">
+                                    <input id="itemId" name="itemId" value="" type="hidden" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="itemCategoryId" class="col-sm-4 col-form-label">Category</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="parentName" data-parsley-required="true" autocomplete="off">
+                                    <input type="hidden" id="parentId" name="parentId" />
+                                </div>
+                            </div>
+                            <div class="form-group row col-sm-12 card shadow" id="header_inners" style="display:none;margin-left: 63px">
+                                <div class="form-group row" style="margin-left: 13px;margin-top: 9px;">
+                                    <div class="form-group" style="width:230px">
+                                        <div class="form-group outer" id="searchbox">
+                                            <div class="form-group row col-sm-3 ml-2" style="width: 170px;border:1px solid currentColor">
+                                                <div class="form-group has-search">
+                                                    <span class="fa fa-search form-control-feedback" style="margin-top: 10px;"></span>
+                                                    <input type="text" id="myInput1" onclick="searchcat(1)" class="form-control" placeholder="Search-1" style="margin-top: 10px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group outerd" id="catbox" style="margin-top: -12px">
+                                        <div class="form-group row col-sm-3 ml-2 mycontent panel" id="l1" style="height: auto;border:1px solid currentColor">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" style="width: 100%;background: #E9EBEC;margin-left: 5px;border-radius: 5px;margin-top: 30px;">
+                                    <div class="form-group row col-sm-4">
+                                        <label for="itemName" class="col-sm-12 col-form-label">Current Selection</label>
+                                    </div>
+                                    <div class="form-group row col-sm-8">
+                                        <input class="form-control" style="width:700px;margin-top:6px" value="" id="catflow" readonly />
+                                    </div>
+                                </div>
+                                <div class="form-group row" style="width: 100%;background: #E9EBEC;margin-left: 5px;border-radius: 5px;margin-top: 30px;">
+                                    <div class="form-group row col-sm-4">
+                                    </div>
+                                    <div class="form-group row col-sm-8">
+                                        <button type="button" data-toggle="tooltip" title="Refresh" onclick="RefreshAllD()" class="btn btn-danger btn-xs" style="float:right; margin-top:5px;margin-right:5px;margin-left: 8px;">Cancel</button>
+                                        <button data-toggle="tooltip" title="Confirm" type="button" onclick="confirmD()" class="btn btn-success btn-xs" style="float:right; margin-top:5px;">Confirm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label for="unitId" class="col-sm-4 col-form-label">@Model.fLang.unitId</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="unitId" id="unitId" data-parsley-required="true">
+                                        <option value="">Select</option>
+                                        @foreach (var data in Model.units)
+                                        {
+                                            <option value="@data.Id">@data.unitName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row" style="display:none">
+                                <label for="reOrderLevel" class="col-sm-4 col-form-label">@Model.fLang.reOrderLevel</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="reOrderLevel" name="reOrderLevel">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="itemDescription" class="col-sm-4 col-form-label">@Model.fLang.itemDescription</label>
+                                <div class="col-sm-8">
+                                    <textarea maxlength="250" class="form-control" id="itemDescription" value="" name="itemDescription"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="itemTypeId" class="col-sm-4 col-form-label">Item Type</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" name="itemTypeId" id="itemTypeId">
+                                        <option value="">Select</option>
+                                        @foreach (var data in Model.itemTypes)
+                                        {
+                                            <option value="@data.Id">@data.itemTypeName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 row">
+                        <div class="col-12">
+                            <img id="user_img" style="width:200px;height:200px" src="https://www.phoca.cz/images/projects/phoca-gallery-r.png" alt="" class="img-thumbnail float-left">
+                            <input type="file" title="Photo Upload" id="imagePath" name="itemPhoto" class="btn btn-default btn-sm pull-right" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="modal-title" id="exampleModalLabel"><u>Variation Detail:</u> &nbsp;&nbsp;&nbsp;<button type="button" value="Add" title="Add" id="btnpedit" onclick="AddImpact()" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button></h5>
+                        <div class="card-body row">
+                            <div class="row col-sm-12 tabcontent justified">
+                                <div class="row col-sm-6">
+                                    <h5 style="width:50%">Variation</h5>
+                                    <h5 style="width:50%">SKU</h5>
+                                </div>
+                                <div class="row col-sm-6">
+                                    <h5 style="width:50%">Variation Type</h5>
+                                    <h5 style="width:50%">Value</h5>
+                                </div>
+                            </div>
+                            <div id="programflow" class="row col-sm-12 tabcontent justified">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <button type="button" data-toggle="tooltip" title="Refresh" onclick="RefreshAll()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;margin-left: 8px;"><i class="fas fa-sync"></i></button>
+                <button data-toggle="tooltip" title="Save" type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="itemTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>@Model.fLang.itemCode</th>
+                            <th>@Model.fLang.itemName</th>
+                            <th>Item Category</th>
+                            <th>Item Type</th>
+                            <th>@Model.fLang.unitId</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.items)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data?.itemCode</td>
+                                    <td>@data?.itemName</td>
+                                    <td>@data?.parent?.categoryName</td>
+                                    <td>@data?.itemType?.itemTypeName</td>
+                                    <td>@data?.unit?.unitName</td>
+                                    <td>
+                                        <a class="btn btn-success" id="editbutton" title='Edit' onclick="Edit(@data?.Id,'@data?.itemName.Replace("'", "\\'")',@data?.unitId,'@data?.itemCode','@data?.itemDescription','@data?.parentId','@data?.parent?.categoryName','@data?.itemTypeId','@data?.fileName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                        @*<a href="javascript:void(0)" title="Specification" class="btn btn-info" onclick="fnIspecification(@data.Id)"><i class="fa fa-list"></i></a>*@
+                                        <a title="Delete" class="btn btn-danger" onclick="Remove(@data.Id)"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addClusterModel" tabindex="-1" role="dialog" style="padding-left:2px" aria-labelledby="exampleaddClusterModel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width:1400px" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-sm-3">
+                    </div>
+                    <div class="col-sm-8">
+                        <h2 class="modal-title text-center" id="exampleModalLabel" style="padding-top: 14px;">Item Tree Sheet </h2>
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="organoDiv">
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="itemSpecification" tabindex="-1" role="dialog" style="padding-left:2px" aria-labelledby="exampleaddClusterModel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-sm-3">
+                    </div>
+                    <div class="col-sm-8">
+                        <h5 class="modal-title text-center" id="exampleModalLabel" style="padding-top: 14px;">Item Wise Specification List</h5>
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <table class="table table-bordered" style="width:100%" id="tblSpec">
+                        <thead>
+                            <tr>
+                                
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js" type="text/javascript"></script>
+    <script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+    <script>
+        var speccatid = "";
+        var skuid = 0;
+        function AddImpact() {
+            var id = 0;
+            var count = 0;
+            $('#programflow').find('input[name="skuspec"]').each(function () {
+                count += 1
+                //alert(count);
+                $('#Lg' + count + '').prop("disabled", true);
+                $('#Lg' + count + '').prop("text-align", "justify");
+            });
+            id = count + 1;
+            skuid = id;
+			$('#programflow').append('<div id="Impact' + id + '" class="col-sm-6 row"><div class="col-sm-10 row"><input type="text" style="width:50%" class="form-control"   id="Lgspec' + id + '" name="skuspec"  value=""/><input type="text" style="width:30%" class="form-control"   id="Lgsku' + id + '"  value="" disabled/>' + '<a href="javascript:void(0)" style="width:20%" onclick="uploadimage(' + id + ')"><img style="width:100%" id="imgsmall' + id + '" src="https://www.phoca.cz/images/projects/phoca-gallery-r.png"></a><input type="file" id="my_file' + id +'" name="skuPhotes" onchange="imagechange(this, '+id+')" style="display: none;" />'+'</div><div class="col-sm-2 row"><a  class="ml-1 mr-2" href="javascript:void(0)"><span style="width:30%" class="crossButton" onclick="Deletesku(' + "'" + id + "'" + ')"><i class="fas fa-minus"></i></span></a><a style="width:30%" class="" href="javascript:void(0)"><span style="width:50%" class="crossButton" onclick="AddOutCome(' + id + ')"><i class="fas fa-plus"></i></span></a></div></div><div id="outcome' + id + '" class="col-sm-6 row"></div><br id="br' + id + '"/><hr id="hr' + id + '" class="col-sm-12"  />');
+            getskuno(count);
+        }
+
+        function myFunction(id) {
+            var count = 0;
+            var text = $("#Lgspec" + id).val();
+            $('#outcome' + id + '').find('input[type="hidden"]').each(function () {
+                count += 1
+                $("#Lgskuf" + id + '-' + count).val(text);
+            });
+        }
+
+        function AddOutCome(id) {
+            var ids = 0;
+            var count = 0;
+            $('#outcome' + id + '').find('input[type="text"]').each(function () {
+                count += 1;
+                //alert(count);
+                //$('#LgIs' + count + '').prop("disabled", true);
+            });
+            ids = count / 2 + 1;
+            speccatid = id + '-' + ids
+            var specname = $("#Lgspec" + id).val();
+            var specsku = $("#Lgsku" + id).val();
+            // var impacttext = $('#Lg' + id + '').val();
+            $('#outcome' + id + '').append('<div id="outcomes' + id + '-' + ids + '" class="col-sm-12 row"><div class="col-sm-10 row"><input type="hidden" style="width:100%" class="form-control" name="itemSpecificationName"   id="Lgskuf' + id + '-' + ids + '"  value="' + specname + '"/><input type="hidden" style="width:100%" class="form-control" name="skuList"   id="Lgspecf' + ids + '"  value="' + specsku + '"/><input type="text" style="width:50%" class="form-control" name="specificationCategoryname"  id="Lgskucat' + id + '-' + ids + '"  value=""/><input type="text" style="width:50%" class="form-control" name="CategoryValue"  id="Lgskucatval' + ids + '"  value=""/></div><div class="col-sm-2><span class="spanClass" id="LgId' + ids + '" ><a class="m-1" href="javascript:void(0)"><span class="crossButton" onclick="Deletecat(' + "'" + id + "-" + ids + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div></div>');
+            // $('#output' + id + '').append('<div id="outputs' + ids + '" class="col-sm-12 row"></div>');
+            var catId = $("#parentId").val();
+            Common.Ajax('GET', '/SCMMasterData/Item/getspeccat/' + catId, [], 'json', ajaxSup, false);
+        }
+        function Deletecat(id) {
+            $("#outcomes" + id).remove();
+        }
+        function Deletesku(id) {
+            $("#Impact" + id).remove();
+            $("#outcome" + id).remove();
+            $("#br" + id).remove();
+            $("#hr" + id).remove();
+        }
+        function ajaxSup(response) {
+            var lstLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                // obj.ledgerId = option.ledgerId;
+                obj.value = option.specificationCategoryName;
+                lstLedger[lstLedger.length] = obj;
+            });
+            $('#Lgskucat' + speccatid).autocomplete({
+                source: lstLedger,
+                select: function (event, ui) {
+                    $('#Lgskucat' + speccatid).val(ui.item.value);
+                }
+            });
+        }
+        function ajaxskuno(response) {
+            //$('#sku'+).val(response);
+            var numTypeId = $('#NumType').val();
+            if (numTypeId == 3) {
+                $('#Lgsku' + skuid).val(response).removeAttr('disabled');
+            } else {
+                $('#Lgsku' + skuid).val(response).attr('disabled', 'disabled');
+            }
+            
+        }
+
+        function getskuno(Id) {
+            var itemid = $("#itemId").val();
+            if (itemid == "") {
+                itemid = 0;
+            }
+            if (Id <= 0) {
+                Id = 0;
+            }
+            Common.Ajax('GET', '/SCMMasterData/Item/getitemspecno/?Id=' + Id + '&&itemId=' + itemid, [], 'json', ajaxskuno, false);
+        }
+        function sleep(milliseconds) {
+            const date = Date.now();
+            let currentDate = null;
+            do {
+                currentDate = Date.now();
+            } while (currentDate - date < milliseconds);
+        }
+
+        function readURL(input) {
+            // alert(input);
+            sleep(200);
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+        function searchcat(Id) {
+            $("#myInput" + Id).on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#l" + Id + " a").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+                var vales = $("#catbox div").map(function () {
+                    // return $(this).css('height'); // only if you want applied css values with 'px' etc.
+                    return $(this).height();
+                }).get();
+                //alert(vales);
+                if (Id != 1) {
+                    $('#catbox').each(function () {
+                        var $panels = $(this).find('.panel');
+                        var tallest = 0;
+                        //find tallest
+                        $panels.each(function () {
+                            var ph = $(this).height();
+                            if (ph > tallest) tallest = ph;
+                        });
+                        $panels.height(tallest);
+                    });
+                }
+                else {
+                    $('#catbox').each(function () {
+                        var $panels = $(this).find('.panel');
+                        var tallest = 0;
+                        //find tallest
+                        $panels.each(function () {
+                            var ph = $(this).height();
+                            if (ph > tallest) tallest = ph;
+                        });
+                        $panels.height(150);
+                    });
+                }
+                // $("#l" + Id).css("height","150px");
+            });
+        }
+
+        function fnIspecification(id) {
+            Common.Ajax('GET', '/SCMMasterData/Item/getItemSpecificationByItem/' + id, [], 'json', ajaxItemSpecInfo, false);
+            $('#itemSpecification').modal('show')
+        };
+
+        function ajaxItemSpecInfo(response) {
+            
+            if (response == null) {
+                return false;
+            }
+            //$("#tblSpec").DataTable().destroy();
+            var table = $("#tblSpec tbody");
+            table.empty();
+            for (var i = 0; i < response.length; i++) {
+                var sl = i + 1;
+                table.append("<tr id='trId" + i + "'>" +
+                    + "<td>" + sl + "</td>"
+                    + "<td>" + response[i].specificationName + "</td>"
+                    + "</tr >");
+            }
+            //$('#tblSpec').DataTable();
+        }
+
+        function getItemCode() {
+            var numType = $('#NumType').val();
+            if (numType == 1) {
+                Common.Ajax('GET', '/SCMMasterData/Item/GetItemCode/' + numType, [], 'json', ajaxItemCode, false);
+            } else {
+                $('#itemCode').val('').prop('readonly',false);
+            }
+            
+        }
+
+        function ajaxItemCode(response) {
+            $('#itemCode').val(response).prop('readonly',true);
+        }
+
+        $(document).ready(function () {           
+            $("#previewdiv").hide();
+            $("#btnpedit").click(function () {
+                $("#editdiv").show();
+            });
+            $("#Item").addClass("active");
+            $('#itemTable').DataTable();
+            $("#specCategory").change(function () {
+                $('#catValue').val('');
+            });
+            $("#parentName").click(function () {
+                var Id = $("#parentId").val();
+                // Common.Ajax('GET', '/SCMMasterData/Item/getspeccat/' + Id, [], 'json', ajaxSup, false);
+                $("#header_inners").show();
+            });
+
+            $("#itemspecification").change(function () {
+                getskuno();
+            });
+
+            Common.Ajax('GET', '/global/api/patentCatItem/', [], 'json', GetItemList);
+
+			$("#imagePath").change(function () {
+                readURL(this);
+            });
+
+            $("#header_inner .menu-header-container ul li").hover(function () {
+                $(this).find("a").toggleClass('hover');
+                $(this).siblings().children(".sub-menu").hide();
+                $(this).children(".sub-menu").slideToggle(50);
+            });
+
+        });
+
+        function hideelement(name) {
+            $('#s' + name).remove();
+            $('#d' + name).remove();
+        }
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/SCMMasterData/Item/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+        function GetSpecName(response) {
+            
+            $('#itemspecification').empty();
+            $.each(response, function (i, item) {
+                $("#itemSpecificationId").val(item.Id);
+            });
+        }
+        function GetItemList(response) {
+            $.each(response, function (i, option) {
+                var jj = 0;
+                
+                $.each(response, function (j, ff) {
+                    if (ff.parentId == option.Id) {
+                        jj += 1;
+                    }
+                });
+                //  alert(Option.parentId);
+                if (option.parentId == null) {
+                    // alert(jj);
+                    if (jj > 0) {
+                        $('#l1').append('<a  class="col-sm-12" id="a' + option.Id + '" onclick="nextdata(' + "'" + option.categoryName + "'," + option.Id + ',' + 1 + ')" style="color:grey;font-weight:700" href="javascript:void(0)">' + option.categoryName + '<i class="fas fa-angle-right"></i></a>');
+                    }
+                    else {
+                        $('#l1').append('<a  class="col-sm-12" id="a' + option.Id + '" onclick="condata(' + "'" + option.categoryName + "'," + option.Id + ',' + 1 + ')" style="color:grey;font-weight:700" href="javascript:void(0)">' + option.categoryName + '</a>');
+                    }
+                }
+            });
+        }
+        function GetElementInsideContainer(containerID, childID) {
+            var elm = {};
+            var elms = document.getElementById(containerID).getElementsByTagName("*");
+            
+            for (var i = 0; i < elms.length; i++) {
+                if (elms[i].id === childID) {
+                    var Id = childID.replace("a", '');
+                    $("#a" + Id).css("color", "blue");
+                }
+                else {
+                    var Id = elms[i].id.replace("a", '');
+                    $("#a" + Id).css("color", "grey");
+                }
+            }
+        }
+        var SLID = 0;
+        function nextdata(name, Id, sl) {
+            SLID = sl;
+            var prename = name;
+            var matched = $("#catbox div");
+            for (var i = 1; i <= matched.length; i++) {
+                if (i > sl) {
+                    $("#ss" + i).remove();
+                    $("#l" + i).remove();
+                }
+            }
+            GetElementInsideContainer("l" + sl, "a" + Id);
+            //  $('#a' +Id).css("color","blue");
+            Common.Ajax('GET', '/global/api/patentCatItemC/' + Id, [], 'json', GetItemListC);
+            var data = $("#catflow").val();
+            if (sl == 1) {
+                data = "";
+            }
+            if (data != name + '>') {
+                name = data + name;
+                $("#catflow").val(name + '>');
+            }
+            var text = $("#catflow").val();
+            var tlist = text.split(">");
+            var targettext = 0;
+            var fdata = "";
+            for (var i = 0; i < tlist.length; i++) {
+                if (targettext != 1) {
+                    if (fdata == "") {
+                        fdata = tlist[i];
+                    }
+                    else {
+                        fdata = fdata + ">" + tlist[i];
+                    }
+                    if (tlist[i] == prename) {
+                        targettext = 1;
+                    }
+                }
+            }
+            $("#parentId").val(Id);
+            $("#catflow").val(fdata + ">");
+        }
+        function condata(name, Id, sl) {
+            var prename = name;
+            var matched = $("#catbox div");
+            for (var i = 1; i <= matched.length; i++) {
+                if (sl != 1) {
+                    if (i > sl) {
+                        var j = i + 1;
+                        $("#ss" + j).remove();
+                        $("#l" + j).remove();
+                    }
+                }
+            }
+            if (sl == 0) {
+                $("#l2").empty();
+            }
+            else {
+                var sldata = SLID + 1;
+                if (sldata != 1) {
+                    $("#l" + sldata).empty();
+                }
+            }
+            var data = $("#catflow").val();
+            var x = data.split(">");
+            // var i = x.length();
+            var fdata = "";
+            for (var i = 0; i < x.length; i++) {
+                fdata = x[i];
+            }
+            if (sl == 0) {
+                name = name;
+            }
+            else {
+                name = data.replace(fdata, "") + name;
+            }
+            GetElementInsideContainer("l" + sl, "a" + Id);
+            // $('#a' + Id).css("color", "blue");
+            $("#catflow").val(name);
+            if (sl == 1) {
+                $("#catflow").val(prename);
+            }
+            //  $("#parentName").val(name);
+            $("#parentId").val(Id);
+        }
+        function RefreshAllD() {
+            var matched = $("#catbox div");
+            for (var i = 1; i <= matched.length; i++) {
+                var j = i + 1;
+                $("#ss" + j).remove();
+                $("#l" + j).remove();
+            }
+            Common.Ajax('GET', '/global/api/patentCatItem/', [], 'json', GetItemList);
+            $("#header_inners").hide();
+            $("#catflow").val('');
+            $("#parentName").val('');
+            $("#parentId").val('');
+        }
+        function confirmD() {
+            var Id = $("#parentId").val();
+            if (Id == "") {
+                swal("Please select last node.");
+                return;
+            }
+            var name = $("#catflow").val();
+            $("#parentName").val(name);
+            Common.Ajax('GET', '/global/api/patentCatItem/', [], 'json', GetItemList);
+            $("#header_inners").hide();
+            $("#catflow").val('');
+
+        }
+        function GetItemListC(response) {
+            SLID = SLID + 1;
+            $.each(response.itemCategories, function (i, option) {
+                var jj = 0;
+                $.each(response.itemCategoriesall, function (j, ff) {
+                    if (ff.parentId == option.Id) {
+                        jj += 1;
+                    }
+                });
+                //  alert(Option.parentId);
+                if (jj > 0) {
+                    var lll = $('#l' + SLID).length;
+                    if (lll != 1) {
+                        $('#searchbox').append('<div class="form-group row col-sm-3 ml-2" id="ss' + SLID + '" style = "width: 170px;border:1px solid currentColor">' +
+                            '<div class="form-group has-search">' +
+                            '<span class="fa fa-search form-control-feedback" style="margin-top: 10px;" ></span>' +
+                            '<input type="text" id="myInput' + SLID + '" onclick="searchcat(' + SLID + ')" class="form-control" placeholder="Search-' + SLID + '" style="margin-top: 10px;">' +
+                            '</div></div>');
+                        $('#catbox').append('<div class="form-group row col-sm-3 ml-2 mycontent panel" id="l' + SLID + '" style="height: auto;border:1px solid currentColor"> </div >');
+                    }
+                    $('#l' + SLID).append('<a  class="col-sm-12 data' + SLID + '" id="a' + option.Id + '" onclick="nextdata(' + "'" + option.categoryName + "'," + option.Id + ',' + SLID + ')" style="color:grey;font-weight:700" href="javascript:void(0)">' + option.categoryName + '<i class="fas fa-angle-right"></i></a>');
+                }
+                else {
+                    var lll = $('#l' + SLID).length;
+                    if (lll != 1) {
+                        $('#searchbox').append('<div class="form-group row col-sm-3 ml-2" id="ss' + SLID + '" style = "width: 170px;border:1px solid currentColor">' +
+                            '<div class="form-group has-search">' +
+                            '<span class="fa fa-search form-control-feedback" style="margin-top: 10px;"></span>' +
+                            '<input type="text" id="myInput' + SLID + '" onclick="searchcat(' + SLID + ')" class="form-control" placeholder="Search-' + SLID + '" style="margin-top: 10px;">' +
+                            '</div></div>');
+                        $('#catbox').append('<div class="form-group row col-sm-3 ml-2 mycontent panel" id="l' + SLID + '" style="height: auto;border:1px solid currentColor"> </div >');
+                    }
+                    $('#l' + SLID).append('<a  class="col-sm-12" id="a' + option.Id + '" onclick="condata(' + "'" + option.categoryName + "'," + option.Id + ',' + SLID + ')" style="color:grey;font-weight:700" href="javascript:void(0)">' + option.categoryName + '</a>');
+                }
+                if (SLID != 1) {
+                    $('#catbox').each(function () {
+                        var $panels = $(this).find('.panel');
+                        var tallest = 0;
+                        //find tallest
+                        $panels.each(function () {
+                            var ph = $(this).height();
+                            if (ph > tallest) tallest = ph;
+                        });
+                        $panels.height(tallest);
+                    });
+                }
+            });
+            scrollcount = 0;
+            animatethis($('#catbox'), 170);
+            animatethis($('#searchbox'), 170);
+            scrollcount = 1;
+        }
+        var scrollcount = 0;
+        function animatethis(targetElement, speed) {
+            if (scrollcount == 0) {
+                var scrollWidth = $(targetElement).get(0).scrollWidth;
+                var clientWidth = $(targetElement).get(0).clientWidth;
+                $(targetElement).animate({ scrollLeft: scrollWidth - clientWidth }
+                    //,
+                    //{
+                    //    duration: speed,
+                    //    complete: function () {
+                    //        targetElement.animate({ scrollLeft: 0 },
+                    //            {
+                    //                duration: speed,
+                    //                complete: function () {
+                    //                    animatethis(targetElement, speed);
+                    //                }
+                    //            });
+                    //    }
+                    //}
+                );
+            }
+
+        };
+        function Edit(Id, itemName, unitId, itemCode, itemDescription, parentId, categoryName, itemTypeId, fileName) {
+            //alert(itemDescription);
+            $("#previewdiv").show();
+            $("#editdiv").hide();
+            $("#itemId").val(Id);
+            $("#itemName").val(itemName);
+            $("#unitId").val(unitId);
+            $("#itemCode").val(itemCode);
+            $("#itemDescription").val(itemDescription);
+            $("#parentId").val(parentId);
+            $("#parentName").val(categoryName);
+            $('#user_img').attr('src', '/../../ItemImages/' + fileName);
+            Common.Ajax('GET', '/SCMMasterData/Item/getspeccat/' + parentId, [], 'json', ajaxSup, false);
+            $("#itemTypeId").val(itemTypeId);
+            Common.Ajax('GET', '/SCMMasterData/Item/GetAllSpecificationDetailByitemId/?itemId=' + $("#itemId").val(), [], 'json', ajaxGetAllSpecificationDetailByitemId);
+            Common.Ajax('GET', '/SCMMasterData/Item/GetAllSpecificationDetailByitemIdp/?itemId=' + $("#itemId").val(), [], 'json', ajaxGetAllSpecificationDetailByitemIdP);
+            //Common.Ajax('GET', '/global/api/ItemSpec/' + Id, [], 'json', GetSpecName);
+           // Common.Ajax('GET', '/global/api/CatParent/' + parentId, [], 'json', GetItemName);
+        }
+
+        function AdditemDetails() {
+            $("#editdiv").show();
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsspecificationCategoryId").val();
+            }
+            if ($("#itemspecification").val() == "") {
+                alert("Plaese Enter Specification Name.");
+                return false
+            }
+            if ($("#specCategory").val() == "") {
+                alert("Plaese Enter Specification Category.");
+                return false
+            }
+            if ($("#catValue").val() == "") {
+                alert("Plaese Enter Category Value.");
+                return false
+            }
+            let id = parseInt($("#detailsId").val()) ? parseInt($("#detailsId").val()) : 0;
+            var itemSpecificationName = $("#itemspecification").val();
+            var sku = $("#sku").val();
+            var skuShow = $("#sku").val();
+            var itemSpecificationNameShow = $("#itemspecification").val();
+            var specificationCategoryId = $("#specCategory").val();
+            var specificationCategoryName = $("#specCategory option:selected").text();
+            var catValue = $("#catValue").val();
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            //if (editOption == 2)
+            //{
+            //    ifExistIndex = null;
+            //}
+            for (i = 0; i <= RowCount; i++) {
+                var _itemSpecificationName = $("#itemSpecificationNameVD" + i).val();
+                var _sku = $("#sku" + i).val();
+                var _specificationCategoryId = $("#specificationCategoryId" + i).val();
+                if ((_sku == sku && _specificationCategoryId == specificationCategoryId) && editOption == 0) {
+                    alert('You have already added this category!!');
+                    return false;
+                }
+            }
+
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + skuShow + '<input type="hidden" id="sku' + index + '" name="skuList" class="clsitemSpecificationName" value="' + skuShow + '"/></td>' +
+                '<td>' + itemSpecificationNameShow + '<input type="hidden" id="itemSpecificationName' + index + '" name="itemSpecificationName" class="clsitemSpecificationName" value="' + itemSpecificationNameShow + '"/><input type="hidden" id="itemSpecificationNameVD' + index + '" name="itemSpecificationNameVD" class="clsitemSpecificationNameVD" value="' + itemSpecificationName + '"/></td>' +
+                '<td>' + specificationCategoryName + '<input type="hidden" name="id"class="clsId" value="' + id + '"><input type="hidden" id="specificationCategoryId' + index + '" name="specificationCategoryId" class="clsspecificationCategoryId" value="' + specificationCategoryId + '"/></td>' +
+                '<td>' + catValue + '<input type="hidden" id="CategoryValue' + index + '" name="CategoryValue" class="clsCategoryValue" value="' + catValue + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTbl(' + index + "," + specificationCategoryId + ", '" + itemSpecificationName + "','" + catValue + "','" + itemSpecificationNameShow + "','" + sku + "'," + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >&nbsp;&nbsp;' + '<a onclick="PlusTbl(' + index + "," + specificationCategoryId + ", '" + itemSpecificationName + "','" + catValue + "','" + itemSpecificationNameShow + "','" + sku + "'," + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-plus"></i></a ></td>' +
+                '</tr>';
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            Refresh();
+        }
+
+        var itemSpecificationNameShowedit = "";
+
+        function EditTbl(index, specificationCategoryId, itemSpecificationName, catValue, itemSpecificationNameShow, sku, Id) {
+            var rightIndex = index;
+            itemSpecificationNameShowedit = itemSpecificationNameShow;
+            $("#IsEdit").val(1);
+            $('#detailsId').val(Id);
+            $('#itemspecification').val(itemSpecificationName);
+            $('#specCategory').val(specificationCategoryId);
+            $('#catValue').val(catValue);
+            $('#sku').val(sku);
+            $("#sku").prop("disabled", true);
+            $("#itemspecification").prop("disabled", true);
+            //$("#specCategory").prop("disabled", true);
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+        function PlusTbl(index, specificationCategoryId, itemSpecificationName, catValue, itemSpecificationNameShow, sku, Id) {
+            var rightIndex = index;
+            itemSpecificationNameShowedit = itemSpecificationNameShow;
+            $("#IsEdit").val(0);
+            $('#detailsId').val(0);
+            $('#itemspecification').val(itemSpecificationName);
+            $('#specCategory').val(specificationCategoryId);
+            $('#catValue').val(catValue);
+            $('#sku').val(sku);
+            $("#sku").prop("disabled", true);
+            $("#itemspecification").prop("disabled", true);
+
+        }
+        function Refresh() {
+            $('#detailsId').val('');
+            $("#IsEdit").val(0);
+            $('#specCategory').val('');
+            $('#catValue').val('');
+            $("#sku").prop("disabled", false);
+            $("#itemspecification").prop("disabled", false);
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        function RefreshAll() {
+            location.reload();
+        }
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblitemDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success');
+            });
+        }
+
+        function ajaxGetAllSpecificationDetailByitemId(response) {
+            //console.log(response);
+            $('#programflow').empty();
+            var skuShow = "";
+            var id = 0;
+            var count = 0;
+			$.each(response, function (key, value) {
+				console.log("ok");
+				console.log(value.FileName);
+                var itemSpecificationName = value.specificationName;
+				var itemSpecificationFileName = value.FileName;
+                var itemSpecificationNameShow = value.specificationName;
+                var sku = value.SKUNumber;
+                if (sku != skuShow) {
+                    $('#programflow').find('input[name="skuspec"]').each(function () {
+                        count = count + 1;
+                        $('#Lg' + count + '').prop("disabled", true);
+                        $('#Lg' + count + '').prop("text-align", "justify");
+                    });
+
+                    id = count + 1;
+                    skuid = id;
+					$('#programflow').append('<div id="Impact' + id + '" class="col-sm-6 row"><div class="col-sm-10 row"><input type="text" style="width:50%" class="form-control"   id="Lgspec' + id + '" name="skuspec" onkeyup="myFunction(' + id + ')"  value="' + itemSpecificationName + '"/><input type="text" style="width:30%;" class="form-control" id="Lgsku' + id + '"  value="' + sku + '" disabled/><a><img width="60" src="../../SKUImages/' + itemSpecificationFileName + '" id="Lgskuw' + id + '"></a></div><div class="col-sm-2 row"><a  class="ml-1 mr-2" href="javascript:void(0)"><span style="width:30%" class="crossButton" onclick="Deletesku(' + "'" + id + "'" + ')"><i class="fas fa-minus"></i></span></a><a style="width:30%" class="" href="javascript:void(0)"><span style="width:50%" class="crossButton" onclick="AddOutCome(' + id + ')"><i class="fas fa-plus"></i></span></a></div></div><div id="outcome' + id + '" class="col-sm-6 row"></div><br id="br' + id + '"/><hr id="hr' + id + '" class="col-sm-12" />');
+                    skuShow = value.SKUNumber;
+                }
+                count = 0;
+                var ids = 0;
+                var counts = 0;
+                $('#outcome' + id + '').find('input[type="text"]').each(function () {
+                    counts += 1;
+                });
+                ids = counts / 2 + 1;
+                speccatid = id + '-' + ids
+                var specname = $("#Lgspec" + id).val();
+                var specsku = $("#Lgsku" + id).val();
+
+                $('#outcome' + id + '').append('<div id="outcomes' + id + '-' + ids + '" class="col-sm-12 row"><div class="col-sm-10 row"><input type="hidden" style="width:100%" class="form-control" name="itemSpecificationName"   id="Lgskuf'+ id + '-' + ids +'"  value="' + specname + '"/><input type="hidden" style="width:100%" class="form-control" name="skuList"   id="Lgspecf' + ids + '"  value="' + specsku + '"/><input type="text" style="width:50%" class="form-control" name="specificationCategoryname"  id="Lgskucat' + id + '-' + ids + '"  value="' + value.specificationCategoryName + '"/><input type="text" style="width:50%" class="form-control" name="CategoryValue"  id="Lgskucatval' + ids + '"  value="' + value.value + '"/></div><div class="col-sm-2><span class="spanClass" id="LgId' + ids + '" ><a class="m-1" href="javascript:void(0)"><span class="crossButton" onclick="Deletecat(' + "'" + id + "-" + ids + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div></div>');
+                var catId = $("#parentId").val();
+                Common.Ajax('GET', '/SCMMasterData/Item/getspeccat/' + catId, [], 'json', ajaxSup, false);
+            })
+        }
+
+        function ajaxGetAllSpecificationDetailByitemIdP(response) {
+            //console.log(response);
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetailsP tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetailsP tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsspecificationCategoryId").val();
+            }
+            $("#tblitemDetailsP tbody>tr").empty();
+            var trHtml = "";
+            var trHtml1 = "";
+            var trHtml2 = "";
+            var trHtml3 = "";
+            var trHtml4 = "";
+            var ItemId = 0;
+            var ItemSpecId = 0;
+            var i = 1;
+            $.each(response, function (key, value) {
+                //var itemSpecificationName = value.specificationName;
+                //var itemSpecificationNameShow = value.specificationName;
+                //var sku = value.SKUNumber;
+                //var skuShow = value.SKUNumber;
+                var RowCount = $("#tblitemDetailsP tbody>tr").length;
+                index = $("#tblitemDetailsP tbody>tr").length;
+                var dtTable = $("#tblitemDetailsP");
+                var tableBody = dtTable.find('tbody');
+                if (ItemId != value.itemSpecification.itemId) {
+                    var jj = 0;
+                    $.each(response, function (jj, ff) {
+                        if (ff.itemSpecification.itemId == value.itemSpecification.itemId) {
+                            jj += 1;
+                        }
+                    });
+                    trHtml1 = '<tr><td rowspan="' + jj + '" style="vertical-align : middle;text-align:center;">' + value ?.itemSpecification ?.Item ?.itemCode + '</td>' +
+                        '<td rowspan="' + jj + '" style="vertical-align : middle;text-align:center;">' + value ?.itemSpecification ?.Item ?.itemName + '</td>' +
+                            '<td rowspan="' + jj + '" style="vertical-align : middle;text-align:center;">' + value ?.itemSpecification ?.Item ?.parent ?.categoryName + '</td>';
+
+                    if (ItemSpecId != value.itemSpecificationId) {
+                        var jjj = 0;
+
+                        $.each(response, function (js, fs) {
+                            if (fs.itemSpecificationId == value.itemSpecificationId) {
+                                jjj += 1;
+                            }
+                        });
+                        trHtml2 = '<td rowspan ="' + jjj + '" style = "vertical-align : middle;text-align:center;">' + value ?.itemSpecification ?.SKUNumber + '</td > ' +
+                            '<td rowspan="' + jjj + '" style="vertical-align : middle;text-align:center;">' + value ?.itemSpecification ?.specificationName + '</td>' +
+                                '<td>' + value ?.specificationCategory ?.specificationCategoryName + '-' + value ?.value + '</td>';
+                    }
+                    else {
+                        trHtml2 = '<td>' + value ?.specificationCategory ?.specificationCategoryName + '-' + value ?.value + '</td>';
+                    }
+                    trHtml3 = '</tr>';
+                }
+                else {
+                    trHtml1 = '<tr>';
+                    if (ItemSpecId != value.itemSpecificationId) {
+                        var jjj = 0;
+                        $.each(response, function (js, fs) {
+                            if (fs.itemSpecificationId == value.itemSpecificationId) {
+                                jjj += 1;
+                            }
+                        });
+                        trHtml2 = '<td rowspan ="' + jjj + '" style = "vertical-align : middle;text-align:center;">' + value ?.itemSpecification ?.SKUNumber + '</td > ' +
+                            '<td rowspan="' + jjj + '" style="vertical-align : middle;text-align:center;">' + value ?.itemSpecification ?.specificationName + '</td>' +
+                                '<td>' + value ?.specificationCategory ?.specificationCategoryName + '-' + value ?.value + '</td>';
+                    }
+                    else {
+                        trHtml2 = '<td>' + value ?.specificationCategory ?.specificationCategoryName + '-' + value ?.value + '</td>';
+                    }
+                    trHtml3 = '</tr>';
+                }
+                ItemId = value.itemSpecification.itemId;
+                ItemSpecId = value.itemSpecificationId;
+                tableBody.append(trHtml1 + trHtml2 + trHtml3);
+            })
+            index = index + 1;
+		}
+		//$("#my_file"+).change(function (e) {
+		//	console.log("changed" + e);
+		//	readImgURL(this);
+		//});
+		function imagechange(e, id) {
+			readImgURL(e, id);
+		}
+		function readImgURL(input, id) {
+			sleep(200);
+			if (input.files && input.files[0]) {
+				var filerdr = new FileReader();
+				filerdr.onload = function (e) {
+					//$('#imgsmall').attr('src', e.target.result);
+					$('#imgsmall' + id).attr('src', e.target.result);
+				}
+				filerdr.readAsDataURL(input.files[0]);
+			}
+		}
+		function uploadimage(id) {
+			console.log("my_file" + id);
+			//alert("image");
+			$("input[id='my_file" + id + "']").click();
+        };
+
+        $(function () {
+            $("#editbutton").click(function () {
+                console.log(response);
+            });
+        
+        });
+
+       
+    </script>
+}

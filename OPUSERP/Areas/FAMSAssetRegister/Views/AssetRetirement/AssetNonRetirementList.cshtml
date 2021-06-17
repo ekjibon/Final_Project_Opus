@@ -1,0 +1,94 @@
+﻿@model AssetRetirementViewModel
+@{
+    ViewData["Title"] = "AssetNonRetirementList";
+}
+
+@section Style{
+    <style>
+        #assetRetirementTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Asset Non Retirement List</h4>
+                <a href="/FAMSAssetRegister/AssetRetirement/AssetRetirementList" class="btn btn-success btn-sm pull-right">Back To Retirement List</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="assetRetirementTable">
+                    <thead>
+                        <tr>
+                            <th>Purchase No</th>
+                            <th>Receive Date</th>
+                            <th>Purchase Date</th>
+                            <th>Supplier Name</th>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.assetRegistrations)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.purchaseInfo.purchaseNo</td>
+                                    <td>@data.purchaseInfo.receiveDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.purchaseInfo.purchaseDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.purchaseInfo.supplier.organizationName</td>
+                                    <td>@data.assetNo</td>
+                                    <td>@data.assetValue</td>
+                                    <td>
+                                        <a class="btn btn-danger" data-toggle="tooltip" title="Retirement" href="/FAMSAssetRegister/AssetRetirement/AssetRetirement/?id=0&assetId=@data.Id"><i class="fa fa-expand"></i></a>
+
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#assetRetirementTable').DataTable();
+
+            //var table = $('#assetRetirementTable').DataTable();
+            //$('#assetRetirementTable tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var assetid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/FAMSAssetRegister/AssetRegister/AssetRegisterDetails/?id=" + assetid;
+            //});
+            //$('#assetRetirementTable tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+        });
+
+    </script>
+}
+
+
+
+
+
+
+
+

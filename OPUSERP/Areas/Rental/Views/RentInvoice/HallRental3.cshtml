@@ -1,0 +1,351 @@
+﻿@model HallRentalViewModel
+@{
+    ViewData["Title"] = "HallRentalApplication";
+}
+
+
+@section Style{
+    @*<link href="~/lib/main.css" rel="stylesheet" />*@
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Hall Booking Agreement</h5>
+            </div>
+            <div class="col-6">
+                <a href="/Rental/RentInvoice/HallRentalList" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Back To List</a>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Rental" asp-controller="RentInvoice" asp-action="HallRental" method="post" data-parsley-validate="parsley" id="formRental">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="salesInvoiceNo" class="col-sm-2 col-form-label">Agreement Number</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="" id="" value="@Model.AgreementNumber" readonly>
+                    </div>
+
+                    <input type="hidden" class="form-control" name="Id" id="" value="@Model.hallRentalApplicationInfo?.Id">
+                    <input type="hidden" class="form-control" name="isPaid" id="" value="0">
+                    <input type="hidden" class="form-control" name="status" id="" value="1">
+
+                    <label for="invoiceDate" class="col-sm-2 col-form-label text-left">Rental Date</label>
+                    <div class="col-sm-4 input-group">
+                        <input type="text" name="rentalDate" id="rentalDate" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.rentalDate" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="customerName" class="col-sm-2 col-form-label">Applicant Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.applicantName != null)
+                        {
+                            <input type="text" class="form-control input-group-sm" id="applicantName" name="applicantName" value="@Model.hallRentalApplicationInfo?.applicantName" readonly>
+                        }
+                        else
+                        {
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control input-group-sm" name="applicantName" id="applicantName" value="@Model.hallRentalApplicationInfo?.applicantName">
+                        }
+
+
+                    </div>
+                    <label class="col-sm-2 col-form-label text-left">Organization Name<span style="float:right;" class="redStar">*</span></label>
+
+                    <div class="col-sm-4 ">
+                        @if (@Model.hallRentalApplicationInfo?.applicantOrganization != null)
+                        {
+                            <input type="text" class="form-control input-group-sm" id="applicantOrganization" name="applicantOrganization" value="@Model.hallRentalApplicationInfo?.applicantName" readonly>
+                        }
+                        else
+                        {
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" name="applicantOrganization" id="applicantOrganization" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.applicantOrganization" />
+                        }
+
+
+                    </div>
+                    @*<label for="paymentDate" class="col-sm-2 col-form-label text-left" hidden>Payment Date</label>
+                        <div class="col-sm-4 input-group" hidden>
+                            <input name="paymentDate" id="paymentDate" class="form-control input-group-sm" value="" />
+                            <div class="input-group-prepend">
+                                <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                            </div>
+                        </div>*@
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Phone<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.mobileNo != null)
+                        {
+                            <input type="text" class="form-control input-group-sm" id="mobileNo" name="mobileNo" value="@Model.hallRentalApplicationInfo?.mobileNo" readonly />
+                        }
+                        else
+                        {
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control input-group-sm" id="mobileNo" name="mobileNo" value="@Model.hallRentalApplicationInfo?.mobileNo" />
+                        }
+
+
+                    </div>
+
+                    <label for="applicantAddress" class="col-sm-2 col-form-label text-left">Address</label>
+                    <div class="col-sm-4 input-group">
+                        @if (@Model.hallRentalApplicationInfo?.applicantAddress != null)
+                        {
+                            <textarea name="applicantAddress" id="applicantAddress" class="form-control input-group-sm" readonly>@Model.hallRentalApplicationInfo?.applicantAddress</textarea>
+                        }
+                        else
+                        {
+                            <textarea name="applicantAddress" id="applicantAddress" class="form-control input-group-sm"></textarea>
+                        }
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group row">
+                    <label for="hallName" class="col-sm-2 col-form-label">Hall Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.hallInfoId > 0)
+                        {
+                            <input type="text" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.hallInfo?.hallName" readonly>
+                            <input type="hidden" id="hallInfoId" name="hallInfoId" value="@Model.hallRentalApplicationInfo?.hallInfo?.Id" readonly>
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(Model => Model.hallInfoId, new SelectList(Model.hallInfos, "Id", "hallName", 1), "Select Hall", new { @id = "hallInfoId", @class = "form-control", @value = "@Model.hallRentalApplicationInfo?.hallInfoId" })
+                        }
+
+                    </div>
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Rental Period<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.hallRentalShiftId > 0)
+                        {
+                            @Html.DropDownListFor(Model => Model.hallRentalShiftId, new SelectList(Model.hallRentalShifts, "Id", "shiftName", 1), "Select Shedule Time", new { @id = "hallRentalShiftId", @class = "form-control" })
+
+                            // <input type="text" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.hallRentalShift?.shiftName" readonly>
+                            <input type="hidden" id="hallRentalShiftId" name="hallRentalShiftId" value="@Model.hallRentalApplicationInfo?.hallRentalShift?.Id">
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(Model => Model.hallRentalShiftId, new SelectList(Model.hallRentalShifts, "Id", "shiftName", 1), "Select Shedule Time", new { @id = "hallRentalShiftId", @class = "form-control" })
+                        }
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="price" class="col-sm-2 col-form-label">Price (Taka)<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.hallRent > 0)
+                        {
+                            <input type="text" class="form-control input-group-sm" id="hallRent" name="hallRent" value="@Model.hallRentalApplicationInfo?.hallRent" readonly>
+                        }
+                        else
+                        {
+                            <input type="number" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="hallRent" id="hallRent" />
+                        }
+
+                    </div>
+                    <label for="chiefGuest" class="col-sm-2 col-form-label">Chief Guest</label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.chiefGuest != null)
+                        {
+                            <input type="text" class="form-control" name="chiefGuest" id="chiefGuest" value="@Model.hallRentalApplicationInfo?.chiefGuest" readonly />
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" name="chiefGuest" id="chiefGuest" />
+                        }
+
+                    </div>
+
+                    @*<label for="discount" class="col-sm-2 col-form-label">Discount</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" name="discount" id="discount" value="@Model.hallRentalApplicationInfo?"/>
+                        </div>*@
+                </div>
+                <div class="form-group row">
+                    <label for="chiefGuest" class="col-sm-2 col-form-label">Status</label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.status == 3)
+                        {
+                            <input type="text" class="form-control" value="Approved" readonly />
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" value="Not Approved" readonly />
+                        }
+
+                    </div>
+
+                    <label for="specialGuest" class="col-sm-2 col-form-label">Special Guest</label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.specialGuest != null)
+                        {
+                            <input type="text" class="form-control" name="specialGuest" id="specialGuest" value="@Model.hallRentalApplicationInfo?.specialGuest" readonly />
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" name="specialGuest" id="specialGuest" />
+                        }
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-2 col-form-label">Subject</label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.remarks != null)
+                        {
+                            <textarea type="text" class="form-control" name="remarks" id="remarks" readonly>@Model.hallRentalApplicationInfo?.remarks</textarea>
+                        }
+                        else
+                        {
+                            <textarea type="text" class="form-control" name="remarks" id="remarks"></textarea>
+                        }
+                    </div>
+                    <label for="chiefGuest" class="col-sm-2 col-form-label">Submission Date</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="submissiondate" id="submissiondate" value="@DateTime.Now.ToString("dd/MMMM/yyyy")" readonly />
+                    </div>
+                </div>
+                <button type="button" value="" class="btn btn-info btn-lg" onclick="SaveRentalApplication()" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+                @*@if (@Model.hallRentalApplicationInfo?.status == 3)
+                    {
+                        <button type="submit" onclick="SaveRentalApplication()" value="Paid" class="btn btn-success btn-lg" style="float:right; margin-top:5px;">Paid</button>
+                    }*@
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @*<script src="~/lib/main.js"></script>*@
+    <script>
+        $(document).ready(function () {
+            $("#rentalDate").datepicker({ dateFormat: 'dd-MM-yy' });
+        });
+        function SaveRentalApplication() {
+            var rentalDate = $("#rentalDate").val();
+            var applicantName = $("#applicantName").val();
+            var organization = $("#applicantOrganization").val();
+            var phone = $("#mobileNo").val();
+            var hall = $("#hallInfoId").val();
+            var shedule = $("#hallRentalShiftId").val();
+            var remarks = $("#remarks").val();
+            var ToDate = new Date();
+            if (rentalDate == null || rentalDate == '') {
+                swal('Warning', 'Please select Rental Date', 'warning');
+                return false;
+            }
+            if (new Date(rentalDate).getTime() < ToDate.getTime()) {
+                swal('Warning', 'Please Do Not Select Previous Rental Date', 'warning');
+                return false;
+            }
+            if (applicantName == null || applicantName == '') {
+                swal('Warning', 'Please insert Applicant Name!', 'warning');
+                return false;
+            }
+            if (organization == null || organization == '') {
+                swal('Warning', 'Please insert Organization Name!', 'warning');
+                return false;
+            }
+            if (phone == null || phone == '') {
+                swal('Warning', 'Please insert Phone Number!', 'warning');
+                return false;
+            }
+            if (hall == null || hall == '') {
+                swal('Warning', 'Please select Hall!!', 'warning');
+                return false;
+            }
+            if (shedule == null || shedule == '') {
+                swal('Warning', 'Please select Shedule Time!', 'warning');
+                return false;
+            }
+            if (remarks == null || remarks == '') {
+                swal('Warning', 'Please Insert Subject!', 'warning');
+                return false;
+            }
+            var form = $("#formRental");
+            swal({
+                title: 'Are you sure?', text: 'Do you want to save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, save it!'
+            }).then(function (e) {
+                $.ajax({
+                    url: '/Rental/RentInvoice/HallRental',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (response) {
+
+                        //console.log(response);
+                        swal('', 'Saved successfully!', 'success');
+                        //window.location.href='/Rental/RentInvoice/InvoiceList';
+                        window.location.href = "/Rental/RentInvoice/HallRentalList";
+                        //window.open('/Rental/RentInvoice/HallRentalReportPdf?id=' + response, '_blank');
+                        //Refresh();
+                    }
+                })
+            })
+        };
+
+        function Calender() {
+            $("#calendar").show();
+            $("#list").hide();
+        };
+
+
+        function List() {
+            $("#calendar").hide();
+            $("#list").show();
+        };
+
+        $(document).ready(function () {
+            $("#calendar").hide();
+            $("#list").show();
+            //$("#hallID").change(function (e) {
+            //    $("#hallInfoId").val($("#hallID option:selected").val());
+            //    $("#hallName").val($("#hallID option:selected").text().trim());
+            //});
+
+            //$("#timeID").change(function (e) {
+            //    $("#hallRentalShiftId").val($("#timeID option:selected").val());
+            //    $("#shiftName").val($("#timeID option:selected").text().trim());
+            //});
+        });
+
+        //function DeleteGroup(id) {
+        //    $('#Lg' + id).remove();
+        //    $('#LgId' + id).remove();
+        //}
+        function Refresh() {
+            location.reload();
+        }
+    </script>
+}
+

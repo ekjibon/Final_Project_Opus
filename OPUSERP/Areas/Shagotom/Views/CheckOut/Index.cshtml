@@ -1,0 +1,158 @@
+﻿
+@model VisitorEntryViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br/>
+<section>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="font-weight-bold" style="color: black">Visitor Check Out</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label">Card No</label>
+                                    <div class="col-md-8">
+                                        <select id="tokenNo" onchange="onchangeFun()" class="form-control customSelect" ></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <button type="button" onclick="checkOutFun()" class="btn btn-block btn-sm btn-danger">checkout visitor</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="font-weight-bold" style="color: black">
+                            Visitor Details
+                        </h5>
+                    </div>
+                    <div class="card-body" id="visitor_div_details_id">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="font-weight-bold" style="color: black">Checked Out List
+                        </h5>
+                    </div>
+                    <div class="card-body" style="height:400px; overflow:scroll;">
+                        @foreach (var item in Model.approvedList)
+                        {
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4">
+                                    <img src="@item.imgUrl" height="90" width="90"/>
+                                </div>             
+                                <div class="col-lg-8 col-md-8">
+                                    Employee: @item.nameEnglish
+                                    <br/> Visitor Name: @item.name
+                                    <br/> Contact: @item.mobile
+                                    <br/> Token No: @item.cardNo
+                                </div>
+                            </div>
+                            <br/>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+
+            $.ajax({
+                url: "/global/api/CheckOut/GetAllApprovedList",
+                type: "get",
+                success: function (res) {
+                    
+                    if (res != null) {
+
+                        $("#tokenNo").append('<option value="0">select token number</option>');
+
+                        $.each(res.approvedList,
+                            function (i, e) {
+                                $("#tokenNo").append("<option value=" + e.detailsId + ">" + e.cardNo + "</option>");
+                            });
+                    }
+                }
+            });
+        });
+
+
+        function onchangeFun() {
+
+            var detailsId = $("#tokenNo option:selected").val();
+
+            $.ajax({
+                url: "/Shagotom/CheckOut/GetVisitorDetailsByDetailsId",
+                type: "get",
+                data: { detailsId: detailsId},
+                success: function (res) {
+                    console.log(res);
+                    if (res != null) {
+
+                        $.each(res.approvedList,
+                            function(i, e) {
+                                var card = '<div class="row" style="color:black">'+
+                                    '<div class="col-lg-4 col-md-4">' +
+                                    '<img src="' + e.imgUrl +'" height="160" width="160"/>' +
+                                    '</div>'+
+                                    '<div class="col-lg-8 col-md-8">' +
+                                    '<br/> Visitor Name:' + e.name +
+                                    '<br/>Company: ' + e.company +
+                                    '<br/> Contact: ' + e.mobile +
+                                    '<br/>Employee Name: ' + e.nameEnglish +
+                                    '<br/> Token No: ' + e.cardNo +
+                                    '</div>' +
+                                    '</div>';
+
+                                $("#visitor_div_details_id").append(card);
+                            });
+                    }
+                }
+            });
+        }
+
+        function checkOutFun() {
+
+            var detailsId = $("#tokenNo option:selected").val();
+
+            $.ajax({
+                url: "/Shagotom/CheckOut/Index",
+                type: "post",
+                data: { detailsId: detailsId},
+                success: function (response) {
+                    if (response == "success") {
+                        swal({
+                            title: 'Success!', text: 'Saved Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!'
+                        }).then(function () {
+                            window.location.href = "/Shagotom/CheckOut/Index";
+                        });
+
+                    }
+                    else {
+                        swal('Warning!', 'Unable to save!', 'warning');
+                    }
+                }
+            });
+        }
+
+    </script>
+}
+

@@ -1,0 +1,311 @@
+﻿@model AdvanceAdjustmentViewModel
+@{
+    ViewData["Title"] = "Loan Schedule ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Advance Adjustment Schedule </h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="Adjustment" asp-action="EditAdvanceAdjustment" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="advanceAdjustmentId" name="advanceAdjustmentId" value="0">
+                    <input type="hidden" id="Id" name="Id" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustmentId">
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-sm-4 col-form-label">Employee's Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeName" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.employeeInfo.nameEnglish" readonly name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Designation </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Designation" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.employeeInfo.designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="department" class="col-sm-4 col-form-label">Department</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="department" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.employeeInfo?.department?.deptName" name="department" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-4 col-form-label">Starting Date<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="date" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.date?.ToString("dd-MMM-yyyy")" name="date" readonly>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="advanceAmount" class="col-sm-4 col-form-label">Total Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="advanceAmount" name="advanceAmount" readonly value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.advanceAmount" data-parsley-required="true" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="installmentAmount" class="col-sm-4 col-form-label">Monthly installment <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="installmentAmount" readonly value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.installmentAmount" name="installmentAmount" data-parsley-required="true" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="noOfInstallment" class="col-sm-4 col-form-label">No of Installment <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="noOfInstallment" name="noOfInstallment" data-parsley-required="true" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.noOfInstallment" readonly style="text-align:right">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="salaryHeadId" class="col-sm-4 col-form-label">Salary Head <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="noOfInstallment" name="noOfInstallment" data-parsley-required="true" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.salaryHead.salaryHeadName" readonly>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <label for="purpose" class="col-sm-2 col-form-label">Purpose</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="purpose" name="purpose" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.purpose" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-2 col-form-label">Schedule Amount<span class="redStar">*</span></label>
+                            <div class="col-sm-10">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Select</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Updated Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.advanceAdjustmentDetails.Count() > 0)
+                                        {
+
+                                            @foreach (var data in Model.advanceAdjustmentDetails)
+                                            {
+                                                <tr>
+                                                    @if (data.isPaid == 0)
+                                                    {
+                                                        <th>
+                                                            <div class="custom-control custom-checkbox mb-3">
+                                                                <input type="checkbox" class="custom-control-input" value="@data.Id" id="select-@data.Id" onclick="AddQuantity(@data.Id);">
+                                                                <label class="custom-control-label" for="select-@data.Id">
+                                                                </label>
+                                                            </div>
+                                                        </th>
+                                                    }
+                                                    else
+                                                    {
+                                                        <th>Paid</th>
+                                                    }
+
+                                                    <th>
+                                                        <input type="text" class="form-control" value="@data.scheduleDate?.ToString("dd-MMM-yyyy")" id="paymentHead-@data.Id" readonly />
+                                                    </th>
+                                                    <th>
+                                                        <input type="number" style="text-align:right" class="form-control" value="@data.scheduleAmount?.ToString("0.00")" id="paymentDue-@data.Id" readonly />
+                                                    </th>
+                                                    <th>
+                                                        <input type="number" style="text-align:right" class="form-control paymentAmount" value="@data.scheduleAmount?.ToString("0.00")" onkeyup="CalCulateTotal()" id="paymentAmount-@data.Id" readonly />
+                                                    </th>
+                                                </tr>
+                                            }
+
+                                        }
+
+                                        <tr>
+                                            <th colspan="2" class="text-center">Total Amount </th>
+                                            <td><input type="number" style="text-align:right" id="totalNew" name="total" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.advanceAmount" readonly class="form-control" /></td>
+                                            <td><input type="number" style="text-align:right" id="totalNewAmount" name="total" value="@Model.advanceAdjustmentDetails.FirstOrDefault().advanceAdjustment.advanceAmount" readonly class="form-control" /></td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Save" id="SubmitBTN" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></input>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#leaveTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+            $("#date").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            $("#installmentAmount").keyup(function () {
+                GetInstallment();
+            });
+            $("#advanceAmount").keyup(function () {
+
+                GetInstallment();
+            });
+            $("#noOfInstallment").keyup(function () {
+                GetMonthly();
+            });
+
+        });
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+        function Edit(Id, employeeInfoId, nameEnglish, employeeCode, designation, salaryPeriodId, salaryHeadId, advanceAmount, installmentAmount, noOfInstallment, purpose, isContinue) {
+            $('#advanceAdjustmentId').val(Id);
+            $('#employeeInfoId').val(employeeInfoId);
+            $('#employeeName').val(nameEnglish + '(' + (employeeCode) + ')');
+            $('#Designation').val(designation);
+            $('#salaryPeriodId').val(salaryPeriodId);
+            $('#salaryHeadId').val(salaryHeadId);
+            $('#advanceAmount').val(advanceAmount);
+            $('#installmentAmount').val(installmentAmount);
+            $('#noOfInstallment').val(noOfInstallment);
+            $('#purpose').val(purpose);
+            $('#isContinue').val(isContinue);
+        }
+
+        function GetInstallment() {
+            var totalAmount = $("#advanceAmount").val();
+            var monthlyAmount = $("#installmentAmount").val();
+            if ($("#advanceAmount").val() == '' || $("#installmentAmount").val() == '') {
+                totalAmount = 0;
+                monthlyAmount = 0;
+            }
+            $("#noOfInstallment").val(parseFloat(totalAmount / monthlyAmount).toFixed(0));
+        }
+
+        function GetMonthly() {
+            var totalAmount = $("#advanceAmount").val();
+            var noOfInstal = $("#noOfInstallment").val();
+            if ($("#advanceAmount").val() == '' || $("#noOfInstallment").val() == '') {
+                totalAmount = 0;
+                noOfInstal = 0;
+            }
+            $("#installmentAmount").val(parseFloat(totalAmount / noOfInstal).toFixed(2));
+        }
+
+        function AddQuantity(id) {
+            if ($("#select-" + id).prop("checked") == true) {
+                var x = $("#paymentDue-" + id).val();
+                $("#paymentAmount-" + id).val($("#paymentDue-" + id).val());
+                $("#paymentAmount-" + id).removeAttr("readonly");
+                $("#select-" + id).attr("name", "selectPaymentHeadIds[]");
+                $("#paymentAmount-" + id).attr("name", "selectPaymentHeadAmounts[]");
+            } else {
+                $("#paymentAmount-" + id).val("");
+                $("#paymentAmount-" + id).attr("readonly", true);
+                $("#select-" + id).removeAttr("name");
+                $("#paymentAmount-" + id).removeAttr("name");
+            }
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+        }
+        function TotalCalculation() {
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+        }
+
+        function CalCulateTotal() {
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#totalNewAmount").val(sum);
+
+            var totalNew = $("#totalNew").val();
+
+            if (totalNew == sum) {
+                $('#SubmitBTN').prop('disabled', false);
+            } else {
+                //alert("Entered Amount and Total Amount Must be Same!!");
+                $('#SubmitBTN').prop('disabled', true);
+            }
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

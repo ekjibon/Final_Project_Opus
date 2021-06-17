@@ -1,0 +1,285 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "Project Details";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 10px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+    </style>
+}
+<div class="container">
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="fa-pull-right">
+                    <p style="font-size:smaller;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+                </div>
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-2">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                    </div>
+                    <div class="col-8">
+                        <div style="color:black;text-align:center;">
+                            <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                            <label>@Model.companies.FirstOrDefault().addressLine</label>
+                            <label>@Model.companies.FirstOrDefault().officeTelephone</label>
+                            <h5>Project Details</h5>
+                            <br />
+                        </div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <hr style="border:1px solid black;">
+            <div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight:600;color:black;">Project No: </span>
+                        <span style="color:black;">@Model.programReportModels.programMaster.number</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Project Name: </span>
+                        <span style="color:black;">@Model.programReportModels.programMaster.projectName</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Project Start Date: </span>
+                        <span style="color:black;">@Model.programReportModels.programMaster.Startdate?.ToString("dd-MMM-yyyy")</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Project End Date: </span>
+                        <span style="color:black;">@Model.programReportModels.programMaster.Enddate?.ToString("dd-MMM-yyyy")</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight:600;color:black;">Project Location: </span>
+                        <span style="color:black;">@Model.programLocations?.FirstOrDefault()?.location</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Implementation Organization: </span>
+                        <span style="color:black;">@Model.programImplementors?.FirstOrDefault()?.implementor</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Grant No: </span>
+                        <span style="color:black;">@Model.programReportModels.programMaster.grantNumber</span>
+                        <br />
+                        <span style="font-weight:600;color:black;">Description: </span>
+                        <span style="color:black;">@Model.programReportModels.programMaster.subject</span>                       
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        <span style="font-weight:600;color:black;">Source of Fund: </span>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-striped table-bordered" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <td style="width:60%;">Source Name</td>
+                                    <td style="width:20%;">Percent (%)</td>
+                                    <td style="width:20%;">Amount</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var data in Model.programSourceFunds)
+                                {
+                                    <tr>
+                                        <td>@data.sourceName</td>
+                                        <td align="center">@data.percent</td>
+                                        <td align="right">@data.amount</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br />
+                <span style="font-weight:600;color:black;">Impact: </span>
+                <span style="color:black;">@Model.programReportModels.programMaster.programImpact?.name</span>
+                <div>
+                    <table class="table table-striped table-bordered" id="voucherList" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <td style="width:20%;text-align:center;">Outcome</td>
+                                <td style="width:20%;text-align:center;">Output</td>
+                                <td style="width:10%;text-align:center;">Measuring Indicator (Output)</td>
+                                <td style="width:10%;text-align:center;">Output Values</td>
+                                <td style="width:20%;text-align:center;">Planned Activity</td>
+                                <td style="width:10%;text-align:center;">Measuring Indicator</td>
+                                <td style="width:10%;text-align:center;">Planned Value</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                string ItemId = string.Empty;
+                                string ItemSpecId = string.Empty;
+                                //int i = 1;
+                                @foreach (var item in Model.ProgramActivities)
+                                {
+                                    if (ItemId != item.outComeName)
+                                    {
+                                        int jj = Model.ProgramActivities.Where(x => x.outComeName == item.outComeName).Count();
+
+                                        <tr>
+                                            <td rowspan="@jj" style="vertical-align : middle;text-align:center;">@item.outComeName</td>
+                                            @if (ItemSpecId != item.outPutName)
+                                            {
+                                                int jjj = Model.ProgramActivities.Where(x => x.outPutName == item.outPutName).Count();
+                                                <td rowspan="@jjj" style="vertical-align : middle;text-align:center;">@item.outPutName</td>
+
+                                                @if (@item.outputIndicator == null || @item.outputIndicator == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outputIndicator</td>
+                                                }
+                                                @if (@item.outPutValues == null || @item.outPutValues == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outPutValues</td>
+                                                }
+
+                                                <td>@item.activity</td>
+                                                <td>@item.indicator</td>
+                                                <td>@item.values</td>
+                                            }
+                                            else
+                                            {
+                                                @if (@item.outputIndicator == null || @item.outputIndicator == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outputIndicator</td>
+                                                }
+                                                @if (@item.outPutValues == null || @item.outPutValues == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outPutValues</td>
+                                                }
+                                                <td>@item.activity</td>
+                                                <td>@item.indicator</td>
+                                                <td>@item.values</td>
+                                            }
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            @if (ItemSpecId != item.outPutName)
+                                            {
+                                                int jjjj = Model.ProgramActivities.Where(x => x.outPutName == item.outPutName).Count();
+                                                <td rowspan="@jjjj" style="vertical-align : middle;text-align:center;">@item.outPutName</td>
+                                                @if (@item.outputIndicator == null || @item.outputIndicator == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outputIndicator</td>
+                                                }
+                                                @if (@item.outPutValues == null || @item.outPutValues == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outPutValues</td>
+                                                }
+                                                <td>@item.activity</td>
+                                                <td>@item.indicator</td>
+                                                <td>@item.values</td>
+                                            }
+                                            else
+                                            {
+                                                @if (@item.outputIndicator == null || @item.outputIndicator == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outputIndicator</td>
+                                                }
+                                                @if (@item.outPutValues == null || @item.outPutValues == "null")
+                                                {
+                                                    <td></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@item.outPutValues</td>
+                                                }
+                                                <td>@item.activity</td>
+                                                <td>@item.indicator</td>
+                                                <td>@item.values</td>
+                                            }
+                                        </tr>
+                                    }
+                                    ItemId = item.outComeName;
+                                    ItemSpecId = item.outPutName;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @*<br /><br /><br /><br /><br /><br />
+        <div>
+            <div>
+                <div style="float:left">
+                    <span style="color:black"></span>
+                    <br />
+                    <span style="color:black">---------------------</span>
+                    <br />
+                    <span style="color:black;padding-left:0px">Approved By</span>
+                </div>
+                <div style="float:right">
+                    <span style="color:black;text-align:center;padding-left:7px">@Model.programReportModels.programMaster.createdBy</span>
+                    <br />
+                    <span style="color:black">------------------</span>
+                    <br />
+                    <span style="color:black;padding-left:5px">Created By</span>
+                </div>
+            </div>
+        </div>*@
+
+            </div>
+        </div>
+    </div>
+</div>

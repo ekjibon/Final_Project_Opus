@@ -1,0 +1,19 @@
+﻿{
+  "title": "Children Information",
+  "childName": "Name (English)",
+  "childNameBN": "Name (Bengali)",
+  "dateOfBirth": "Date of Birth",
+  "education": "Education",
+  "gender": "Gender",
+  "bin": "Birth Registration No.",
+  "occupation": "Occupation",
+  "designation": "Designation",
+  "organization": "Organization",
+  "nid": "NID",
+  "bloodGroup": "Blood Group",
+  "disability": "Disability",
+  "Disable": "Disability",
+  "disablityType": "Disablity Type",
+  "skill": "Skill",
+  "action": "Action"
+}

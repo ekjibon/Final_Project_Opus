@@ -1,0 +1,444 @@
+﻿@{
+    ViewData["Title"] = "Bank Reconciliation";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+
+<div class="card p-0 m-0">
+    <div class="row">
+        <div class="col-sm-10">
+            <span style="font-size:1.5em;font-weight:700;color:gray;">Bank Reconciliation Not Matched List</span>
+        </div>
+        @*<div class="col-sm-2 text-right">
+                <a class="btn btn-sm btn-dark" href="/Accounting/PaymentVoucher/PaymentVoucherList">Back To List</a>
+            </div>*@
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="formBankReconciliationOD" aria- data-parsley-validate="parsley" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="m-0 font-weight-bold text-primary"><u>List of Unpresented Cheques</u></label>
+                </div>
+                @*<div class="col-sm-6"style="float:left;"></div>
+                <div class="col-sm-6">
+                    <input type="button" id="btnLoad" class="btn btn-danger" value="Load"/>&nbsp;&nbsp;
+                    <input type="button" id="btnUpdate" class="btn btn-danger" value="Update Cheque No"  />&nbsp;&nbsp;
+                    <input type="button" id="btnExcel" class="btn btn-info" value="Export to Excel"  />
+                </div>*@
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group row">
+                                <label for="ledger" class="col-sm-2 col-form-label text-left">Ledger Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="ledger" id="ledger" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="onDate" class="col-sm-4 col-form-label text-left">As on Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="onDate" id="onDate" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="onToDate" class="col-sm-4 col-form-label text-left">To</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="onToDate" id="onToDate" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="unpresentedChequeTable">
+                                <thead>
+                                    <tr>
+                                        <th>V Date</th>
+                                        <th>Voucher No</th>
+                                        <th>Ref No</th>
+                                        <th>Cheque No</th>
+                                        <th>Posted By</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                        <th>Overdue Check</th>
+                                        <th>Remarks</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P12</td>
+                                        <td>01012020</td>
+                                        <td>Business Trading</td>
+                                        <td>245</td>
+                                        <td>0901</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                    </tr>
+                                    @*@foreach (var data in Model.assetYears)
+                                {
+                                    <tr>
+                                        <td>@data.AssetYearName</td>
+
+                                        <td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                                        </td>
+                                    </tr>
+                                }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">List of Overdue Cheques</h6>
+                            <input style="float:right;" type="button" id="btnExcel" class="btn btn-info" value="Export to Excel" />
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="overdueChequeTable">
+                                <thead>
+                                    <tr>
+                                        <th>V Date</th>
+                                        <th>Voucher No</th>
+                                        <th>Ref No</th>
+                                        <th>Cheque No</th>
+                                        <th>Posted By</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                        <th>Overdue Check</th>
+                                        <th>Remarks</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P12</td>
+                                        <td>01012020</td>
+                                        <td>Business Trading</td>
+                                        <td>245</td>
+                                        <td>0901</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                    </tr>
+                                    @*@foreach (var data in Model.assetYears)
+                                {
+                                    <tr>
+                                        <td>@data.AssetYearName</td>
+
+                                        <td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                                        </td>
+                                    </tr>
+                                }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="height:5px;"></div>
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">List of wrongly posted data in ledger book</h6>
+                            <input style="float:right;" type="button" id="btnExcel" class="btn btn-info" value="Export to Excel" />
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="wrongLedgerTable">
+                                <thead>
+                                    <tr>
+                                        <th>V Date</th>
+                                        <th>Voucher No</th>
+                                        <th>Ref No</th>
+                                        <th>Cheque No</th>
+                                        <th>Posted By</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P12</td>
+                                        <td>01012020</td>
+                                        <td>Business Trading</td>
+                                        <td>245</td>
+                                        <td>0901</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                    </tr>
+                                    @*@foreach (var data in Model.assetYears)
+                                {
+                                    <tr>
+                                        <td>@data.AssetYearName</td>
+
+                                        <td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                                        </td>
+                                    </tr>
+                                }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">List of wrongly posted data in Bank Statement</h6>
+                            <input style="float:right;" type="button" id="btnExcel" class="btn btn-info" value="Export to Excel" />
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="wrongBSTable">
+                                <thead>
+                                    <tr>
+                                        <th>V_Date</th>
+                                        <th>Tr_Particular</th>
+                                        <th>No of Inst.</th>
+                                        <th>Withdraw</th>
+                                        <th>Deposit</th>
+                                        <th>Balance</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P12</td>
+                                        <td>01012020</td>
+                                        <td>Business Trading</td>
+                                        <td>245</td>
+                                        <td>0901</td>
+                                        <td>920</td>
+                                    </tr>
+                                    @*@foreach (var data in Model.assetYears)
+                                {
+                                    <tr>
+                                        <td>@data.AssetYearName</td>
+
+                                        <td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                                        </td>
+                                    </tr>
+                                }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="m-0 font-weight-bold text-primary"><u>List of Ledger Book to Return</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group row">
+                                <label for="ledgerBR" class="col-sm-2 col-form-label text-left">Ledger Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="ledgerBR" id="ledgerBR" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="onDateBR" class="col-sm-4 col-form-label text-left">As on Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="onDateBR" id="onDateBR" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="onToDateBR" class="col-sm-4 col-form-label text-left">To</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="onToDateBR" id="onToDateBR" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group row" style="float:right;">
+                                <div class="col-sm-8" style="margin-left:250px;">
+                                    <input type="button" id="btnLoad" class="btn btn-danger" value="Load" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="ledgerReturnTable">
+                                <thead>
+                                    <tr>
+                                        <th>V Date</th>
+                                        <th>Voucher No</th>
+                                        <th>Ref No</th>
+                                        <th>Cheque No</th>
+                                        <th>Posted By</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                        <th>Return</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P12</td>
+                                        <td>01012020</td>
+                                        <td>Business Trading</td>
+                                        <td>245</td>
+                                        <td>0901</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                        <td>920</td>
+                                    </tr>
+                                    @*@foreach (var data in Model.assetYears)
+                                {
+                                    <tr>
+                                        <td>@data.AssetYearName</td>
+
+                                        <td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                                        </td>
+                                    </tr>
+                                }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">List of Bank Settlement to return</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="bsReturnTable">
+                                <thead>
+                                    <tr>
+                                        <th>V_Date</th>
+                                        <th>Tr Particular</th>
+                                        <th>No of Inst</th>
+                                        <th>Withdraw</th>
+                                        <th>Deposit</th>
+                                        <th>Balance</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P12</td>
+                                        <td>01012020</td>
+                                        <td>Business Trading</td>
+                                        <td>2451360</td>
+                                        <td>1542020</td>
+                                        <td>92000</td>
+                                    </tr>
+                                    @*@foreach (var data in Model.assetYears)
+                                {
+                                    <tr>
+                                        <td>@data.AssetYearName</td>
+
+                                        <td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                                        </td>
+                                    </tr>
+                                }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section ScriptsV{
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#unpresentedChequeTable').DataTable();
+            $('#overdueChequeTable').DataTable();
+            $('#wrongLedgerTable').DataTable();
+            $('#wrongBSTable').DataTable();
+            $('#ledgerReturnTable').DataTable();
+            $('#bsReturnTable').DataTable();
+            $('#notMatchGL2Table').DataTable();
+
+            $("#onDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#onDateBR").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#onToDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#onToDateBR").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            
+
+            $("#pNo").on('click', function () {
+                //$('input[name="forProcessNo"]').show();
+                $("#forProcessNo").show();
+                $("#forSupplier").hide();
+            });
+        });
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+    </script>
+}
+
+@section StyleV{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+
+
+

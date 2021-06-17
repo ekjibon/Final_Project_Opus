@@ -1,0 +1,213 @@
+﻿@model DisciplinaryViewModel
+
+@{
+    ViewData["Title"] = Model.fLang.title;
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo?.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo?.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo?.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo?.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo?.activityStatus == 1 ? "Active" : "Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">@Model.fLang.title</u></h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="Disciplinary" asp-action="Index" method="post" data-parsley-validate="parsley" enctype="multipart/form-data">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="card" style="padding: 2%">
+                    <div class="form-group row">
+                        <label for="offenseId" class="col-sm-2 col-form-label">@Model.fLang.offense <span class="redStar">*</span></label>
+                        <div class="col-sm-4">
+                            <input type="hidden" name="employeeId" id="employeeId" value="@Model.employeeId" />
+                            <input type="hidden" name="disciplinaryId" id="disciplinaryId" value="0" />
+                            <select type="text" class="form-control" id="offenseId" value="" name="offenseId" data-parsley-required="true">
+                                <option value="">Select One</option>
+                                @foreach (var data in Model.offenses)
+                                {
+                                    <option value="@data.Id">@data.name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <label for="punishmentId" class="col-sm-2 col-form-label">@Model.fLang.naturalPunishment <span class="redStar">*</span></label>
+                        <div class="col-sm-4">
+                            <select type="text" class="form-control" id="punishmentId" value="" name="punishmentId" data-parsley-required="true">
+                                <option value="">Select One</option>
+                                @foreach (var data in Model.punishments)
+                                {
+                                    <option value="@data.Id">@data.name</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="punishmentDate" class="col-sm-2 col-form-label">@Model.fLang.punishmentDate <span class="redStar">*</span></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="punishmentDate" value="" name="punishmentDate" data-parsley-required="true">
+                        </div>
+
+                        <label for="goNo" class="col-sm-2 col-form-label">@Model.fLang.goWithDate <span class="redStar">*</span></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="goNo" value="" name="goNo" data-parsley-required="true">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="goAttachment" class="col-sm-2 col-form-label">@Model.fLang.goAttachment</label>
+                        <div class="col-sm-10">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="goAttachment" id="goAttachment">
+                                <label class="custom-file-label" for="goAttachment">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="startFrom" class="col-sm-2 col-form-label">@Model.fLang.startFrom</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="startFrom" value="" name="startFrom">
+                        </div>
+
+                        <label for="endTo" class="col-sm-2 col-form-label">@Model.fLang.endTo</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="endTo" value="" name="endTo">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="remarks" class="col-sm-2 col-form-label">@Model.fLang.remarks</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="remarks" name="remarks" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+                <hr />
+                <button data-toggle="tooltip" title="Save" type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="disciplinaryTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.employeeName</th>
+                            <th>@Model.fLang.offense</th>
+                            <th>@Model.fLang.naturalPunishment</th>
+                            <th>@Model.fLang.goWithDate</th>
+                            <th>@Model.fLang.punishmentDate</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.disciplinaries)
+                        {
+                            <tr>
+                                <td>@data.employee.nameEnglish</td>
+                                <td>@data.offense.name</td>
+                                <td>@data.naturalPunishment.name</td>
+                                <td>@data.goNumberWithDate</td>
+                                <td>@data.punishmentDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>
+                                    <a class="btn btn-info" data-toggle="tooltip" title="Edit" onclick="Edit(@data.Id,@data.OffenseId,@data.naturalPunishmentId,'@data.goNumberWithDate','@data.punishmentDate?.ToString("dd-MMM-yyyy")','@data.startingDate?.ToString("dd-MMM-yyyy")','@data.endDate?.ToString("dd-MMM-yyyy")','@data.remarks')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id,@data.employeeId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+            $("#disciplinary").addClass("active");
+            $('#disciplinaryTable').DataTable();
+            
+            $('#punishmentDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#startFrom').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#endTo').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+
+            $('#goAttachment').on('change', function (e) {
+                var fileName = e.target.files[0].name;
+                $(this).next('.custom-file-label').html(fileName);
+            })
+        });
+
+        function Edit(Id, OffenseId, naturalPunishmentId, goNumberWithDate, punishmentDate, startingDate, endDate, remarks) {
+            $("#disciplinaryId").val(Id);
+            $("#offenseId").val(OffenseId);
+            $("#punishmentId").val(naturalPunishmentId);
+            $("#punishmentDate").val(punishmentDate);
+            $("#goNo").val(goNumberWithDate);
+            $("#startFrom").val(startingDate);
+            $("#endTo").val(endDate);
+            $("#remarks").val(remarks);
+        }
+
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                //return true;
+                location.replace("/HRPMSEmployee/Disciplinary/Delete/" + Id + "?empId=" + employeeId);
+            } else {
+                return false;
+            }
+        }
+
+    </script>
+}

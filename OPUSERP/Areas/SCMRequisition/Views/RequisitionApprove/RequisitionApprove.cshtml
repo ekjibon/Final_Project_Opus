@@ -1,0 +1,569 @@
+﻿@model ApprovalLogViewModel
+@{
+    ViewData["Title"] = "RequisitionApprove";
+    //Layout = "~/Areas/Requisition/Views/Shared/_RequisitionLayout.cshtml";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Requisition Approve</h6>
+        <a class="btn btn-outline-warning btn-sm" data-toggle="tooltip" title="New" href="@Url.Action("ReqApprovelist", "RequisitionApprove")" style="color:midnightblue;"><i class="fa fa-backward"> Back To List</i></a>
+    </div>
+    <div class="card-body">
+        <div class="container">
+            <div class="row">
+                <h6 class="card-title col-md-10" style="color: black;"><u>Requisition Details</u></h6>
+                <div class="col-sm-8 divBorder">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div style="height:10px;"></div>
+                            <div class="form-group row">
+                                <label for="reqNo" class="col-sm-4 col-form-label">Requisition No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="reqNo" value="" name="reqNo" disabled="disabled">
+                                    <input type="hidden" id="reqMasterId" name="reqMasterId" value=0>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="reqDate" class="col-sm-4 col-form-label">Requisition Date </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="reqDate" value="" name="reqDate" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="targetDate" class="col-sm-4 col-form-label">Target Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="targetDate" value="" name="targetDate" disabled="disabled">
+                                </div>
+                            </div>
+                            <div style="height:10px;"></div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div style="height:10px;"></div>
+                            <div class="form-group row">
+                                <label for="reqBy" class="col-sm-4 col-form-label">Requisition By </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="reqBy" value="" name="reqBy" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="justification" class="col-sm-4 col-form-label">Justification</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="justification" value="" name="justification" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="subject" class="col-sm-4 col-form-label">Purpose</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="subject" value="" name="subject" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="reqDept" class="col-sm-4 col-form-label">Review Remarks</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="revremarks" name="revremarks" value="@ViewBag.remarks" readonly />
+                                </div>
+                            </div>
+                            <div style="height:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 divBorder">
+                    <div style="height:10px;"></div>
+                    <div class="form-group row">
+                        <label for="ApproverName" class="col-sm-4 col-form-label">Approver Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="ApproverName" value="@ViewBag.ApproverName" name="ApproverName" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="DepartmentName" class="col-sm-4 col-form-label">Department</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="DepartmentName" value="@ViewBag.DepartmentName" name="DepartmentName" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="FinancialValue" class="col-sm-4 col-form-label">Max Amount</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="FinancialValue" value="@ViewBag.FinancialValue" name="FinancialValue" disabled="disabled">
+                        </div>
+                    </div>
+                    <div style="height:10px;"></div>
+                </div>
+            </div>
+            <div style="height:15px;"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h6 style="color: black"><u>List of Requisition Item</u></h6>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="divBorder col-md-12" style="padding-left:0px;padding-right:0px;">
+                    <table class="table table-striped table-bordered table-responsive" id="ItemTable">
+                        <thead style="background-color:#c6c3c3">
+                            <tr>
+                                <th>Item Code</th>
+                                <th>Item Name</th>
+                                <th>Specification</th>
+                                <th>Justification</th>
+                                <th>Last Price</th>
+                                <th>Budget Code</th>
+                                <th>Cum QTY</th>
+                                <th>Req. Qty</th>
+                                <th>Rate</th>
+
+                                <th>Unit of measurement(UOM)</th>
+                                <th>Total</th>
+                                <th>Images</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.requisitionDetailVMs)
+                            {
+                            <tr>
+                                <td>@data.itemCode</td>
+                                <td>@data.itemName</td>
+                                <td>@data.specificationName</td>
+                                <td>@data.justification</td>
+                                <td>@data.lastPrice</td>
+                                <td>@data.budgetCode</td>
+                                <td>@data.qumQTY</td>
+                                <td>@data.reqQty</td>
+                                <td>@data.reqRate</td>
+
+                                <td>@data.unitName</td>
+                                <td>@data.total?.ToString("0,0.00")</td>
+                                <td>
+                                    @foreach (var d in @Model.documentAttachmentDetails?.Where(x => x.itemSpecificationId == data.itemSpecificationId))
+                                    {
+
+                                        <a href="/Upload/@d?.fileName" target="_blank" title="Preview" class="btn btn-info btn-sm"><img src="/Upload/@d?.fileName" class="mb-2" style="width:50px;height:50px;" /></a>
+
+                                    }
+
+                                </td>
+                            </tr>                                
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                
+                                <td colspan="11"  style="text-align:right;">Total : @Model.requisitionDetailVMs.Sum(x => x.reqQty * x.reqRate)?.ToString("0,0.00")</td>
+
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+               
+            </div> 
+            <div class="row">
+
+                <div class="col-md-12">
+                    <h6 style="color: black"><u>Attachments</u></h6>
+                </div>
+                <div class="divBorder col-md-12" style="padding-left:0px;padding-right:0px;">
+                    <table id="dtAttachment" class="table table-striped table-bordered">
+                        <thead style="background-color:#c6c3c3">
+                            <tr>
+                                <th style="width:40%">File Name</th>
+                                <th style="width:40%">Subject</th>
+                                <th style="width:10%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyAttachment"></tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+            <hr />
+            <div class="container">
+                <h6 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;">
+                    <u>
+                        Approval Panel
+                    </u>
+                </h6>
+                <div class="row" style="border:ridge" id="divPanel">
+
+                </div>
+            </div>
+            <hr />
+
+            <div style="height:15px;"></div>
+            <div class="row">
+                <div class="col-md-8">
+                    <h6 style="color: black"><u>PR Approver History</u></h6>
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div id="divPanel" class="col-md-8 divBorder" style="padding-left:0px;padding-right:0px;max-height:150px;overflow-x:scroll">
+                    <table id="AppprovedGrid" class="table table-striped table-bordered">
+                        <thead style="background-color:#c6c3c3">
+                            <tr>
+                                <th style="width:30%">Process By</th>
+                                <th style="width:30%">Date</th>
+                                <th style="width:15%;">Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.approerPanelList)
+                            {
+                                <tr>
+                                    <td>@data.EmpName</td>
+                                    <td>@data.ProcessDate.Substring(0, 10)</td>
+                                    <td>@data.notes</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-4 divBorder">
+                    <div class="row divBorder">
+                        <div class="col-sm-6">
+                            <div style="height:10px;"></div>
+                            <select id="processType" class="form-control">
+                                <option value="3">Approve</option>
+                                <option value="4">Return</option>
+                                <option value="5">Reject</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <button type="button" id="btnSave" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                        </div>
+                    </div>
+                    <div class="row divBorder" id="dvreturn" style="display:none">
+                        <label for="projectId" class="col-sm-4 col-form-label">Return To</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="appId" name="appId" data-parsley-required="true">
+                                <option value="">Select One</option>
+                                @foreach (var data in Model.approverPanelFViewModels)
+                                {
+                                    <option value="@data.Id">@data.EmpName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12 divBorder" style="padding-right:0px;">
+                        <span style="color:#eb106b;font-size:.8em;padding-left:0px;padding-right:0px;padding-left:0px;"> Remarks<i id="remarkforReturn" style="color:red">*</i></span>
+                        <textarea id="Remarks" class="form-control pull-right" placeholder="Remarks" style="max-height:40px;"></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+
+    .divBorder {
+        border-width: 1px;
+        border-color: gray;
+        border-style: solid;
+    }
+
+    .big {
+        width: 1.2em;
+        height: 1.2em;
+    }
+
+    .labelPadding {
+        font-size: .8em;
+        padding-left: 0px;
+    }
+
+    .divPadding {
+        padding: 0px 0px 5px 0px;
+    }
+
+    .cls0 {
+        background-color: #ffcd41;
+    }
+
+    .cls1 {
+        background-color: green;
+    }
+
+    .cls2 {
+        background-color: dodgerblue;
+    }
+</style>
+
+
+@section Scripts{
+    <script>
+        var reqMasterId = '@ViewBag.reqMasterId';
+        $(document).ready(function () {
+            $("#supplier").addClass("active");
+            $('#ItemTable').DataTable();
+            GetRequisitionInfo();
+            $("#iReject").hide();
+            $("#iReturn").hide();
+            $("#rReturn").attr('disabled', true);
+            $("#rReject").attr('disabled', true);
+            $("#btnSave").on("click", SaveRequisuitionApprovalLog);
+
+            $(document).on('change', '#isRejectReturn', function () {
+                if (this.checked) {
+                    $("#rReturn").attr('disabled', false);
+                    $("#rReject").attr('disabled', false);
+                }
+                else {
+                    $("#rReturn").attr('disabled', true);
+                    $("#rReject").attr('disabled', true);
+                    $("#rReturn").prop('checked', false)
+                    $("#rReject").prop('checked', false)
+                    $("#iReject").hide();
+                    $("#iReturn").hide();
+                    $("#iApprove").show();
+                    $("#btnSave").css({ "background-color": "#33a55d" }).attr('disabled', false);
+                    $("#remarkforReturn").hide();
+                }
+            });
+            $("#remarkforReturn").hide();
+            $("input:radio[name='RejectReturn']").change(function () {
+                if ($("input[name='RejectReturn']:checked").val() == '1') {
+                    $("#iReject").hide();
+                    $("#iReturn").show();
+                    $("#iApprove").hide();
+                    $("#remarkforReturn").show();
+                    $("#btnSave").css({ "background-color": "#ed3423" });
+                    if ($("#Remarks").val() == "") {
+                        $("#btnSave").attr('disabled', true);
+                    }
+                    else {
+                        $("#btnSave").attr('disabled', false);
+                    }
+                }
+                else if ($("input[name='RejectReturn']:checked").val() == '2') {
+                    $("#iReject").show();
+                    $("#iReturn").hide();
+                    $("#iApprove").hide();
+                    $("#btnSave").css({ "background-color": "#bab532" });
+                    $("#remarkforReturn").show();
+                    if ($("#Remarks").val() == "") {
+                        $("#btnSave").attr('disabled', true);
+                    }
+                    else {
+                        $("#btnSave").attr('disabled', false);
+                    }
+                }
+                $("#Remarks").keyup(function () {
+                    if ($("#Remarks").val() == "" && $("input[name='RejectReturn']:checked").val() != "") {
+                        $("#btnSave").attr('disabled', true);
+                    }
+                    else {
+                        $("#btnSave").attr('disabled', false);
+                    }
+                });
+            });
+            $("#processType").change(function () {
+                if ($("#processType").val() == 4) {
+                    $("#dvreturn").show();
+                }
+                else
+                {
+                    $("#dvreturn").hide();
+                }
+               
+            });
+
+            Common.Ajax('GET', '/api/matrix/GetPRApproverPanelListFromApprovalLogs/' + 1 + '/' + reqMasterId, [], 'json', GetApproverPanelList);
+
+            LoadAttachment();
+        });
+
+
+        function SaveRequisuitionApprovalLog() {
+            $("#btnSave").attr("disabled", true);
+            var ReqMasterId = '@ViewBag.reqMasterId';
+            var ReqNo = $("#reqNo").val();
+            var appId = $("#appId").val();
+            var Remark = $("#Remarks").val();
+            var txtAppType = "";
+            var conAppType = "";
+            var AppType = 0;
+                if ($("#processType").val() == "4") {
+                AppType = 4; //return
+                txtAppType = "Do you want to return this record!";
+                    conAppType = "Yes, return it!";
+                    if ($("#appid").val() == "")
+                    {
+                        swal("Please select one approver.");
+                        return;
+                    }
+            }
+                else if ($("#processType").val() == "5") {
+                AppType = 5; // reject
+                txtAppType = "Do you want to reject this record!";
+                conAppType = "Yes, reject it!";
+            }
+            else {
+                AppType = 3; //approve
+                txtAppType = "Do you want to approve this record!";
+                conAppType = "Yes, approve it!";
+            }
+            swal({
+                title: 'Are you sure?', text: txtAppType, type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: conAppType
+            }).then(function () {
+                //$("#txtBody").attr("placeholder", "Processing .....");
+                $.ajax({
+                    url: '@Url.Action("SaveRequisitionApprovalLog", "RequisitionApprove")',
+                    type: "POST",
+                    data: { reqId: parseInt(ReqMasterId), reqNo: ReqNo, appType: AppType, remark: Remark, appId: appId },
+                })
+                    .done(function () {
+                        if (AppType == 5) {
+                            swal('Rejected!', 'Your PR has been rejected.', 'success').then(function () {
+                                window.location = '@Url.Action("ReqApprovelist", "RequisitionApprove")';
+                                $("#btnSave").attr("disabled", false);
+                            })
+                        }
+                        else if (AppType == 4) {
+                            swal('Returned!', 'Your PR has been returned.', 'success').then(function () {
+                                window.location = '@Url.Action("ReqApprovelist", "RequisitionApprove")';
+                                $("#btnSave").attr("disabled", false);
+                            })
+                        }
+                        else {
+                            swal('Approved!', 'Your PR has been approved.', 'success').then(function () {
+                                window.location = '@Url.Action("ReqApprovelist", "RequisitionApprove")';
+                                $("#btnSave").attr("disabled", false);
+                            })
+                        }
+                    })
+                    .fail(function () {
+                        swal('Attention!', 'Unable to Approved. Please Try Again.', 'warning');
+                        $("#btnSave").attr("disabled", false);
+                    })
+                    , function (isConfirm) {
+                        if (isConfirm) {
+                            $("#btnSave").attr("disabled", false);
+                        } else {
+                            swal("Cancelled", "", "error");
+                            $("#btnSave").attr("disabled", false);
+                        }
+                    };
+                });
+        }
+
+        function GetRequisitionInfo() {
+            var reqId = reqMasterId;
+            Common.Ajax('GET', '/global/api/GetApprovalLogByRequisitionId/' + reqId, [], 'json', ajaxRequisitionInfo);
+        }
+
+        function ajaxRequisitionInfo(response) {
+            if (response) {
+                $("#reqMasterId").val(response.Id);
+                $("#reqNo").val(response.reqNo);
+                $("#reqDate").val(response.reqDate);
+                $("#targetDate").val(response.targetDate).toString();
+                $("#reqBy").val(response.nameEnglish);
+                $("#justification").val(response.justification);
+                $("#subject").val(response.subject);
+            }
+        }
+
+        function GetApproverPanelList(response) {
+            var divPanel = $("#divPanel");
+            var inputPanel;
+            var index = 0;
+            $.each(response, function (id, option) {
+                var source = option.imagePath;
+
+                if (source == '') {
+
+                    source = "images/user.png";
+                }
+                var empName = option.EmpName.substr(option.EmpName, 100);
+                empName = empName.substr(0, Math.min(empName.length, empName.lastIndexOf(" ")))
+                if (option.isActive == 1 && index == 0) {
+                    index = 1;
+                } else if (option.isActive == 0 && index == 1) {
+                    index = 2;
+                }
+                inputPanel = '<div class="col-md-3" style="padding-left:0px;padding-right:0px;" id="divChieldPanel">' +
+                    '<a href="javascript:void(0)" class="btn btn-success div' + index + ' boxDesign" id="btnTotalLead" role="button" style="width:100%;float:left;color:black;background-color:#fff">' +
+                    '<div class="row">' +
+                    '<div class="col-md-4">' +
+                    '<span style="padding:0px 0px 0px 0px;">' +
+                    '<img src="/' + source + '" style="width:60px;height:60px;"/>' +
+                    '<input type="button" class="btn btn-primary btn-sm pull-left cls' + index + ' clsSequenceNo" style="padding:0px 5px 0px 5px;color:black;" value="' + option.sequenceNo + '" />' +
+                    '</span>' +
+
+                    '</div>' +
+                    '<div class="col-md-8">' +
+                    '<span class="pull-left" style="font-weight:bold">' + empName + '</span><br />' +
+                    '<span class="pull-left" style="font-size:.7em">' + option.DesignationName + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>' +
+                    '<input type="hidden" class="clsUserId" value="' + option.sequenceNo + '" />'
+                    +
+                    '<input type="hidden" class=" cls' + option.isActive + ' clsIsActive" value="' + option.isActive + '" />'
+                '</div>';
+
+                divPanel.append(inputPanel);
+                
+                //index++;
+            });
+        }
+
+        function LoadAttachment() {
+            var rowno = 0
+            $.ajax({
+                type: 'GET',
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("GetAttachmentListByMatrixType", "RequisitionApprove", "http")',
+                data: { masterId: '@ViewBag.reqMasterId' },
+                dataType: 'json',
+                async: true,
+                success: function (attachments) {
+                    console.log(attachments);
+                    var index = 1;
+                    var dtTable = $("#dtAttachment");
+                    var tableBody = dtTable.find('tbody');
+                    tableBody.empty();
+                    $.each(attachments, function (index, E) {
+                        rowno = rowno + 1;
+                        var filePath = '/Upload/'+E.fileName
+                        $('#SubjectName').val(E.Subject);
+                        if (E.FilePath != "") {
+                            if (E.MimeType == "application/msword" || E.MimeType == "application/pdf" || E.MimeType == "application/x-msexcel" || E.MimeType == "application/octet-stream" || E.MimeType == "text/plain" || E.MimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || E.MimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                                tableBody.append(
+                                    '<tr id=' + rowno + '>' +
+                                    '<td>' + E.fileName + '</td>' +
+
+                                    '<td><i class="fa fa-file" style="font-size:40px;color:lightgray"> </i></td>' +
+                                    '<td><a href=' + "'" + filePath + "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a></td>' +
+                                    '</tr>')
+                            }
+                            else {
+                                tableBody.append(
+                                    '<tr id=' + rowno + '>' +
+                                    '<td>' + E.fileName + '</td>' +
+
+                                    '<td style="height:50px;width: 45px; background - color:lightgray"><img src=' + "'" + filePath + "'" + ' height=50 width=45 /></td>' +
+                                    '<td><a href=' + "'" + filePath+ "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a></td>' +
+                                    '</tr>')
+                            }
+                        }
+                        index = index + 1;
+                    });
+                    $('#AjaxLoader').hide()
+                },
+                error: function (request, status, error) {
+                    alert(request.statusText + "/" + request.statusText + "/" + error);
+                }
+            });
+        }
+
+    </script>
+}

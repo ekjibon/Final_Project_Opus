@@ -1,0 +1,302 @@
+﻿@model TaskManagemnetViewModel
+@{
+    ViewData["Title"] = "Task Reports";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+@{
+    decimal? Sumdebit = 0;
+    decimal? Sumcredit = 0;
+    decimal? TClosing = 0;
+
+
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-2">
+                        @*<img src="~/images/bKashLogo.png" style="margin:0px 0px 0px 0px;" height="100" width="180" />*@
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+                    </div>
+                    <div class="col-8" style="color:black;text-align:center">
+                        <p style="font-size:25px;font-weight:500; margin-top:10px;">@Model.companies.FirstOrDefault().companyName</p>
+                        <p style="font-size:20px;width:100%;margin-top:-15px;">@Model.companies.FirstOrDefault().addressLine</p>
+                        <p style="font-size:20px;width:100%;margin-top:-15px;">Task Report</p>
+                    </div>
+                </div>
+            </div><br />
+
+                  <div class="container-fluid" style="color:black;">
+                      <hr style="border:1px solid grey;">
+                      <h5>Task Information : </h5>
+                      <div class="row" style="padding: 0px 15px 0px 15px;">
+                          <table class="table table-bordered" style="border-color:black;">
+                              <tr>
+                                  <th class="text-center">Name</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation.name</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">Description</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation.description</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">Assign Employee Name</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation.employeeAssign.nameEnglish</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">Start Date</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation.satrtDate?.ToString("dd-MMM-yyyy")</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">End Date</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation.endDate?.ToString("dd-MMM-yyyy")</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">Time</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation?.estimatedHours Hr.</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">Activity Status</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation?.activityStatus?.status</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">Activity Category</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation?.activityCategory?.activityCategoryName</td>
+                              </tr>
+                              <tr>
+                                  <th class="text-center">Activity Session</th>
+                                  <td>@Model.singleTaskViewModel.taskInformation?.activitySession?.activitySessionName</td>
+                              </tr>
+                          </table>
+                      </div>
+                      <br />
+                      <br />
+                      <h5>Task Follower & Tags : </h5>
+                      <div class="row" style="padding: 0px 15px 0px 15px;">
+                          <table class="table table-bordered" style="border-color:black;">
+                              <thead>
+                                  <tr>
+                                      <td class="text-center" style="font-weight:bold">Followers</td>
+                                      <td class="text-center" style="font-weight:bold">Tags</td>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <td>
+                                          @foreach (var data in Model.singleTaskViewModel.followers)
+                                          {
+                                              <span>@data.employee.employeeCode - @data.employee.nameEnglish</span><span>,</span>
+                                          }
+                                      </td>
+                                      <td>
+                                          @foreach (var data in Model.singleTaskViewModel.Tags)
+                                          {
+                                              <span>@data.tag</span><span>,</span>
+                                          }
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                      <br />
+                      <br />
+                      <h5>Task Comments : </h5>
+                      <div class="row" style="padding: 0px 15px 0px 15px;">
+                          <table class="table table-bordered" style="border-color:black;">
+                              <thead>
+                                  <tr>
+                                      <td class="text-center" style="font-weight:bold">Employee</td>
+                                      <td class="text-center" style="font-weight:bold">Comments</td>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  @foreach (var data in Model.singleTaskViewModel.Comments)
+                                  {
+                                      <tr>
+                                          <td>@data.name</td>
+                                          <td>@data.comments</td>
+                                      </tr>
+                                  }
+                              </tbody>
+                          </table>
+                      </div>
+                      <br />
+                      <br />
+                      <h5>Sub-task List : </h5>
+                      <div class="row" style="padding: 0px 15px 0px 15px;">
+                          <table class="table table-bordered" style="border-color:black;">
+                              <thead>
+                                  <tr>
+                                      <td class="text-center" style="font-weight:bold">Name</td>
+                                      <td class="text-center" style="font-weight:bold">Start Date</td>
+                                      <td class="text-center" style="font-weight:bold">End Date</td>
+                                      <td class="text-center" style="font-weight:bold">Remarks</td>
+                                      <td class="text-center" style="font-weight:bold">Comments</td>
+                                      <td class="text-center" style="font-weight:bold">status</td>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  @foreach (var data in Model.singleTaskViewModel.taskSubtasks)
+                                  {
+                                      <tr>
+                                          <td>@data.name</td>
+                                          <td>@data.satrtDate?.ToString("dd-MMM-yyyy")</td>
+                                          <td>@data.endDate?.ToString("dd-MMM-yyyy")</td>
+                                          <td>@data.remarks</td>
+                                          <td>@data.details</td>
+                                          <td>@data.statusDetails</td>
+                                      </tr>
+                                  }
+                              </tbody>
+                          </table>
+                      </div>
+                      <br />
+                      <br />
+                      <h5>Follow Up List : </h5>
+                      <div class="row" style="padding: 0px 15px 0px 15px;">
+                          <table class="table table-bordered" style="border-color:black;">
+                              <thead>
+                                  <tr>
+                                      <td class="text-center" style="font-weight:bold">Name</td>
+                                      <td class="text-center" style="font-weight:bold">Target Date</td>
+                                      <td class="text-center" style="font-weight:bold">Execution Date</td>
+                                      <td class="text-center" style="font-weight:bold">Remarks</td>
+                                      <td class="text-center" style="font-weight:bold">Category</td>
+                                      <td class="text-center" style="font-weight:bold">Session</td>
+                                      <td class="text-center" style="font-weight:bold">Status</td>
+                                      <td class="text-center" style="font-weight:bold">Is Remainder?</td>
+                                      <td class="text-center" style="font-weight:bold">Remainder Date</td>
+                                      <td class="text-center" style="font-weight:bold">Note</td>
+                                      <td class="text-center" style="font-weight:bold">Status</td>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  @foreach (var data in Model.singleTaskViewModel.taskFollowUps)
+                                  {
+                                      <tr>
+                                          <td>@data.name</td>
+                                          <td>@data.targetDate?.ToString("dd-MMM-yyyy")</td>
+                                          <td>@data.executionDate?.ToString("dd-MMM-yyyy")</td>
+                                          <td>@data.description</td>
+                                          <td>@data.activityCategory.activityCategoryName</td>
+                                          <td>@data.activitySession.activitySessionName</td>
+                                          <td>@data.activityStatus.status</td>
+                                          @if (data.remainderStatus == 1)
+                                          {
+                                              <td>Yes</td>
+                                          }
+                                          else
+                                          {
+                                              <td>No</td>
+                                          }
+                                          <td>@data.reminderDate?.ToString("dd-MMM-yyyy")</td>
+                                          <td>@data.note</td>
+                                          <td>@data.status</td>
+                                      </tr>
+                                  }
+                              </tbody>
+                          </table>
+                      </div>
+                      <br />
+                      <br />
+                      <h5>Task Hours List : </h5>
+                      <div class="row" style="padding: 0px 15px 0px 15px;">
+                          <table class="table table-bordered" style="border-color:black;">
+                              <thead>
+                                  <tr>
+                                      <td class="text-center" style="font-weight:bold">Date</td>
+                                      <td class="text-center" style="font-weight:bold">Hours</td>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  @foreach (var data in Model.singleTaskViewModel.taskHours)
+                                  {
+                                      <tr>
+                                          <td>@data.date?.ToString("dd-MMM-yyyy")</td>
+                                          <td>@data.hours Hr.</td>
+                                      </tr>
+                                  }
+                              </tbody>
+                          </table>
+                      </div>
+
+                      <br />
+                      <br />
+                      <h5>Task Status List : </h5>
+                      <div class="row" style="padding: 0px 15px 0px 15px;">
+                          <table class="table table-bordered" style="border-color:black;">
+                              <thead>
+                                  <tr>
+                                      <td class="text-center" style="font-weight:bold">Date</td>
+                                      <td class="text-center" style="font-weight:bold">Status</td>
+                                      <td class="text-center" style="font-weight:bold">Remarks</td>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  @foreach (var data in Model.singleTaskViewModel.taskStatusLists)
+                                  {
+                                      <tr>
+                                          <td>@data.date?.ToString("dd-MMM-yyyy")</td>
+                                          <td>@data.status</td>
+                                          <td>@data.remarks</td>
+                                      </tr>
+                                  }
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+}

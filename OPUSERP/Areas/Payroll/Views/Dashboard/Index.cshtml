@@ -1,0 +1,317 @@
+﻿
+@{
+    ViewData["TitleMD"] = "Payroll Dashboard";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="row bg-danger" style="padding-top:10px;padding-bottom:10px;margin-bottom:20px;">
+    <div class="col-sm-12">
+        <h5 class="text-center" style="color:white;">Payroll Dashboard </h5>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="monthly_salary" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="dept_salary" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="desi_salary" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="dept_salary_yearly" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="highVsavg_basic" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="highVsavg_total" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="tax_deduction" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="pf_deduction" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="permanentVsProbation" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="yearly_Bonus" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+
+@section ScriptsMD{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="~/js/palette.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#activityStatus").addClass("active");
+            $('#departmentTable').DataTable();
+            Common.Ajax('GET', '/Payroll/Dashboard/DashboardValue', [], 'json', chart1, false);
+        });
+
+        function chart1(response) {
+            console.log(response);
+
+            var item_money = document.getElementById('monthly_salary');
+            var myChart2 = new Chart(item_money, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.months,
+                    datasets: [{
+                        label: 'Monthly Salary Paid this year',
+                        data: response.sCMDashboardcountViewModel.totalmontlysalary,
+                        backgroundColor: '#FFE933',
+                        borderColor: '#FFE933',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+
+            var dept_salary = document.getElementById('dept_salary');
+            var myChart2 = new Chart(dept_salary, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.departmentname,
+                    datasets: [{
+                        label: 'Department Wise Salary',
+                        data: response.sCMDashboardcountViewModel.totaldepartmentwisesalary,
+                        backgroundColor: '#33AFFF',
+                        borderColor: '#33AFFF',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var desi_salary = document.getElementById('desi_salary');
+            var myChart2 = new Chart(desi_salary, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.designationname,
+                    datasets: [{
+                        label: 'Designation wise Salary',
+                        data: response.sCMDashboardcountViewModel.totaldesignationwisesalary,
+                        backgroundColor: '#FF9633',
+                        borderColor: '#FF9633',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var year = new Date().getFullYear();
+
+            var dept_salary_yearly = document.getElementById('dept_salary_yearly');
+            var myChart = new Chart(dept_salary_yearly, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        data: response.sCMDashboardcountViewModel.deptotalamountbyyearone,
+                        label: year,
+                        borderColor: '#3380FF',
+                    }, {
+                        data: response.sCMDashboardcountViewModel.deptotalamountbyyeartwo,
+                            label: --year,
+                        borderColor: '#FF8A33',
+                    }, {
+                        data: response.sCMDashboardcountViewModel.deptotalamountbyyearthree,
+                            label: --year,
+                        borderColor: '#B48299',
+                    }],
+                    labels: response.sCMDashboardcountViewModel.departmentname
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+
+            var item_requsition = document.getElementById('highVsavg_basic').getContext('2d');
+            var chart = new Chart(item_requsition, {
+                type: 'doughnut',
+                data: {
+                    labels: ["Average Basic", "Highest Basic"],
+                    datasets: [{
+                        label: "Average Basic Vs Highest Basic",
+                        backgroundColor: palette('tol', 2).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: [response.sCMDashboardcountViewModel.averagebasic, response.sCMDashboardcountViewModel.heighestbasic],
+                    }]
+                },
+            });
+
+            var highVsavg_total = document.getElementById('highVsavg_total').getContext('2d');
+            var chart = new Chart(highVsavg_total, {
+                type: 'doughnut',
+                data: {
+                    labels: ["Average Total", "Highest Total"],
+                    datasets: [{
+                        label: "Average Total Vs Highest Total",
+                        backgroundColor: palette('tol', 2).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: [response.sCMDashboardcountViewModel.averagetotal, response.sCMDashboardcountViewModel.heighesttotal],
+                    }]
+                },
+            });
+
+            var tax_deduction = document.getElementById('tax_deduction');
+            var myChart2 = new Chart(tax_deduction, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.months,
+                    datasets: [{
+                        label: 'Yearly Tax deduction',
+                        data: response.sCMDashboardcountViewModel.taxlist,
+                        backgroundColor: '#54EC67',
+                        borderColor: '#54EC67',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var pf_deduction = document.getElementById('pf_deduction');
+            var myChart2 = new Chart(pf_deduction, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.months,
+                    datasets: [{
+                        label: 'Yearly PF deduction',
+                        data: response.sCMDashboardcountViewModel.pflist,
+                        backgroundColor: '#03A2C6',
+                        borderColor: '#03A2C6',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var permanentVsProbation = document.getElementById('permanentVsProbation').getContext('2d');
+            var chart = new Chart(permanentVsProbation, {
+                type: 'pie',
+                data: {
+                    labels: ["Permanent Salary", "Provision Salary"],
+                    datasets: [{
+                        label: "Permanent Salary VS Provision Salary",
+                        backgroundColor: palette('tol', 2).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: [response.sCMDashboardcountViewModel.totalpermanentsalrypercent, response.sCMDashboardcountViewModel.totalprovisionsalarypercent],
+                    }]
+                },
+            });
+
+            var yearly_Bonus = document.getElementById('yearly_Bonus');
+            var myChart2 = new Chart(yearly_Bonus, {
+                type: 'bar',
+                data: {
+                    labels: response.sCMDashboardcountViewModel.years,
+                    datasets: [{
+                        label: 'Yearly Bonus Paid',
+                        data: response.sCMDashboardcountViewModel.yearlybonus,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+        }
+
+
+
+    </script>
+}

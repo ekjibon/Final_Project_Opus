@@ -1,0 +1,122 @@
+﻿@model EmployeeInfoViewModel
+
+@{
+    ViewData["Title"] = "Peer Search";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">Peer Search</h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <div class="form-group row">
+                <div class="col-md-10">
+                    <input type="text" class="form-control input-sm" id="txtSearch" placeholder="Search......................Employee Name/Department/Blood Group/Marital Status/Gender/Office Mobile" />
+                </div>
+                <div class="col-md-2">
+                    <span class="input-group-btn">
+                        <button type="button" id="btnSearch" onclick="LoadEmployeeInfo()" class="btn btn-info btn-sm">Search</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<br />*@
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="employeeIfoTable">
+                    <thead>
+                        <tr>
+                            <th style="width:5%">Image</th>
+                            <th style="width:30%">Employee Name</th>
+                            <th style="width:20%">Designation</th>
+                            <th style="width:13%">Department</th>
+                            <th style="width:20%">Email</th>
+                            <th style="width:12%">Blood Group</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+
+            $("#award").addClass("active");
+            $('#txtAwardDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#awardTable').DataTable();
+        });
+
+        function Edit(Id, awardName, purpose, awardDate) {
+            $("#awardId").val(Id);
+            $("#awardName").val(awardName);
+            $("#perpose").val(purpose);
+            $("#txtAwardDate").val(awardDate);
+        }
+
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                //return true;
+                location.replace("/HRPMSEmployee/Award/Delete/" + Id + "?empId=" + employeeId);
+            } else {
+                return false;
+            }
+        }
+
+        function LoadEmployeeInfo() {
+            if ($("#txtSearch").val() == '' || $("#txtSearch").val() == null || $("#txtSearch").val() == '0') {
+                alert("Attention.!! Please enter employee search entity");
+                return false;
+            }
+            Common.Ajax('GET', '/global/api/GetEmployeeInfoBySearch/' + $("#txtSearch").val(), [], 'json', ajaxGetEmployeeInfoBySearch);
+        }
+
+        function ajaxGetEmployeeInfoBySearch(response) {
+            console.log(response);
+            $("#employeeIfoTable").DataTable().destroy();
+            var dtTable = $("#employeeIfoTable");
+            var tableBody = dtTable.find('tbody');
+            $("#employeeIfoTable tbody tr").remove();
+            var index = 1;
+            $.each(response, function (id, option) {
+                //var scheduleDate = formatDate(option.scheduleDate);
+                tableBody.append('<tr id=' + index + '>' +
+                    '<td><img src="/' + option.url +'" height="32" width="32"/></td>' +
+                    '<td>' + option.nameEnglish + '</td>' +
+                    '<td>' + option.designation + '</td>' +
+                    '<td>' + option.deptName + '</td>' +
+                    '<td>' + option.emailAddress + '</td>' +
+                    '<td style="text-align:left;">' + option.bloodGroup + '</td>' +
+                    '</tr>');
+
+                index = index + 1;
+            });
+            $("#employeeIfoTable").dataTable();
+        }
+
+
+    </script>
+}

@@ -1,0 +1,82 @@
+﻿@model SalesMenuOpeningBalanceViewModel
+@{
+    ViewData["Title"] = "Opening Menu Balance List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Opening Stock/Purchase List</h6>
+                <a href="/OtherSales/SalesMenu/MenuOpening?Id=0" style="margin-left:506px" class="btn btn-success btn-sm pull-right">Add New</a>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="ledgerOpeningBalanceTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Item Spec</th>
+                            <th>Quantity</th>
+                            <th>Opening Date</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.salesMenuOpeningBalances)
+                        {
+                            <tr>
+                                <td>@data?.itemSpecification?.Item?.itemName</td>
+                                <td>@data?.itemSpecification?.specificationName</td>
+                                <td>@data.openingQty</td>
+                                <td>@data.openingDate?.ToString("dd-MMM-yyyy")</td>                               
+                                <td>
+                                    <a class="btn btn-info" href="/OtherSales/SalesMenu/MenuOpening/?Id=@data.Id" title='Edit/Update'><i class="fa fa-edit"></i></a>
+                                    &nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#ledgerOpeningBalanceTable').DataTable();
+
+        });
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteSalesMenuOpeningBalanceById", "SalesMenu")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/OtherSales/SalesMenu/MenuOpeningList";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}
+
+@section Style{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}

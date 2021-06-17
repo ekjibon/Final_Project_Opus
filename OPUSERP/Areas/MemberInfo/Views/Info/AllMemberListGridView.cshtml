@@ -1,0 +1,410 @@
+﻿@model MemberInfoViewModel
+@{
+    ViewData["Title"] = @Model.fLang.memberTitle;
+
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <meta charset="utf-8">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        #topNav {
+            margin-top: 5px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            border-radius: 5px;
+        }
+
+            .card:hover {
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            }
+
+        img {
+            border-radius: 5px 5px 0 0;
+        }
+
+        .card {
+            padding: 1px 8px;
+            height: 10rem;
+            margin-top: 7px;
+        }
+
+        p {
+            margin-top: -13px;
+        }
+
+        #profileimg {
+            height: 100px;
+            width: 150px;
+            align-self: center;
+        }
+
+        .pagination {
+            font-family: 'Merriweather', serif;
+            display: inline-flex;
+            margin-left: 25%;
+        }
+
+            .pagination li a.page-link {
+                color: #333;
+                background: #fff;
+                font-size: 20px;
+                font-weight: 600;
+                line-height: 31px;
+                height: 35px;
+                width: 35px;
+                padding: 0;
+                margin: 0 5px;
+                border: none;
+                border-radius: 0 10px;
+                display: block;
+                overflow: hidden;
+                position: relative;
+                z-index: 1;
+                transition: all 0.3s ease 0s;
+            }
+
+                .pagination li a.page-link:hover,
+                .pagination li a.page-link:focus,
+                .pagination li.active a.page-link {
+                    color: #fff;
+                    background: #fff;
+                    box-shadow: 0 0 10px -2px rgba(0, 0, 0, 0.5);
+                }
+
+            .pagination li:first-child a.page-link,
+            .pagination li:last-child a.page-link {
+                font-size: 25px;
+                line-height: 34px;
+            }
+
+                .pagination li:first-child a.page-link:hover,
+                .pagination li:last-child a.page-link:hover {
+                    color: #0984e3;
+                    text-shadow: -3px 3px 0 rgba(0, 0, 0, 0.2);
+                    box-shadow: none;
+                }
+
+                .pagination li:last-child a.page-link:hover {
+                    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+                }
+
+            .pagination li a.page-link:before {
+                content: '';
+                background-color: #0984e3;
+                height: 7px;
+                width: 7px;
+                border-radius: 50% 50% 0 50%;
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                z-index: -1;
+                transition: all 0.3s ease 0s;
+            }
+
+            .pagination li.active a.page-link:before,
+            .pagination li a.page-link:hover:before {
+                height: 100%;
+                width: 100%;
+                border-radius: 0;
+            }
+
+            .pagination li:first-child a.page-link:before,
+            .pagination li:last-child a.page-link:before {
+                display: none;
+            }
+    </style>
+}
+
+
+<div class="container">
+    <h2>ALL MEMBER TYPE LIST</h2>
+
+    <ul class="nav nav-tabs">
+        <li class="active" title="Table Grid View"><a id="ShowGridView" data-toggle="tab" href="#tableGridView"><i class="fa fa-th fa-3x" aria-hidden="true"></i></a></li> &nbsp; &nbsp; &nbsp;
+        <li><a data-toggle="tab" href="#tblView" id="ShowTableView" title="Table Data View"><i class="fa fa-list fa-3x" aria-hidden="true"></i></a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="tableGridView" class="tab-pane fade in active">
+          <div class="row">
+              <div class="col"><h3>Table Grid View</h3></div>
+              <div class="col"><input id="myInput" class="form-control fa fa-search" type="text" placeholder="Search.."></div>
+          </div>
+          
+            <div class="row bg-gray-300" id="topNav">
+                <div class="col">
+                    @using (Html.BeginForm("AllMemberListGridView", "Info"))
+                    {
+                        <select id="pageLoder" class="dropdown-item col-2">
+                            <option value="12" selected="selected">12</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                        </select>
+                    }
+
+                </div>
+                <div class="col d-flex justify-content-end" id="headerTop">
+                </div>
+            </div>
+            <div class="row" id="GridLoad">
+
+            </div>
+
+        </div>
+        <div id="tblView" class="tab-pane fade">
+            <div class="row">
+                <div class="col"><h3>Table View</h3></div>
+                <div class="col"><input id="myInput" class="form-control fa fa-search" type="text" placeholder="Search.."></div>
+            </div>
+            <div class="row">
+                <table class="table table-striped table-bordered" style="width:100%;" id="allEmployeeListTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.memberID</th>
+                            <th>@Model.fLang.name</th>
+                            <th>@Model.fLang.memberType</th>
+                            <th>@Model.fLang.mobileNumber</th>
+                            <th>@Model.fLang.designation</th>
+                            <th>@Model.fLang.emailAddress</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="TableViewBody">
+
+                    </tbody>
+                </table>
+
+
+            </div>
+
+        </div>
+
+        <br /><br />
+        <div class="demo">
+            <nav class="pagination-outer" aria-label="Page navigation">
+                <ul class="pagination" id="ListOfPage">
+                    @*<li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    <li class="page-item"><a class="page-link" href="#">5</a></li>*@
+                    @*<li class="page-item">
+                        <a href="#" class="page-link" aria-label="Next">
+                            <span aria-hidden="true">>></span>
+                        </a>
+                    </li>*@
+                </ul>
+            </nav>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+@section Scripts{
+    <script type="text/javascript">
+        var table;
+        $(document).ready(function () {
+
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#TableViewBody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+
+            $('#pageLoder').change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/MemberInfo/Info/employeeGridView?perPage=' + id + '&&pageNo=' + 1, [], 'json', ajaxEmployeeForDutyList, false);
+            });
+
+            $('#ShowTableView').click(function () {
+                var id = $('#pageLoder').val();
+                Common.Ajax('GET', '/MemberInfo/Info/employeeGridView?perPage=' + id + '&&pageNo=' + 1, [], 'json', ajaxEmployeeForTableList, false);
+            });
+
+            $('#ShowGridView').click(function () {
+                var id = $('#pageLoder').val();
+                Common.Ajax('GET', '/MemberInfo/Info/employeeGridView?perPage=' + id + '&&pageNo=' + 1, [], 'json', ajaxEmployeeForDutyList, false);
+            });
+
+          
+              
+            
+        });
+        // Start Function for Grid View
+        function ajaxEmployeeForDutyList(response) {
+            console.log(response);
+            var content = "";
+            var tableContent = "";
+            var page = `<li class="page-item" > <a href="#" onclick="PageLoad(${parseInt(response.CurrentPage - 1)
+                }) " class="page-link btn"> << </a></li>`;
+            var topHeader = `<p>Item Shiowing in ${response.CurrentPage} page out of ${response.TotalPage} page (Total  ${response.dataCount} items) </p>`
+
+
+            var img = "";
+            //Card Data Show
+            $.each(response.allMemberJsons, function (key, value) {
+                if (value.imageUrl == null) {
+                    img = '<img src="~/images/user-icon-png.png" id="profileimg" alt="profile Image" />';
+                } else {
+                    img = '<img src="/../../' + value.imageUrl + '" id="profileimg" alt="profile Image" />'
+                }
+                content += `<div class="col-3">
+                                                                    <div class="card text-center">
+                                                            ${img}
+                                                                        <div class="container">
+                                                                            <h6 class="text-uppercase"><b>${value.nameEnglish}</b></h6>
+                                                                            <p>${value.designation}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>`
+
+
+
+
+                $('#GridLoad').empty();
+                $('#GridLoad').append(content);
+                $('#TableView').append(content);
+            });
+
+            //Table Data Show
+
+
+            //$.each(response.allMemberJsons, function (key, value) {
+            //    tableContent += `
+            //                     <tr>
+            //                        <td>${value.employeeCode}</td>
+            //                        <td>${value.nameEnglish}</td>
+            //                        <td>${value.membertype}</td>
+            //                        <td>${value.mobileNumberOffice}</td>
+            //                        <td>${value.designation}</td>
+            //                        <td>${value.designation}</td>
+            //                        <td>
+            //                            <a class='btn btn-success' data-toggle='tooltip' title='Edit' target='_blank' href='/MemberInfo/Info/Index/${value.memberID}'><i class='fa fa-edit'></i></a>
+            //                            <a class='btn btn-success' data-toggle='tooltip' title='Preview' target='_blank' href='/MemberInfo/InfoView/Index/${value.memberID}'><i class='fas fa-eye'></i></a>
+            //                            <a class='btn btn-info' data-toggle='tooltip' title='Print' target='_blank' href='/MemberInfo/InfoView/pdspdf/${value.memberID}'><i class='fa fa-print'></i></a>
+            //                        </td>
+            //                    </tr>`
+
+
+
+            //    $('#TableView').empty();
+            //    $('#TableView').append(tableContent);
+            //});
+
+            $('#headerTop').append(topHeader);
+
+            //Pagination
+            var i;
+            var active = "";
+            for (i = response.CurrentPage; i <= response.CurrentPage + 10; i++) {
+                if (i == response.CurrentPage) {
+                    active = "active";
+                } else {
+                    active = "";
+                }
+                page += `<li class="page-item ${active}" onclick="PageLoad(${i})"><a class="page-link" href="#">${i}</a></li>`
+            }
+
+            page += `<li class="page-item" > <a href="#" onclick="PageLoad(${parseInt(response.CurrentPage + 1)
+                }) " class="page-link btn"> >> </a></li>`
+
+            $('#ListOfPage').empty();
+            $('#ListOfPage').append(page);
+        }
+        //page Looder
+        function PageLoad(id) {
+            var item = $('#pageLoder').val();
+            if (id == 0) {
+                alert("No page Left");
+                return false;
+            }
+            Common.Ajax('GET', '/MemberInfo/Info/employeeGridView?perPage=' + item + '&&pageNo=' + id, [], 'json', ajaxEmployeeForDutyList, false);
+        }
+
+
+        function PageLoadTable(id) {
+            var item = $('#pageLoder').val();
+            if (id == 0) {
+                alert("No page Left");
+                return false;
+            }
+            Common.Ajax('GET', '/MemberInfo/Info/employeeGridView?perPage=' + item + '&&pageNo=' + id, [], 'json', ajaxEmployeeForTableList, false);
+        }
+
+
+        // End Function for Grid View
+
+
+
+        // Start Function for Table View
+        function ajaxEmployeeForTableList(response) {
+            //console.log(response);
+            var page = `<li class="page-item" > <a href="#" onclick="PageLoadTable(${parseInt(response.CurrentPage - 1)
+                }) " class="page-link btn"> << </a></li>`;
+            //$('#allEmployeeListTable').DataTable().destroy();
+            var tableContent = "";
+            $.each(response.allMemberJsons, function (key, value) {
+                tableContent += `
+                                 <tr>
+                                    <td>${value.employeeCode}</td>
+                                    <td>${value.nameEnglish}</td>
+                                    <td>${value.membertype}</td>
+                                    <td>${value.mobileNumberOffice}</td>
+                                    <td>${value.designation}</td>
+                                    <td>${value.designation}</td>
+                                    <td>
+                                        <a class='btn btn-success' data-toggle='tooltip' title='Edit' target='_blank' href='/MemberInfo/Info/Index/${value.memberID}'><i class='fa fa-edit'></i></a>
+                                        <a class='btn btn-success' data-toggle='tooltip' title='Preview' target='_blank' href='/MemberInfo/InfoView/Index/${value.memberID}'><i class='fas fa-eye'></i></a>
+                                        <a class='btn btn-info' data-toggle='tooltip' title='Print' target='_blank' href='/MemberInfo/InfoView/pdspdf/${value.memberID}'><i class='fa fa-print'></i></a>
+                                    </td>
+                                </tr>`
+                $('#TableViewBody').empty();
+                $('#TableViewBody').append(tableContent);
+                //$('#allEmployeeListTable').DataTable();
+                
+
+            });
+
+            var i;
+            var active = "";
+            for (i = response.CurrentPage; i <= response.CurrentPage + 10; i++) {
+                if (i == response.CurrentPage) {
+                    active = "active";
+                } else {
+                    active = "";
+                }
+                page += `<li class="page-item ${active}" onclick="PageLoadTable(${i})"><a class="page-link" href="#">${i}</a></li>`
+            }
+
+            page += `<li class="page-item" > <a href="#" onclick="PageLoadTable(${parseInt(response.CurrentPage + 1)
+                }) " class="page-link btn"> >> </a></li>`
+
+            $('#ListOfPage').empty();
+            $('#ListOfPage').append(page);
+
+
+        }
+             // End Function for Grid View
+    </script>
+}
+
+

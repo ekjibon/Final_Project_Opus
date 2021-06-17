@@ -1,0 +1,255 @@
+﻿@model TravelReportModel
+@{
+    ViewData["Title"] = "Travel Approve Report";
+    Layout = "/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 10px;
+        }
+
+        .tableClass {
+            padding-left: 3px;
+            font-size: small;
+            border-color: lightgray;
+            text-align: left;
+            border: none;
+        }
+
+        .tableClassBold {
+            padding-left: 3px;
+            font-size: small;
+            border-color: lightgray;
+            text-align: left;
+            font-weight: bold;
+            border: none;
+        }
+
+        .spanClass {
+            font-size: small;
+            text-align: left;
+            color: black;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid !important;
+        }
+
+        #travel-report-section-id {
+            margin-top: 20px;
+        }
+
+        #barnd-name-id {
+            color: black;
+            font-weight: bold;
+        }
+
+        #top-right-side-table-id-tbl-01 {
+            float: right;
+        }
+
+        .report-heading-cls h3 {
+            color: black;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table-td-background-color-cls {
+            background: whitesmoke;
+        }
+
+        table thead tr th, .table-td-background-color-cls, table tbody tr td {
+            text-align: center;
+        }
+
+        #table-03-footer-text-id {
+            color: black;
+        }
+
+        #th-font-width-bold-id {
+            font-weight: bold;
+        }
+
+        #th-font-size-sm-id {
+            font-size: 12px;
+        }
+
+        #approve-card-header-id-tbl-07 {
+            text-align: center;
+            color: black;
+        }
+
+        #approve-card-header-id-tbl-08 {
+            text-align: center;
+            color: red;
+        }
+
+        .text-align-left-cls {
+            text-align: left;
+        }
+
+        .travel-report-footer-section-cls .card-header {
+            text-align: center;
+        }
+
+        #report-top-section-right-side-id {
+            margin-left: auto;
+        }
+
+        @@media screen and (max-width: 800px) {
+            #report-top-section-right-side-id {
+                margin-left: 150px;
+            }
+        }
+    </style>
+}
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="card-body">           
+            <div class="container-fluid">
+                <div class="fa-pull-right">
+                    <p style="font-size:smaller;color:black;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+                </div>
+                <div class="fa-pull-left">
+                    <img src="@Model.company.filePath" alt="OPUS ERP" style="height:90px;" />
+                </div>
+                <div class="row" >
+                    <div class="col-2">
+                        
+                    </div>
+                    <div class="col-8">
+                        <div style="color:black;text-align:center;">
+                            <h4>Travel Approval Letter</h4>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <table style="border:none;width:100%;">
+                        <tr>
+                            <td class="tableClassBold">Name: </td>
+                            <td class="tableClass">@Model.travelMaster?.employee?.nameEnglish</td>
+                            <td class="tableClassBold">PIN: </td>
+                            <td class="tableClass">@Model.travelMaster?.employee?.employeeCode</td>
+                        </tr>
+                        <tr>
+                            <td class="tableClassBold">Designation: </td>
+                            <td class="tableClass">@Model.travelMaster?.employee?.designation</td>
+                            <td class="tableClassBold">Duty Station: </td>
+                            <td class="tableClass">@Model.travelMaster?.employee?.branch?.branchUnitName</td>
+                        </tr>
+                        <tr>
+                            <td class="tableClassBold">Programme/ Division: </td>
+                            <td class="tableClass">@Model.travelMaster.travelProject.name</td>
+                            <td class="tableClassBold">Destination: </td>
+                            <td class="tableClass">@Model.travellingInfos.FirstOrDefault().travellingTo</td>
+                        </tr>
+                        <tr>
+                            <td class="tableClassBold">Starting Date of Journey: </td>
+                            <td class="tableClass">@Model.travellingInfos.FirstOrDefault().startDate?.ToString("dd-MMM-yyyy")</td>
+                            <td class="tableClassBold">Time: </td>
+                            <td class="tableClass">@Model.travellingInfos.FirstOrDefault().startTime</td>
+                        </tr>
+                        <tr>
+                            <td class="tableClassBold">Possible date of return: </td>
+                            <td class="tableClass">@Model.travellingInfos.FirstOrDefault().arrivalDate?.ToString("dd-MMM-yyyy")</td>
+                            <td class="tableClassBold">Time: </td>
+                            <td class="tableClass">@Model.travellingInfos.FirstOrDefault().arrivalTime</td>
+                        </tr>
+                        <tr>
+                            <td class="tableClassBold">Purpose of travel: </td>
+                            <td class="tableClass">@Model.travelMaster.purpose</td>
+                        </tr>
+                        <tr>
+                            <td class="tableClassBold">STATUS: </td>
+                            <td class="tableClass">
+                                @if (Model.travelStatusLogs.FirstOrDefault().Status == 1)
+                                {
+                                    <span style="color:black;">Applied</span>
+                                }
+                                else if (Model.travelStatusLogs.FirstOrDefault().Status == 2)
+                                {
+                                    <span style="color:black;">Pending for approval</span>
+                                }
+                                else if (Model.travelStatusLogs.FirstOrDefault().Status == 3)
+                                {
+                                    <span style="color:black;">Approved</span>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br /><br />
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-6" style="border:solid 1px;">
+                        <span class="spanClass"><b>Signature of Applicant:</b> @Model.travelStatusLogs.FirstOrDefault().employee?.nameEnglish</span>
+                        <span class="spanClass"><b>Date:</b> @Model.travelStatusLogs.FirstOrDefault().date?.ToString("dd-MMM-yyyy")</span>
+                    </div>
+                    <div class="col-6" style="border:solid 1px;">
+                        <span class="spanClass"><b>Approver Information:</b></span>
+                        <span class="spanClass"><b>Name:</b> @Model.approvalDetail.approver?.nameEnglish</span><br />
+                        <span class="spanClass"><b>PIN:</b> @Model.approvalDetail.approver?.employeeCode</span><br />
+                        <span class="spanClass"><b>Designation:</b> @Model.approvalDetail.approver?.designation</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" style="border:solid 1px;">
+                        <span class="spanClass"><b>To be filled in after completion of travel:</b></span><br />
+                        <span class="spanClass">Actual date of return: @Model.travellingInfos.FirstOrDefault().arrivalDate?.ToString("dd-MMM-yyyy")  </span>&nbsp;
+                        <span class="spanClass">Time: @Model.travellingInfos.FirstOrDefault().arrivalTime</span><br />
+                        <span class="spanClass">Reasons, if the possible date of return has changed :</span>
+                    </div>
+                </div>
+                <br /><br />
+                      <span class="spanClass">This is a computer generated document which does not require a signature.</span>
+            </div>
+        </div>
+    </div>
+</div>

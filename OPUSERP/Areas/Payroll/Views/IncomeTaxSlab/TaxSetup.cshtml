@@ -1,0 +1,236 @@
+﻿@model IncomeTaxSetupViewModel
+@{
+    ViewData["Title"] = "Income Tax Setup";
+    Layout = "~/Areas/Payroll/Views/Shared/_TaxMasterForm.cshtml";
+}
+
+@section StyleMD{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Income Tax Setup</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="IncomeTaxSlab" asp-action="TaxSetup" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row col-sm-12">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="taxYearId" class="col-sm-3 col-form-label">Tax Year<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="taxYearId" name="taxYearId" data-parsley-required="true">
+                                    <option value="">Select Tax Year</option>
+                                    @foreach (var data in Model.taxYearsList)
+                                    {
+                                        <option value="@data.Id">@data.taxYearName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+
+
+
+                            <label for="slabTypeId" class="col-sm-3 col-form-label">Tax Item <span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="salaryHeadId" name="salaryHeadId" data-parsley-required="true">
+                                    <option value="">Select Salary Head</option>
+                                    @foreach (var data in Model.salaryHeads)
+                                    {
+                                        <option value="@data.Id">@data.salaryHeadName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+
+
+
+                            <label for="slabTypeId" class="col-sm-3 col-form-label">Exemption <span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="exemption" name="exemption" data-parsley-required="true">
+                                    <option value="">Select an Exemption Head</option>
+
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="registrationTypeId" class="col-sm-3 col-form-label">SL#</label>
+                            <div class="col-sm-9">
+                                <input type="hidden" name="IncomeTaxSettupId" value="" id="IncomeTaxSettupId" />
+                                <input type="text" class="form-control" name="sortOrder" id="sortOrder" />
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="exemptionAmount" class="col-sm-3 col-form-label">Exemption Amount <span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input data-parsley-type="number" data-parsley-required="true" class="form-control" name="exemptionAmount" id="exemptionAmount">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="exemptionPercent" class="col-sm-3 col-form-label">Exemption Percent <span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input data-parsley-type="number" data-parsley-required="true" class="form-control" name="exemptionPercent" id="exemptionPercent">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="exemptionMaxAmount" class="col-sm-3 col-form-label">Exemption Max Amount <span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input data-parsley-type="number" data-parsley-required="true" class="form-control" name="exemptionMaxAmount" id="exemptionMaxAmount">
+                            </div>
+                        </div>
+                     
+                        <div class="form-group row">
+                            <label for="exemptionRule" class="col-sm-3 col-form-label">Exemption Rule</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="exemptionRule" name="exemptionRule">
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Calculate" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Income Tax Setup List</h6>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="row col-md-12">
+                    <div class="col-12">
+                    
+                        <table class="table table-striped table-bordered" id="taxslabTable">
+                            <thead>
+                                <tr>
+                                    <th>Serial</th>
+                                    <th>Tax Year</th>
+                                    <th>Tax Item</th>
+                                    <th>Exemption</th>
+                                    <th>Exemption Amount</th>
+                                    <th>Exemption Percent</th>
+                                    <th>Exemption Max Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int a = 1;
+                                    @foreach (var data in Model.incomeTaxSetups)
+                                    {
+                                <tr>
+                                    <td>@a</td>
+                                    <td>@data.taxYear.taxYearName</td>
+                                    <td>@data.salaryHead.salaryHeadName</td>
+                                    <td>@data.exemption</td>
+                                    <td style="text-align:right">@data.exemptionAmount.ToString("0,0.0")</td>
+                                    <td style="text-align:right">@data.exemptionPercent</td>
+                                    <td style="text-align:right">@data.exemptionMaxAmount.ToString("0,0.0")</td>
+                                   
+
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edittaxslab(@a,@data.taxYearId,@data.salaryHeadId,'@data.exemption',@data.exemptionAmount,@data.exemptionPercent,@data.exemptionMaxAmount,@data.sortOrder,'@data.exemptionRule',@data.Id)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                        a++;
+                                    }
+                                }
+                            </tbody>
+                           
+                        </table>
+                    </div>
+                  
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- View Service Reminders Modal-->
+
+
+@section ScriptsMD{
+    <script>
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        $(document).ready(function () {
+            $("#taxSetup").addClass("active");
+            $('#taxslabTable').DataTable();
+     
+           
+        });
+
+        //function addCommas(x) {
+        //    var parts = x.toString().split(".");
+        //    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        //    return parts.join(".");
+        //}
+        function Edittaxslab(i, taxYearId, salid, exemtion, exemptionamount, exemptionpercent, exemptionMaxAmount, sortOrder,rules, Id) {
+            $('#IncomeTaxSettupId').val(Id);
+            $('#taxYearId').val(taxYearId);
+            $('#salaryHeadId').val(salid);
+            $('#exemption').val(exemtion);
+            $('#sortOrder').val(sortOrder);
+            $('#exemptionAmount').val(exemptionamount);
+            $('#exemptionPercent').val(exemptionpercent);
+            $('#exemptionMaxAmount').val(exemptionMaxAmount);
+            $('#exemptionRule').val(rules);
+
+        }
+      
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

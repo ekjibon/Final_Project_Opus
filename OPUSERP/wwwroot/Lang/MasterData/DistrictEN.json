@@ -1,0 +1,10 @@
+{
+  "title": "District Information",
+  "country": "Country",
+  "division": "Division",
+  "districtCode": "District Code",
+  "districtName": "District Name (English)",
+  "districtNameBn": "District Name (Bangla)",
+  "shortName": "Short Name",
+  "action": "Action"
+}

@@ -1,0 +1,424 @@
+﻿@model LeadViewModel
+@{
+    ViewData["Title"] = "Client Info";
+    Layout = "~/Areas/CRMClient/Views/Shared/_ClientForm.cshtml";
+}
+@section StyleLead{
+    <style>
+        .redStar {
+            color: red;
+        }
+        .node {
+            cursor: pointer;
+            width: 240px;
+        }
+            .node circle {
+                fill: #fff;
+                stroke: steelblue;
+                stroke-width: 2px;
+            }
+            .node text {
+                font: 14px sans-serif;
+                text-align: center;
+            }
+        .link {
+            fill: none;
+            stroke: #C80;
+            stroke-width: 2px;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">       
+        <hr>
+        <div class="container">
+            <form asp-area="CRMClient" asp-controller="Client" asp-action="ClientInfo" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="leadName" class="col-sm-4 col-form-label">Lead Name<span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="leadName" value="@ViewBag.leadName" name="leadName" data-parsley-required="true">
+                                @{
+                                    var id = 0;
+                                    if (@ViewBag.leadId == null)
+                                    {
+                                        id = 0;
+                                    }
+                                    else
+                                    {
+                                        id = ViewBag.leadId;
+                                    }
+                                    <input type="hidden" name="leadId" id="leadId" value="@id">
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="leadShortName" class="col-sm-4 col-form-label">Lead Short Name<span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="leadShortName" name="leadShortName" data-parsley-required="true" value="@Model.leadShortName">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="leadNumber" class="col-sm-4 col-form-label">Lead Number</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="leadNumber" name="leadNumber" readonly value="@ViewBag.leadNumber">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="companyGroupId" class="col-sm-4 col-form-label">Group Name</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="companyGroupId" name="companyGroupId">
+                                    <option value="">Select Group Name</option>
+                                    @foreach (var data in Model.companyGroups)
+                                    {
+                                        <option value="@data.Id">@data.groupName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="fITypeId" class="col-sm-4 col-form-label">Organization Type</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="fITypeId" name="fITypeId">
+                                    <option value="">Select Organization Type</option>
+                                    @foreach (var data in Model.fITypes)
+                                    {
+                                        <option value="@data.Id">@data.fiTypeName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="ownerShipTypeId" class="col-sm-4 col-form-label">Owner Ship Type</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="ownerShipTypeId" name="ownerShipTypeId">
+                                    <option value="">Select Owner Ship Type</option>
+                                    @foreach (var data in Model.ownerShipTypes)
+                                    {
+                                        <option value="@data.Id">@data.ownerShipTypeName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="sourceId" class="col-sm-4 col-form-label">Lead Source</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="sourceId" name="sourceId">
+                                    <option value="">Select Lead Source</option>
+                                    @foreach (var data in Model.sources)
+                                    {
+                                        <option value="@data.Id">@data.sourceName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="sourceDescription" class="col-sm-4 col-form-label">Source Description</label>
+                            <div class="col-sm-8">
+                                <textarea type="text" class="form-control" id="sourceDescription" name="sourceDescription"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="totalemployee" class="col-sm-4 col-form-label">Total Employees</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="totalemployee" name="totalemployee" value="@Model.totalemployee">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="sector" class="col-sm-2 col-form-label">Sector <span class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="sector" name="sector" data-parsley-required="true">
+                            <option value="">-Select-</option>
+                            @foreach (var data in Model.sectors)
+                            {
+                                <option value="@data.Id">@data.sectorName</option>
+                            }
+                        </select>
+                    </div>                   
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ShowtreeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left" id="myModalLabel">Show Tree</h4>
+                <input type="text" id="FTtitle" class="control-label col-md-4" style="border:none;font:bold;font-weight:900" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <br />
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <div class="col-sm-12" id="organoDiv" style="display:none"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <center>
+                    <button type="button" class="btn btn-sm btn-default close" data-dismiss="modal">Close</button>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsLead{
+    <script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            $("#personal").addClass("active");
+            $('#leadTable').DataTable();
+        });
+        if ('@ViewBag.message' == "Save")
+        {
+            alert('Save Successfully');
+        }
+        $("#sector").val(@ViewBag.sectorId);
+        $("#leadName").val("@ViewBag.leadName");
+        $("#leadShortName").val("@ViewBag.leadShortName");
+        $("#companyGroupId").val(@ViewBag.companyGroupId);
+        $("#fITypeId").val(@ViewBag.fITypeId);
+        $("#ownerShipTypeId").val(@ViewBag.ownerShipTypeId);
+        $("#sourceId").val(@ViewBag.sourceId);
+        $("#sourceDescription").val("@ViewBag.sourceDescription");
+        $("#totalemployee").val(@ViewBag.totalemployee);
+        $('#showtree').click(function () {
+            $('#organoDiv').show();
+            $('#ShowtreeModal').modal("show");
+            var Id = $("#sector").val();
+            Common.Ajax('GET', '/CRMMasterData/Sector/GetSectorsJson/?org=' + Id, [], 'json', ajaxHandle);
+        });
+
+        function Edit(Id, leadName) {
+            $("#divisionId").val(Id);
+            $("#leadName").val(leadName);
+        }
+
+        function ajaxHandle(response) {
+            console.log(response);
+            GenerateTree(response.menus);
+        }
+
+        function wrap(text, width) {
+            text.each(function () {
+                var text = d3.select(this),
+                    words = d3.select(this).data()[0].name.split("|").reverse(),
+                    word,
+                    line = [],
+                    lineNumber = 0,
+                    lineHeight = 1.1,
+                    y = text.attr("y"),
+                    dy = parseFloat(text.attr("dy")),
+                    tspan = text.text(null).append("tspan").attr("x", 5).attr("y", y).attr("dy", dy + "em");
+                while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(" "));
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = text.append("tspan").attr("x", 5).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                }
+                d3.select(this.parentNode.children[0]).attr("height", 13 * (lineNumber + 1));
+            });
+        };
+
+        var margin = {
+            top: 20,
+            right: 120,
+            bottom: 20,
+            left: 20
+        },
+            width = 960 - margin.right - margin.left,
+            height = 800 - margin.top - margin.bottom;
+
+        var i = 0,
+            duration = 750,
+            rectW = 155,
+            fontSize = 10,
+            rectH = 20;
+        var root;
+        var tree = d3.layout.tree().nodeSize([120, 110]);
+        var diagonal = d3.svg.diagonal()
+            .projection(function (d) {
+                return [d.x + rectW / 2, d.y + rectH / 2];
+            });
+
+        var svg = d3.select("#organoDiv").append("svg").attr("width", 1000).attr("height", 1000)
+            .call(zm = d3.behavior.zoom().scaleExtent([1, 3]).on("zoom", redraw)).append("g")
+            .attr("transform", "translate(" + 350 + "," + 20 + ")");
+
+        //necessary so that zoom knows where to zoom and unzoom from
+        zm.translate([350, 20]);
+        //
+
+        //d3.select("#organoDiv").style("height", "600px");
+        d3.select("#organoDiv").style("height", "600px");
+
+        function GenerateTree(tempData, tempdepth) {
+            root = JSON.parse(tempData);
+            console.log(root);
+            root.x0 = 0;
+            root.y0 = height / 2;
+            root.children.forEach(collapse);
+            update(root);
+        }
+        function collapse(d) {
+            if (d.children) {
+                d._children = d.children;
+                d._children.forEach(collapse);
+                d.children = null;
+            }
+        }
+        function update(source) {
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+            // Normalize for fixed-depth.
+            nodes.forEach(function (d) {
+                d.y = d.depth * 180;
+            });
+            // Update the nodes…
+            var node = svg.selectAll("g.node")
+                .data(nodes, function (d) {
+                    return d.id || (d.id = ++i);
+                });
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) {
+                    return "translate(" + source.x0 + "," + source.y0 + ")";
+                }).on("click", click);
+
+            nodeEnter.append("rect")
+                .attr("width", rectW)
+                //.attr("height", rectH)
+                //.attr("height", function (d) { if(d.size == 1)  return rectH;  else return 80})
+                .attr("stroke", "blue")
+                .attr("stroke-width", 1)
+                .style("fill", function (d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                });
+
+            nodeEnter.append("text")
+                .attr("x", 10)
+                .attr("y", 10)
+                .attr("dy", "0")
+                .attr("text-anchor", "start")
+                .text(function (d) { return d.name; });
+
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+
+            nodeUpdate.select("rect")
+                .attr("width", rectW)
+                //.attr("height", function (d) { if(d.size == 1)  return rectH;  else return 80})
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .style("fill", function (d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                });
+
+            nodeUpdate.select("text")
+                .style("fill-opacity", 1);
+            nodeUpdate.select("text").call(wrap, rectW);
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + source.x + "," + source.y + ")";
+                }).remove();
+
+            nodeExit.select("rect")
+                .attr("width", rectW)
+                //.attr("height", function (d) { if(d.size == 1)  return rectH;  else return 80})
+                .attr("stroke", "black")
+                .attr("stroke-width", 1);
+
+            nodeExit.select("text");
+
+            // Update the links…
+            var link = svg.selectAll("path.link")
+                .data(links, function (d) {
+                    return d.target.id;
+                });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("x", rectW / 2)
+                .attr("y", rectH / 2)
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x0,
+                        y: source.y0
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x,
+                        y: source.y
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                }).remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function (d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        // Toggle children on click.
+        function click(d) {
+
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            $("#selectedInputName,#parentSectorName,#organizationName,#organoOrganizationName").val(d.nameBN);
+            $("#organoOrganizationParrentId,#ParrentId,#organoOrganizationId").val(d.data);
+
+            update(d);
+        }
+        //Redraw for zoom
+        function redraw() {
+            //console.log("here", d3.event.translate, d3.event.scale);
+            svg.attr("transform",
+                "translate(" + d3.event.translate + ")"
+                + " scale(" + d3.event.scale + ")");
+        }
+    </script>
+}

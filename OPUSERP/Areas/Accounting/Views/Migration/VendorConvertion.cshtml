@@ -1,0 +1,195 @@
+﻿@model VendorViewModel
+@{
+    ViewData["Title"] = "Vendor Convertion";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+
+@section StyleV{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="vListTable">
+                    <thead>
+                        <tr>
+                            <th>Vendor Code</th>
+                            <th>Vendor Name</th>
+                            <th>Mobile No</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.organizations)
+                        {
+                            <tr>
+                                <td>@data.orgCode</td>
+                                <td>@data.organizationName</td>
+                                <td>@data.mobile</td>
+                                <td>
+                                    <a class="btn btn-success" href="#" onclick="Edit(@data.Id, '@data.orgCode', '@data.organizationName', '@data.mobile')"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Vendor Convertion</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Accounting" asp-controller="Migration" asp-action="VendorConvertion" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                @*<div>
+                    <input type="button" id="btnImport" onclick="GetVendor" class="btn btn-info" value="Import" />
+                </div>*@
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="vendorCode" class="col-sm-3 col-form-label">Vendor Code</label>
+                            <div class="col-sm-9">
+                                <input id="vendorId" name="vendorId" type="hidden" value="0" />
+                                <input type="text" class="form-control" name="accountCode" id="vendorCode" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <input type="hidden" name="subLedgerId" id="subLedgerId" value="0" />
+                            <label for="vendorName" class="col-sm-3 col-form-label">Vendor Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="accountName" id="vendorName" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="mobileNo" class="col-sm-3 col-form-label">Mobile No</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="mobileNo" id="mobileNo" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <label for="SubLedgerof" class="col-sm-2 col-form-label">Sub-Ledger of</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="SubLedgerof" name="SubLedgerof">
+                                <input type="hidden" class="form-control" id="LedgerIds" name="LedgerIds">
+                                <input type="hidden" class="form-control" id="LedgerNames" name="LedgerNames">
+                            </div>
+                            <div class="col-sm-1">
+                                <a class="btn btn-block btn-success" onclick="AddGroup()" style="color:white;" title="Add Ledger"><i class="fas fa-plus"></i></a>
+                            </div>
+                        </div>
+
+                        <br />
+                        <hr />
+                        <div class="form-group row">
+                            <div class="col-sm-2">
+
+                            </div>
+                            <div id="SubLedgerList" class="col-sm-10 row">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section ScriptsV{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            Common.Ajax('GET', '/global/api/GetLedgerWithSubLedger/', [], 'json', GetLedgerForSubLedger);
+
+            $('#vListTable').DataTable();
+        });
+
+        function Edit(Id, code, name, mobile) {
+            $("#vendorId").val(Id);
+            $("#vendorCode").val(code);
+            $("#vendorName").val(name);
+            $("#mobileNo").val(mobile);
+        }
+
+        function GetLedgerForSubLedger(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.name = option.accountName;
+
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                obj.accountCode = option.accountCode;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#SubLedgerof').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#LedgerIds').val(ui.item.key);
+                    $("#LedgerNames").val(ui.item.name);
+                }
+            });
+        }
+
+        function AddGroup() {
+            var id = $('#LedgerIds').val();
+            var value = $('#SubLedgerof').val();
+            $('#SubLedgerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroup(' + "'" + id + "'" + ')">X</span></a></span>');
+            $('#SubLedgerof').val('')
+        }
+
+        function DeleteGroup(id) {
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+    </script>
+}
+
+
+

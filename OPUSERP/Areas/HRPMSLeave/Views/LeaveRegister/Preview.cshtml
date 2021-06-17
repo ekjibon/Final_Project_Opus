@@ -1,0 +1,208 @@
+﻿@model LeaveRegisterViewModel
+@{
+    ViewData["Title"] = "Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2">
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+                </div>
+                <div class="col-8">
+                    <div style="color:black;text-align:center;">
+                        @*<img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />*@
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    @*<img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:85px" />*@
+                </div>
+                <div class="col-6 text-center">
+                    <h3 class="card-title" style="color: black;margin-top: 25px;"><b>LEAVE APPLICATION FORM</b></h3>
+                    @*<h6 class="identity-box-center">(@Model.pIMSVisitor.name)</h6>*@
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-info" data-toggle='tooltip' title='Print' target='_blank' href='/HRPMSLeave/LeaveRegister/LeaveViewPdf/@Model.leaveRegister.Id' style="float:right;margin-top: 25px;"><i class="fa fa-print"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">SUBMITTED BY</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="4" style="background-color:lightgray">Employee Name</th>
+                                <td colspan="4" style="background-color:lightgray">@Model.leaveRegister.employee.nameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>Employee @Model.visualEmpCodeName</th>
+                                <td>@Model.leaveRegister.employeeId</td>
+                                <th colspan="2">Department</th>
+                                <td>@Model.leaveRegister?.employee?.department?.deptName</td>
+
+                                <th colspan="2">Designation</th>
+                                <td>@Model.leaveRegister?.employee?.designation</td>
+                            </tr>
+                            <tr>
+                                <th colspan="4" style="background-color:lightgray">Name of the assigned person</th>
+                                <td colspan="4" style="background-color:lightgray">@Model.leaveRegister.substitutionUser?.nameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>Employee @Model.visualEmpCodeName</th>
+                                <td>@Model.leaveRegister.substitutionUser?.Id</td>
+                                <th colspan="2">Designation</th>
+                                <td>@Model.leaveRegister.substitutionUser?.designation</td>
+                                <th colspan="2">Signature</th>
+                                <td>@Model.leaveRegister.substitutionUser?.nameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>Leave Type</th>
+                                <td>@Model.leaveRegister.leaveType.nameEn</td>
+
+                                <th>From</th>
+                                <td>@Model.leaveRegister.leaveFrom?.ToString("dd-MMM-yyy")</td>
+
+                                <th>To</th>
+                                <td>@Model.leaveRegister.leaveTo?.ToString("dd-MMM-yyy")</td>
+
+                                <th>Duration</th>
+                                <td>@Model.leaveRegister.daysLeave days</td>
+                            </tr>
+                            <tr>
+                                <th colspan="4">Reason of leave</th>
+                                <td colspan="4">@Model.leaveRegister.purposeOfLeave</td>
+                            </tr>
+                            <tr>
+                                <th rowspan="2">Address and contact during leave</th>
+                                <th colspan="6"></th>
+                                <th>@Model.leaveRegister.createdAt?.ToString("dd-MMM-yyyy")</th>
+                            </tr>
+                            <tr>
+                                <th colspan="6">@Model.leaveRegister.address</th>
+                                <th>Signature with date</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">LEAVE HISTORY</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th colspan="2">Leave Type</th>
+                                <th colspan="2">Opening Balance</th>
+                                <th colspan="2">Leave taken</th>
+                                <th colspan="2">Closing Balance</th>
+                            </tr>
+
+
+                        </thead>
+                        <tbody>
+
+                            @foreach (var data in Model.leaveReportModels)
+                            {
+                                <tr>
+                                    <td colspan="2">@data.type</td>
+                                    <td colspan="2">@data.allMonth</td>
+                                    <td colspan="2">@data.total</td>
+                                    <td colspan="2">@data.balance</td>
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">SUPERVISOR/LINE MANAGER'S RECOMMENDATION</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th colspan="3">Name of Supervisor</th>
+
+
+                                <th colspan="2">Designation</th>
+
+
+                                <th>Remarks</th>
+
+
+                                <th>Date</th>
+                                <th>Recommended</th>
+                                <th>Approved</th>
+                            </tr>
+
+                            @foreach (var data in Model.leaveSupervisorRecomViewModels)
+                            {
+                                <tr>
+                                    <td colspan="3">@data.supervisorName</td>
+                                    <td colspan="2">@data.supervisorDesignation</td>
+                                    <td>@(data.leaveStatus == 1 ? "Applied" : "")</td>
+                                    <td>@data.date</td>
+                                    <td>@(data.leaveStatus == 2 ? "Recommended" : "")</td>
+                                    <td>@(data.leaveStatus == 3 ? "Approved" : "")</td>
+                                </tr>
+                            }
+
+
+
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">FOR HUMAN RESOURCE RECORD</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <td colspan="5">Received by</td>
+                                <td  colspan="3">Signature &amp; date</td>
+                            </tr>
+
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+{
+  "title": "Item Information",
+  "itemCategoryId": "Item Category",
+  "subCategory": "Sub Category",
+  "mainCategory": "Main Category",
+  "unitId": "Unit Name",
+  "itemName": "Item Name",
+  "itemCode": "Item Code",
+  "itemDescription": "Item Description",
+  "accountLedgerId": "Account Ledger",
+  "reOrderLevel": "Re-Order Level",
+  "itemunder": "Item Category",
+  "itemspecification": "Specification",
+  "itemSl": "SL No",
+  "itemQty": "Item Quantity",
+  "itemApproxPrice": "Apprx.Rate",
+  "action": "Action"
+}

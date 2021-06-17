@@ -1,0 +1,549 @@
+﻿@model RentInvoiceViewModel
+@{
+    ViewData["Title"] = "Rental Invoice Details";
+    // Layout = "~/Areas/Voucher/Views/shared/_VoucherLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="row" style="padding-top:5px;padding-bottom:0px;">
+                <span style="color:black;" class="col-sm-9 m-1"><a href="/Rental/RentInvoice/InvoiceList">Agreement List</a></span>
+                <a href="/Rental/RentInvoice/Index/?id=@ViewBag.masterId" style="background-color:#024972;" class="btn-primary btn-sm pull-right">Edit Invoice</a>&nbsp;
+                @*<a class="btn btn-success" href="/Rental/RentInvoice/HallRentalReportPdf" target="_blank" title="Invoice Report"><i class="fa fa-print"></i>Print Preview</a>*@
+                <a class="btn btn-success" href="/Rental/RentInvoice/InvoicePDFAction?id=@ViewBag.masterId" target="_blank" title="Invoice Report"><i class="fa fa-print"></i>Print Preview</a>
+            </div>
+
+            <div style="height:5px;"></div>
+        </div>
+    </div>
+</div>
+<div>
+    <div>
+        <div style="color:black">
+            <p style="width:650px;padding-left:400px;text-align:center;font-weight:900;">Rental Agreement</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body">
+            <div class="container" style="background:white">
+                <div style="margin-bottom:30px;color:black">
+                    <span style="color:black;float:left"><span style="font-weight:800;color:black">Agreement Number :</span>&nbsp; &nbsp; @Model.salesInvoiceMaster.invoiceNumber</span>
+                    <span style="color:black;text-align:right;float:right"><span style="font-weight:800;color:black">Agreement Date:</span>&nbsp; &nbsp;@Model.salesInvoiceMaster.invoiceDate?.ToString("dd-MMM-yyyy")</span>
+                    <br />
+                    <span style="color:black;float:left"><span style="font-weight:800;color:black">Customer :</span>&nbsp; &nbsp; @Model.salesInvoiceMaster.relSupplierCustomerResourse?.Leads?.leadName</span>
+                </div>
+
+                <div class="row">
+                    <table class="table table-striped table-bordered" id="voucherList" style="margin-left: -11px;">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Item Spec.</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>Vat</th>
+                                <th>Tax</th>
+                                <th>Discount</th>
+
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.salesInvoiceDetails)
+                            {
+                                <tr>
+                                    <td>@item.itemSpecication.Item.itemName</td>
+                                    <td>@item.itemSpecication.specificationName</td>
+                                    <td>@item.StartDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@item.EndDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@item.rate?.ToString("0.00")</td>
+                                    <td>@item.quantity?.ToString("0.00")</td>
+                                    <td>@item.vatAmount?.ToString("0.00")</td>
+                                    <td>@item.taxAmount?.ToString("0.00")</td>
+                                    <td>@item.disAmount?.ToString("0.00")</td>
+                                    <td style="text-align:right;">@item.lineTotal?.ToString("0.00")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="9" style="text-align:right;">Gross Total</th>
+                                <td style="text-align:right;">@Model.salesInvoiceMaster.totalAmount?.ToString("0.00")</td>
+                            </tr>
+                            @*<tr>
+                                    <th colspan="5" style="text-align:right;">Discount(%)</th>
+                                    <td style="text-align:right;">@Model.salesInvoiceMaster.DiscountOnTotal?.ToString("0.00")</td>
+                                </tr>*@
+                            <tr>
+                                <th colspan="9" style="text-align:right;">VAT</th>
+                                <td style="text-align:right;">@Model.salesInvoiceMaster.VATOnTotal?.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <th colspan="9" style="text-align:right;">TAX</th>
+                                <td style="text-align:right;">@Model.salesInvoiceMaster.TAXOnTotal?.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <th colspan="9" style="text-align:right;">Discount</th>
+                                <td style="text-align:right;">@Model.salesInvoiceMaster.DiscountOnTotal?.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <th colspan="9" style="text-align:right;">Net Total</th>
+                                <td style="text-align:right;">@Model.salesInvoiceMaster.NetTotal?.ToString("0.00")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="row">
+                    <div style="text-align:left;">
+                        <span style="color:black"><span style="font-weight:800;color:black">Amount In Word:</span>&nbsp; &nbsp;@ViewBag.InWord</span>
+                    </div>
+                </div>
+                @*<br />
+                    <div class="row">
+                        <div style="text-align:left;">
+                            <span style="color:black"><span style="font-weight:800;color:black">Narration:</span>&nbsp; &nbsp;@Model.GetGetvoucherMasterById.remarks</span>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding-left:35px;padding-right:55px">
+    <div class="col-sm-4" style="border:1px solid gray">
+        <div class="card-header" style="padding:6px 0px 5px 3px;background:white">
+            <label style="padding:0px 0px 0px 46px;font-size:16px;font-weight:600" class="col-sm-7 pull-left">Comments <span id="cmntCount" class="dot">@Model.comments.Count()</span></label>
+            <label style="padding:0px 0px 0px 0px;" class="pull-right col-sm-4"><a href="#" class="btn-sm pull-right" style="color:deepskyblue" data-toggle="modal" data-target="#commentsModal" data-whatever="0"><i class="fa fa-plus fa-sm"></i> Add Comment</a></label>
+        </div>
+        <div class="card-body">
+            <ul id="ulComments" class="list-group list-group-flush" style="font-size:14px;color: black;">
+                <li class="list-group-item">
+                    <span class="col-sm-2" style="border-width:1px 1px 1px 1px;border-style:solid">
+                        Title
+                    </span>
+                    <span class="col-sm-8" style="border-width:1px 1px 1px 1px;border-style:solid">
+                        Comments
+                    </span>
+                    <span class="col-sm-2" style="border-width:1px 1px 1px 1px;border-style:solid">
+                        Action
+                    </span>
+                </li>
+                @foreach (var data in Model.comments)
+                {
+                    <li class="list-group-item">
+                        <span class="col-sm-2" style="border-width:1px 1px 1px 1px;border-style:solid">
+                            @data.title
+                        </span>
+                        <span class="col-sm-8" style="border-width:1px 1px 1px 1px;border-style:solid">
+                            @data.comment
+                        </span>
+                        <span class="col-sm-2" style="border-width:1px 1px 1px 1px;border-style:solid">
+
+                            <a href="/Sales/SalesInvoice/DeleteComments?Id=@data.Id&actionId=@data.actionTypeId"><i class="fa fa-trash fa-fw"></i></a>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-4" style="border:1px solid gray">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-7 pull-left">Photo <span style="color:white" class="photoDot">@Model.photoes.Count()</span></label>
+            <label style="padding:0px 0px 0px 0px;" class="pull-right col-sm-4"><a href="#" class="btn-sm pull-right" style="color:deepskyblue" data-toggle="modal" data-target="#photoModal" data-whatever="@ViewBag.masterId"><i class="fa fa-plus fa-sm"></i> Add Photo</a></label>
+        </div>
+        <div class="card-body">
+            <ul id="ulPhoto" class="list-group list-group-flush" style="max-height:250px;overflow-y:scroll">
+                @foreach (var data in Model.photoes)
+                {
+                    <li class="list-group-item">
+                        <span class="col-sm-8">
+                            <img src="@data.filePath" style="width:220px;height:100px;" />
+                        </span>
+                        <span class="col-sm-4">
+                            <a href="@data.filePath" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
+                            <a href="/Sales/SalesInvoice/DeletePhoto?actionId=@data.actionTypeId&photoId=@data.Id"><i class="fa fa-trash fa-fw"></i></a>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-4" style="border:1px solid gray">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-7 pull-left">Documents <span style="color:white" class="photoDot">@Model.documents.Count()</span></label>
+            <label style="padding:0px 0px 0px 0px;" class="pull-right col-sm-4"><a href="#" class="btn-sm pull-right" style="color:deepskyblue" data-toggle="modal" data-target="#docModal" data-whatever="@ViewBag.masterId"><i class="fa fa-plus fa-sm"></i> Add Documents</a></label>
+        </div>
+        <div class="card-body">
+            <ul id="ulPhoto" class="list-group list-group-flush" style="max-height:250px;overflow-y:scroll;color:black;">
+                @foreach (var data in Model.documents)
+                {
+                    <li class="list-group-item">
+                        <span class="col-sm-8">
+                            <label class="col-form-label">@data.fileName</label>
+                        </span>
+                        <span class="col-sm-4">
+                            <a href="@data.filePath" target="_blank"><i class="fa fa-eye fa-fw"></i></a>
+                            <a href="/Sales/SalesInvoice/DeletePhoto?actionId=@data.actionTypeId&photoId=@data.Id"><i class="fa fa-trash fa-fw"></i></a>
+                        </span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<br />
+<form asp-area="Rental" asp-controller="RentInvoice" asp-action="InsertCondition" method="post" data-parsley-validate="parsley">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group row">
+        <label for="conditext" class="col-sm-2 col-form-label">Terms &amp; Conditions</label>
+        <div class="col-sm-9">
+            <select name="conditext" id="conditext" class="form-control">
+                <option value="">Select Terms & Conditions</option>
+                @foreach (var data in Model.termsAndConditions)
+                {
+                    <option value="@data.Id">@data.termName</option>
+                }
+            </select>
+            @*<input type="text" class="form-control" id="conditext" name="conditext">*@
+            <input type="hidden" class="form-control" id="masterId" name="masterId" value="@Model.salesInvoiceMaster.Id">
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-block btn-success" onclick="AddGroup()" style="color:white;" title="Add Ledger"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+    <br />
+    <hr />
+    <div id="SubLedgerList" class="form-group row">
+    </div>
+    <div  class="form-group row">
+        <div class="col-sm-2 row"></div>
+        <div class="col-sm-8 row"></div>
+        <div class="col-sm-2 row">  <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button></div>
+    </div>
+</form>
+<!-- Modal -->
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="frmPhoto" asp-area="Sales" asp-controller="SalesInvoice" asp-action="SavePhoto" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="modal-body">
+                    <div class="form-group" enctype="multipart/form-data">
+                        <label for="formFile" style="height:200px;width:100%">
+                            <img id="user_img" src="~/images/upload.jpg" style="border:solid;height:200px; width:100%" />
+                        </label>
+                        or <input class="form-control input-sm" type="file" id="formFile" name="formFile" onchange="show(this)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Name :</label>
+                        <input type="text" class="form-control" id="subject" name="subject">
+                        <input type="hidden" id="actionTypeId" name="actionTypeId" value="@ViewBag.masterId" />
+                        <input type="hidden" id="documentId" name="documentId" value="0" />
+                        <input type="hidden" id="actionType" name="actionType" value="SalesInvoice" />
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-form-label">Description :</label>
+                        <textarea class="form-control" rows="4" id="description" name="description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0)" style="color:deepskyblue" id="btnCancel" data-dismiss="modal">Cancel</a>&nbsp;
+                    <button type="submit" style="background-color:#024972;" class="btn-primary btn-sm">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="docModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="frmDoc" asp-area="Sales" asp-controller="SalesInvoice" asp-action="SaveDoc" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="modal-body">
+                    <div class="form-group" enctype="multipart/form-data">
+                        <label for="docformFile" style="height:200px;width:100%">
+                            <img id="user_doc" src="~/images/uploaddoc.jpg" style="border:solid;height:200px; width:100%" />
+                        </label>
+                        or <input class="form-control input-sm" type="file" id="docformFile" name="formFile" onchange="showdoc(this)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Name :</label>
+                        <input type="text" class="form-control" id="subjectdoc" name="subject">
+                        <input type="hidden" id="actionTypeIddoc" name="actionTypeId" value="@ViewBag.masterId" />
+                        <input type="hidden" id="documentIddoc" name="documentId" value="0" />
+                        <input type="hidden" id="actionTypedoc" name="actionType" value="SalesInvoice" />
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-form-label">Description :</label>
+                        <textarea class="form-control" rows="4" id="descriptiondoc" name="description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0)" style="color:deepskyblue" id="btnCancel1" data-dismiss="modal">Cancel</a>&nbsp;
+                    <button type="submit" style="background-color:#024972;" class="btn-primary btn-sm">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Comment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmComments" asp-area="Sales" asp-controller="SalesInvoice" asp-action="SaveComment" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                        <input type="hidden" id="actionTypeId" name="actionTypeId" value="@ViewBag.masterId" />
+                        <input type="hidden" id="commentsId" name="commentsId" value="0" />
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Comments<i style="color:red">*</i>:</label>
+                        <textarea class="form-control" rows="4" id="comment" name="comment" data-parsley-required="true"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="javascript:void(0)" style="color:deepskyblue" id="btnCancel2" data-dismiss="modal">Cancel</a>&nbsp;
+                        <button type="submit" style="background-color:#024972;" class="btn-primary btn-sm">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#btnCancel').click(function (e) {
+                location.reload();
+            });
+            $('#btnCancel1').click(function (e) {
+                location.reload();
+            });
+
+            $('#btnCancel2').click(function (e) {
+                location.reload();
+            });
+             Common.Ajax('GET', '/global/api/getAllRenttermsconditionr/' + @Model.salesInvoiceMaster.Id, [], 'json', ajaxLedgerRelation, false);
+        });
+
+        var TID = 1;
+        function AddGroup() {
+            //var id = $('#conditext').val();
+            var id = $('#conditext option:selected').text();
+            $('#SubLedgerList').append(' <div class="col-sm-2"></div ><div class="col-sm-10 row"><input type="hidden" name="context[]" id="Lg' + TID + '" value="' + id + '"><span class="spanClass" id="LgId' + TID + '" >' + id + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + TID + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+            TID = TID + 1;
+            //$('#conditext').val('')
+        }
+
+        function DeleteGroup(id) {           
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+
+        var TEDITID = 1;
+        function ajaxLedgerRelation(response) {
+            $('#SubLedgerList').empty();
+            $.each(response, function (i, item) {
+                $('#SubLedgerList').append(' <div class="col-sm-2"></div ><div class="col-sm-10 row"><input type="hidden" name="context[]" id="Lg' + TEDITID + '" value="' + item.termtext + '"><span class="spanClass" id="LgId' + TEDITID + '" >' + item.termtext + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + TEDITID + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+                TEDITID = TEDITID + 1;
+            });
+        }        
+
+        function show(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function showdoc(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_doc').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+    </script>
+}
+<style>
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 3px 25px 3px 25px;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+    .heading {
+        text-align: right;
+    }
+
+    .project-tab #tabs .nav-tabs .nav-link.show, .nav-tabs .nav-link.active {
+        color: #0062cc;
+        background-color: transparent;
+        border-color: transparent transparent #f3f3f3;
+        border-bottom: 3px solid !important;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .project-tab .nav-link {
+        border: 1px solid transparent;
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+        color: gray;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+        .project-tab .nav-link:hover {
+            border: none;
+        }
+
+    .project-tab a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .dot {
+        height: 25px;
+        width: 25px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .photoDot {
+        height: 25px;
+        width: 25px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+        padding-bottom: 0px;
+    }
+
+    .dropdown-menu > a:hover {
+        background-color: #79d180;
+        background-image: none;
+    }
+
+    .vehicleLogo {
+        background-color: gray;
+        color: white;
+        font-size: 1.9em;
+        font-weight: 600;
+        padding: 0px 0px 0px 0px;
+        height: 50px;
+        width: 60px;
+        text-align: center;
+        margin: 0px 0px 0px 0px;
+        border-radius: 8%;
+    }
+
+    .statuscolor {
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+        padding-bottom: 0px;
+    }
+
+    .table-bordered {
+        border-collapse: collapse !important;
+    }
+
+        .table-bordered th {
+            border: 1px solid gray !important;
+        }
+
+        .table-bordered td {
+            border: 1px solid gray !important;
+        }
+
+    .spanClass {
+        background: white;
+        padding: 6px;
+        border: 1px solid;
+        border-radius: 15px;
+        margin-right: 5px;
+        color: black;
+        margin-bottom: 10px;
+        background: oldlace;
+    }
+
+    .crossButton {
+        margin-left: 5px;
+        padding: 3px;
+        border-radius: 10px;
+        background: maroon;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+    }
+</style>

@@ -1,0 +1,1710 @@
+﻿@model CustomerViewModel
+@{
+    ViewData["Title"] = "Customer Entry";
+    Layout = "~/Areas/MasterData/Views/Shared/_CustomerDataForm.cshtml";
+}
+
+<div class="row" style="padding:0px 5px 0px 3px;">
+    <div class="col-sm-10"></div>
+    <div class="col-sm-2" style="float:right">
+
+        <button type="button" class="btn btn-info btn-sm" style="background-color:#024972;float:right" onclick="location.href='@Url.Action("CustomerList", "Customer")'">Cancel</button>
+
+    </div>
+</div>
+<div class="row" style="height:15px"><hr /></div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'CustomerInfo')" id="defaultOpen"><i class="fas fa-list-ul"></i> Distributor Info</button>
+            <button class="tablinks" onclick="openTab(event, 'Contacts')" id="contacts"><i class="fas fa-address-book"></i> Contacts</button>
+            <button class="tablinks" onclick="openTab(event, 'Address')" id="address"><i class="fas fa-address-card"></i> Address</button>
+            @*<button class="tablinks" onclick="openTab(event, 'ItemInfo')" id="fuel"><i class="fas fa-apple-alt"></i> Item Info</button>*@
+            <button class="tablinks" onclick="openTab(event, 'AreaInfo')" id="area"><i class="fas fa-apple-alt"></i> Area  Info</button>
+            <button class="tablinks" onclick="openTab(event, 'SalesTeaminfo')" id="SalesTeam"><i class="fas fa-apple-alt"></i> Sales Team</button>
+
+        </div>
+    </div>
+    <div class="col-md-9" style="margin-top:-17px;background-color:#ffffff">
+        <form asp-area="MasterData" asp-controller="Customer" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row" style="margin-left:-40px;">
+                <div class="container">
+                    <div id="CustomerInfo" class="tabcontent">
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Distributor Information</h4></div>
+
+                        <div class="form-group row">
+                            <label for="nameEnglish" class="col-sm-3 col-form-label text-right">Distributor Name<i style="color:red">*</i></label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="nameEnglish" id="nameEnglish" value="@Model.GetResourcebyId.nameEnglish" data-parsley-required="true">
+                                <input type="hidden" id="resourceId" name="resourceId" value="@Model.GetResourcebyId.Id" />
+                                <input type="hidden" class="form-control" name="relSupplierCustomerResourseId" id="relSupplierCustomerResourseId" value="@Model.relSupplierCustomerResourseId">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="LicenseNumber" class="col-sm-3 col-form-label text-right">License Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="LicenseNumber" id="LicenseNumber" value="@Model.GetResourcebyId.LicenseNumber">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="eTinNumber" class="col-sm-3 col-form-label text-right">e-Tin Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="eTinNumber" id="eTinNumber" value="@Model.GetResourcebyId.eTinNumber">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="binNumber" class="col-sm-3 col-form-label text-right">BIN Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="binNumber" id="binNumber" value="@Model?.GetResourcebyId?.binNumber" maxlength="50" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="VATNumber" class="col-sm-3 col-form-label text-right">VAT Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="VATNumber" id="VATNumber" value="@Model.GetResourcebyId.VATNumber">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-3 col-form-label text-right">Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" maxlength="100" class="form-control" name="email" id="email" value="@Model.GetResourcebyId.email">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="alternativeEmail" class="col-sm-3 col-form-label text-right">Alternative Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" maxlength="100" class="form-control" name="alternativeEmail" id="alternativeEmail" value="@Model.GetResourcebyId.alternativeEmail">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="mobile" class="col-sm-3 col-form-label text-right">Contact Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="mobile" id="mobile" value="@Model.GetResourcebyId.mobile">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="phone" class="col-sm-3 col-form-label text-right">Phone Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="phone" id="phone" value="@Model.GetResourcebyId.phone">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="phone" class="col-sm-3 col-form-label text-right">Distributor Type</label>
+                            <div class="col-sm-9">
+                                <select type="text" class="form-control" id="distributorTypeId" name="distributorTypeId" value="@Model.relSupplierCustomerResourse?.distributorTypeId">
+                                    <option value="0">Select</option>
+                                    @foreach (var data in Model.distributorTypes)
+                                    {
+                                        <option value="@data.Id">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        @*<div class="form-group row">
+                                <label for="attachment" class="col-sm-3 col-form-label text-right">Attachment</label>
+                                <div class="col-sm-9">
+                                    <input type="file" id="formFile" name="formFile" class="btn btn-success btn-sm">
+                                </div>
+                            </div>*@
+
+                        <br />
+                        <br />
+                    </div>
+
+                    <div id="Contacts" class="tabcontent" style="padding-left:1px;padding-right:1px">
+
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Contacts</h4></div>
+
+                        <div class="form-group row">
+                            <label for="personName" class="col-sm-3 col-form-label text-right">Person Name<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="personName" id="personName" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="PhoneNumber" class="col-sm-3 col-form-label text-right">Phone Number<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="20" class="form-control" name="phoneNumber" id="phoneNumber" value="">
+                                <input type="hidden" id="contactid" name="contactid" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="MobileNumber" class="col-sm-3 col-form-label text-right">Mobile Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="20" class="form-control" name="mobileNumber" id="mobileNumber" value="">
+                            </div>
+                        </div>
+
+                        @*<div class="form-group row">
+                                <label for="Department" class="col-sm-3 col-form-label text-right">Department</label>
+                                <div class="col-sm-9">
+                                    <input type="text" maxlength="100" class="form-control" name="Department" id="Department" value="">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="Designation" class="col-sm-3 col-form-label text-right">Designation</label>
+                                <div class="col-sm-9">
+                                    <input type="text" maxlength="100" class="form-control" name="Designation" id="Designation" value="">
+                                </div>
+                            </div>*@
+
+
+                        <div class="row">
+                            <div class="col-md-9">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" onclick="AddContactInfo()" value="Addcon" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                <button type="button" onclick="RefreshContact()" value="Refreshcon" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Contact Details</h5>
+
+                                <input type="hidden" id="IsEditCon" name="IsEditCon" value="0" />
+                                <table class="table table-responsive col-form-label " id="tblcontactDetails" data-parsley-required="true">
+                                    <thead style="width:100%">
+                                        <tr>
+                                            <th width="40%">Person Name</th>
+                                            <th width="25%">Phone</th>
+                                            <th width="25%">Mobile</th>
+                                            @*<th width="10%">Department</th>
+                                                <th width="10%">Designation</th>*@
+                                            <th width="10%"><span>Action</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <br />
+                        <br />
+                    </div>
+
+                    <div id="Address" class="tabcontent" style="padding-left:1px">
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Address</h4></div>
+
+                        <div class="row">
+                            <div class="col-sm-12 card-body">
+                                <div class="form-group row">
+                                    <label for="txtaddressCategoryId" class="col-sm-3 col-form-label text-right">Address Category <i style="color:red">*</i></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtaddressCategoryId">
+                                            <option value="0">Select Category</option>
+                                            @foreach (var data in Model.addressTypes)
+                                            {
+                                                <option value="@data.Id">@data.typeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgUnion" class="col-sm-3 col-form-label text-right">Road <i style="color:red">*</i></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" maxlength="100" class="form-control" id="txtorgUnion" value="">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtorgVillage" maxlength="100" class="col-sm-3 col-form-label text-right">House/Village</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="txtorgVillage" maxlength="100" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgBlockSector" class="col-sm-3 col-form-label text-right">Block/Sector</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" maxlength="100" id="txtorgBlockSector" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgPostCode" class="col-sm-3 col-form-label text-right">Post Code <i style="color:red">*</i></label>
+                                    <div class="col-sm-9">
+                                        <input data-parsley-type="number" data-parsley-length="[4, 6]" data-parsley-trigger="keyup" class="form-control" id="txtorgPostCode" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgPostOffice" class="col-sm-3 col-form-label text-right">Post Office</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" maxlength="100" id="txtorgPostOffice" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgDivision" class="col-sm-3 col-form-label text-right">Division</label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtorgDivision"></select>
+                                        <input type="hidden" id="txtorgAddressID" value="" />
+                                        <input type="hidden" id="IsEditadd" name="IsEditadd" value="0" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgDistrict" class="col-sm-3 col-form-label text-right">District</label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtorgDistrict" value=""></select>
+                                        <input type="hidden" id="distId" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+
+                                    <label for="txtorgUpazila" class="col-sm-3 col-form-label text-right">Upazila <i style="color:red">*</i></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtorgUpazila"></select>
+                                        <input type="hidden" id="thanaId" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+
+                                <div class="row">
+                                    <label class="col-md-8 p-2 m-2"><u>Address Details List</u></label>
+                                    <div class="col-md-3 p-1">
+                                        <button type="button" onclick="AddAddress()" value="Addcon" title="Add" class="btn btn-success btn-sm ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                        <button type="button" onclick="RefreshAddress()" value="Refreshcon" title="Refresh" class="btn btn-success btn-sm ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                                    </div>
+                                </div>
+                                <table id="tblAddress" class="table table-striped table-bordered" style="width:100%;float:right">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Road</th>
+                                            <th>House/Village</th>
+                                            <th>Block/Sector</th>
+                                            <th>Post Code</th>
+                                            <th>Upozila</th>
+                                            <th>District</th>
+                                            <th>Division</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<div id="ItemInfo" class="tabcontent">
+
+                            <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Item Info</h4></div>
+
+
+                            <div class="row">
+                                <label for="itemId" class="col-sm-3 col-form-label text-right">Item</label>
+                                <div class="col-sm-9">
+                                    <input type="text" placeholder="Please Type item Name" class="form-control" id="itemAuto" name="itemAuto" />
+                                    <input type="hidden" class="form-control" id="itemId" name="itemId" />
+                                    <input type="hidden" class="form-control" id="itemName" name="itemName" />
+                                    <select class="form-control" id="itemId" name="itemId">
+                                            <option></option>
+                                            @foreach (var data in Model.items)
+                                            {
+                                                <option value="@data.Id">@data.itemName</option>
+                                            }
+                                        </select>
+
+
+                                    <input type="hidden" id="customerItemInfoId" name="customerItemInfoId" />
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-9">
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" onclick="AddItemInfo()" value="Add" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                    <button type="button" onclick="Refresh()" value="Refresh" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-9">
+                                    <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Item Details</h5>
+
+                                    <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                                    <table class="table table-responsive col-form-label " id="tblfuelDetails" data-parsley-required="true">
+                                        <thead style="width:100%">
+                                            <tr>
+                                                <th width="45%">Item Name</th>
+                                                <th width="20%"><span>Action</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>*@
+                    <div id="AreaInfo" class="tabcontent">
+
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Area Info</h4></div>
+
+
+                        <div class="row">
+                            <label for="areaid" class="col-sm-3 col-form-label text-right">Area Name</label>
+                            <div class="col-sm-9">
+                                <input type="hidden" placeholder="Please Type area Name" class="form-control" id="areaAuto" name="areaAuto" />
+                                @*<input type="hidden" class="form-control" id="areaid" name="areaid" />*@
+                                <select class="form-control" id="areaid" name="areaid">
+                                    <option value="0">Select</option>
+                                    @foreach (var data in Model.areas)
+                                    {
+                                        <option value="@data.Id">@data.areaName</option>
+                                    }
+                                </select>
+                                <input type="hidden" class="form-control" id="areaname" name="areaname" />
+                                <input type="hidden" id="areaInfoId" name="areaInfoId" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-9">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" onclick="AddAreaInfo()" value="Add" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                <button type="button" onclick="RefreshArea()" value="Refresh" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                                <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Area Details</h5>
+
+                                <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                                <table class="table table-responsive col-form-label " id="tblareaDetails" data-parsley-required="true">
+                                    <thead style="width:100%">
+                                        <tr>
+                                            <th width="45%">Name</th>
+                                            <th width="20%"><span>Action</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="SalesTeaminfo" class="tabcontent">
+
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Sales Team Info</h4></div>
+                        @*<div class="row">
+            <label for="areaid" class="col-sm-3 col-form-label text-right">NSM Team</label>
+            <div class="col-sm-9">
+
+                <select class="form-control" id="nsmid" name="nsmid">
+                    <option value="0">Select</option>
+                    @foreach (var data in Model.salesTeamDeployments.Where(x => x.salesLevel.name == "NSM"))
+                    {
+                        <option value="@data.Id">@data.employeeInfo.nameEnglish</option>
+                    }
+                </select>
+
+                <input type="hidden" id="teamInfoId" name="teamInfoId" />
+                <input type="hidden" class="form-control" id="teamAuto" name="teamAuto" />
+            </div>
+            <label for="areaid" class="col-sm-3 col-form-label text-right">RSM Team</label>
+            <div class="col-sm-9">
+
+                <select class="form-control" id="rsmid" name="rsmid">
+
+                </select>
+
+            </div>
+            <label for="areaid" class="col-sm-3 col-form-label text-right">TSM Team</label>
+            <div class="col-sm-9">
+
+                <select class="form-control" id="tsmid" name="tsmid">
+
+                </select>
+
+            </div>
+        </div>*@
+
+                        <div class="form-group row">
+
+                            <label for="degreeName" class="col-sm-2 col-form-label">Employee Name <span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-4">
+                                <input type="hidden" name="employeeInfoId" id="employeeInfoId" value="0" />
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="empName" id="empName">
+                            </div>
+                            <label for="degreeNameBn" class="col-sm-2 col-form-label">Joining Date</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="joiningdate" id="joiningdate" readonly>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+
+
+                            <div class="col-sm-6">
+
+                            </div>
+
+                            <div class="col-sm-4">
+                                <img id="pic" src="~/Upload/Photo/bimage.png" style="height:50px;width:80px" />
+                            </div>
+                            <div class="col-sm-2">
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="degreeNameBn" class="col-sm-2 col-form-label">Designation</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="designation" id="designation" readonly>
+                            </div>
+                            <label for="degreeNameBn" class="col-sm-2 col-form-label">Department</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="department" id="department" readonly>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="form-group row">
+                            <input type="hidden" name="Id" id="Id" value="0" />
+
+                            <label for="levelofeducationId" class="col-sm-2 col-form-label">Sales Level<span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="salesLevelId" id="salesLevelId">
+                                    <option value="0">Select</option>
+                                    @foreach (var data in Model.salesLevels)
+                                    {
+                                        <option value="@data.Id">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @*<input type="hidden" name="Id" id="Id" value="0" />*@
+
+                            <label for="levelofeducationId" class="col-sm-2 col-form-label">Area<span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="tareaId" id="tareaId">
+                                    <option value="0">Select</option>
+                                    @foreach (var data in Model.areas)
+                                    {
+                                        <option value="@data.Id">@data.areaName</option>
+                                    }
+                                </select>
+                                <input type="hidden" id="teamInfoId" name="teamInfoId" />
+                                <input type="hidden" class="form-control" id="teamAuto" name="teamAuto" />
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+                            <input type="hidden" name="Id" id="Id" value="0" />
+
+                            <label for="levelofeducationId" class="col-sm-2 col-form-label">Supervisor<span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="salesTeamDeploymentId" id="salesTeamDeploymentId">
+                                    <option value="0">Select</option>
+                                    @foreach (var data in Model.salesTeamDeployments)
+                                    {
+                                        <option value="@data.Id">@data.employeeInfo.nameEnglish</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>*@
+                        <br />
+
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-9">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" onclick="AddTeamInfo()" value="Add" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                <button type="button" onclick="RefreshTeam()" value="Refresh" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                                <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Team Details</h5>
+
+                                <input type="hidden" id="IsEditteam" name="IsEditteam" value="0" />
+                                <table class="table table-responsive col-form-label " id="tblteamDetails" data-parsley-required="true">
+                                    <thead style="width:100%">
+                                        <tr>
+                                            <th width="30%">Name</th>
+                                            <th width="30%">Sales Level</th>
+                                            <th width="30%">Area</th>
+                                            <th width="10%"><span>Action</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="row" style="padding-left:500px">
+
+                <input type="submit" value="Submit" id="btnSubmit" class="btn btn-success" style="float:right;background-color:#024972; margin-top:5px;margin-bottom:5px;" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section ScriptsMD{
+
+    <script type="text/javascript">
+    function checkvalidText(Id) {
+
+        let QtyLen = $('#'+Id).val().length;
+
+
+        if (QtyLen > 150) {
+            alert("Text limit over...");
+            $('#' + Id).val('');
+            return false;
+        }
+
+    }
+        function Refresh() {
+            $('#customerItemInfoId').val('');
+            $('#itemId').val('');
+            $("#IsEdit").val(0);
+            $('#itemAuto').val('');
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+        function RefreshArea() {
+            $('#areaInfoId').val('');
+            $('#areaid').val(0);
+            $("#IsEdit").val(0);
+            $('#areaAuto').val('');
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+        function RefreshTeam() {
+            $('#teamInfoId').val('');
+            $('#nsmid').val(0);
+            $('#rsmid').val(0);
+            $('#tsmid').val(0);
+            $("#IsEditteam").val(0);
+            $('#teamAuto').val('');
+            $("#tareaId").val(0);
+            $("#salesLevelId").val(0);
+            $("#employeeInfoId").val('');
+            $("#empName").val('');
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        //Address Info
+        function RefreshAddress() {
+            $('#txtaddressCategoryId').val(0);
+            $('#txtorgUnion').val('');
+            $('#txtorgVillage').val('');
+            $('#txtorgBlockSector').val('');
+            $("#txtorgPostCode").val('');
+
+            $('#txtorgPostOffice').val('');
+            $('#orgDivision').val('');
+            $('#txtorgDistrict').val('');
+            $('#txtorgUpazila').val('');
+            $('#IsEditadd').val(0);
+
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        function AddAddress() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblAddress tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsaddressCategoryId").val();
+            }
+
+
+            let orgAddressID = 0;
+            let addressCategoryId = $('#txtaddressCategoryId').val();
+            let txtaddressCategory = $('#txtaddressCategoryId option:selected').text();
+            let orgUnion = $('#txtorgUnion').val();
+            let orgHouseVillage = $('#txtorgVillage').val();
+            let orgBlockSector = $('#txtorgBlockSector').val();
+            let orgPostCode = $('#txtorgPostCode').val();
+            let orgPostOffice = $('#txtorgPostOffice').val();
+            let orgDivision = $('#txtorgDivision').val();
+            let txtorgDivision = $('#txtorgDivision option:selected').text();
+            let orgDistrict = $('#txtorgDistrict').val();
+            let txtorgDistrict = $('#txtorgDistrict option:selected').text();
+            let orgUpazila = $('#txtorgUpazila').val();
+            let txtorgUpazila = $('#txtorgUpazila option:selected').text();
+            if (addressCategoryId==0) {
+                swal('Please Select Category!');
+                return false;
+            }else if (orgUnion == '') {
+                swal('Please Entered Road No');
+                return false;
+            } else if (orgPostCode == '') {
+                swal('Please Entered Post Code');
+                return false;
+            } else if (orgUpazila == null || orgUpazila=='') {
+                swal('Please Select Upazila');
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEditadd').val()) ? parseInt($('#IsEditadd').val()) : 0;
+            var RowCount = $("#tblAddress tbody>tr").length;
+            for (i = 0; i < RowCount; i++) {
+                var _itemId = $('#txtaddressCategoryId' + i + '').val();
+
+                if (_itemId == addressCategoryId && editOption == 0) {
+                    alert('You have already added this category!');
+                    return false
+                }
+                //if (editOption == 1) {
+
+                //} else {
+                //    if (_itemId == itemId) {
+                //        alert('You have already added this fuel type!');
+                //        return false
+                //    }
+                //}
+            }
+            var dtTable = $("#tblAddress");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + txtaddressCategory + '<input type="hidden" name="addressCategoryId"  id="txtaddressCategoryId' + index + '" class="clsaddressCategoryId" value="' + addressCategoryId + '"/></td>' +
+                '<td>' + orgUnion + '<input type="hidden" name="orgUnion" class="clsorgUnion"value="' + orgUnion + '"/><input type="hidden" name="orgAddressID" class="clsorgAddressID"value="' + orgAddressID + '"/></td>' +
+                '<td>' + orgHouseVillage + '<input type="hidden" name="orgHouseVillage" class="clsorgVillage" value="' + orgHouseVillage + '"/></td>' +
+                '<td>' + orgBlockSector + '<input type="hidden" name="orgBlockSector" class="clsorgBlockSector" value="' + orgBlockSector + '"/></td>' +
+                '<td>' + orgPostCode + '<input type="hidden" name="orgPostCode" class="clsorgPostCode" value="' + orgPostCode + '"/><input type="hidden" name="orgPostOffice" class="clsorgPostOffice" value="' + orgPostOffice + '"/></td>'+
+                '<td>' + txtorgUpazila + '<input type="hidden" name="orgUpazila" class="clsorgUpazila" value="' + orgUpazila + '"/></td>' +
+                '<td>' + txtorgDistrict + '<input type="hidden" name="orgDistrict" class="clsorgDistrict" value="' + orgDistrict + '"/></td>' +
+                '<td>' + txtorgDivision + '<input type="hidden" name="orgDivision" class="clsorgDivision" value="' + orgDivision + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteAddress(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditaddTbl(' + index + ", " + addressCategoryId + ",'" + orgUnion + "', '" + orgHouseVillage + "','" + orgBlockSector + "','" + orgPostCode + "','" + orgPostOffice + "'," + orgUpazila + "," + orgDistrict + "," + orgDivision + "," + orgAddressID + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+
+                tableBody.append(trHtml);
+            }
+            else {
+
+                var rowUpdate = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            //index = index + 1;
+            RefreshAddress();
+        }
+
+        //function DeleteAddress(index) {
+        //    $("#tblAddress #" + index).remove();
+        //    return false;
+        //}
+        function DeleteAddress(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                //$("#tblfuelDetails #" + index).remove();
+                $("#tblAddress #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+
+            return false;
+        }
+        function DeleteAreas(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                //$("#tblfuelDetails #" + index).remove();
+                $("#tblareaDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+
+            return false;
+        }
+        function DeleteTeams(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                //$("#tblfuelDetails #" + index).remove();
+                $("#tblteamDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+
+            return false;
+        }
+
+        function ajaxGetAddress(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblAddress tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsaddressCategoryId").val();
+            }
+            $("#tblAddress tbody>tr").empty();
+
+            $.each(response, function (key, rc) {
+                index = $("#tblAddress tbody>tr").length;
+                let orgAddressID = rc.Id;
+                let addressCategoryId = rc.addressTypeId;
+                let txtaddressCategory = rc.addressType.typeName;
+                let orgUnion = rc.union;
+                let orgHouseVillage = rc.houseVillage;
+                let orgBlockSector = rc.blockSector;
+                let orgPostCode = rc.postCode;
+                let orgPostOffice = rc.postOffice;
+                let orgDivision = rc.division.Id;
+                let txtorgDivision = rc.division.divisionName;
+                let orgDistrict = rc.district.Id;
+                let txtorgDistrict = rc.district.districtName;
+                let orgUpazila = rc.thana.Id;
+                let txtorgUpazila = rc.thana.thanaName;
+                var dtTable = $("#tblAddress");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + txtaddressCategory + '<input type="hidden" name="addressCategoryId"  id="txtaddressCategoryId' + index + '" class="clsaddressCategoryId" value="' + addressCategoryId + '"/></td>' +
+                    '<td>' + orgUnion + '<input type="hidden" name="orgUnion" class="clsorgUnion"value="' + orgUnion + '"/><input type="hidden" name="orgAddressID" class="clsorgAddressID"value="' + orgAddressID + '"/></td>' +
+                    '<td>' + orgHouseVillage + '<input type="hidden" name="orgHouseVillage" class="clsorgVillage" value="' + orgHouseVillage + '"/></td>' +
+                    '<td>' + orgBlockSector + '<input type="hidden" name="orgBlockSector" class="clsorgBlockSector" value="' + orgBlockSector + '"/></td>' +
+                    '<td>' + orgPostCode + '<input type="hidden" name="orgPostCode" class="clsorgPostCode" value="' + orgPostCode + '"/><input type="hidden" name="orgPostOffice" class="clsorgPostOffice" value="' + orgPostOffice + '"/></td>' +
+                    '<td>' + txtorgUpazila + '<input type="hidden" name="orgUpazila" class="clsorgUpazila" value="' + orgUpazila + '"/></td>' +
+                    '<td>' + txtorgDistrict + '<input type="hidden" name="orgDistrict" class="clsorgDistrict" value="' + orgDistrict + '"/></td>' +
+                    '<td>' + txtorgDivision + '<input type="hidden" name="orgDivision" class="clsorgDivision" value="' + orgDivision + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteAddress(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditaddTbl(' + index + ", " + addressCategoryId + ",'" + orgUnion + "', '" + orgHouseVillage + "','" + orgBlockSector + "','" + orgPostCode + "','" + orgPostOffice + "'," + orgUpazila + "," + orgDistrict + "," + orgDivision + "," + orgAddressID + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+
+            })
+        }
+
+        //End Address
+        function EditaddTbl(index, addressCategoryId, orgUnion, orgHouseVillage, orgBlockSector, orgPostCode, orgPostOffice, orgUpazila, orgDistricts, orgDivision, orgAddressID)
+        {
+            var rightIndex = index;
+            $('#txtorgDivision').val(orgDivision);
+
+
+            Common.Ajax('GET', '/global/api/districts/' + orgDivision, [], 'json', orgDistrict);
+
+            $('#distId').val(orgDistricts);
+            Common.Ajax('GET', '/global/api/thanas/' + orgDistricts, [], 'json', orgThana);
+            $('#thanaId').val(orgUpazila);
+
+            $('#txtaddressCategoryId').val(addressCategoryId);
+
+            $('#txtorgUnion').val(orgUnion);
+            $('#txtorgVillage').val(orgHouseVillage);
+            $('#txtorgBlockSector').val(orgBlockSector);
+            $('#txtorgPostCode').val(orgPostCode);
+            $('#txtorgPostOffice').val(orgPostOffice);
+
+
+
+
+
+
+
+
+            $('#IsEditadd').val(1);
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+
+
+         }
+        function RefreshContact() {
+            //alert("refresh")
+            $('#contactid').val('');
+            $('#Department').val('');
+            $('#mobileNumber').val('');
+
+            $('#personName').val('');
+            $('#phoneNumber').val('');
+            $('#Designation').val('');
+
+            $("#IsEditCon").val(0);
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+        function ajaxGetContactId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblcontactDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblcontactDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+                index = $("#tblcontactDetails tbody>tr").length;
+                var dtTable = $("#tblcontactDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.personName + '<input type="hidden" name="contactall"  id="txtcontactId" class="clscontactDetailsId" value="' + value.personName + '"/></td>' +
+                    '<td>' + value.phoneNumber + '<input type="hidden"name="phoneall" class="clsQtypdone"value="' + value.phoneNumber + '"/></td>' +
+                    '<td>' + value.mobileNumber + '<input type="hidden"name="mobileall" class="clsQtmmy"value="' + value.mobileNumber + '"/></td>'
+                    +
+                   '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditconTbl(' + index + ", '" + value.personName + "','" + value.phoneNumber + "','" + value.mobileNumber + "', '" + value.resourceId + "', "+ value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+
+        function AddContactInfo() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblcontactDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+
+
+            let id = parseInt($("#contactid").val()) ? parseInt($("#contactid").val()) : 0;
+
+            let contactName = $('#personName').val();
+            if (contactName == null || contactName == '') {
+                alert("Please entry person name first");
+                return
+            }
+
+            let Department = $('#Department').val();
+            if (Department == null || Department == '') {
+                Department = "N/A";
+            }
+
+            let Designation = $('#Designation').val();
+            if (Designation == null || Designation == '') {
+                Designation = "N/A";
+            }
+
+            let mobile = $('#mobileNumber').val();
+            if (mobile == null || mobile == '') {
+                mobile = "N/A";
+            }
+
+            let phone = $('#phoneNumber').val();
+            if (phone == null || phone == '') {
+                alert("Please entry phone number first");
+                return
+            }
+            let resouceid = $('#resourceId').val();
+
+            if (resouceid == '')
+            {
+                resouceid = 0;
+
+            }
+            if (contactName == "")
+            {
+                alert("Please entire contact name");
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEditCon').val()) ? parseInt($('#IsEditCon').val()) : 0;
+            var RowCount = $("#tblcontactDetails tbody>tr").length;
+
+            var dtTable = $("#tblcontactDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + contactName + '<input type="hidden" name="contactall"  id="txtcontactId" class="clscontactDetailsId" value="' + contactName + '"/></td>' +
+                '<td>' + phone + '<input type="hidden"name="phoneall" class="clsQtypdone"value="' + phone + '"/></td>' +
+                '<td>' + mobile + '<input type="hidden"name="mobileall" class="clsQtmmy"value="' + mobile + '"/></td>'
+                //+
+                //'<td>' + Department + '<input type="hidden"name="deptall" class="clsQtmmy"value="' + Department + '"/></td>'
+                //+
+                //'<td>' + Designation + '<input type="hidden"name="desall" class="clsQtmmy"value="' + Designation + '"/></td>'
+                +
+
+
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                //'<a onclick="EditconTbl(' + index + "', '" + phone + "','" + mobile + ", " + resouceid + ", " +id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            index = index + 1;
+            RefreshContact();
+        }
+
+        function ajaxGetItemByCustomerId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+            $("#tblfuelDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+
+                index = $("#tblfuelDetails tbody>tr").length;
+                var dtTable = $("#tblfuelDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.area.itemName + '<input type="hidden" name="fuelidall"class="clsId" value="' + value.Id + '"><input type="hidden" name="itemidall"  id="txtitemId" class="clsitemId"value="' + value.itemId + '"/></td>' +
+
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTbl(' + index + "," + value.itemId + ",'" + value.item.itemName + "', "  + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+        function ajaxGetAreaByCustomerId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblareaDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblareaDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+            $("#tblareaDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+               // console.log(response);
+                index = $("#tblareaDetails tbody>tr").length;
+                var dtTable = $("#tblareaDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.area.areaName + '<input type="hidden" name="areaidall"class="clsId" value="' + value.area.Id + '"><input type="hidden" name="areainfoidall"  id="txtareainfoidall" class="clsitemId"value="' + value.Id + '"/></td>' +
+
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteAreas(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditareaTbl(' + index + "," + value.area.Id + ",'" + value.area.areaName + "', " + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblareaDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+        function ajaxGetTeamByCustomerId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblteamDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblteamDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+            $("#tblteamDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+                console.log(response);
+                index = $("#tblteamDetails tbody>tr").length;
+                var dtTable = $("#tblteamDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.employeeInfo.nameEnglish + '<input type="hidden" name="employeeInfoAll"class="clsId" value="' + value.employeeInfoId + '"><input type="hidden" name="teamInfoId"  id="txtteaminfoidall" class="clsitemId"value="' + value.Id + '"/></td>' +
+                    '<td>' + value.salesLevel.name + '<input type="hidden" name="salesLevelIdAll"class="clsId" value="' + value.salesLevelId + '"></td>' +
+                    '<td>' + value.area.areaName + '<input type="hidden" name="areaIdAll"class="clsId" value="' + value.areaId+ '"></td>' +
+
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteTeams(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditteamTbl(' + index + "," + value.employeeInfoId + ",'" + value.employeeInfo.nameEnglish + "'," + value.salesLevelId + "," + value.areaId + ", " + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblteamDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+
+        function AddTeamInfo() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblteamDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblteamDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#teamInfoId").val()) ? parseInt($("#teamInfoId").val()) : 0;
+            //let nsmId = $('#nsmid').val();
+            //let rsmId = $('#rsmid').val();
+            //let tsmId = $('#tsmid').val();
+            //let nsmName = $('#nsmid option:selected').text();
+            //let rsmName = $('#rsmid option:selected').text();
+            //let tsmName = $('#tsmid option:selected').text();
+            let employeeId = $('#employeeInfoId').val();
+            let employeeName = $('#empName').val();
+            let saleslevelId = $('#salesLevelId').val();
+            let saleslevelName = $('#salesLevelId option:selected').text();
+            let areaId = $('#tareaId').val();
+            let areaName = $('#tareaId option:selected').text();
+           
+
+            if (employeeId == 0) {
+                alert("Please select Employee");
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEditteam').val()) ? parseInt($('#IsEditteam').val()) : 0;
+            var RowCount = $("#tblteamDetails tbody>tr").length;
+
+            //for (i = 0; i < RowCount; i++) {
+            //    var _itemId = $('#txtteaminfoidall' + i + '').val();
+
+            //    if (_itemId == itemId && editOption == 0) {
+            //        alert('You have already added this item!');
+            //        return false
+            //    }
+
+            //}
+
+            var dtTable = $("#tblteamDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + employeeName + '<input type="hidden" name="employeeInfoAll"class="clsId" value="' + employeeId + '"><input type="hidden" name="teamInfoId"  id="txtteaminfoidall' + index + '" class="clsitemId"value="' + id + '"/></td>' +
+                '<td>' + saleslevelName + '<input type="hidden" name="salesLevelIdAll"class="clsId" value="' + saleslevelId + '"></td>' +
+                '<td>' + areaName + '<input type="hidden" name="areaIdAll"class="clsId" value="' + areaId + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteTeams(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditteamTbl(' + index + "," + employeeId + ",'" + employeeName + "'," + saleslevelId + "," + areaId + "," + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblteamDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            RefreshTeam();
+        }
+        function AddAreaInfo() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblareaDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblareaDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#areaInfoId").val()) ? parseInt($("#areaInfoId").val()) : 0;
+            let itemId = $('#areaid').val();
+            let fuelTypeName = $('#areaid option:selected').text();
+
+            if (itemId == 0) {
+                alert("Please select Item");
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblareaDetails tbody>tr").length;
+
+            for (i = 0; i < RowCount; i++) {
+                var _itemId = $('#txtareainfoidall' + i + '').val();
+
+                if (_itemId == itemId && editOption == 0) {
+                    alert('You have already added this item!');
+                    return false
+                }
+
+            }
+
+            var dtTable = $("#tblareaDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" name="areaidall"class="clsId" value="' + itemId + '"><input type="hidden" name="areainfoidall"  id="txtareainfoidall' + index + '" class="clsitemId"value="' + id + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteAreas(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditareaTbl(' + index + "," + itemId + ",'" + fuelTypeName + "', " + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblareaDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            RefreshArea();
+        }
+        function Delete(index) {
+            $("#tblfuelDetails #" + index).remove();
+            return false;
+        }
+        function Delete(index) {
+            $("#tblfuelDetails #" + index).remove();
+            return false;
+        }
+        function DeleteContact(index) {
+            $("#tblcontactDetails #" + index).remove();
+            return false;
+        }
+        function EditconTbl(index, contactName, phone, mobile, resourceId, Id) {
+            var rightIndex = index;
+
+            $('#contactid').val(Id);
+            $('#phoneNumber').val(phone);
+            $('#mobileNumber').val(mobile);
+            $('#personName').val(contactName);
+            $('#contactid').val(resourceId);
+            $("#IsEditCon").val(1);
+
+        window.localStorage.setItem('holdIndex', null);
+        if (rightIndex != null) {
+            window.localStorage.setItem('holdIndex', rightIndex);
+        }
+        }
+        function EditTbl(index, itemId, Id) {
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+            $('#customerItemInfoId').val(Id);
+            $('#itemId').val(itemId);
+            $('#itemAuto').val(name);
+            $('#itemName').val(name);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+        function EditareaTbl(index, itemId, Id) {
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+            $('#areaInfoId').val(Id);
+            $('#areaid').val(itemId);
+            $('#areaAuto').val(name);
+            $('#areaname').val(name);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+        function EditteamTbl(index, nsmId,empname,rsmId,tsmId, Id) {
+            var rightIndex = index;
+            $("#IsEditteam").val(1);
+            $('#teamInfoId').val(Id);
+            $('#employeeId').val(nsmId);
+            Common.Ajax('GET', '/api/global/getemployeepicbyId/' + nsmId, [], 'json', Getphoto, false);
+            //Common.Ajax('GET', '/global/api/GetparentsalesdeployebyId/' + nsmId, [], 'json', orgrsm, false);
+            $('#salesLevelId').val(rsmId);
+           // Common.Ajax('GET', '/global/api/GetparentsalesdeployebyId/' + rsmId, [], 'json', orgtsm, false);
+            $('#tareaId').val(tsmId);
+            $('#empName').val(empname);
+            //$('#areaname').val(name);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+
+
+
+        function openTab(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace("active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += "active";
+        }
+
+     document.getElementById("@Model.actionType").click();
+        $(document).ready(function () {
+
+            $("#defaultOpen").css("background-color", "lightgrey");
+            $('#btnSubmit').click(function () {
+                if ($('#nameEnglish').val() == "") {
+
+                    $("#defaultOpen").css("background-color", "lightgrey");
+
+                    $('#defaultOpen').click();
+
+                }
+            })
+            Common.Ajax('GET', '/api/global/getEmployeeInfoinDep/', [], 'json', GetEmployeeList);
+            $('#defaultOpen').click(function () {
+
+
+                $("#defaultOpen").css("background-color", "lightgrey");
+                $("#contacts").css("background-color", "white");
+                $("#address").css("background-color", "white");
+
+                $("#fuel").css("background-color", "white");
+                $("#area").css("background-color", "white");
+                $("#SalesTeam").css("background-color", "white");
+
+            })
+            $('#contacts').click(function () {
+
+                $("#contacts").css("background-color", "lightgrey");
+                $("#defaultOpen").css("background-color", "white");
+                $("#address").css("background-color", "white");
+
+                $("#fuel").css("background-color", "white");
+                $("#area").css("background-color", "white");
+                $("#SalesTeam").css("background-color", "white");
+
+            })
+            $('#address').click(function () {
+
+                $("#address").css("background-color", "lightgrey");
+                $("#defaultOpen").css("background-color", "white");
+                $("#contacts").css("background-color", "white");
+
+                $("#fuel").css("background-color", "white");
+                $("#area").css("background-color", "white");
+                $("#SalesTeam").css("background-color", "white");
+
+            })
+            //$('#fuel').click(function () {
+
+            //    $("#fuel").css("background-color", "lightgrey");
+            //    $("#defaultOpen").css("background-color", "white");
+            //    $("#address").css("background-color", "white");
+            //    $("#contacts").css("background-color", "white");
+            //    $("#area").css("background-color", "white");
+
+
+            //})
+            $('#area').click(function () {
+                $("#area").css("background-color", "lightgrey");
+                $("#fuel").css("background-color", "white");
+                $("#defaultOpen").css("background-color", "white");
+                $("#address").css("background-color", "white");
+                $("#contacts").css("background-color", "white");
+                $("#SalesTeam").css("background-color", "white");
+
+
+            })
+            $('#SalesTeam').click(function () {
+                $("#area").css("background-color", "white");
+                $("#fuel").css("background-color", "white");
+                $("#defaultOpen").css("background-color", "white");
+                $("#address").css("background-color", "white");
+                $("#contacts").css("background-color", "white");
+                $("#SalesTeam").css("background-color", "lightgrey");
+
+
+            })
+
+
+            Common.Ajax('GET', '/global/api/divisions/1', [], 'json', orgDivision, false);
+
+            Common.Ajax('GET', '/global/api/GetAllItem', [], 'json', ajaxItem, false);
+
+
+            $("#txtorgDivision").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', orgDistrict);
+            });
+            $("#nsmid").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetparentsalesdeployebyId/' + id, [], 'json', orgrsm);
+            });
+            $("#rsmid").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetparentsalesdeployebyId/' + id, [], 'json', orgtsm);
+            });
+
+            $("#txtorgDistrict").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', orgThana);
+            });
+
+            //  Present
+
+
+        //Organization
+
+            if (@ViewBag.addcount.division.Id> 0) {
+                var masterId = @Model.GetResourcebyId.Id;
+                Common.Ajax('GET', '/global/api/Distributor/GetAddressListByResourceId/' + masterId, [], 'json', ajaxGetAddress);
+
+            $('#txtorgDivision').val(@ViewBag.addcount.division.Id);
+            var divisionId = @ViewBag.addcount.division.Id;
+
+            Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', orgDistrict, false);
+
+            $('#txtorgDistrict').val(@ViewBag.addcount.district.Id);
+            var districtId = @ViewBag.addcount.district.Id;
+            Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', orgThana, false);
+
+            $('#orgUpazila').val(@ViewBag.addcount.thana.Id);
+        }
+
+            if (@Model.GetResourcebyId.Id> 0)
+            {
+                $("#distributorTypeId").val(@Model.relSupplierCustomerResourse?.distributorTypeId);
+                var masterId = @Model.GetResourcebyId.Id;
+                Common.Ajax('GET', '/global/api/Distributor/GetContacByResourceId/' + masterId, [], 'json', ajaxGetContactId);
+                //Common.Ajax('GET', '/global/api/Distributor/GetCustomerItemInfobyResourceId/' + masterId, [], 'json', ajaxGetItemByCustomerId);
+                Common.Ajax('GET', '/global/api/Distributor/GetCustomerareaInfobyResourceId/' + masterId, [], 'json', ajaxGetAreaByCustomerId);
+                Common.Ajax('GET', '/global/api/Distributor/GetCustomerteamInfobyResourceId/' + masterId, [], 'json', ajaxGetTeamByCustomerId);
+
+
+
+            }
+
+        });
+        function GetEmployeeList(response) {
+            $('#empName').empty();
+            $("#employeeInfoId").val('');
+            $("#designation").val('');
+
+            var lstLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.department = option.department.deptName;
+                obj.joiningDate = option.joiningDate;
+                obj.designation = option.designation;
+                obj.value = option.nameEnglish + ' (' + option.employeeCode + ')';
+                lstLedger[lstLedger.length] = obj;
+            });
+            $('#empName').autocomplete({
+                source: lstLedger,
+                select: function (event, ui) {
+                    $('#empName').val(ui.item.value);
+                    $("#joiningDate").val(ui.item.joiningDate);
+                    $("#department").val(ui.item.department);
+                    $("#designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+                    Common.Ajax('GET', '/api/global/getemployeepicbyId/' + ui.item.key, [], 'json', Getphoto, false);
+
+                }
+            });
+        }
+        function Getphoto(response) {
+            console.log(response);
+            $('#pic').empty();
+            if (response != null) {
+                $('#pic').attr("src", "/" + response.url);
+            }
+            else {
+                $('#pic').attr("src", "/Upload/Photo/noimage.jpg");
+            }
+
+            //$.each(response, function (i, item) {
+
+
+            //});
+
+
+        }
+
+        function orgDivision(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#txtorgDivision').empty();
+            $('#txtorgDivision').append(options);
+        }
+        function orgDistrict(response) {
+            $('#txtorgDistrict').empty();
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+
+            $('#txtorgDistrict').append(options);
+            if ($('#IsEditadd').val() == 1)
+            {
+                $('#txtorgDistrict').val($('#distId').val());
+            }
+        }
+
+        function orgtsm(response) {
+            $('#tsmid').empty();
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.employeeInfo.nameEnglish+ '</option>';
+            });
+
+            $('#tsmid').append(options);
+
+        }
+        function orgrsm(response) {
+            $('#tsmid').empty();
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.employeeInfo.nameEnglish + '</option>';
+            });
+
+            $('#rsmid').append(options);
+
+        }
+
+        function orgThana(response) {
+            $('#txtorgUpazila').empty();
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+
+            $('#txtorgUpazila').append(options);
+
+            if ($('#IsEditadd').val() == 1) {
+                $('#txtorgUpazila').val($('#thanaId').val());
+            }
+        }
+
+        function ajaxItem(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.name = option.itemName;
+
+                obj.value = option.itemName + ' (' + option.itemCode + ')';
+                obj.accountCode = option.itemCode;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#itemAuto').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#itemId').val(ui.item.key);
+                    $("#itemName").val(ui.item.name);
+                }
+            });
+        }
+    </script>
+}
+
+
+@section StyleMD{
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        /* Style the tab */
+        .tab {
+            float: left;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            width: 100%;
+            font-size: 1.1em;
+        }
+
+            /* Style the buttons that are used to open the tab content */
+            .tab button {
+                display: block;
+                background-color: inherit;
+                color: black;
+                padding: 22px 16px;
+                width: 100%;
+                border: none;
+                outline: none;
+                text-align: left;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                /* Change background color of buttons on hover */
+                .tab button:hover {
+                    background-color: #ddd;
+                }
+
+                /* Create an active/current "tab button" class */
+                .tab button.active {
+                    background-color: #ccc;
+                }
+
+        /* Style the tab content */
+        .tabcontent {
+            border: 1px solid #ccc;
+        }
+
+        .form-control-new {
+            color: #606066 !important;
+            font-size: 14px !important;
+            padding: 1px 4px 1px 8px;
+            border: 1px solid #606066;
+            height: 30px;
+            width: 90%;
+        }
+
+        .active {
+            width: 5px;
+            height: 5px;
+            background: green;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .inactive {
+            width: 5px;
+            height: 5px;
+            background: blue;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .sold {
+            width: 5px;
+            height: 5px;
+            background: gray;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .inshop {
+            width: 5px;
+            height: 5px;
+            background: yellow;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .outservice {
+            width: 5px;
+            height: 5px;
+            background: red;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+    </style>
+}

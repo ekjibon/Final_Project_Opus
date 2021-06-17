@@ -1,0 +1,488 @@
+﻿@model ProgramMasterView
+@*@{
+        ViewData["Title"] = "ProjectActivityByLocation";
+    }*@
+
+<section>
+    <br />
+    <form id="myForm">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="font-weight-bold" style="color:black">Create Activity By Loaction</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-4">Project Impact</label>
+                            <div class="col-md-8">
+                                <select class="form-control" name="projectId" id="impactId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @*@foreach (var data in Model.programImpacts)
+                                        {
+                                            <option value="@data.Id">@data.name</option>
+                                        }*@
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-4">Remarks</label>
+                            <div class="col-md-8">
+                                <input type="text" name="remarks" id="remarks" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="card">
+            <div class="card-header">
+                <h5 class="font-weight-bold" style="color: black;">Details Information</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+
+                    <table id="tblProject" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Outcome
+                                    <button type="button" onclick="AddFirstNode()" class="btn btn-success" style="font-weight:bold;font-size:20px;"><i class="fas fa-plus fa-w-1"></i></button>
+                                </th>
+                                <th>
+                                    Output
+                                    <button type="button" onclick="AddSecondNode()" class="btn btn-success" style="font-weight:bold;font-size:20px;"><i class="fas fa-plus fa-w-1"></i></button>
+                                </th>
+                                @*<th>Unit</th>
+                                    <th>QTY</th>*@
+                                <th>
+                                    Activities
+                                    <button type="button" onclick="AddThirdNode()" class="btn btn-success" style="font-weight:bold;font-size:20px;"><i class="fas fa-plus fa-w-1"></i></button>
+                                </th>
+                                @*<th>Unit</th>*@
+                                <th>Values</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr id="tr_id_1">
+                                <td style="padding-left:0px;padding-right:0px;vertical-align:middle;" id="first_node_first_child_1">
+                                    <input name="location" style="width:96%" />
+                                    <input type="hidden" name="projectLocationId" value="0" style="width:96%" />
+                                </td>
+                                <td style="padding-left:0px;padding-right:0px;vertical-align:middle;" id="first_node_of_second_node_first_child_1">
+                                    <input name="activity" style="width:96%" />
+                                    
+                                </td>
+                                <td style="padding-left:0px;padding-right:0px;" class="common_item_cls_1">
+                                    <input type="text" id="itemspecification_1" style="width:96%">
+                                    <input type="hidden" id="itemSpecification_id_1" name="item" />
+                                    <input type="hidden" id="locationIndexForActivity_id_1" name="locationIndexForActivity" value="0" />
+                                </td>
+                                <td style="padding-left:0px;padding-right:0px;" class="common_item_cls_1">
+                                    <input name="itemQty" style="width:96%" />
+                                    <input type="hidden" id="locationIndexForItem_id_1" name="locationIndexForItem" value="0" />
+                                    <input type="hidden" id="activityIndexForItem_id_1" name="activityIndexForItem" value="0" />
+                                </td>
+                                <td style="padding-left:0px;padding-right:0px;"></td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <button type="button" onclick="formSubmitFun()" class="btn btn-success btn-lg float-right">Submit</button>
+                <br />
+            </div>
+        </div>
+
+        <div style="height:350px;"></div>
+    </form>
+</section>
+
+@section Scripts
+    {
+
+    <script type="text/javascript">
+
+        @*var allActivity = @Html.Raw(Json.Serialize(Model.workProgressActivityTypes));*@
+        $(document).ready(function () {
+
+            //Common.Ajax('GET', '/global/api/GetAllItemSpecification/', [], 'json', GetItemSpecificationList, 1);
+            GetItemSpecificationListApiCall(1);
+            Common.Ajax('GET', '/global/api/getUserInfoList/', [], 'json', GetAllUserList);
+            GetUnitListApiCall(1);
+            GetUnitListForItemsApiCall(1);
+
+        });
+
+        function GetItemSpecificationListApiCall(i) {
+
+            $.ajax({
+                url: "/global/api/GetAllItemSpecification",
+                type: "get",
+                success: function (res) {
+                    //console.log(res);
+                    GetItemSpecificationList(res, i)
+                }
+            })
+        }
+
+        function GetItemSpecificationList(response, i) {
+            //console.log(i);
+            var lstPOP = [];
+            // console.log(response);
+            $.each(response, function (i, option) {
+                //  alert(option.itemName);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                lstPOP[lstPOP.length] = obj;
+            });
+            $('#itemspecification_' + i).autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+
+                    $("#itemspecification_" + i).val(ui.item.value);
+                    $("#itemSpecification_id_" + i).val(ui.item.key);
+
+                }
+            });
+            return false;
+        }
+
+        // units for activity
+
+        function GetUnitListApiCall(i) {
+
+            $.ajax({
+                url: "/global/api/Project/GetAllUnits",
+                type: "get",
+                success: function (res) {
+                    //console.log(res);
+                    GetUnitList(res, i)
+                }
+            })
+        }
+
+        function GetUnitList(response, i) {
+            //console.log(i);
+            var lstPOP = [];
+            // console.log(response);
+            $.each(response, function (i, option) {
+                //  alert(option.itemName);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.unitName;
+                lstPOP[lstPOP.length] = obj;
+            });
+            $('#activityUnit_' + i).autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+
+                    $("#activityUnit_" + i).val(ui.item.value);
+                    $("#activityUnit_id_" + i).val(ui.item.key);
+
+                }
+            });
+            return false;
+        }
+
+        // end
+
+        // units for items
+
+        function GetUnitListForItemsApiCall(i) {
+
+            $.ajax({
+                url: "/global/api/Project/GetAllUnits",
+                type: "get",
+                success: function (res) {
+                    //console.log(res);
+                    GetUnitListForItems(res, i)
+                }
+            })
+        }
+
+        function GetUnitListForItems(response, i) {
+            //console.log(i);
+            var lstPOP = [];
+            // console.log(response);
+            $.each(response, function (i, option) {
+                //  alert(option.itemName);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.unitName;
+                lstPOP[lstPOP.length] = obj;
+            });
+            $('#itemUnit_' + i).autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+
+                    $("#itemUnit_" + i).val(ui.item.value);
+                    $("#itemUnit_id_" + i).val(ui.item.key);
+
+                }
+            });
+            return false;
+        }
+
+        // end
+
+        function GetAllUserList(response) {
+            var lstUser = [];
+            //console.log(response);
+            $.each(response, function (i, option) {
+                //  alert(option.itemName);
+                var obj = new Object();
+                obj.key = option.aspnetId;
+                obj.value = option.EmpName;
+                lstUser[lstUser.length] = obj;
+            });
+            $('#userName').autocomplete({
+                source: lstUser,
+                select: function (event, ui) {
+
+                    $("#userName").val(ui.item.value);
+                    $("#applicationUserId").val(ui.item.key);
+
+                }
+            });
+
+        }
+
+        function formSubmitFun() {
+
+            var data = $("#myForm").serialize();
+
+            $.ajax({
+                url: "/SCMMasterData/Project/ProjectActivityByLocation",
+                type: "post",
+                data: data,
+                success: function (res) {
+                    console.log(res);
+                }
+            })
+        }
+
+        var firstNodeIndex = 1;
+        var secondNodeIndex = 1;
+        var thirdNodeIndex = 1;
+        var rowSpan = 2;
+        var rowSpan_02 = 2;
+        var lastClick = 1;
+        var newClick = 0;
+
+        var commonCls = 1;
+        var commonActivity = 1;
+        var commonItem = 0;
+        var locationVal = 0;
+        var activityVal = 0;
+        var lastClickCheckedForIndex = 1;
+
+        function AddFirstNode() {
+
+            firstNodeIndex = parseInt(firstNodeIndex) + 1;
+
+            rowSpan = 2;
+            rowSpan_02 = 2;
+            lastClick = 1;
+            commonItem = commonItem + 1;
+            locationVal = locationVal + 1;
+            activityVal = activityVal + 1;
+            lastClickCheckedForIndex = 1;
+            $('#tblProject > tbody:last-child').append('<tr class="common_cls_row_' + commonCls +'" id="tr_id_' + firstNodeIndex + '">' +
+                '<td style="padding-left:0px;padding-right:0px;" id="first_node_first_child_' + firstNodeIndex + '"><input  name="location" style="width:96%" /></td > ' +
+                '<td style="padding-left:0px;padding-right:0px;" id="first_node_of_second_node_first_child_' + firstNodeIndex + '"><input name="activity" style="width:100%" /></td >' +     
+                
+                '<td style="padding-left:0px;padding-right:0px;" class="item_common_item_cls_' + commonItem + ' common_item_cls_' + commonItem + '" id="first_node_of_third_node_first_child_' + firstNodeIndex + '">'+
+                '<input type = "text" id = "itemspecification_' + firstNodeIndex + '" style = "width:96%" ></td > ' +
+                '<input type="hidden" id="itemSpecification_id_' + firstNodeIndex + '" name="item" />' +
+                '<input type="hidden" id="locationIndexForActivity_id_' + firstNodeIndex + '" name="locationIndexForActivity" value="' + locationVal + '"/>' +
+                
+                '<td style="padding-left:0px;padding-right:0px;" class="item_common_item_cls_' + commonItem + '" id="first_node_of_third_node_third_child_' + firstNodeIndex + '"><input  name="itemQty" style="width:96%" />' +
+                '<input type="hidden" id="locationIndexForItem_id_' + firstNodeIndex + '" name="locationIndexForItem" value="' + locationVal + '"/>' +
+                ' <input type="hidden" id="activityIndexForItem_id_' + firstNodeIndex + '" name="activityIndexForItem" value="' + activityVal + '"/>' +
+                '</td > ' +
+                '<td style=""><button type="button" class="btn btn-danger" onclick="locationDeleteFun(' + firstNodeIndex + "," + commonCls + ')"  style="font-weight:bold;font-size:20px;"><i class="fas fa-trash-alt"></i></button></td></tr>');
+
+            //$("#activity_" + firstNodeIndex).append('<option value="">Select</option>');
+            //$.each(allActivity, function (i, e) {
+
+            //    $("#activity_" + firstNodeIndex).append('<option value="' + e.Id + '">' + e.activityName +'</option>')
+            //});
+
+            GetItemSpecificationListApiCall(firstNodeIndex);
+            GetUnitListApiCall(firstNodeIndex);
+            GetUnitListForItemsApiCall(firstNodeIndex);
+            commonCls = commonCls + 1;
+            commonActivity = commonActivity + 1;
+
+        }
+
+        function AddSecondNode() {
+
+            secondNodeIndex = parseInt(secondNodeIndex) + 1;
+            rowSpan_02 = 2;
+            lastClick = 2;
+            commonItem = commonItem + 1;
+            activityVal = activityVal + 1;
+
+            //alert("common item " + commonItem);
+            //console.log("method second : " + firstNodeIndex + ' _ ' + secondNodeIndex + ' _ ' + thirdNodeIndex + ' _row span_1 = ' + rowSpan + ' _row span_2 = ' + rowSpan_02);
+            $('#tblProject > tbody:last-child').append('<tr class="common_cls_row_' + commonCls + ' common_activity_cls_' + commonActivity +'" id="tr_id_' + firstNodeIndex + "_" + secondNodeIndex + '">' +
+                '<td style="padding-left:0px;padding-right:0px;" id="second_node_first_child_' + secondNodeIndex + '"><input name="activity" style="width:96%" /></td>' +
+                '<td style="padding-left:0px;padding-right:0px;" id="second_node_second_child_' + secondNodeIndex + '"><input type="text" id="itemspecification_2' + secondNodeIndex + '" style="width:96%">' +
+                '<input type="hidden"  id="itemSpecification_id_2' + secondNodeIndex + '" name="item" />' +
+                ' <input type="hidden"  id="locationIndexForActivity_id_2' + secondNodeIndex + '" name="locationIndexForActivity" value="' + locationVal + '"/>' +
+                '</td > ' +
+                //'<td style="padding-left:0px;padding-right:0px;" class="item_common_item_cls_' + commonItem + '">' +
+                //'<input id="itemUnit_2' + secondNodeIndex + '" style="width:96%" />' +
+                //'<input type="hidden" name="itemUnit" id="itemUnit_id_2' + secondNodeIndex + '" style="width:96%" />' +
+                //'</td>' +
+                '<td style="padding-left:0px;padding-right:0px;" class="item_common_item_cls_' + commonItem + '">'+
+                '<input name = "itemQty" style = "width:96%" /></td > ' +
+                '<input type="hidden" id="locationIndexForItem_id_2' + secondNodeIndex + '" name="locationIndexForItem" value="' + locationVal + '"/>' +
+                '<input type="hidden" id="activityIndexForItem_id_2' + secondNodeIndex + '" name="activityIndexForItem" value="' + activityVal + '"/>' +
+                '<td style=""><button type="button" class="btn btn-danger" onclick="itemDeleteFun(' + firstNodeIndex + "," + secondNodeIndex + "," + thirdNodeIndex + "," + commonItem + "," + rowSpan + "," + rowSpan_02 + "," + lastClick + ')" style="font-weight:bold;font-size:20px;"><i class="fas fa-trash-alt"></i></button></td>' +
+                '</tr>');
+
+            $('#tblProject tbody').find("#first_node_first_child_" + firstNodeIndex).attr('rowspan', rowSpan).css('vertical-align', 'middle').css('text-align', 'center');
+
+            rowSpan++;
+
+            //$("#activity2_" + secondNodeIndex).append('<option value="">Select</option>');
+            //$.each(allActivity, function (i, e) {
+
+            //    $("#activity2_" + secondNodeIndex).append('<option value="' + e.Id + '">' + e.activityName + '</option>')
+            //});
+
+            GetItemSpecificationListApiCall('2' + secondNodeIndex);
+            GetUnitListApiCall('2' + secondNodeIndex);
+            GetUnitListForItemsApiCall('2' + secondNodeIndex);
+
+        }
+
+        function AddThirdNode() {
+
+            thirdNodeIndex = parseInt(thirdNodeIndex) + 1;
+            lastClickCheckedForIndex = 3;
+            //console.log("method third : " + firstNodeIndex + ' _ ' + secondNodeIndex + ' _ ' + thirdNodeIndex + ' _row span_1 = ' + rowSpan + ' _row span_2 = ' + rowSpan_02 + ' _last click = ' + lastClick);
+
+            $('#tblProject > tbody:last-child').append('<tr class="common_cls_row_' + commonCls + ' common_item_cls_' + commonItem + '" id="tr_id_' + firstNodeIndex + "_" + secondNodeIndex + "_" + thirdNodeIndex + '">' +
+                '<td style="padding-left:0px;padding-right:0px;" >'+
+                '<input maxlength = "150" type = "text" id = "itemspecification_3' + thirdNodeIndex + '" style = "width:96%" ></td > ' +
+                ' <input type="hidden" id="itemSpecification_id_3' + thirdNodeIndex + '" name="item" />' +
+                //'<td style="padding-left:0px;padding-right:0px;">' +
+                //'<input id="itemUnit_3' + thirdNodeIndex + '" style="width:96%" />' +
+                //'<input type="hidden" name="itemUnit" id="itemUnit_id_3' + thirdNodeIndex + '" style="width:96%" />' +
+                //'</td > ' +
+                '<td style="padding-left:0px;padding-right:0px;"><input name="itemQty" style="width:96%" /></td>' +
+                '<input type="hidden" id="locationIndexForItem_id_3' + thirdNodeIndex + '" name="locationIndexForItem" value="' + locationVal + '"/>' +
+                '<input type="hidden" id="activityIndexForItem_id_3' + thirdNodeIndex + '" name="activityIndexForItem" value="' + activityVal + '"/>' +
+                '<td style=""><button type="button" class="btn btn-danger" onclick="itemDeleteFun(' + firstNodeIndex + "," + secondNodeIndex + "," + thirdNodeIndex + "," + commonItem + "," + rowSpan + "," + rowSpan_02 + "," + lastClick + ')" style="font-weight:bold;font-size:20px;"><i class="fas fa-trash-alt"></i></button></td>' +
+                '</tr>');
+
+            $('#tblProject tbody').find("#first_node_first_child_" + firstNodeIndex).attr('rowspan', rowSpan).css('vertical-align', 'middle').css('text-align', 'center');
+
+            if (lastClick == 1) {
+                //alert("last one");
+                $('#tblProject tbody').find("#first_node_of_second_node_first_child_" + firstNodeIndex).attr('rowspan', rowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                $('#tblProject tbody').find("#first_node_of_second_node_second_child_" + firstNodeIndex).attr('rowspan', rowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                $('#tblProject tbody').find("#first_node_of_second_node_third_child_" + firstNodeIndex).attr('rowspan', rowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+            }
+            else if (lastClick == 2) {
+                //alert('last two');
+                $('#tblProject tbody').find("#second_node_first_child_" + secondNodeIndex).attr('rowspan', rowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                //$('#tblProject tbody').find("#second_node_second_child_" + secondNodeIndex).attr('rowspan', rowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                //$('#tblProject tbody').find("#second_node_third_child_" + secondNodeIndex).attr('rowspan', rowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+            }
+
+
+
+            rowSpan++;
+            rowSpan_02++;
+
+            //$("#activity3_" + thirdNodeIndex).append('<option value="">Select</option>');
+            //$.each(allActivity, function (i, e) {
+
+            //    $("#activity3_" + thirdNodeIndex).append('<option value="' + e.Id + '">' + e.activityName + '</option>')
+            //});
+
+            GetItemSpecificationListApiCall('3' + thirdNodeIndex);
+            GetUnitListApiCall('3' + thirdNodeIndex);
+            GetUnitListForItemsApiCall('3' + thirdNodeIndex);
+
+        }
+
+        function locationDeleteFun(firstIndex, commonCls) {
+            //console.log(firstIndex + "_" + secondIndex + "_" + thirdIndex);
+            swal({
+                title: 'Are you sure?', text: 'Do you want Delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Delete it!'
+            }).then(function () {
+
+                if (parseInt(firstIndex) > 0 && parseInt(commonCls) > 0) {
+                    $("#tblProject > tbody").find("#tr_id_" + firstIndex).remove();
+                }
+                else if (parseInt(firstIndex) > 0 && parseInt(secondIndex) > 0) {
+                    $("#tblProject > tbody").find("#tr_id_" + firstIndex + "_" + secondIndex).remove();
+                }
+                else if (parseInt(firstIndex) > 0) {
+                    $("#tblProject > tbody").find("#tr_id_" + firstIndex).remove();
+                }
+            });
+
+        }
+
+        function itemDeleteFun(firstNodeIndex, secondNodeIndex, thirdNodeIndex, commonItem, rowSpan, rowSpan_02, lastClick) {
+            console.log(firstNodeIndex + "_" + secondNodeIndex + "_" + thirdNodeIndex + "_" + commonItem + "_" + rowSpan + "_" + rowSpan_02);
+
+            var countItemLen = 0;
+
+            $.each($(".common_item_cls_" + commonItem), function (i, e) {
+                console.log("========Item Delete Fun ==========" + "\n i = " + i);
+                console.log(e);
+                countItemLen = countItemLen + 1;
+            })
+            console.log(countItemLen);
+            if (countItemLen > 1) {
+                var locationCol = $("#first_node_first_child_" + firstNodeIndex).attr('rowspan');
+                var newRowSpan = locationCol - 1;
+                $('#tblProject tbody').find("#first_node_first_child_" + firstNodeIndex).attr('rowspan', newRowSpan).css('vertical-align', 'middle').css('text-align', 'center');
+
+                if (lastClick == 1) {
+                    var activityCol = $("#first_node_of_second_node_first_child_" + firstNodeIndex).attr('rowspan');
+                    var newRowSpan_02 = activityCol - 1;
+                    $('#tblProject tbody').find("#first_node_of_second_node_first_child_" + firstNodeIndex).attr('rowspan', newRowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                    $('#tblProject tbody').find("#first_node_of_second_node_second_child_" + firstNodeIndex).attr('rowspan', newRowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                    $('#tblProject tbody').find("#first_node_of_second_node_third_child_" + firstNodeIndex).attr('rowspan', newRowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                }
+                else if (lastClick == 2) {
+                    var activityCol = $("#second_node_first_child_" + secondNodeIndex).attr('rowspan');
+                    var newRowSpan_02 = activityCol - 1;
+                    $('#tblProject tbody').find("#second_node_first_child_" + secondNodeIndex).attr('rowspan', newRowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                    //$('#tblProject tbody').find("#second_node_second_child_" + secondNodeIndex).attr('rowspan', newRowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                    //$('#tblProject tbody').find("#second_node_third_child_" + secondNodeIndex).attr('rowspan', newRowSpan_02).css('vertical-align', 'middle').css('text-align', 'center');
+                }
+
+                //$('#tblProject tbody').find("#tr_id_" + firstNodeIndex + "_" + secondNodeIndex + "_" + thirdNodeIndex).remove();
+                $('#tblProject tbody').find("#tr_id_" + firstNodeIndex + "_" + secondNodeIndex ).remove();
+            }
+            else if (countItemLen == 1) {
+                $('#tblProject tbody').find("#tr_id_" + firstNodeIndex + "_" + secondNodeIndex + "_" + thirdNodeIndex).remove();
+                $('#tblProject tbody').find("#tr_id_" + firstNodeIndex + "_" + secondNodeIndex).remove();
+            }
+        }
+
+    </script>
+}
+

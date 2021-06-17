@@ -1,0 +1,171 @@
+﻿@model BankBranchViewModel
+@{
+    ViewData["Title"] = "FI Info";
+    Layout = "~/Areas/CRMMasterData/Views/Shared/_CRMMasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Financial Institute/Bank Info</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="CRMMasterData" asp-controller="Bank" asp-action="BankInfo" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="bankId" id="bankId" value="0" />
+
+                    <label for="bankName" class="col-sm-3 col-form-label">FI/Bank Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="bankName" id="bankName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="fiTypeId" class="col-sm-3 col-form-label">Financial Institute Type</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="fiTypeId" name="fiTypeId" data-parsley-required="true">
+                            <option value="">Select</option>
+                            @foreach (var data in Model.fITypes)
+                            {
+                                <option value="@data.Id">@data.fiTypeName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">All Financial Institute/Bank List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="bankInfoTable">
+                    <thead>
+                        <tr>
+                            <th>Financial Institute/Bank Name</th>
+                            <th>Financial Institute Type</th>
+                            <th>Action</th>
+</thead>
+                    <tbody>
+                        @foreach (var data in Model.banks)
+                        {
+                        <tr>
+                            <td>@data.bankName</td>
+                            <td>@data?.fiType?.fiTypeName</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id, '@data.bankName',@data.fiTypeId)" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+
+            $('#bankInfoTable').DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Employee Training'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        exportOptions: {
+                            columns: [0, 1]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+
+        });
+
+        function Edit(Id, name, fiTypeId) {
+            $("#bankId").val(Id);
+            $("#bankName").val(name);
+            $("#fiTypeId").val(fiTypeId);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteBankById", "Bank")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/CRMMasterData/Bank/BankInfo";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}
+
+
+

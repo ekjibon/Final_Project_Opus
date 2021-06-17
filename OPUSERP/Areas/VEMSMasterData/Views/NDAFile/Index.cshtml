@@ -1,0 +1,52 @@
+﻿@model NDAFileViewModel
+@{
+    ViewData["Title"] = "NDA File";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">Upload NDA File</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<a class="btn btn-sm btn-info" style="float:right;" href="/VEMSMasterData/CodeOfContact/Create/">Add New</a>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <form id="frmDoc" asp-area="VEMSMasterData" asp-controller="NDAFile" asp-action="SaveDocLeadFile" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="row">
+                        <div class="form-group" enctype="multipart/form-data" style="width:100%;" >
+                            <input class="form-control input-sm" style="width:100%;" type="file" id="docformFile" name="formFile" value="@Model?.nDAFile?.fileNmae" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" style="background-color:#024972;" class="btn-primary btn-sm">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#codeOfContactTable').DataTable();
+        });
+
+        function showdoc(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_doc').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,161 @@
+﻿@model StockInViewModel
+@{
+    ViewData["Title"] = "Stock Summary Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Stock Summary Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-2 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="fromDate" id="fromDate" class="form-control input-group-sm" autocomplete="off" />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" autocomplete="off" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <br />
+                            <button id="PrintButton" class="btn btn-success btn-sm" title="Print Preview" style="width:80px;" onclick="PrintReport()">Preview</button>
+                            <button id="SubmitButton" class="btn btn-facebook btn-sm" title="Load" style="width:80px;">Load</button>
+                            <button id="Refreshbutton" class="btn btn-danger btn-sm" title="Refresh" onclick="Refresh()" style="width:80px;">Refresh</button>&nbsp;
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="investmentTable" style="width:100%;">
+                    <thead>                        
+                        <tr>
+                            <th>SL#</th>
+                            <th>Name of items</th>
+                            <th>Item specification</th>
+                            <th>Opening Quantity</th>
+                            <th>Opening Value</th>
+                            <th>Rec./Pur. Quantity</th>
+                            <th>Rec./Pur. Value</th>
+                            <th>Issue Quantity</th>
+                            <th>Issue Value</th>
+                            <th>Balance Quantity</th>
+                            <th>Balance Value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker();
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker();
+
+            $("#SubmitButton").click(function (e) {
+                let fromDate = $('#fromDate').val() ? $('#fromDate').val() : "";
+                let toDate = $('#toDate').val() ? $('#toDate').val() : "";
+                if (fromDate == '' || fromDate == null) {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                }
+                else if (toDate == '' || toDate == null) {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                //GetList(fromDate, toDate);
+                Common.Ajax('GET', '/Inventory/Stock/GetStockSummary/?FDate=' + fromDate + "&TDate=" + toDate, [], 'json', ajaxGetList);
+            });
+        });
+
+        function ajaxGetList(response) {
+            if (response == null) {
+                return false;
+            }
+            $("#investmentTable").DataTable().destroy();
+            var table = $("#investmentTable tbody");
+            table.empty();
+            var index = 0;
+            for (var i = 0; i < response.length; i++) {
+                index = i + 1;
+                table.append('<tr><td>' + index + '</td>'
+                    + '<td>' + response[i].itemName + '</td>'
+                    + '<td>' + response[i].specificationName + '</td>'
+                    + '<td align="center">' + response[i].openQty + '</td>'
+                    + '<td align="right">' + addCommas(response[i].openAmount) + '</td>'
+                    + '<td align="center">' + response[i].inQty + '</td>'
+                    + '<td align="right">' + addCommas(response[i].receiveAmount) + '</td>'
+                    + '<td align="center">' + response[i].outQty + '</td>'
+                    + '<td align="right">' + addCommas(response[i].issueAmount) + '</td>'
+                    + '<td align="center">' + response[i].balance + '</td>'                   
+                    + '<td align="right">' + addCommas(response[i].balanceAmount) + '</td>'                    
+                    + '</tr >');
+            }
+            $("#investmentTable").DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        },
+                        title: "Stock Summary",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        },
+                        title: "Stock Summary",
+                    }
+                ]
+            });
+        }  
+
+        function PrintReport() {
+            let fromDate = $('#fromDate').val() ? $('#fromDate').val() : "";
+            let toDate = $('#toDate').val() ? $('#toDate').val() : "";            
+            
+            window.open('/Inventory/Stock/StockSummaryView?fromDate=' + fromDate + '&toDate=' + toDate, '_blank');
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+    </script>
+}

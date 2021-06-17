@@ -1,0 +1,86 @@
+﻿@model AssetTransferViewModel
+@{
+    ViewData["Title"] = "AssetTransferList";
+}
+
+@section Style{
+    <style>
+        #assetTransferTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Asset Transfer List</h4>
+                <a href="/FAMSAssetRegister/AssetTransfer/AssetNotTransferListO" class="btn btn-success btn-sm pull-right">Add Asset Transfer</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="assetTransferTable">
+                    <thead>
+                        <tr>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Transfer Date</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.assetTransfers)
+                        {
+                            <tr>
+
+                                <td><span style="display:none">-@data.Id-</span>@data.assetRegistration.assetNo</td>
+                                <td>@data.assetRegistration.assetValue</td>
+                                <td>@data.transferDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.deliveryLocation?.locationName</td>
+                                <td>
+                                    <a class="btn btn-success" data-toggle="tooltip" title="Edit" href="/FAMSAssetRegister/AssetTransfer/AssetTransfer/?id=@data.Id&assetId=@data.assetRegistrationId"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#assetTransferTable').DataTable();
+
+            //var table = $('#assetTransferTable').DataTable();
+            //$('#assetTransferTable tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var assetid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/FAMSAssetRegister/AssetRegister/AssetRegisterDetails/?id=" + assetid;
+            //});
+            //$('#assetTransferTable tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+        });
+
+    </script>
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,464 @@
+﻿@model ProjectLocationViewModel
+@{
+    ViewData["Title"] = "Work Progress Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<div style="width:100%;overflow:hidden;">
+    <div style="width:100%;overflow:hidden;">
+        <table style="width:100%;">
+            <thead>
+                <tr>
+                    <th><img src="~/images/BnB.png" style="height:60px;" alt="BnB" /></th>
+                    <th style="font-size:xx-large;text-align:center;">Bricks & Bridges Ltd.</th>
+                    <th style="font-size:x-large;text-align:right;">DAILY PROGRESS REPORT</th>
+                </tr>
+                <tr style="height:70px;vertical-align:bottom;">
+                    <th style="font-size:18px;text-align:left;">QUALITY MANAGEMENT</th>
+                    <th style="font-size:18px;text-align:center;">PROJECT QUALITY PLAN</th>
+                    <th style="font-size:18px;text-align:right;">DATE: @DateTime.Now.ToString("dd-MM-yyyy")</th>
+                </tr>
+            </thead>
+        </table>
+
+    </div>
+    <br />
+    <div style="color:black;font-size:larger;background-color:lightgray;border:solid 1px;padding-left:5px;text-align:center;">
+        <label><b>PROJECT INFORMATION</b></label>
+    </div>
+    <div>
+        <table border="1" style="border:solid 1px;width:100%;border-color:black;font-size:13px;">
+            <tr style="height:30px;">
+                <td>Name of Work: </td>
+                <td>@Model.dailyProgressReport?.project?.projectName</td>
+                <td>Format No: </td>
+                <td>@Model.dailyProgressReport?.reportNo</td>
+            </tr>
+            <tr style="height:30px;">
+                <td>Employer: </td>
+                <td>@Model.dailyProgressReport?.employeeInfo?.nameEnglish</td>
+                <td>Contractor: </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Start Date: </td>
+                <td>@Model.dailyProgressReport?.reportDate?.ToString("dd-MM-yyyy")</td>
+                <td>Completion Date: </td>
+                <td>@Model.dailyProgressReport?.reportDate?.ToString("dd-MM-yyyy")</td>
+            </tr>
+            <tr style="height:30px;">
+                <td>Dur. in Days: </td>
+                <td>Total:</td>
+                <td>Elapsed: </td>
+                <td>Balance:</td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <br />
+    <div style="color:black;font-size:larger;background-color:lightgray;border:solid 1px;padding-left:5px;text-align:center;">
+        <label><b>SITE</b></label>
+    </div>
+    <div>
+        <table border="1" style="border:solid 1px;width:100%;border-color:black;">
+            <tr style="font-size:16px;height:30px;">
+                <td style="padding-left:3px;width:30%;text-align:center;">@Model.dailyProgressReport?.siteWeather</td>
+                <td style="padding-left:3px;width:40%;text-align:center;">@Model.dailyProgressReport?.reportDate?.ToString("dd-MM-yyyy")</td>
+                <td style="padding-left:3px;width:30%;text-align:center;">@Model.dailyProgressReport?.siteCondition</td>
+            </tr>
+
+        </table>
+    </div>
+    <br />
+    <br />
+    <div style="color:black;font-size:larger;background-color:lightgray;border:solid 1px;padding-left:5px;text-align:center;">
+        <label><b>WORK PROGRESS DETAILS</b></label>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <div>
+            <table style="border:solid 1px;width:100%;">
+                <thead>
+                    <tr style="text-align:center;">
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Activity</th>
+                        <th colspan="2" style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;text-align:center;">Location</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Unit</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Total Qty</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Planned</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Achieved</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">PL. Next Day</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Cum Achieved</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">% Comp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int t = 0;
+                        decimal? cumqty = 0;
+                        decimal? compPer = 0;
+                        @foreach (var data in Model.workProgressActivityDescriptions)
+                        {
+                            if (t > 0)
+                            {
+                                cumqty = Convert.ToDecimal(data.forDayAchived) + Convert.ToDecimal(Model.workProgressActivityDescriptions.ToArray()[t].forDayAchived);
+                            }
+                            else
+                            {
+                                cumqty = 0;
+                            }
+                            compPer = (100 * Convert.ToDecimal(data.forDayAchived)) / (decimal)data.totalQty;
+                            <tr>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@data.progressActivityType?.activityName</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.locationName</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.gridName</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.unit</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.totalQty</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.forDayPlanned</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.forDayAchived</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.nextDayPlanned</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@cumqty</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@compPer %</td>
+                            </tr>
+                            t++;
+                        }
+                    }
+
+
+                </tbody>
+                @*<tfoot>
+                        <tr>
+                            <td style="text-align:left;border:1px solid;border-color:grey;font-weight:bold;">Total Deductions: </td>
+                            <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.payslipDeductionViewModels.Sum(x => x.amount)?.ToString("0,0")</td>
+                        </tr>
+                    </tfoot>*@
+            </table>
+        </div>
+        @*</div>*@
+    </div>
+    <br />
+    <br />
+    <div style="width:100%;overflow:hidden;">
+
+        <div style="width:66%;float:left;">
+            <div style="color:black;font-size:larger;background-color:lightgray;border:solid 1px;padding-left:5px;text-align:center;">
+                <label>ON SITE PLANT & EQUIPMENT RECORD</label>
+            </div>
+            <div style="width:50%;float:left;">
+                <div style="color:black;font-size:18px;border:solid 1px;text-align:center;">
+                    <label>WORKING</label>
+                    <div>
+                        <table style="border:solid 1px;width:100%;">
+                            <thead>
+                                <tr>
+                                    <th style="border:solid 1px;font-size:small;width:5%;">Sl.</th>
+                                    <th style="border:solid 1px;font-size:small;width:65%;">Category</th>
+                                    <th style="border:solid 1px;font-size:small;width:15%;">No</th>
+                                    <th style="border:solid 1px;font-size:small;width:15%;">Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 1;
+                                    @foreach (var data in Model.siteEquipment.Where(x => x.status == "Working"))
+                                    {
+                                        <tr>
+                                            <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@i</td>
+                                            <td style="border:solid 1px;font-size:small;border-color:black;text-align:left;">@data?.itemSpecification?.specificationName</td>
+                                            <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@data.equipmentNo</td>
+                                            <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@data.equipmentHours</td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <div style="width:50%;float:right;">
+                <div style="color:black;font-size:18px;border:solid 1px;text-align:center;">
+                    <label>NON WORKING</label>
+                </div>
+                <div>
+                    <table style="border:solid 1px;width:100%;">
+                        <thead>
+                            <tr style="text-align:center;">
+                                <th style="border:solid 1px;font-size:small;width:5%;">Sl.</th>
+                                <th style="border:solid 1px;font-size:small;width:65%;">Category</th>
+                                <th style="border:solid 1px;font-size:small;width:15%;">No</th>
+                                <th style="border:solid 1px;font-size:small;width:15%;">Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int u = 1;
+                                @foreach (var data in Model.siteEquipment.Where(x=>x.status=="Not Working"))
+                                {
+                                    <tr>
+                                        <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@u</td>
+                                        <td style="border:solid 1px;font-size:small;border-color:black;text-align:left;">@data?.itemSpecification?.specificationName</td>
+                                        <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@data.equipmentNo</td>
+                                        <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@data.equipmentHours</td>
+                                    </tr>
+                                    u++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div style="width:2%"></div>
+
+        <div style="width:33%;float:right;">
+            <div style="width:100%;">
+                <div style="color:black;font-size:larger;background-color:lightgray;border:solid 1px;padding-left:5px;text-align:center;">
+                    <label>VISITOR ON SITE</label>
+                </div>
+                <div>
+                    <table style="border:solid 1px;width:100%;">
+                        <thead>
+                            <tr style="text-align:center;">
+                                <th style="border:solid 1px;font-size:small;border-color:black;">Sl.</th>
+                                <th style="border:solid 1px;font-size:small;border-color:black;">Name</th>
+                                <th style="border:solid 1px;font-size:small;border-color:black;">Organization</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int k = 1;
+                                @foreach (var data in Model.siteVisitors)
+                                {
+                                    <tr>
+                                        <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@k</td>
+                                        <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@data.visitorName</td>
+                                        <td style="border:solid 1px;font-size:small;border-color:black;text-align:center;">@data.visitorOrganization</td>
+                                    </tr>
+                                    k++;
+                                }
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div style="width:100%;overflow:hidden;">
+        <div style="color:black;font-size:larger;background-color:lightgray;border:solid 1px;padding-left:5px;text-align:center;">
+            <label>LABOUR & MATERIAL</label>
+        </div>
+        <div style="width:100%;float:left;">
+            @*<div style="color:black;font-size:larger;border:solid 1px;text-align:center;">
+                    <label>MAN POWER</label>
+                </div>*@
+            <div>
+                <table border="1" style="border:solid 1px;width:100%;">
+                    <thead>
+                        <tr style="color:black;font-size:larger;border:solid 1px;text-align:center;">
+                            <th></th>
+                            <th colspan="2">MAN POWER</th>
+                            <th colspan="6">MATERIAL</th>
+                        </tr>
+                        <tr>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Description</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Planned</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Actual</th>
+
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Description</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Unit</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">For Day</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Till Date</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">For Day</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;">Till Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int d = 0;
+                            @foreach (var data in Model.workProgressActivityDescriptions)
+                            {
+                                int rowsp = Model.activityWiseDailyProgressDetails.Where(x => x.workProgressActivityId == data.Id).Count() + 1;
+                                string descrip = Model.siteManpowers.ToArray()[d].description + " (" + data.locationName + ", " + data.gridName + ")";
+                                <tr>
+                                    <td rowspan="@rowsp" style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@descrip</td>
+                                    <td rowspan="@rowsp" style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@Model.siteManpowers.ToArray()[d].planned</td>
+                                    <td rowspan="@rowsp" style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@Model.siteManpowers.ToArray()[d].actual</td>
+                                </tr>
+                                decimal? cumReceived = 0;
+                                decimal? cumConsump = 0;
+                                foreach (var item in Model.activityWiseDailyProgressDetails.Where(x => x.workProgressActivityId == data.Id))
+                                {
+                                    cumReceived += item.materialReceived;
+                                    cumConsump += item.materialConsumtion;
+                                    <tr>
+                                        <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@item.itemDetial?.itemSpecification?.specificationName</td>
+                                        <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@data.unit</td>
+                                        <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@item.materialReceived</td>
+                                        <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@cumReceived</td>
+                                        <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@item.materialConsumtion</td>
+                                        <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@cumConsump</td>
+                                    </tr>
+                                }
+                                d++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @*<div style="width:60%;float:right;">
+                <div style="color:black;font-size:larger;border:solid 1px;text-align:center;">
+                    <label>MATERIAL</label>
+                </div>
+                <div>
+                    <table style="border:solid 1px;width:100%;">
+                        <thead>
+                            <tr>
+                                <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;width:40%;">Description</th>
+                                <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;width:12%;">Unit</th>
+                                <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;width:12%;">For Day</th>
+                                <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;width:12%;">Till Date</th>
+                                <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;width:12%;">For Day</th>
+                                <th style="border:solid 1px;padding-left:3px;font-size:15px;border-color:black;width:12%;">Till Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.activityWiseDailyProgressDetails)
+                            {
+                                <tr>
+                                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@data.itemDetial?.itemSpecification?.specificationName</td>
+                                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data?.itemDetial?.unit?.unitName</td>
+                                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.materialReceived</td>
+                                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@DateTime.Now.ToString("dd-MM-yyyy")</td>
+                                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.materialConsumtion</td>
+                                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:center;">@DateTime.Now.ToString("dd-MM-yyyy")</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>*@
+    </div>
+
+    <br />
+    <br />
+    <div style="width:100%;overflow:hidden;">
+
+        <div style="width:40%;float:left;">
+            <div style="color:black;font-size:larger;background-color:lightgray;border:solid 1px;padding-left:5px;text-align:center;">
+                <label>CONSTRAINTS</label>
+            </div>
+            <div>
+                <table border="1" style="border:solid 1px;width:100%;">
+                    <thead>
+                        @{
+                            int sc = 1;
+                            @foreach (var data in Model.siteConstraints)
+                            {
+                                <tr>
+                                    <th style="text-align:center;">@sc</th>
+                                    <th style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@data.name</th>
+                                </tr>
+                                sc++;
+                            }
+                        }
+
+
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div style="width:2%;"></div>
+        <div style="width:58%;float:right;">
+
+            <div style="width:100%;min-height:100px;">
+                <table style="border:solid 1px;width:100%;min-height:100px;">
+                    <thead>
+                        <tr style="height:100px;">
+                            <th style="border:solid 1px;padding-left:0px;font-size:medium;border-color:black;vertical-align:top;">Distribution</th>
+                            <th style="border:solid 1px;padding-left:0px;font-size:medium;border-color:black;vertical-align:top;">Prepared by:</th>
+                            <th style="border:solid 1px;padding-left:0px;font-size:medium;border-color:black;vertical-align:top;">Project Manager</th>
+                        </tr>
+                    </thead>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    @*<br />
+        <div style="color:black;font-size:larger;background-color:darkgrey;border:solid 1px;padding-left:5px;">
+            <label><b>Payment Methods</b></label>
+        </div>
+        <br />
+        <div>
+            <table style="border:solid 1px;width:100%;">
+                <tr>
+                    <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Payment Type </th>
+                    <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Amount (BDT)</th>
+                    <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Account / Wallet No.</th>
+                    <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Bank / Wallet Name</th>
+                </tr>
+                <tr>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Bank Transfer: </td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;text-align:right;"></td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;"></td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;"></td>
+                </tr>
+                <tr>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Wallet Transfer: </td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;text-align:right;"></td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;"></td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;"></td>
+                </tr>
+                <tr>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Cash: </td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;text-align:right;"></td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;"></td>
+                    <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Cash</td>
+                </tr>
+            </table>
+        </div>
+        <br /><br /><br /><br /><br />
+        <div style="text-align:center;color:black;">
+            <label>[Software generated Pay Slip, Signature is not required]</label>
+            <br />
+            <label>For any query please contact Payroll Team, Human Resources</label>
+        </div>*@
+
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+<style>
+
+    /*label {
+        font-size: large;
+    }*/
+
+    /*tr, td div, th div, table {
+        page-break-inside: auto !important;
+        font-size: large;
+    }*/
+</style>
+
+
+
+
+

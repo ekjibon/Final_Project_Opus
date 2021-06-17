@@ -1,0 +1,228 @@
+﻿@model PayrollReportViewModel
+@{
+    ViewData["Title"] = "Final Tax Certificate Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div style="width:100%;overflow:hidden;">
+    <div style="">
+        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+    </div>
+    <br />
+    <div style="color:black;font-size:large;text-align:center">
+        <h5>CALCULATION OF TAX ON SALARIES AND PAYMENT CERTIFICATE</h5>
+    </div>
+    <br />
+    <div style="width:100%;overflow:hidden;">
+        <div style="width:49%;float:left;">
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Name of Employee</td>
+                        <td style="border:solid 1px;">@Model?.empTaxDetailsViewModels?.FirstOrDefault()?.empName</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Gender</td>
+                        <td style="border:solid 1px;">@Model?.empTaxDetailsViewModels?.FirstOrDefault()?.gender</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Date of Joining</td>
+                        <td style="border:solid 1px;">@Model?.empTaxDetailsViewModels?.FirstOrDefault()?.dateOfJoin</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="width:49%;float:right;">
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Income Year</td>
+                        <td style="border:solid 1px;">@Model?.empTaxDetailsViewModels?.FirstOrDefault()?.taxYearName</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Assessment Year</td>
+                        <td style="border:solid 1px;">@Model?.empTaxDetailsViewModels?.FirstOrDefault()?.assessmentYear</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">e-TIN No</td>
+                        <td style="border:solid 1px;">@Model?.empTaxDetailsViewModels?.FirstOrDefault()?.tinNo</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div style="width:100%;float:right;">
+        <div>
+            <table style="border:solid 1px;width:100%;">
+                <thead>
+                    <tr>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;">Account Name</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;text-align:right;">Amount</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;text-align:right;">Exempted Amount</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;text-align:right;">Taxable Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.empTaxDetailsViewModels)
+                    {
+                        <tr>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@data?.salaryHeadName</td>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.amount?.ToString("0,0")</td>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.exempAmount?.ToString("0,0")</td>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.taxableAmount?.ToString("0,0")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">Total : </td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.empTaxDetailsViewModels.Sum(x => x.amount)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.empTaxDetailsViewModels.Sum(x => x.exempAmount)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.empTaxDetailsViewModels.Sum(x => x.taxableAmount)?.ToString("0,0")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <br /><br /><br /><br /><br />
+    <div style="width:100%;">
+        <div>
+            <table style="border:solid 0px;width:100%;font-size:16px;font-weight:bolder;">
+                <tr>
+                    <td style="border:solid 1px;">Taxable Income</td>
+                    <td style="border:solid 1px;text-align:right;">@Model.empTaxDetailsViewModels.Sum(x => x.taxableAmount)?.ToString("0,0")</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    <br />
+    <div style="width:100%;float:right;">
+        <div>
+            <table style="border:solid 1px;width:100%;">
+                <thead>
+                    <tr>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;">Calculation of Tax</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;text-align:right;">Rate (%)</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;text-align:right;">Slab Amount</th>
+                        <th style="border:solid 1px;padding-left:3px;font-size:16px;border-color:black;text-align:right;">Tax Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.empTaxSlabViewModels)
+                    {
+                        <tr>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@data.slabText</td>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.taxRate</td>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.slabAmount?.ToString("0,0")</td>
+                            <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.taxAmount?.ToString("0,0")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;" colspan="2">Total : </td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.empTaxSlabViewModels.Sum(x => x.slabAmount)?.ToString("0,0")</td>
+                        <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.empTaxSlabViewModels.Sum(x => x.taxAmount)?.ToString("0,0")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <br /><br /><br /><br /><br />
+    <div style="width:100%;">
+        <div>
+            <table style="border:solid 0px;width:100%;font-size:16px;font-weight:bolder;">
+                <tr>
+                    <td style="border:solid 1px;">Total Tax Deduct by @Model.companies.FirstOrDefault().companyName</td>
+                    <td style="border:solid 1px;text-align:right;">@Model.empTaxSlabViewModels.Sum(x => x.taxAmount)?.ToString("0,0")</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    <br />
+    <div style="width:100%;color:black;">
+        <label>
+            This is certified that the above statement contains salary income only of the above mentioned employee which has been paid
+            by @Model?.companies.FirstOrDefault()?.companyName during the income year @Model?.empTaxDetailsViewModels?.FirstOrDefault()?.taxYearName corresponding to the assessment year . We also certified that above
+            mentioned tax liability was duly deducted at source on monthly basis and deposited to Bangladesh Bank through Treasury
+            Challan(s) along with all employees' tax liability which are enumerated below. Tax has been deducted from his/her salary
+            considering the maximum allowable investment under the income tax law
+        </label>
+    </div>
+    <br /><br /><br /><br /><br />
+    <div style="width:100%;overflow:hidden;color:black;font-size:17px;">
+        <div style="width:35%;float:right;">
+            <div>_________________________________________</div>
+            <div style="text-align:center">
+                Chief Human Resources Officer
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+
+        });
+    </script>
+}
+<style>
+
+    .divstyle {
+        color: black;
+    }
+
+    .print-card-body {
+        width: 100%;
+        padding-bottom: 10px;
+    }
+
+    .vartical-table th {
+        width: 25%;
+    }
+
+    .vartical-table td {
+        width: 25%;
+    }
+
+    .table td, .table th {
+        padding: .3rem;
+        font-size: 15px;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+</style>
+
+
+
+
+
+
+
+

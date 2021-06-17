@@ -1,0 +1,202 @@
+﻿
+@model HallRentalViewModel
+@{
+    ViewData["Title"] = "UpdateHallRentalStatus";
+}
+
+@section Style{
+    @*<link href="~/lib/main.css" rel="stylesheet" />*@
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Approve Hall Booking Process</h5>
+            </div>
+            <div class="col-6">
+                <a href="/Rental/RentInvoice/HallRentalList" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Back To List</a>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Rental" asp-controller="RentInvoice" asp-action="UpdateHallRentalStatus" method="post" data-parsley-validate="parsley" id="formRental">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    @*<label for="salesInvoiceNo" class="col-sm-2 col-form-label">Agreement Number</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="" id="" value="@Model.AgreementNumber" readonly>
+                        </div>*@
+
+                    <input type="hidden" class="form-control" name="hallRentalApplicationInfoId" id="hallRentalApplicationInfoId" value="@Model.hallRentalApplicationInfo?.Id">
+                    @*<input type="hidden" class="form-control" name="isPaid" id="" value="1">*@
+                    <label for="invoiceDate" class="col-sm-2 col-form-label text-left">Rental Date<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4 input-group">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" name="rentalDate" id="rentalDate" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.rentalDate" readonly />
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <label for="customerName" class="col-sm-2 col-form-label">Applicant Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control input-group-sm" id="applicantName" name="applicantName" value="@Model.hallRentalApplicationInfo?.applicantName" readonly>
+                    </div>
+                    <label class="col-sm-2 col-form-label text-left">Organization Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4 ">
+                        <input type="text" class="form-control input-group-sm" id="applicantOrganization" name="applicantOrganization" value="@Model.hallRentalApplicationInfo?.applicantName" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Phone<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control input-group-sm" id="mobileNo" name="mobileNo" value="@Model.hallRentalApplicationInfo?.mobileNo" readonly />
+                    </div>
+
+                    <label for="applicantAddress" class="col-sm-2 col-form-label text-left">Address</label>
+                    <div class="col-sm-4 input-group">
+                        <textarea name="applicantAddress" id="applicantAddress" class="form-control input-group-sm" readonly>@Model.hallRentalApplicationInfo?.applicantAddress</textarea>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group row">
+                    <label for="hallName" class="col-sm-2 col-form-label">Hall Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @*@if (@Model.hallRentalApplicationInfo?.hallInfoId > 0)
+                        {
+                            <input type="text" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.hallInfo?.hallName" readonly>
+                            <input type="hidden" id="hallInfoId" name="hallInfoId" value="@Model.hallRentalApplicationInfo?.hallInfo?.Id" readonly>
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(Model => Model.hallInfoId, new SelectList(Model.hallInfos, "Id", "hallName", 1), "Select Hall", new { @id = "hallInfoId", @class = "form-control", @value = "@Model.hallRentalApplicationInfo?.hallInfoId" })
+                        }*@
+
+
+                        <input type="text" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.hallInfo?.hallName" readonly>
+                        <input type="hidden" id="hallInfoId" name="hallInfoId" value="@Model.hallRentalApplicationInfo?.hallInfo?.Id" readonly>
+                    </div>
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Rental Period<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.hallRentalShift?.shiftName" readonly>
+                        <input type="hidden" id="hallRentalShiftId" name="hallRentalShiftId" value="@Model.hallRentalApplicationInfo?.hallRentalShift?.Id">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="price" class="col-sm-2 col-form-label">Price (Taka)<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control input-group-sm" id="hallRent" name="hallRent" value="@Model.hallRentalApplicationInfo?.hallRent" readonly>
+                    </div>
+                    <label for="chiefGuest" class="col-sm-2 col-form-label">Chief Guest</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="chiefGuest" id="chiefGuest" value="@Model.hallRentalApplicationInfo?.chiefGuest" readonly />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="chiefGuest" class="col-sm-2 col-form-label">Status</label>
+                    <div class="col-sm-4">
+                        @if (Model.hallRentalApplicationInfo?.status == 1|| Model.hallRentalApplicationInfo?.status == null)
+                        {
+                            <input type="text" class="form-control" name="status" id="status" value="Pending" readonly />
+                        }
+
+                    </div>
+
+                    <label for="specialGuest" class="col-sm-2 col-form-label">Special Guest</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="specialGuest" id="specialGuest" value="@Model.hallRentalApplicationInfo?.specialGuest" readonly />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-2 col-form-label">Subject</label>
+                    <div class="col-sm-10">
+                        <textarea type="text" class="form-control" name="remarks" id="remarks" readonly>@Model.hallRentalApplicationInfo?.remarks</textarea>
+                    </div>
+                </div>
+                <hr />
+               
+
+                <button type="button" onclick="SaveRentalPayment()" value="Paid" class="btn btn-success btn-lg" style="float:right; margin-top:5px;">Approve</button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //$("#paymentDate").datepicker({ dateFormat: 'dd-MM-yy' });
+            //$('#divBank').hide();
+            //$('#divCheck').hide();
+            //$('#paymentMode').on('change', function (e) {
+            //    var val = $(this).val();
+            //    if (val == 1) {
+            //        $('#divBank').hide();
+            //        $('#divCheck').hide();
+            //    }
+            //    else if (val == 2) {
+            //        $('#divBank').show();
+            //        $('#divCheck').show();
+            //    }
+            //});
+
+        });
+        function SaveRentalPayment() {
+            var form = $("#formRental");
+            swal({
+                title: 'Are you sure?', text: 'Do you want to save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, save it!'
+            }).then(function (e) {
+                $.ajax({
+                    url: '/Rental/RentInvoice/UpdateHallRentalStatus',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (response) {
+                    //    alert(response);
+                        //    console.log(response);
+                        swal('', 'Saved successfully!', 'success').then(function (e) {
+                            window.location.href = "/Rental/RentInvoice/HallRentalListForApprovel";
+                        });
+
+                        
+                        //window.location.href='/Rental/RentInvoice/InvoiceList';
+                        //window.location.href = "/Rental/RentInvoice/HallRentalReportPdf?id=" + response.id;
+                        //window.open('/Rental/RentInvoice/HallRentalReportPdf?id=' + response, '_blank');
+                        //Refresh();
+                    }
+                })
+            })
+        };
+        function Refresh() {
+            location.reload();
+        }
+    </script>
+
+}
+
+

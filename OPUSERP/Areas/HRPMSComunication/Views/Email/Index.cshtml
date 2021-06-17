@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewData["Title"] = "Email Setting";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">Email Setting</h5>
+            </div>
+            <div class="col-4">
+                @*<h6 class="identity-box">@Model.employeeNameCode</h6>*@
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group row">
+                            <label for="smtpServer" class="col-sm-2 col-form-label">SMTP Server <span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="smtpServer" value="" name="smtpServer" data-parsley-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group row">
+                            <label for="smtpProt" class="col-sm-2 col-form-label">SMTP Port <span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="smtpProt" value="" name="smtpProt" data-parsley-required="true" />
+                            </div>
+                            <label for="ssl" style="padding-top: 8px;" class="col-sm-5 col-form-label"><input type="checkbox" id="ssl" name="ssl" /> Enable SSL</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group row">
+                            <label for="smtpUsername" class="col-sm-2 col-form-label">SMTP Username <span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="smtpUsername" value="" name="smtpUsername" data-parsley-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group row">
+                            <label for="smtpPassword" class="col-sm-2 col-form-label">SMTP Password <span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-5">
+                                <input type="password" class="form-control" id="smtpPassword" value="" name="smtpPassword" data-parsley-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //$("#bankInfo").addClass("active");
+            //$('#bankInfoTable').DataTable();
+        });
+
+    </script>
+}

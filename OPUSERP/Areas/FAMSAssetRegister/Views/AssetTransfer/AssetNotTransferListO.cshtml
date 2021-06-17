@@ -1,0 +1,246 @@
+﻿@model AssetTransferViewModel
+@{
+    ViewData["Title"] = "AssetNotTransferList";
+}
+
+
+@section Style{
+    <style>
+        #assetTrasnferTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary"></h4>
+                <a href="/FAMSAssetRegister/AssetTransfer/AssetTransferList" class="btn btn-success btn-sm pull-right">Back To Transfer List</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="row">
+                    <h5 style="color:#0062cc">Asset Not Transfer List</h5>
+                </div>
+                <table class="table table-striped table-bordered" id="assetTrasnferTable">
+                    <thead>
+                        <tr>
+                            <th>Purchase No</th>
+                            <th>Receive Date</th>
+                            <th>Purchase Date</th>
+                            <th>Supplier Name</th>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.assetRegistrations)
+                        {
+                            <tr>
+
+                                <td><span style="display:none">-@data.Id-</span>@data.purchaseInfo.purchaseNo</td>
+                                <td>@data.purchaseInfo.receiveDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.purchaseInfo.purchaseDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.purchaseInfo.supplier.organizationName</td>
+                                <td>@data.assetNo</td>
+                                <td>@data.assetValue</td>
+                                <td>
+                                    <a class="btn btn-success" data-toggle="tooltip" title="Add" onclick="getiteminfo(@data.Id)"><i class="fa fa-plus"></i></a>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <hr />
+            <div class="card-body">
+                <div class="row">
+                    <h5 style="color:#0062cc">Asset Assign Info</h5>
+                </div>
+                <form asp-area="FAMSAssetRegister" asp-controller="AssetTransfer" asp-action="AssetTransferO" method="post" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-sm-6">
+
+                            <div class="form-group row">
+                                <label for="AssetNo" class="col-sm-4 col-form-label">Asset No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="AssetNo" name="AssetNo" readonly>
+                                    <input type="hidden" name="assetAssignId" id="assetAssignId" value="">
+                                    <input type="hidden" name="assetRegistrationId" id="assetRegistrationId">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="itemName" class="col-sm-4 col-form-label">Item Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="itemName" name="itemName" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="assignDate" class="col-sm-4 col-form-label">Tranfer Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="transferDate" name="transferDate">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="deliveryLocationId" class="col-sm-4 col-form-label">Delivery Location</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="deliveryLocationId" name="deliveryLocationId">
+                                        <option value="">-Select-</option>
+                                        @foreach (var data in Model.deliveryLocations)
+                                        {
+                                            <option value="@data.Id">@data.locationName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+
+                            <div class="form-group row">
+                                <label for="empId" class="col-sm-4 col-form-label">New User Name</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="currentEmpId" name="currentEmpId">
+                                        <option value="">-Select-</option>
+                                        @foreach (var data in Model.employeeInfoViewModels)
+                                        {
+                                            <option value="@data.ID">@data.EmpName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="departmentId" class="col-sm-4 col-form-label">Department Name</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="departmentId" name="departmentId">
+                                        <option value="">-Select-</option>
+                                        @foreach (var data in Model.departments)
+                                        {
+                                            <option value="@data.Id">@data.deptName</option>
+                                        }
+                                    </select>
+
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="coordinatorempId" class="col-sm-4 col-form-label">New Co-ordinator Name</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="currentCoordinatorId" name="currentCoordinatorId">
+                                        <option value="">-Select-</option>
+                                        @foreach (var data in Model.employeeInfoViewModels)
+                                        {
+                                            <option value="@data.ID">@data.EmpName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea type="text" class="form-control" id="remarks" name="remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+                </form>
+            </div>
+            <hr />
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="assetTransferedTable">
+                    <thead>
+                        <tr>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Transfer Date</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.assetTransfers)
+                        {
+                            <tr>
+
+                                <td><span style="display:none">-@data.Id-</span>@data.assetRegistration.assetNo</td>
+                                <td>@data.assetRegistration.assetValue</td>
+                                <td>@data.transferDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.deliveryLocation?.locationName</td>
+                                <td>
+                                    <a class="btn btn-success" data-toggle="tooltip" title="Edit" href="/FAMSAssetRegister/AssetTransfer/AssetTransfer/?id=@data.Id&assetId=@data.assetRegistrationId"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function getiteminfo(id) {
+
+            Common.Ajax('GET', '/global/api/getiteminfo/' + id, [], 'json', GetItemName);
+
+        };
+        function GetItemName(response) {
+
+            console.log(response);
+
+            $("#AssetNo").val(response.assetNo);
+            $("#assetRegistrationId").val(response.Id);
+            $("#itemName").val(response.itemSpecification.Item.itemName);
+
+
+        }
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+        $(document).ready(function () {
+            $("#transferDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $('#assetTrasnferTable').DataTable();
+            $('#assetTransferedTable').DataTable();
+            //var table = $('#assetTrasnferTable').DataTable();
+            //$('#assetTrasnferTable tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var assetid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/FAMSAssetRegister/AssetRegister/AssetRegisterDetails/?id=" + assetid;
+            //});
+            //$('#assetTrasnferTable tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+        });
+
+    </script>
+}
+
+
+
+
+
+
+

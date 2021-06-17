@@ -1,0 +1,14 @@
+{
+  "title": "Service History",
+  "sl": "SL",
+  "designation": "Designation",
+  "workStation": "Work Station",
+  "organization": "Organization",
+  "grade": "Grade",
+  "address": "Address",
+  "newGrade": "New Grade",
+  "toDate": "To date",
+  "fromDate": "Form date",
+  "status": "Status",
+  "action": "Action"
+}

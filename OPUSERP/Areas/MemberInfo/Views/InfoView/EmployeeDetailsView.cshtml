@@ -1,0 +1,145 @@
+﻿@model InfoViewModel
+@{
+    ViewData["Title"] = "EmployeeDetailsView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <img src="~/images/Key-Club-International-Logo.jpg" style="height:85px" />
+                </div>
+                <div class="col-6 text-center">
+                    <h3 class="card-title" style="color: black;margin-top: 25px;">Member's Profile</h3>
+                    <h6 class="identity-box-center">(@Model.employeeNameCode)</h6>
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-info" data-toggle='tooltip' title='Print' target='_blank' href='/MemberInfo/InfoView/pdspdf/@Model.employee.Id' style="float:right;margin-top: 25px;"><i class="fa fa-print"></i></a>
+                </div>
+
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <!--Employee Info-->
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">@Model.fLang.employeeInfoLn.memberTitle</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.memberID</th>
+                                <td>@Model.employee.employeeCode</td>
+                                <td rowspan="3" style="height: 140px;width: 140px;">
+                                    <img id="user_img_current" style="width:110px;height:110px" src="~/@Model.photograph.url" alt="" class="img-thumbnail">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.name (@Model.fLang.employeeInfoLn.english)</th>
+                                <td>@Model.employee.nameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.name (@Model.fLang.employeeInfoLn.bangla)</th>
+                                <td>@Model.employee.nameBangla</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.fatherName (@Model.fLang.employeeInfoLn.english)</th>
+                                <td colspan="2">@Model.employee.fatherNameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.fatherName (@Model.fLang.employeeInfoLn.bangla)</th>
+                                <td colspan="2">@Model.employee.fatherNameBangla</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.motherName (@Model.fLang.employeeInfoLn.english)</th>
+                                <td colspan="2">@Model.employee.motherNameEnglish</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.motherName (@Model.fLang.employeeInfoLn.bangla)</th>
+                                <td colspan="2">@Model.employee.motherNameBangla</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.nationality</th>
+                                <td colspan="2">@Model.employee.nationality</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.nationalID</th>
+                                <td colspan="2">@Model.employee.nationalID</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.dateOfBirth</th>
+                                <td colspan="2">@Model.employee.dateOfBirth?.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.birthPlace</th>
+                                <td colspan="2">@Model.employee.birthPlace</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.gender</th>
+                                <td colspan="2">@Model.employee.gender</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.maritalStatus</th>
+                                <td colspan="2">@Model.employee.maritalStatus</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.religion</th>
+                                <td colspan="2">@Model.employee.religion?.name</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.bloodGroup</th>
+                                <td colspan="2">@Model.employee.bloodGroup</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.freedomFighterNo</th>
+                                <td colspan="2">@Model.employee.freedomFighterNo</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.telephoneOffice</th>
+                                <td colspan="2">@Model.employee.telephoneOffice</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.telephoneResidence</th>
+                                <td colspan="2">@Model.employee.telephoneResidence</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.emailAddress</th>
+                                <td colspan="2">@Model.employee.emailAddress</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.emailAddressPersonal</th>
+                                <td colspan="2">@Model.employee.emailAddressPersonal</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.mobileNumberOffice</th>
+                                <td colspan="2">@Model.employee.mobileNumberOffice</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.mobileNumberPersonal</th>
+                                <td colspan="2">@Model.employee.mobileNumberPersonal</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.memberType</th>
+                                <td colspan="2">@Model.employee.memberType.memberType</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.gpfAcNo</th>
+                                <td colspan="2">@Model.employee.gpfAcNo</td>
+                            </tr>
+                            <tr>
+                                <th>@Model.fLang.employeeInfoLn.skill</th>
+                                <td colspan="2">@Model.employee.spacialSkills</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>

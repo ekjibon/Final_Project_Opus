@@ -1,0 +1,208 @@
+﻿@model AddressInformationViewModel
+@{
+    ViewData["Title"] = "Address Info";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header row">
+        <div class="col-md-10">
+            <h6 class="m-0 font-weight-bold text-primary">Address Information</h6>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-sm btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/Index/@Model?.companyId">Back To List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSInformation" asp-controller="GeneralInformation" asp-action="AddressInfo" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Address Type <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="hidden" id="companyId" name="companyId" value="@Model?.companyId" />
+                            <input type="hidden" id="addressInfoId" name="addressInfoId" value="@Model?.vendorAddress?.Id" />
+                            <select class="form-control" name="addressTypeId" id="addressTypeId" data-parsley-required="true">
+                                <option value="">select</option>
+                                @foreach (var data in Model.addressTypes)
+                                {
+                                    <option value="@data.Id">@data.typeName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Country <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <select class="form-control" name="countryId" id="countryId" data-parsley-required="true">
+                                <option value="">select</option>
+                                @foreach (var data in Model.countries)
+                                {
+                                    <option value="@data.Id">@data.countryName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Division <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <select class="form-control" name="divisionId" id="divisionId" data-parsley-required="true"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">District <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <select class="form-control" name="districtId" id="districtId" data-parsley-required="true"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Thana <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <select class="form-control" name="thanaId" id="thanaId" data-parsley-required="true"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Road </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="union" name="union" value="@Model?.vendorAddress?.union" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">House/Village </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="houseVillage" name="houseVillage" value="@Model?.vendorAddress?.houseVillage" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Block/Sector </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="blockSector" name="blockSector" value="@Model?.vendorAddress?.blockSector" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Post Code </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="postCode" name="postCode" value="@Model?.vendorAddress?.postCode" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Post Office </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="postOffice" name="postOffice" value="@Model?.vendorAddress?.postOffice" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$('#dateofEstablishment').flatpickr({ dateFormat: "d-M-Y" });
+
+            $("#countryId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/divisions/' + id, [], 'json', orgDivision, false);
+            });
+
+            $("#divisionId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', orgDistrict);
+            });
+
+            $("#districtId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', orgThana);
+            });
+
+            if ('@Model?.addressInfoId' > 0) {
+                $('#addressTypeId').val('@Model?.vendorAddress?.addressTypeId');
+                $('#countryId').val('@Model?.vendorAddress?.countryId');
+                Common.Ajax('GET', '/global/api/divisions/' + '@Model?.vendorAddress?.countryId', [], 'json', orgDivision, false);                
+                $('#divisionId').val('@Model?.vendorAddress?.divisionId');
+                Common.Ajax('GET', '/global/api/districts/' + '@Model?.vendorAddress?.divisionId', [], 'json', orgDistrict, false);
+                $('#districtId').val('@Model?.vendorAddress?.districtId');
+                Common.Ajax('GET', '/global/api/thanas/' + '@Model?.vendorAddress?.districtId', [], 'json', orgThana, false);                
+                $('#thanaId').val('@Model?.vendorAddress?.thanaId');
+            }
+        });
+
+        function orgDivision(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#divisionId').empty();
+            $('#divisionId').append(options);
+        }
+
+        function orgDistrict(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#districtId').empty();
+            $('#districtId').append(options);
+
+            //if ($('#IsEditadd').val() == 1) {
+            //    $('#txtorgDistrict').val($('#distId').val());
+            //}
+        }
+
+        function orgThana(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#thanaId').empty();
+            $('#thanaId').append(options);
+
+            //if ($('#IsEditadd').val() == 1) {
+            //    $('#txtorgUpazila').val($('#thanaId').val());
+            //}
+        }
+    </script>
+}

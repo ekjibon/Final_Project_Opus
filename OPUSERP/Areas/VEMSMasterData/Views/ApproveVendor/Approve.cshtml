@@ -1,0 +1,159 @@
+﻿@model ApproveViewModel
+@{
+    ViewData["Title"] = "Approve";
+}
+
+<div class="card">
+    <div class="card-header row">
+        <div class="col-md-10">
+            <h6 class="m-0 font-weight-bold text-primary">Vendor Approve Process</h6>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-sm btn-info" style="float:right;" href="/VEMSMasterData/ApproveVendor/Index">Back To List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSMasterData" asp-controller="ApproveVendor" asp-action="Approve" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Company Name </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="companyName" name="companyName" readonly value="@Model?.registrationForm?.companyName"/>
+                            <input type="hidden" id="typeOfNDAAgree" name="typeOfNDAAgree" value="@Model?.registrationForm?.typeOfNDAAgree" />
+                            <input type="hidden" id="companyId" name="companyId" value="@Model?.registrationForm?.Id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Trade License Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="tradeLicenseNumber" name="tradeLicenseNumber" readonly value="@Model?.registrationForm?.tradeLicenseNumber" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">eTin Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="eTinNumber" name="eTinNumber" readonly value="@Model?.registrationForm?.eTinNumber" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">VAT Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="vatNumber" name="vatNumber" readonly value="@Model?.registrationForm?.vatNumber" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Contact Person Name </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="contactPersonName" name="contactPersonName" readonly value="@Model?.registrationForm?.contactPersonName" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Contact Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="contactNumber" name="contactNumber" readonly value="@Model?.registrationForm?.contactNumber" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Company Email </span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="companyEmail" name="companyEmail" readonly value="@Model?.registrationForm?.companyEmail" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Alternative Email </span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="alternativeEmail" name="alternativeEmail" readonly value="@Model?.registrationForm?.alternativeEmail" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Procurement Category </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="procurementCategoryId" name="procurementCategoryId" readonly value="@Model?.registrationForm?.procurementCategory?.itemCatName" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Product/Service Name </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="productServiceName" name="productServiceName" readonly value="@Model?.registrationForm?.productServiceName" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (@Model?.registrationForm?.typeOfNDAAgree == 2)
+            {
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-2"><span class="col-form-label">Clauses of Partial Disagreement in NDA </span></div>
+                            <div class="col-10">
+                                <textarea rows="3" class="form-control" id="partialDisagreement" name="partialDisagreement" readonly>@Model?.registrationForm?.partialDisagreement</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Login Email </span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="loginId" name="loginId" readonly value="@Model?.registrationForm?.loginId" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Approve Type <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <select class="form-control" id="approveType" name="approveType" data-parsley-required="true">
+                                <option value="">Select</option>
+                                <option value="1">Approve</option>
+                                <option value="2">Reject</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                    @*<a class="btn btn-danger btn-sm" href="/VEMSHome/VendorHome/Index" style="float:right;" onclick=""><i class="fa fa-times"></i> Cancel</a>*@
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

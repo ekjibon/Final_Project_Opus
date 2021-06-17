@@ -1,0 +1,239 @@
+﻿@model RentInvoiceViewModel
+@{
+    ViewData["Title"] = "Rental Sales Invoice";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    .table-bordered {
+        border-collapse: collapse !important;
+    }
+
+        .table-bordered th {
+            border: 1px solid gray !important;
+        }
+
+        .table-bordered td {
+            border: 1px solid gray !important;
+        }
+</style>
+
+<div>
+    <div>
+        <div style="width:100%">
+            <div>
+                <div style="width:100%;overflow:hidden;">
+
+                   
+                    <div style="width:20%;float:right;">
+                        <img src="@Model.company.filePath" alt="OPUS ERP" style="height:50px;" />
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border:1px solid black;">
+            <div style="width:80%;float:left">
+                <span style="width:30%;float:left;font-weight:600;color:black">Agreement Number :</span><span style="width:70%;float:left;color:black"> @Model.salesInvoiceMaster.invoiceNumber</span>
+                <br />
+                <span style="width:30%;float:left;font-weight:600;color:black">Name :</span><span style="width:70%;float:left;color:black"> @Model.Contacts.Where(x => x.leadsId == Model.salesInvoiceMaster.relSupplierCustomerResourse.LeadsId).FirstOrDefault()?.resource?.resourceName</span>
+                <br />
+                <span style="width:30%;float:left;font-weight:600;color:black">Address :</span><span style="width:70%;float:left;color:black"> @Model.GetAddresses?.FirstOrDefault()?.maillingAddress</span>
+                <br />
+                <span style="width:30%;float:left;font-weight:600;color:black">Mobile :</span><span style="width:20%;float:left;color:black"> @Model.Contacts.Where(x => x.leadsId == Model.salesInvoiceMaster.relSupplierCustomerResourse.LeadsId).FirstOrDefault()?.resource?.mobile</span>
+                <span style="width:30%;float:left;font-weight:600;color:black">Email :</span><span style="width:20%;float:left;color:black"> @Model.salesInvoiceMaster?.relSupplierCustomerResourse?.resource?.email</span>
+
+                <br />
+                <span style="width:30%;float:left;font-weight:600;color:black">NID :</span><span style="width:70%;float:left;color:black"> @Model.salesInvoiceMaster?.relSupplierCustomerResourse?.resource?.nationalId</span>
+            </div>
+            <div style="width:20%;float:right;">
+                <img src="" alt="Image" style="height:140px;width:140px" />
+            </div>
+
+            <br /><br />
+
+            <div style="width:100%;float:left">
+                <span style="width:40%;float:left;font-weight:600;color:black"></span>
+                <span style="width:20%;float:left;font-weight:700;color:black;margin-left:40%"><u>Agreement Detail</u></span>
+                <span style="width:40%;float:left;color:black"></span>
+            </div>
+
+            <div style="width:100%;float:left">
+                <br />
+                <span style="width:50%;float:left;font-weight:600;color:black">From Date&nbsp; :&nbsp;@Model.salesInvoiceDetails.FirstOrDefault().StartDate?.ToString("dd-MMM-yyyy")</span>
+                <span style="width:50%;font-weight:600;color:black"> To Date &nbsp;: &nbsp; @Model.salesInvoiceDetails.FirstOrDefault().EndDate?.ToString("dd-MMM-yyyy") </span>
+                <br />
+                <span style="width:50%;float:left;font-weight:600;color:black">Start Time&nbsp; :&nbsp;@Model.salesInvoiceDetails.FirstOrDefault().StartTime</span>
+                <span style="width:50%;font-weight:600;color:black"> End Time &nbsp;: &nbsp; @Model.salesInvoiceDetails.FirstOrDefault().EndTime</span>
+                <br />
+                <span style="width:50%;float:left;font-weight:600;color:black">Bill Date &nbsp;&nbsp;&nbsp; :&nbsp;@Model.salesInvoiceMaster.invoiceDate?.ToString("dd-MMM-yyyy")</span>
+
+                <br />
+
+
+
+            </div>
+
+            
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <div>
+            <hr style="border:1px solid black;">
+        </div>
+        <div style="width:100%">
+            <table class="table table-striped table-bordered" id="voucherList">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Item Spec.</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Vat</th>
+                        <th>Tax</th>
+                        <th>Discount</th>
+
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.salesInvoiceDetails)
+                    {
+                        <tr>
+                            <td>@item.itemSpecication.Item.itemName</td>
+                            <td>@item.itemSpecication.specificationName</td>
+                            <td>@item.StartDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@item.EndDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@item.rate?.ToString("0,0.00")</td>
+                            <td>@item.quantity</td>
+                            <td>@item.vatAmount</td>
+                            <td>@item.taxAmount</td>
+                            <td>@item.disAmount?.ToString("0,0.00")</td>
+                            <td style="text-align:right;">@item.lineTotal?.ToString("0,0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="9" style="text-align:right;">Gross Total</th>
+                        <td style="text-align:right;">@Model.salesInvoiceMaster.totalAmount?.ToString("0,0.00")</td>
+                    </tr>
+
+                    <tr>
+                        <th colspan="9" style="text-align:right;">VAT</th>
+                        <td style="text-align:right;">@Model.salesInvoiceMaster.VATOnTotal?.ToString("0,0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="9" style="text-align:right;">TAX</th>
+                        <td style="text-align:right;">@Model.salesInvoiceMaster.TAXOnTotal?.ToString("0,0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="9" style="text-align:right;">Discount</th>
+                        <td style="text-align:right;">@Model.salesInvoiceMaster.DiscountOnTotal?.ToString("0,0.00")</td>
+                    </tr>
+                    <tr>
+                        <th colspan="9" style="text-align:right;">Net Total</th>
+                        <td style="text-align:right;">@Model.salesInvoiceMaster.NetTotal?.ToString("0,0.00")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div>
+            <div style="text-align:left;width:100%;">
+                <span style="color:black"><span style="font-weight:600">Amount In Word:</span>&nbsp; &nbsp;@ViewBag.InWord</span>
+            </div>
+        </div>
+        <br />
+        @if (Model.rentTermsConditions.Count() > 0)
+        {
+            <div>
+                <div style="text-align:left;width:100%;">
+                    <span style="font-weight:600;color:black;margin-left:40%"><u>Terms &amp;Conditions</u></span>
+                </div>
+            </div>
+            <br />
+            <div>
+                <table class="table table-striped table-bordered" width="100%" id="voucherList">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;width:10%">SL No</th>
+                            <th style="text-align:center; width:90%">Terms &amp; Conditions</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 0;
+                            @foreach (var data in Model.rentTermsConditions)
+                            {
+
+                                i = i + 1;
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.termtext</td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        }
+        <br /><br /><br /><br /><br /><br />
+        <div style="width:100%">
+            <div>
+                <div style="float:left">
+                    <span style="color:black"></span>
+                    <br />
+                    <span style="color:black">-------------------------------------------</span>
+                    <br />
+                    <span style="color:black;padding-left:0px">Customer Signature & Date</span>
+                </div>
+
+                <div style="float:right">
+                    <span style="color:black;text-align:center;padding-left:50px">@Model.salesInvoiceMaster.createdBy</span>
+                    <br />
+                    <span style="color:black">---------------------------------------------</span>
+                    <br />
+                    <span style="color:black;padding-left:0px">Authorized Signature & Date</span>
+                </div>
+            </div>
+        </div>
+        @if (Model.rentTermsConditions.Count() > 0)
+        {
+            <br /><br /> <br />
+        }
+        else
+        {
+            <br /><br /> <br /><br /> <br /><br /><br /><br /> <br /><br /> <br /><br /><br />
+
+        }
+        <hr style="border:1px solid black;">
+        <div style="width:100%">
+            <div>
+                <div style="float:left;width:100%">
+                    <span style="color:black;width:25%">@Model.company.companyName&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span style="color:black;width:25%;">@Model.company.companyEmail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span style="color:black;width:25%">@Model.company.officeTelephone&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span style="color:black;width:25%">@Model.company.alternetEmail</span>
+                </div>
+                <div style="float:left;width:100%">
+                    <span style="color:black;width:35%"></span>
+                    <span style="color:black;width:30%;margin-left:20%;text-align:center">@Model.company.addressLine</span>
+
+                    <span style="color:black;width:35%"></span>
+                </div>
+
+                @*<div style="float:right">
+
+                </div>*@
+            </div>
+        </div>
+
+    </div>
+</div>

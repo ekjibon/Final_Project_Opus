@@ -1,0 +1,125 @@
+﻿@model BudgetRequisitionViewModel
+@{
+    ViewData["Title"] = "Create Production";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+    var notes = "";
+}
+<style>
+    .header-cls {
+        text-align: left;
+        color: black;
+    }
+    .header-clst {
+        text-align: center;
+        color: black;
+    }
+    .text-align-center-cls {
+        text-align: center;
+    }
+    .table-cls {
+        margin-top: 100px;
+    }
+    .signature-div-cls p {
+        text-align: right;
+        color: black;
+        margin-right: 50px;
+    }
+</style>
+<br />
+<section>
+    <div class="container-fluid">
+
+        <div class="header-cls" style="text-align:center;">
+            <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+            <h3>@Model.companies.FirstOrDefault().companyName</h3>
+            <label>@Model.companies.FirstOrDefault().addressLine</label>
+            <h4 style="text-align: center;">Budget Requisition</h4>
+            <h5 style="text-align: center;">Branch Name : &nbsp; &nbsp;@Model.branchName</h5>
+            <h5>@Model.flang.reqNo : &nbsp; &nbsp; @Model.Number</h5>
+            <h5>@Model.flang.fiscalYear: &nbsp; &nbsp; @Model.fiscalYear.yearName</h5>
+            <h5>@Model.flang.date : &nbsp; &nbsp; @Model.Date?.ToString("dd-MMM-yyyy")</h5>
+        </div>
+        <br />     
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="container">
+                        <h6 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;">
+                            <u>
+                                Approver Panel
+                            </u>
+                        </h6>
+                        <div class="row" id="divPanel">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td>Approvar Name</td>
+                                        <td>Sequence No</td>
+                                        <td>Status</td>
+                                    </tr>
+                                    @foreach (var data in @Model.approerPanelList)
+                                    {
+                                        notes = data.notes;
+                                        if(notes == "")
+                                        {
+                                            notes = "Approved";
+                                        }
+                                        <tr>
+                                            <td>@data.EmpName</td>
+                                            <td>@data.sequenceNo</td>
+                                            <td>@notes</td>
+                                        </tr>
+                                    }
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />      
+        <h5 style="text-align: left;color:black">Budget Requisition Details</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Budget Head</th>
+                    <th>January</th>
+                    <th>February</th>
+                    <th>March</th>
+                    <th>April</th>
+                    <th>May</th>
+                    <th>June</th>
+                    <th>July</th>
+                    <th>August</th>
+                    <th>September</th>
+                    <th>October</th>
+                    <th>November</th>
+                    <th>December</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.budgetRequsitionDetails)
+                {
+                    <tr>
+                        <td>@data.budgetHead.name</td>
+                        <td>@data.firstMonth</td>
+                        <td>@data.secondMonth</td>
+                        <td>@data.thirdMonth</td>
+                        <td>@data.fourthMonth</td>
+                        <td>@data.fifthMonth</td>
+                        <td>@data.sixthMonth</td>
+                        <td>@data.seventhMonth</td>
+                        <td>@data.eighthMonth</td>
+                        <td>@data.ninethMonth</td>
+                        <td>@data.tenthMonth</td>
+                        <td>@data.eleventhMonth</td>
+                        <td>@data.twelvethMonth</td>
+                        <td>@data.subTotal</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br /><br /><br /><br />
+    </div>
+</section>

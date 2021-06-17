@@ -1,0 +1,117 @@
+﻿@model NoteMasterViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Note Master Profit & Loss</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Accounting" asp-controller="BalanceSheet" asp-action="NoteMasterProfitLoss" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="noteMasterId" name="noteMasterId" value=0>
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <label for="balanceSheetMasterId" class="col-sm-3 col-form-label">Line Master Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <select name="balanceSheetMasterId" id="balanceSheetMasterId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select Line Name</option>
+                                    @foreach (var data in Model.balanceSheetMasters.Where(a => a.fsLineFor == "PLA"))
+                                    {
+                                        <option value="@data.Id">@data.fsLineName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="noteName" class="col-sm-3 col-form-label">Note Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="noteName" name="noteName" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="noteHead" class="col-sm-3 col-form-label">Note Head</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="noteHead" name="noteHead">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Note Master Profit & Loss List</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Line Name</th>
+                            <th>Note Name</th>
+                            <th>Note Head</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.noteMasters.Where(a => a.balanceSheetMaster.fsLineFor == "PLA"))
+                        {
+                            <tr>
+                                <td>@data?.balanceSheetMaster?.fsLineName</td>
+                                <td>@data?.noteName</td>
+                                <td>@data?.noteHead</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,`@data.noteName`,`@data.noteHead`,@data.balanceSheetMasterId)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteNoteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#educationalTable').DataTable();
+        });    
+
+        function Edit(noteMasterId, noteName, noteHead, balanceSheetMasterId) {
+            $('#noteMasterId').val(noteMasterId);
+            $('#noteName').val(noteName);
+            $('#noteHead').val(noteHead);
+            $('#balanceSheetMasterId').val(balanceSheetMasterId);
+        }
+
+        function DeleteNoteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    url: '@Url.Action("DeleteNoteMaster", "BalanceSheet")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Accounting/BalanceSheet/ProfitLossMaster";
+                    })
+                    .fail(function () {
+                        alert("Unable to Delete. Please Try Again");
+                    });
+            });
+        }
+    </script>
+}

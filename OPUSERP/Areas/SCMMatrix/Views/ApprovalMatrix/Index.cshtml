@@ -1,0 +1,580 @@
+﻿@model ApprovalMatrixViewModel
+@{
+    ViewData["Title"] = "Approval Matrix";
+    Layout = "~/Areas/SCMMatrix/Views/shared/_LayoutMatrix.cshtml";
+    ViewBag.PageHeading = "Approval Matrix";
+}
+
+@section StyleMtrx{
+    @*<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">*@
+    <style>
+        .ui-autocomplete {
+            cursor: pointer;
+            height: 400px;
+            width: 300px;
+            overflow-y: scroll;
+            background-color: white;
+            color: rgb(0,188,212);
+            z-index: 1050;
+            /*outline-style:outset;*/
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.flang.title</h5>
+        <hr>
+        <div class="container" data-parsley-validate="parsley" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" id="ID" name="ID" />
+
+            <div class="form-group row">
+                <div class="col-md-1"></div>
+                <label for="brandName" class="col-sm-2 col-form-label">@Model.flang.project</label>
+                <div class="col-sm-6">
+                    @*<select class="form-control" id="projectId" name="projectId" required data-parsley-required="true">
+            @foreach (var data in Model.projects)
+            {
+                <option value="@data.Id">@data.projectName</option>
+            }
+        </select>*@
+                    <input type="text" class="form-control" id="projectName" data-parsley-required="true">
+                    <input type="hidden" id="projectId" name="projectId" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-1"></div>
+                <label for="modelName" class="col-sm-2 col-form-label">@Model.flang.matrixType</label>
+                <div class="col-sm-6">
+                    <select class="form-control" id="matrixTypeId" name="matrixTypeId" required data-parsley-required="true">
+                        <option value="" id="mtrxTypeHead">Select Matrix Type</option>
+                        @foreach (var data in Model.matrixTypes)
+                        {
+                            <option value="@data.Id">@data.matrixTypeName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1"></div>
+                <label for="partsName" class="col-sm-2 col-form-label">@Model.flang.raiser</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="userName" data-parsley-required="true">
+                    <input type="hidden" id="userId" name="userId"  />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1"></div>
+                <label for="partsName" class="col-sm-2 col-form-label">@Model.flang.nextApprover</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="nextApproverName" data-parsley-required="true">
+                    <input type="hidden" id="nextApproverId" name="nextApproverId" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1"></div>
+                <label for="modelName" class="col-sm-2 col-form-label">@Model.flang.approverType</label>
+                <div class="col-sm-6">
+                    <select class="form-control" id="approverTypeId" name="approverTypeId" required data-parsley-required="true">
+                        <option value="" id="appTypeHead">Select Approver Type</option>
+                        @foreach (var data in Model.approverTypes)
+                        {
+                            <option value="@data.Id">@data.approverTypeName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <hr />
+            <div class="form-group row">
+                <div class="col-md-5"></div>
+                <div class="col-md-4">
+                    <button title="Add" onclick="AddMatrixInfo()" class="btn btn-info btn-lg" style="float:right;"><i class="fas fa-plus"></i></button>
+                </div>
+
+            </div>
+        </div>
+        <div class="container">
+            <form asp-area="Matrix" asp-controller="ApprovalMatrix" asp-action="Index" method="post" data-parsley-validate="parsley" autocomplete="off">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" id="ID" name="ID" />
+                <input type="hidden" id="projectnid" name="projectnid" />
+                <input type="hidden" id="matrixnid" name="matrixnid" />
+
+                <div class="row">
+                    <table id="tblMatrix" class="table table-striped jambo_table bulk_action" style="width:100%;">
+                        <thead style="background-color:#e6e7ed">
+                            <tr>
+                                <th>@Model.flang.nextApprover</th>
+                                <th>@Model.flang.approverType</th>
+                                <th>@Model.flang.sequenceNo</th>
+                                <th>@Model.flang.isActive ?</th>
+                                <th>@Model.flang.action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <hr />
+                <div class="form-group row">
+                    <div class="col-md-7"></div>
+                    <div class="col-md-5">
+                        <button type="submit" title="Submit" value="Submit" class="btn btn-success btn-lg fa-pull-right"><i class="fas fa-save"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.flang.listTitle</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="matrixTable">
+                    <thead>
+                        <tr>
+                            <th style="width:24%">Project Name</th>
+                            <th style="width:10%">@Model.flang.matrixType</th>
+                            <th style="width:12%">@Model.flang.raiser</th>
+                            @*<th style="width:12%">@Model.flang.nextApprover</th>
+                            <th style="width:8%">@Model.flang.approverType</th>
+                            <th style="width:2%">@Model.flang.sequenceNo</th>*@
+                            <th style="width:2%">@Model.flang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.matrixInformation)
+                        {
+                            <tr>
+                                <td>@data.projectName</td>
+                                <td>@data.matrixTypeName</td>
+                                <td>@data.EmpName</td>
+                                @*<td>@data.nextEmpName</td>
+                                <td>@data.approverTypeName</td>
+                                <td>@data.sequenceNo</td>*@
+                                <td>
+                                    <a class="btn btn-success" title="Edit Approver" onclick="EditMatrixByRaiser(@data.projectId,@data.matrixTypeId,@data.userId,'@data.EmpName','@data.EmpCode','@data.projectName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-success" title="View Approver" onclick="ViewMatrixByRaiser(@data.projectId,@data.matrixTypeId,@data.userId,'@data.EmpName','@data.EmpCode')" href="javascript:void(0)"><i class="fa fa-street-view"></i></a>
+                                    <a class="btn btn-success" title="Change Raiser" onclick="ChangeMatrixByRaiser(@data.projectId,@data.matrixTypeId,@data.userId,'@data.EmpName','@data.EmpCode')" href="javascript:void(0)"><i class="fa fa-transgender"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalviewmatrix" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Approver List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+              
+                <div class="form-group">
+                    <table id="tblMatrixV" class="table table-striped jambo_table bulk_action" style="width:100%;">
+                        <thead style="background-color:#e6e7ed">
+                            <tr>
+                                <th>@Model.flang.nextApprover</th>
+                                <th>@Model.flang.approverType</th>
+                                <th>@Model.flang.sequenceNo</th>
+                                <th>@Model.flang.isActive ?</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:void(0)" style="color:deepskyblue" id="btnCancel" data-dismiss="modal">Cancel</a>&nbsp;
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalviewmatrixChange" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Raiser</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">Previous Raiser :</label>
+                        <input type="text" class="form-control" id="userNameP" readonly>
+                        <input type="hidden" id="userIdP" name="userIdP" />
+                        <input type="hidden" id="projectIdU"  />
+                        <input type="hidden" id="matrixTypeIdU" />
+                    </div>
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">New Raiser :</label>
+                        <input type="text" class="form-control" id="userNameN">
+                        <input type="hidden" id="userIdN" name="userIdN" />
+                    </div>
+                   
+
+
+                </div>
+                <br />
+             
+
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:void(0)" style="color:deepskyblue" id="btnCancel" data-dismiss="modal">Cancel</a>&nbsp;
+                <button type="button" style="background-color:#024972;" onclick="ChangeRaiser()" class="btn-primary btn-sm">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section ScriptsMtrx{
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+         function GetProjectInfo() {
+            var result =@Html.Raw(Json.Serialize(Model.projects));
+            console.log(result);
+            var lstPOP = [];
+            $.each(result, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.projectName;
+                lstPOP[lstPOP.length] = obj;
+            });
+             $('#projectName').autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+                    $("#projectName").val(ui.item.value);
+                    $("#projectId").val(ui.item.key);
+                
+                }
+            });
+           
+        }
+
+        function GetUserInfo() {
+            var result =@Html.Raw(Json.Serialize(Model.aspNetUsersApproverViews));
+            console.log(result);
+            var lstPOP = [];
+            $.each(result, function (i, option) {
+                var obj = new Object();
+                obj.key = option.UserId;
+                obj.value = option.EmpName;
+                lstPOP[lstPOP.length] = obj;
+            });
+            $('#userName').autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+                    $("#userName").val(ui.item.value);
+                    $("#userId").val(ui.item.key);
+                    GetAppMatrixData();
+                }
+            });
+            $('#userNameN').autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+                    $("#userNameN").val(ui.item.value);
+                    $("#userIdN").val(ui.item.key);
+                   
+                }
+            });
+            $('#nextApproverName').autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+                    $("#nextApproverName").val(ui.item.value);
+                    $("#nextApproverId").val(ui.item.key);
+                }
+            });
+        }
+
+        function AddMatrixInfo() {
+            let index = $("#tblMatrix tbody tr").length;
+            var rowCount = $("#tblMatrix tbody tr").length + 1;
+
+            let projectId = $('#projectId').val();
+            let matrixTypeId = $('#matrixTypeId').val();
+            $('#projectnid').val(projectId);
+            $('#matrixnid').val(matrixTypeId);
+            let userName = $('#userName').val();
+            let userId = $('#userId').val();
+            let nextApproverName = $('#nextApproverName').val();
+            let nextApproverId = $('#nextApproverId').val();
+            let approverTypeId = $('#approverTypeId').val();
+            let approverType = $('#approverTypeId option:selected').text();
+            let isActive = 0;
+
+            if (projectId == 0) {
+                swal('Warning', 'Please Select Project', 'warning');
+                return false;
+            } else if (matrixTypeId == 0) {
+                swal('Warning', 'Please Select Matrix Type', 'warning');
+                return false;
+            } else if (userId == 0 || userName == '') {
+                swal('Warning', 'Please Enter Raiser Name', 'warning');
+                return false;
+            } else if (nextApproverId == 0 || nextApproverName == '') {
+                swal('Warning', 'Please Approver Name', 'warning');
+                return false;
+            } else if (approverTypeId == 0) {
+                swal('Warning', 'Please Approver Type', 'warning');
+                return false;
+            }
+
+
+
+
+            var dtTable = $("#tblMatrix");
+            var tableBody = dtTable.find('tbody');
+
+            var trHtml = '<tr id=' + index + '>' +
+                //'<td>' + nextApproverName + '<input type="hidden" id="txtNPOP' + index + '" name="nextApproverId" class ="clsNPOPId"  value="' + nextApproverId + '"/><input type="hidden" class ="clsProjectId" name="projectId" value="' + projectId + '"/></td>' +
+                '<td>' + nextApproverName + '<input type="hidden" id="txtNPOP' + index + '" name="nextApproverId" class ="clsNPOPId"  value="' + nextApproverId + '"/></td>' +
+                //'<td>' + approverType + '<input type="hidden" id="txtAppTypeId' + index + '" class ="clsAppTypeId" name="approverTypeId" value="' + approverTypeId + '"/><input type="hidden" id="txtMtrxTypeId' + index + '" class ="clsMtrxTypeId" name="matrixTypeId"  value="' + matrixTypeId + '"/></td>' +
+                '<td>' + approverType + '<input type="hidden" id="txtAppTypeId' + index + '" class ="clsAppTypeId" name="approverTypeId" value="' + approverTypeId + '"/></td>' +
+                '<td><input type="text" style="width:40px;height:30px;text-align:center"  id="txtSequence' + index + '" onkeyup=" keyUpAppLevelCorrection(' + index + ')" class ="clsSequence" name="sequenceNo"  value="' + rowCount + '"/></td>' +
+                '<td><input type="checkbox" style="width:20px;height:20px;" onclick="getcheckdata(' + index + ')" id="txtIsAtive' + index + '"  class="clsIsActive" name="isActive" value="' + isActive + '" /><input type="hidden" id="txtPOPId' + index + '" class ="clsPOPId" name="userId" value="' + userId + '"/><input type="hidden" id="txtActive' + index + '" class ="clsPOPIds" name="Active" /></td>' +
+                '<td><a href="javascript:void(0)" title="Delete" onclick="DeleteRow(' + index + ',' + rowCount + ')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a></td>' +
+
+                '</tr>'
+
+            tableBody.append(trHtml);
+
+            $('#nextApproverName').val('');
+            $('#nextApproverId').val('');
+            $('#approverTypeId').val('');
+        }
+
+        function DeleteRow(index, rowCount) {
+            var Count = $("#tblMatrix tbody tr").length;
+            for (i = 1; i <= Count; i++) {
+                var apUer = $("#txtSequence" + i).val();
+                if (apUer > rowCount) {
+                    $("#txtSequence" + i).val(apUer - 1)
+                }
+            }
+
+            $("#" + index).remove();
+            return false;
+        }
+
+        function GetAppMatrixData() {
+            let raiserId = $('#userId').val();
+            let projectId = $('#projectId').val();
+            let matrixTypeId = $('#matrixTypeId').val();
+            Common.Ajax('GET', '/api/matrix/MatrixByRaiser/' + projectId + '/' + matrixTypeId + '/' + raiserId, [], 'json', LoadAppMatrixByRaiser);
+        }
+
+        function ChangeRaiser() {
+            let newUserId = $('#userIdN').val();
+            let oldUserId = $('#userIdP').val();
+            let projectId = $('#projectIdU').val();
+            let matrixTypeId = $('#matrixTypeIdU').val();
+            if (newUserId == "")
+            {
+                swal('Warning', 'Please Select New Raiser', 'warning');
+                return false;
+            }
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Change this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Change it!'
+            }).then(function () {
+                $.ajax({
+
+                    url: '/SCMMatrix/ApprovalMatrix/ChangeRaiser',
+                    data: { projectId: projectId, matrixTypeId: matrixTypeId, newUserId: newUserId, oldUserId: oldUserId},
+                    type: 'POST',
+                    success: function (records) {
+                        swal('Success', 'Change Successfull!!!', 'success');
+                        $('#modalviewmatrixChange').modal('hide');
+                      
+                        window.location.href = "/SCMMatrix/ApprovalMatrix/Index";
+                    }
+                });
+                });
+           
+        }
+        function GetAppMatrixDataV(projectId, matrixTypeId, userId, empName, empCode) {
+
+            let raiserId = userId;
+            //let projectId = $('#projectId').val();
+            //let matrixTypeId = $('#matrixTypeId').val();
+            Common.Ajax('GET', '/api/matrix/MatrixByRaiser/' + projectId + '/' + matrixTypeId + '/' + raiserId, [], 'json', LoadAppMatrixByRaiserV);
+        }
+
+        function LoadAppMatrixByRaiser(response) {
+            console.log(response);
+            var dtTable = $("#tblMatrix");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            let index = 0;
+            $.each(response, function (id, option) {
+                $('#projectnid').val(option.projectId);
+                $('#matrixnid').val(option.matrixTypeId);
+                let rowCount = option.sequenceNo;
+                let projectId = option.projectId;
+                let matrixTypeId = option.matrixTypeId;
+                let userId = option.userId;
+                let nextApproverName = option.nameEnglish;
+                let nextApproverId = option.nextApproverId;
+                let approverTypeId = option.approverTypeId;
+                let approverType = option.approverTypeName;
+                let isActive = option.isActive;
+                var trHtml = '<tr id=' + index + '>' +
+                    //'<td>' + nextApproverName + '<input type="hidden" id="txtNPOP' + index + '" name="nextApproverId" class ="clsNPOPId"  value="' + nextApproverId + '"/><input type="hidden" class ="clsProjectId" name="projectId" value="' + projectId + '"/></td>' +
+                    '<td>' + nextApproverName + '<input type="hidden" id="txtNPOP' + index + '" name="nextApproverId" class ="clsNPOPId"  value="' + nextApproverId + '"/></td>' +
+                    //'<td>' + approverType + '<input type="hidden" id="txtAppTypeId' + index + '" class ="clsAppTypeId" name="approverTypeId" value="' + approverTypeId + '"/><input type="hidden" id="txtMtrxTypeId' + index + '" class ="clsMtrxTypeId" name="matrixTypeId"  value="' + matrixTypeId + '"/></td>' +
+                    '<td>' + approverType + '<input type="hidden" id="txtAppTypeId' + index + '" class ="clsAppTypeId" name="approverTypeId" value="' + approverTypeId + '"/></td>' +
+                    '<td><input type="text" style="width:40px;height:30px;text-align:center"  id="txtSequence' + index + '" onkeyup=" keyUpAppLevelCorrection(' + index + ')" class ="clsSequence" name="sequenceNo"  value="' + rowCount + '"/></td>' +
+                    '<td><input type="checkbox" onclick="getcheckdata(' + index + ')" style="width:20px;height:20px;" id="txtIsAtive' + index + '"  class="clsIsActive"  name="isActive" value="' + isActive + '" /><input type="hidden" id="txtPOPId' + index + '" class ="clsPOPId" name="userId" value="' + userId + '"/><input type="hidden" id="txtActive' + index + '" class ="clsPOPIds" name="Active" /></td>' +
+                    '<td><a href="javascript:void(0)" title="Delete" onclick="DeleteRow(' + index + ',' + rowCount + ')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a></td>' +
+
+                    '</tr>'
+
+                tableBody.append(trHtml);
+
+                if (isActive == 1) {
+                    $('#txtIsAtive' + index).prop('checked', true);
+                   
+                    $('#txtActive' + index).attr("value", "1");
+                } else {
+                    $('#txtIsAtive' + index).prop('checked', false);
+                   
+                    $('#txtActive' + index).attr("value", "0");
+                }
+                index++;
+            });
+
+        }
+
+        function LoadAppMatrixByRaiserV(response) {
+            console.log(response);
+            var dtTable = $("#tblMatrixV");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            let index = 0;
+            $.each(response, function (id, option) {
+
+                let rowCount = option.sequenceNo;
+               
+                let nextApproverName = option.nameEnglish;
+                
+                let approverType = option.approverTypeName;
+                let isActive = option.isActive;
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + nextApproverName + '</td>' +
+                    '<td>' + approverType + '</td>' +
+                    '<td><input readonly type="text" style="width:40px;height:30px;text-align:center"  id="txtSequencedd' + index + '" onkeyup=" keyUpAppLevelCorrection(' + index + ')" class ="clsSequence" name="sequenceNo"  value="' + rowCount + '"/></td>' +
+                    '<td><input readonly type="checkbox" onclick="getcheckdata(' + index + ')" style="width:20px;height:20px;" id="txtIsAtivedd' + index + '"  class="clsIsActive"  name="isActive" value="' + isActive + '" /></td>' +
+                 
+
+                    '</tr>'
+
+                tableBody.append(trHtml);
+
+                if (isActive == 1) {
+                    $('#txtIsAtivedd' + index).prop('checked', true);
+
+                    $('#txtActivedd' + index).attr("value", "1");
+                } else {
+                    $('#txtIsAtivedd' + index).prop('checked', false);
+
+                    $('#txtActivedd' + index).attr("value", "0");
+                }
+                index++;
+            });
+
+        }
+        function getcheckdata(id)
+        {
+            if ($('#txtIsAtive' + id).prop('checked') == true) {
+                $('#txtActive' + id).attr("value", "1");
+                //alert("yes");
+            } else {
+                $('#txtActive' + id).attr("value", "0");
+                //alert("No");
+                //$('#' + ids).attr("value", "0");
+                //$('#' + names).attr("value", "0");
+            }
+        }
+        function EditMatrixByRaiser(projectId, matrixTypeId, userId, empName, empCode,projectName) {
+            $('#projectId').val(projectId);
+            $('#projectName').val(projectName);
+            $('#matrixTypeId').val(matrixTypeId);
+            $("#userName").val(empCode + ' - ' + empName);
+            $("#userId").val(userId);
+            GetAppMatrixData();
+        }
+        function ViewMatrixByRaiser(projectId, matrixTypeId, userId, empName, empCode) {
+
+            $('#modalviewmatrix').modal('show');
+            //$('#projectId').val(projectId);
+            //$('#matrixTypeId').val(matrixTypeId);
+            //$("#userName").val(empCode + ' - ' + empName);
+            //$("#userId").val(userId);
+            GetAppMatrixDataV(projectId, matrixTypeId, userId, empName, empCode);
+        }
+        function ChangeMatrixByRaiser(projectId, matrixTypeId, userId, empName, empCode) {
+
+            $('#modalviewmatrixChange').modal('show');
+            $('#projectIdU').val(projectId);
+            $('#matrixTypeIdU').val(matrixTypeId);
+            $("#userNameP").val(empCode + ' - ' + empName);
+            $("#userIdP").val(userId);
+           // GetAppMatrixDataV(projectId, matrixTypeId, userId, empName, empCode);
+        }
+
+        function keyUpAppLevelCorrection(rowCount) {
+            var row_Count = $("#data-table-row-grouping tbody tr").length;
+            var txtValue = $("#txtLevel" + rowCount).val();
+            var abs = row_Count - Final;
+
+            if (txtValue != "") {
+                if (txtValue > abs) {
+                    $("#txtLevel" + rowCount).val("")
+                    $.alert.open("error", "Invalid aproval level ii");
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            $('#matrixTable').DataTable();
+            $('#projectName').change(function () {
+                $('#projectnid').val($('#projectId').val());
+            });
+            $('#matrixTypeId').change(function () {
+                $('#matrixnid').val($('#matrixTypeId').val());
+            });
+            GetProjectInfo();
+            GetUserInfo();
+            
+
+        });
+    </script>
+}

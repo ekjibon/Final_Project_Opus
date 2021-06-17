@@ -1,0 +1,2 @@
+/ERPSettings/Navbar/Create
+/Auth/UserAssignPage

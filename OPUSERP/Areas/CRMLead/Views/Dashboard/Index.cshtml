@@ -1,0 +1,327 @@
+﻿@model MainDashboardViewModel
+@{
+    ViewData["TitleMD"] = "CRM Dashboard";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="row bg-success" style="padding-top:10px;padding-bottom:10px;margin-bottom:20px;">
+    <div class="col-sm-12">
+        <h5 class="text-center" style="color:white;">CRM Dashboard </h5>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Number of Lead</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.cRMDataCountViewModel.TotalLead</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Number of Clients</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.cRMDataCountViewModel.TotalClient</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hand-holding fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Lead(This month)</div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.cRMDataCountViewModel.ThisMonthTotalLead</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-microphone fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Clients(This Month)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.cRMDataCountViewModel.ThisMonthTotalClient</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-4">
+        <canvas id="meter_chart" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-8">
+        <canvas id="relef_distribution" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-4">
+        <canvas id="lead_prograss" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-8">
+        <canvas id="product_requirement" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+
+<div class="row">
+    <div class="col-sm-4">
+        <canvas id="lead_source" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-8">
+        <canvas id="work_achive" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-4">
+        <canvas id="organization" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-8">
+        <canvas id="proposal" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+@section ScriptsMD{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="~/js/palette.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#activityStatus").addClass("active");
+            $('#departmentTable').DataTable();
+            //chart1();
+            // chart2();
+            Common.Ajax('GET', '/CRMLead/Dashboard/DashboardValue', [], 'json', chart1, false);
+        });
+
+        function chart1(response) {
+            console.log(response);
+            var ctx = document.getElementById('relef_distribution');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: response.cRMDataCountViewModel.activityCompletePercent,
+                        label: 'Complete',
+                        backgroundColor: 'rgba(255, 20, 100, 0.5)',
+                    }, {
+                            data: response.cRMDataCountViewModel.activityInprogressPercent,
+                        label: 'In-Progress',
+                        backgroundColor: 'rgba(0,255,0, 0.5)',
+                    }],
+                    labels: response.cRMDataCountViewModel.months
+                },
+                options: {
+                }
+            });
+
+            var meter_chart = document.getElementById('meter_chart').getContext('2d');
+            var chart = new Chart(meter_chart, {
+                // The type of chart we want to create
+                type: 'doughnut',
+
+                // The data for our dataset
+                data: {
+                    labels: ["Leads", "Clients"],
+                    datasets: [{
+                        label: "Lead Target",
+                        backgroundColor: ['green', 'red'],
+                        borderColor: '#fff',
+                        data: [@Model.cRMDataCountViewModel.TotalLead, @Model.cRMDataCountViewModel.TotalClient],
+                    }]
+                },
+            });
+
+
+            var lead_prograss = document.getElementById('lead_prograss').getContext('2d');
+            var chart = new Chart(lead_prograss, {
+                // The type of chart we want to create
+                type: 'doughnut',
+
+                // The data for our dataset
+                data: {
+                    labels: response.cRMDataCountViewModel.leadprogressstatus,
+                    datasets: [{
+                        label: "Lead Progress",
+                        backgroundColor: palette('tol', response.cRMDataCountViewModel.leadprogressstatus.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.cRMDataCountViewModel.leadprogressstatuscount,
+                    }]
+                },
+            });
+
+            var product_requirement = document.getElementById('product_requirement');
+            var myChart2 = new Chart(product_requirement, {
+                type: 'bar',
+                data: {
+                    labels: response.cRMDataCountViewModel.products,
+                    datasets: [{
+                        label: 'Product Requirements',
+                        data: response.cRMDataCountViewModel.productscount,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var lead_source = document.getElementById('lead_source').getContext('2d');
+
+            var datapart = {
+                datasets: [{
+                    data: response.cRMDataCountViewModel.sourcescount,
+                    backgroundColor: palette('tol', response.cRMDataCountViewModel.sourcescount.length).map(function (hex) {
+                        return '#' + hex;
+                    })
+                }],
+                labels: response.cRMDataCountViewModel.sources
+            };
+
+            var myDoughnutCharts = new Chart(lead_source, {
+                type: 'pie',
+                data: datapart,
+                options: {
+                    labels: {
+                        display: false,
+                    }
+                }
+            });
+
+            var ctx = document.getElementById('work_achive');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: response.cRMDataCountViewModel.countleadgeneration,
+                        label: 'Generation',
+                        backgroundColor: 'rgba(255, 20, 100, 0.5)',
+                    }, {
+                            data: response.cRMDataCountViewModel.countleadproposal,
+                        label: 'Proposal',
+                        backgroundColor: 'rgba(0,255,0, 0.5)',
+                    }, {
+                            data: response.cRMDataCountViewModel.countleadagrement,
+                        label: 'Agreement',
+                        backgroundColor: 'blue',
+                    }, {
+                            data: response.cRMDataCountViewModel.countleadconversion,
+                        label: 'Conversion',
+                        backgroundColor: 'gray',
+                    }],
+                    labels: response.cRMDataCountViewModel.teams
+                },
+                options: {
+                }
+            });
+
+
+            var organization = document.getElementById('organization').getContext('2d');
+            var chart = new Chart(organization, {
+                // The type of chart we want to create
+                type: 'pie',
+
+                // The data for our dataset
+                data: {
+                    labels: response.cRMDataCountViewModel.OwnerShipTypes,
+                    datasets: [{
+                        label: "Organization Type",
+                        backgroundColor: palette('tol', response.cRMDataCountViewModel.OwnerShipTypes.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.cRMDataCountViewModel.countOwnerShipTypes,
+                    }]
+                },
+            });
+
+            var ctx = document.getElementById('proposal');
+            var myChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    datasets: [{
+                        data: response.cRMDataCountViewModel.counttechnical,
+                        label: 'Proposal Send',
+                        backgroundColor: 'rgba(255, 20, 100, 0.5)',
+                    }, {
+                            data: response.cRMDataCountViewModel.countfinacial,
+                        label: 'Proposal Accepted',
+                        backgroundColor: 'rgba(0,255,0, 0.5)',
+                    }],
+                    labels: response.cRMDataCountViewModel.teams
+                },
+                options: {
+
+                }
+            });
+
+        }
+
+
+
+    </script>
+}
+

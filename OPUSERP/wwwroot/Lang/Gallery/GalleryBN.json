@@ -1,0 +1,19 @@
+﻿{
+  "videoGallery": "ভিডিও গ্যালারী",
+  "galleryTitle": "গ্যালারী তৈরী",
+  "galleryImage": "গ্যালারী ছবি",
+  "caption": "ক্যাপশন",
+  "title": "শিরোনাম",
+  "type": "ধরণ",
+  "description": "বিবরণ",
+  "galleryTitleList": "গ্যালারী তালিকা",
+  "imageGallery": "ছবি গ্যালারী",
+  "imageUpload": "ছবি গ্যালারী আপলোড",
+  "galleryDetails": "গ্যালারী বিস্তারিত",
+  "videoUpload": "ভিডিও আপলোড",
+  "youtubeId": "ইউটিউব আইডি",
+  "videoList": "ভিডিও তালিকা",
+  "video": "ভিডিও",
+  "remarks": "মন্তব্য",
+  "action": "প্রক্রিয়া"
+}

@@ -1,0 +1,128 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+body {
+    padding-top: 0px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+
+.pagination-outer {
+    text-align: center;
+}
+
+.pagination {
+    font-family: 'Merriweather', serif;
+    display: inline-flex;
+}
+
+    .pagination li a.page-link {
+        color: #333;
+        background: #fff;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 31px;
+        height: 35px;
+        width: 35px;
+        padding: 0;
+        margin: 0 5px;
+        border: none;
+        border-radius: 0 10px;
+        display: block;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease 0s;
+    }
+
+        .pagination li a.page-link:hover,
+        .pagination li a.page-link:focus,
+        .pagination li.active a.page-link {
+            color: #fff;
+            background: #fff;
+            box-shadow: 0 0 10px -2px rgba(0, 0, 0, 0.5);
+        }
+
+    .pagination li:first-child a.page-link,
+    .pagination li:last-child a.page-link {
+        font-size: 25px;
+        line-height: 34px;
+    }
+
+        .pagination li:first-child a.page-link:hover,
+        .pagination li:last-child a.page-link:hover {
+            color: #0984e3;
+            text-shadow: -3px 3px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: none;
+        }
+
+        .pagination li:last-child a.page-link:hover {
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+        }
+
+    .pagination li a.page-link:before {
+        content: '';
+        background-color: #0984e3;
+        height: 7px;
+        width: 7px;
+        border-radius: 50% 50% 0 50%;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        transition: all 0.3s ease 0s;
+    }
+
+    .pagination li.active a.page-link:before,
+    .pagination li a.page-link:hover:before {
+        height: 100%;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .pagination li:first-child a.page-link:before,
+    .pagination li:last-child a.page-link:before {
+        display: none;
+    }
+
+@media only screen and (max-width: 480px) {
+    .pagination {
+        font-size: 0;
+        display: block;
+    }
+
+        .pagination li {
+            display: inline-block;
+            margin: 0 0 10px;
+        }
+}
+

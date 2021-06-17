@@ -1,0 +1,187 @@
+﻿@model SalesMenuOpeningBalanceViewModel
+@{
+    ViewData["Title"] = "Day Opening Balance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12">
+        <form asp-area="OtherSales" asp-controller="SalesMenu" asp-action="MenuOpening" method="post" data-parsley-validate="parsley">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @{
+                var id = 0;
+                if (@ViewBag.OpeningStockId == null)
+                {
+                    id = 0;
+                }
+                else
+                {
+                    id = ViewBag.OpeningStockId;
+                }
+                <input type="hidden" name="opeiningId" id="opeiningId" value="@id">
+            }
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Menu Opening Balance</label>
+                    <span style="float:right"><a asp-area="OtherSales" asp-controller="SalesMenu" asp-action="MenuOpeningList" class="btn btn-facebook btn-sm">Back To List</a></span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="particular" class="col-sm-4 col-form-label text-left">Item Name <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="itemName" name="itemName" />
+                                    <input type="hidden" id="itemId" name="itemId" value="0" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="particular" class="col-sm-4 col-form-label text-left">Item Specification <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="hidden" id="itemSpecificationId" name="itemSpecificationId" />
+                                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemSpecificationName" id="itemSpecificationName">
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="openingDate" class="col-sm-4 col-form-label text-left">Stock/Purchase Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="openingDate" id="openingDate" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="openingQty" class="col-sm-4 col-form-label text-left">Quantity <span style="color:red;">*</span></label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="number" class="form-control input-group-sm numeric text-right" name="openingQty" id="openingQty" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="openingValue" class="col-sm-4 col-form-label text-left"></label>
+                                <div class="col-sm-8 input-group">
+                                    <button type="submit" value="Submit" title="Save" class="btn btn-success btn-sm" style="width:80px;">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#openingDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            Common.Ajax('GET', '/global/api/getAllActiveItemFromItemPrice', [], 'json', ajaxAllActiveItem);
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+            let OpeningStockId = parseInt(@ViewBag.OpeningStockId) ? parseInt(@ViewBag.OpeningStockId) : 0;
+            if (OpeningStockId == null || OpeningStockId == 0) {
+
+            }
+            else {               
+                Common.Ajax('GET', '/OtherSales/SalesMenu/GetSalesMenuOpeningBalanceById/?id=' + OpeningStockId, [], 'json', ajaxGetOpeningStockById);                
+            }
+
+        });
+
+        function ajaxGetOpeningStockById(response) {
+            $("#itemName").val(response.itemSpecification?.Item?.itemName);
+            $("#itemId").val(response.itemSpecification ?.Item ?.Id);
+            $("#itemSpecificationId").val(response.itemSpecificationId);
+            $("#itemSpecificationName").val(response.itemSpecification ?.specificationName);
+
+            $("#openingQty").val(response.openingQty);
+            $("#openingDate").val(getPurchaseDate(response.openingDate)); 
+            
+        }
+
+        function ajaxAllActiveItem(response) {
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                GetList[GetList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#itemName").val(ui.item.value);
+                    $("#itemId").val(ui.item.key);
+                    var ItemId = ui.item.key;
+                    //Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetAllItemSpecificationByitemId/?ItemId=' + ItemId, [], 'json', ajaxGetItemSpecification);
+                    Common.Ajax('GET', '/global/api/getAllPriceFixedItemSpacificationByItemId/' + ItemId, [], 'json', ajaxAllPriceFixedItemSpacification);
+                }
+            });
+        }
+
+        function ajaxAllPriceFixedItemSpacification(response) {
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemSpecificationName;
+                GetList[GetList.length] = obj;
+            });
+            $('#itemSpecificationName').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#itemSpecificationName").val(ui.item.value);
+                    $("#itemSpecificationId").val(ui.item.key);
+                }
+            });
+        }   
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+    </script>
+}
+
+@section Style{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+
+
+

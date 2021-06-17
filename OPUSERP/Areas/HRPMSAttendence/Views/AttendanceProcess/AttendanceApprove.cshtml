@@ -1,0 +1,139 @@
+﻿@model AttendanceUpdateApplyViewModel
+@{
+    ViewData["Title"] = "Attendance Approval";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Attendance Approve</h6>
+            </div>
+            <!-- Card Body -->
+            <form id="allform" asp-area="" asp-controller="" asp-action="ActionAll" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="card-body">
+                    <table class="table table-striped table-bordered" id="leaveApplyTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="main" title="Select All" style="height:20px; width:20px;" onclick="check()" /></th>
+                                <th>Employee Name</th>
+                                <th>@Model.visualEmpCodeName</th>
+                                <th>Appilcation No</th>
+                                <th>Date & Time</th>
+                                <th>Notes</th>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var data in Model.attendanceRoutes)
+                            {
+                                <tr>
+                                    <td><input class="SelectCheckBox" type="checkbox" name="child" id="-@data.Id-@data.attendanceUpdateApplyId" style="height:20px; width:20px;" onclick="AddInfo(this)" /></td>
+                                    <td>@data.attendanceUpdateApply?.employeeInfo?.nameEnglish</td>
+                                    <td>@data.attendanceUpdateApply?.employeeInfo?.employeeCode</td>
+                                    <td>@data.attendanceUpdateApply?.applicationNo</td>
+                                    <td>@data.attendanceUpdateApply?.applyDateTime?.ToString("dd-MMM-yyyy hh:mm")</td>
+                                    <td align="right">@data.attendanceUpdateApply?.notes</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row" id="divselectedListTable" style="display:none">
+                    <div class="card-body">
+                        <table class="table table-bordered" id="selectedListTable">
+                            <thead style="background:whitesmoke; text-align:center">
+                                <tr>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <button type="button" id="btnApprove" class="btn btn-success btn-sm" style="float:right; margin-top:5px;margin-right:17px;margin-bottom:5px;">Approve</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#leaveApplyTable').dataTable();
+
+            $('#btnApprove').click(function () {
+                Approve();
+            });
+
+        });
+
+        function Approve() {
+            $('#btnApprove').attr("disabled", true);
+             var form = $("#allform");
+                $.ajax({
+                    url: '@Url.Action("AttendanceApproveAll", "AttendanceProcess")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Approved Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+
+                            $('#btnApprove').attr("disabled", false);
+                            window.location.href = "/HRPMSAttendence/AttendanceProcess/AttendanceApprove";
+                        });
+                    }
+            });
+        }
+
+        function check() {
+            if (document.getElementById("main").checked == true) {
+                $(".SelectCheckBox").trigger("click");
+            } else {
+                $('input[name="child"]').each(function () {
+                    this.checked = false;
+                    var id = this.getAttribute('id');
+                    var leaveid = parseInt(id.split('-')[2]);
+                    DeleteMultiple(leaveid);
+                });
+            }
+        }
+
+        function AddInfo(arg) {
+            var dtTable = $("#selectedListTable");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = "";
+            var trId = 0;
+            var isValid = true;
+            var id = arg.getAttribute('id');
+            var leaveid = parseInt(id.split('-')[2]);
+            var vid= parseInt(id.split('-')[1]);
+            if (arg.checked) {
+                trId = id;
+                var locationList = "";
+                var index = $("#selectedListTable tbody>tr").length;
+                trHtml = '<tr class=' + leaveid + ' id=' + index + "_" + leaveid +
+                    '>' +
+                    '<td>' + leaveid +
+                    '<input type="hidden"  class="leadsId"  name="registerids" value="' + leaveid + '"/>' +
+                    '<input type="hidden"  class="leadsId"  name="ids" value="' + vid + '"/>' +
+                    '</td>' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            } else {
+                DeleteMultiple(leaveid);
+            }
+        }
+
+        function DeleteMultiple(index) {
+            $("#selectedListTable ." + index).remove();
+            return false;
+        }
+
+    </script>
+}

@@ -1,0 +1,396 @@
+﻿@model JobAssignViewModel
+@{
+    ViewData["Title"] = "Job Assign To Team";
+    Layout = "~/Areas/MasterData/Views/Shared/_CustomerDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        #educationalTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <form asp-area="SCMJobAssign" asp-controller="JobAssignToTeam" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="card mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Job Assign To Team</h6>
+                </div>
+                <!-- Card Body -->
+                @{
+                    int i = 1;
+
+                    <div id="AddInputHere">
+
+                    </div>
+
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered" id="educationalTable">
+                            <thead>
+                                <tr>
+                                    <th>SL#</th>
+                                    <th>Requisition No</th>
+                                    <th>Requisition Date</th>
+                                    <th>Subject</th>
+                                    <th>Details</th>
+                                    <th>Select</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.requisitionMasters)
+                                {
+                                    <tr>
+                                        <th>@i</th>
+                                        <th>@data.reqNo</th>
+                                        <th>@data.reqDate?.ToString("dd-MMM-yyyy")</th>
+                                        <th>@data.subject</th>
+                                        <th>
+                                            <a class="btn btn-success" onclick="AddModal(event,@data.Id)" href="#"> <i class="fa fa-folder"></i></a>
+                                            <a class="btn btn-info" href="/SCMReport/ReportMaster/PurchaseRequisitionPdf?reqId=@data.Id" target="_blank"><i class="fa fa-print"></i></a>
+                                        </th>
+                                        <th>
+                                            <select class="form-control" onchange="AddInput(@data.Id)" id="team-@data.Id">
+                                                <option value="">Select One</option>
+                                                @foreach (var data1 in Model.teamMasters)
+                                                {
+                                                    <option value="@data1.Id">@data1.teamName</option>
+                                                }
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    i++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+            <input class="btn btn-success" type="submit" value="Assign" style="float:right" />
+        </form>
+        @if (TempData["Success"] != null)
+        {
+            <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+        }
+    </div>
+</div>
+<br />
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Assigned List</h6>
+            </div>
+            <!-- Card Body -->
+            @{
+                int a = 1;
+
+                <div class="card-body">
+                    <table class="table table-striped table-bordered" id="educationalTable1">
+                        <thead>
+                            <tr>
+                                <th>SL#</th>
+                                <th>ReqNo</th>
+                                <th>ReqDate</th>
+                                <th>Subject</th>
+                                <th>Assigned To</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.assignRequisitionMasters)
+                            {
+                                <tr>
+                                    <th>@a</th>
+                                    <th>@data.reqNo</th>
+                                    <th>@data.reqDate?.ToString("dd-MMM-yyyy")</th>
+                                    <th>
+                                        @data.subject
+                                    </th>
+                                    <th>
+                                        @data.teamMaster?.teamName
+                                    </th>
+
+                                    <th>
+                                        <a class="btn btn-success" onclick="AddModal(event,@data.Id)" href="#"> <i class="fa fa-folder"></i></a>
+                                        <a class="btn btn-info" href="/SCMReport/ReportMaster/PurchaseRequisitionPdf/@data.Id" target="_blank"><i class="fa fa-print"></i></a>
+                                    </th>
+
+                                </tr>
+                                a++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ValidatModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="width:1040px;">
+            <div class="modal-header">
+                <label class="modal-title pull-left" id="myModalLabel" style="color:rgb(9, 7, 161);font-size:1em;">
+                    List of requested item
+                </label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <br />
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="row col-12">
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Employee Name</label>
+                            <input class="form-control" type="text" id="txtEmployee" readonly="readonly" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Requisition No</label>
+                            <input class="form-control" type="text" id="txtReqNo" readonly="readonly" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Requisition Date</label>
+                            <input class="form-control" type="text" id="txtReqDate" readonly="readonly" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Delivery Target Date</label>
+                            <input class="form-control" type="text" id="txtTargetDate" readonly="readonly" />
+                        </div>
+                    </div>
+                    <div class="row col-12">
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Subject</label>
+                            <input class="form-control" type="text" id="txtDescription" readonly="readonly" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Department</label>
+                            <input class="form-control" type="text" id="txtReqDept" readonly="readonly" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Req Status</label>
+                            <input class="form-control" type="text" id="txtRequistionStatus" readonly="readonly" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="col-sm-12 col-form-label">Approval Status</label>
+                            <input class="form-control" type="text" id="txtApprovalStatus" readonly="readonly" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row col-12">
+                        <table id="tblReqDetailReview" cellpadding="3" cellspacing="0" class="table table-striped table-bordered" border="1">
+                            <thead style="background-color:#c6c3c3">
+                                <tr style="text-align:center">
+                                    <th rowspan="2" style="text-align:center">
+                                        SL No
+                                    </th>
+                                    <th rowspan="2" style="text-align:center">
+                                        Item Code
+                                    </th>
+                                    <th rowspan="2">
+                                        Item Name
+                                    </th>
+                                    <th>
+                                        Specification
+                                    </th>
+                                    <th>
+                                        Unit Name
+                                    </th>
+                                    <th>
+                                        Item Quantity
+                                    </th>
+                                    <th>
+                                        Apprx.Rate
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" style="text-align:right">Total</td>
+                                    <td><input class="form-control" type="text" id="txtTotal" style="text-align:right;width:auto;float:right" readonly="readonly" /></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <br />
+                    <div class="row col-12">
+                        <label class="col-12" style="color:rgb(9, 7, 161);font-size:1em;"><u><b>Attachments</b></u></label>
+                        <br />
+                        <div class="form-group col-12" style="background-color:white">
+                            <table id="dtAttachment" cellpadding="3" cellspacing="0" class="table table-striped table-bordered" border="1">
+                                <thead style="background-color:#c6c3c3">
+                                    <tr>
+                                        <th style="width:30%">File Name</th>
+                                        <th style="width:30%">File</th>
+                                        <th style="width:15%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyAttachment"></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#education").addClass("active");
+            $('#educationalTable').DataTable();
+            $('#educationalTable1').DataTable();
+        });
+
+        function AddInput(id) {
+            var teamId = $("#team-" + id).val();
+            if (teamId == "") {
+                $("#masterInfo-" + id).remove();
+                $("#teamInfo-" + id).remove();
+            } else {
+                $("#masterInfo-" + id).remove();
+                $("#teamInfo-" + id).remove();
+
+                $("#AddInputHere").append('<input type="hidden" id="masterInfo-' + id + '" name="masterIds" value="' + id + '"><input type="hidden" id="teamInfo-' + id + '" name="teamIds" value=' + teamId + '>');
+            }
+        }
+
+        function AddModal(e, MasterId) {
+            e.preventDefault();
+            GetRequisitionDetail(MasterId)
+            LoadAttachment(MasterId);
+            Common.Ajax('GET', '/global/api/GetRequisitorInfoByRequisitionId/' + MasterId, [], 'json', GetReqInfo);
+            $("#ValidatModal").modal("show");
+        }
+
+        function GetReqInfo(response) {
+            console.log(response);
+            $("#txtApprovalStatus").val(response.StatusName);
+            $("#txtRequistionStatus").val('-');
+            $("#txtReqDept").val(response.reqDept);
+            $("#txtDescription").val(response.subject);
+            $("#txtTargetDate").val(response.targetDate);
+            $("#txtReqDate").val(response.reqDate);
+            $("#txtReqNo").val(response.reqNo);
+            $("#txtEmployee").val(response.EmpName);
+
+        }
+
+
+        function GetRequisitionDetail(MasterId) {
+             var Total = 0;
+             var rowno=0
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetMasterWiseRequisitionDetails", "JobAssignToTeam", "http")',
+            data: { MasterId: MasterId },
+            dataType: 'json',
+            async: true,
+            success: function (Re_DetailList) {
+               // console.log(Re_DetailList);
+                var dtTable = $('#tblReqDetailReview');
+                var tableBody = dtTable.find('tbody');
+                tableBody.empty();
+
+                $.each(Re_DetailList, function (index, E) {
+                    rowno = rowno + 1;
+                    var appcost = parseInt(E.reqRate * E.reqQty);
+                    Total = Total+ appcost;
+                    $("#txtTotal").val(Total);
+                    //alert(Total);
+                    tableBody.append('<tr>' +
+                        '<td>' + rowno + '</td>' +
+                                  '<td>' + E.itemCode + ' <input type="text" value="' + E.ItemId + '" style="display:none;" name="ItemCode" id="txtItem' + E.Id + '" /></td>' +
+                        '<td>' + E.itemName + '<input type="text" value="' + E.itemName + '" style="display:none;" name="ItemName" id="txtItemName' + E.Id + '" /></td>' +
+                        '<td>' + E.itemSpac + '<input type="text" value="' + E.itemSpac + '" style="display:none;" name="ItemCatName" id="txtItemCatName' + E.Id + '" /></td>' +
+                        '<td>' + E.unitName + '<input type="text" value="' + E.unitName + '" style="display:none;"  name="UnitName" id="txtUnitName' + E.Id + '" /></td>' +
+                        '<td>' + E.reqQty + '<input type="text" value="' + E.reqQty + '" style="display:none;"  name="ReqQTY" id="txtReqQTY' + E.Id + '" /></td>' +
+                        '<td style="text-align:right;width:auto">' + E.reqRate + '<input type="text" value="' + E.ApproxCost + '" style="display:none;"  name="AprQty" id="txtAprQty' + E.Id + '" /></td>' +
+                                  //'<td>' + E.RequisitionStatus + '<input type="text" value="' + E.RequisitionStatus + '" style="display:none;"  name="RequisitionStatus" id="txtRequisitionStatus' + E.ID + '" /></td>' +
+                                  '</tr>'
+                        )
+
+                });
+                $('#AjaxLoader').hide()
+            },
+            error: function (request, status, error) {
+                alert(request.statusText + "/" + request.statusText + "/" + error);
+            }
+        });
+    }
+
+        function LoadAttachment(MasterId) {
+             var rowno = 0
+        $.ajax({
+            type: 'GET',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetMasterWiseRequisitionAttachment", "JobAssignToTeam", "http")',
+            data: { MasterId: MasterId },
+            dataType: 'json',
+            async: true,
+            success: function (attachments) {
+                //console.log(attachments);
+                var index = 1;
+                var dtTable = $("#dtAttachment");
+                var tableBody = dtTable.find('tbody');
+                tableBody.empty();
+                $.each(attachments, function (index, E) {
+                    rowno = rowno + 1;
+                    var filePath = '/Upload/'+E.fileName
+                    $('#SubjectName').val(E.Subject);
+                    if (E.FilePath != "") {
+                        if (E.MimeType == "application/msword" || E.MimeType == "application/pdf" || E.MimeType == "application/x-msexcel" || E.MimeType == "application/octet-stream" || E.MimeType == "text/plain" || E.MimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || E.MimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                            tableBody.append(
+                                '<tr id=' + rowno + '>' +
+                                '<td>' + E.fileName + '</td>' +
+
+                                '<td><i class="fa fa-file" style="font-size:40px;color:lightgray"> </i></td>' +
+                                '<td><a href=' + "'" + filePath + "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a></td>' +
+                                '</tr>')
+                        }
+                        else {
+                            tableBody.append(
+                                '<tr id=' + rowno + '>' +
+                                '<td>' + E.fileName + '</td>' +
+
+                                '<td style="height:50px;width: 45px; background - color:lightgray"><img src=' + "'" + filePath + "'" + ' height=50 width=45 /></td>' +
+                                '<td><a href=' + "'" + filePath+ "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a></td>' +
+                                '</tr>')
+                        }
+
+                    }
+                    index = index + 1;
+                });
+                $('#AjaxLoader').hide()
+            },
+            error: function (request, status, error) {
+                alert(request.statusText + "/" + request.statusText + "/" + error);
+            }
+        });
+    }
+
+
+    </script>
+}
+
+
+

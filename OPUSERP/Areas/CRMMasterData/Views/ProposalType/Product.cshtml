@@ -1,0 +1,107 @@
+﻿@model ProductViewModel
+@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Areas/CRMMasterData/Views/Shared/_CRMMasterDataForm.cshtml";
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Product</h6>
+            </div>
+            <div class="card-body">
+                <div class="container" id="entrydata">
+                    <form asp-area="CRMMasterData" asp-controller="ProposalType" asp-action="Product" method="post" data-parsley-validate="parsley">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group row">
+                            <input type="hidden" name="productId" id="productId" value="0" />
+                            <label for="productName" class="col-sm-2 col-form-label">Product Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="productName" id="productName">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="productDescription" class="col-sm-2 col-form-label">Description</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="productDescription" id="productDescription">
+                            </div>
+                        </div>
+                        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Product</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="statusTable">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.products)
+                        {
+                            <tr>
+                                <td>@data.productName</td>
+                                <td>@data.productDescription</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.productName','@data.productDescription')" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete Product" onclick="DeleteProduct(@data.Id)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#Product").addClass("active");
+            $('#statusTable').DataTable();
+        });
+
+        function Edit(Id, productName, productDescription) {
+            $("#productId").val(Id);
+            $("#productName").val(productName);
+            $("#productDescription").val(productDescription);
+        }
+
+        function DeleteProduct(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/CRMMasterData/ProposalType/DeleteProductById/?id=" + Id;
+                swal({
+                    title: '', text: 'Deleted Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                });
+            });
+        }
+
+    </script>
+}
+
+
+
+
+
+

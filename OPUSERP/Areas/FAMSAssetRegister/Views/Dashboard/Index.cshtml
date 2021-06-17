@@ -1,0 +1,296 @@
+﻿@model MainDashboardViewModel
+@{
+    ViewData["TitleMD"] = "Fixed Asset Dashboard";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="row bg-success" style="padding-top:10px;padding-bottom:10px;margin-bottom:20px;">
+    <div class="col-sm-12">
+        <h5 class="text-center" style="color:white;">Fixed Asset Dashboard </h5>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card h-100 py-2" style="background:#0099ff;color:white ">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+
+                    <div class="col-auto mr-2">
+                        <div class="h5 mb-0 font-weight-bold">@Model.fAMSDashboardcountViewModel.assetOpening</div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Asset Opening Balance</div>
+                    </div>
+                </div>
+
+                <a href="#">
+                    <div class="row" style="background:white;margin-top:10px;">
+                        <div class="col mr-2">
+                            <p style="margin-top:10px;">View Details </p>
+                        </div>
+
+                        <div class="col-auto">
+                            <i class="fas fa-arrow-right fa-2x text-gray-300" style="margin-top:5px;background:#0099ff;border-radius:35%;padding:4px;"></i>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Asset Addition This Year</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.assetAddition</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hand-holding fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Asset Transfer This Year</div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.assetTransfer</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-microphone fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Asset Disposal This Year</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.assetDisposal</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+
+<div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Asset Closing This Year</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.assetClosing</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Depreciation Opening Balance</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.depriciationOpening</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hand-holding fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Deprecition Charged This Year</div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.depriciationcharged</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-microphone fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Deprecition Adjustment Dis/Trans</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.depriciationadjustment</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+
+<div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Deprecition Closing Balance</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.depriciationClosing</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Asset Net Book Value</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.fAMSDashboardcountViewModel.assetNet</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hand-holding fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <canvas id="yearly_asset_value" style='width: 100%;height: 100%'></canvas>
+    </div>
+    <div class="col-sm-6">
+        <canvas id="category_asset" style='width: 100%;height: 100%'></canvas>
+    </div>
+</div>
+
+<hr />
+
+@section ScriptsMD{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="~/js/palette.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#activityStatus").addClass("active");
+            $('#departmentTable').DataTable();
+            //chart1();
+            // chart2();
+            Common.Ajax('GET', '/FAMSAssetRegister/Dashboard/DashboardValue', [], 'json', chart1, false);
+        });
+
+        function chart1(response) {
+            console.log(response);
+            
+            var category_asset = document.getElementById('category_asset').getContext('2d');
+            var chart = new Chart(category_asset, {
+                // The type of chart we want to create
+                type: 'doughnut',
+
+                // The data for our dataset
+                data: {
+                    labels: response.fAMSDashboardcountViewModel.categoryname,
+                    datasets: [{
+                        label: "Lead Progress",
+                        backgroundColor: palette('tol', response.fAMSDashboardcountViewModel.categorywisepercent.length).map(function (hex) {
+                            return '#' + hex;
+                        }),
+                        borderColor: '#fff',
+                        data: response.fAMSDashboardcountViewModel.categorywisepercent,
+                    }]
+                },
+            });
+
+            var yearly_asset_value = document.getElementById('yearly_asset_value');
+            var myChart2 = new Chart(yearly_asset_value, {
+                type: 'bar',
+                data: {
+                    labels: response.fAMSDashboardcountViewModel.years,
+                    datasets: [{
+                        label: 'Product Requirements',
+                        data: response.fAMSDashboardcountViewModel.yearlyvalues,
+                        backgroundColor: '#6f99a3',
+                        borderColor: '#6f99a3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+
+        }
+
+
+
+    </script>
+}

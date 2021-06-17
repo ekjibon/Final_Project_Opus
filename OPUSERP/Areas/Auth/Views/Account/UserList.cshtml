@@ -1,0 +1,278 @@
+﻿@model UserListViewModel
+@{
+    ViewData["Title"] = "User List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+         
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">User List</h6>
+            </div>
+          
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="NomineeTable">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Roles</th>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Employee Code</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.aspNetUsersViewModels)
+                        {
+                            <tr>
+                                <td>
+                                    @if (data.DivisionName != null)
+                                    {
+                                        <img src="~/@data.DivisionName" height="60" width="60" alt="profile Image" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/user-icon-png.png" height="60" width="60" alt="profile Image" />
+                                    }
+                                </td>
+                                <td>@data.EmpName</td>
+                                <td>@data.roleId</td>
+                                <td>@data.UserName</td>
+                                <td>@data.Email</td>
+                                <td>@data.EmpCode</td>
+                                <td>
+                                    <a class="btn btn-info" title="Edit" onclick="Edit('@data.aspnetId','@data.UserName','@data.EmpCode','@data.EmpName','@data.DesignationName','@data.roleId')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-success" title="Reset Password" onclick="SetEmpCode('@data.UserName','@data.EmpCode')" href="#" data-toggle="modal" data-target="#changePasswordModal"><i class="fa fa-key"></i></a>
+                                    <a class="btn btn-danger" title="Delete User" onclick="Remove('@data.aspnetId')" href="#"><i class="fa fa-trash-alt"></i></a>
+                                    @if (data.isActive == 1)
+                                    {
+                                        <a class="btn btn-danger" title="InActive User" onclick="InActive('@data.aspnetId')" href="#"><i class="fa fa-times"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-success" title="Active User" onclick="Active('@data.aspnetId')" href="#"><i class="fa fa-check"></i></a>
+                                    }
+
+
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              
+                <h5 class="modal-title" id="exampleModalLabel">Reset Password </h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-area="Auth" asp-controller="Account" asp-action="ResetPassword" method="post" data-parsley-validate="parsley" autocomplete="on">
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+
+                    <div class="form-group row" style="display:none;">
+                        <label for="Name" class="col-sm-2 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="hidden" class="form-control" id="Name" name="Name" data-parsley-required="true" data-parsley-maxlength="100">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="Email" class="col-sm-4 col-form-label">User Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="userName" name="userName" value="" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="Password" class="col-sm-4 col-form-label">New Password</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" id="Password" name="Password" data-parsley-required="true" data-parsley-maxlength="20" data-parsley-equalto="#ConfirmPassword">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="ConfirmPassword" class="col-sm-4 col-form-label">Confirm Password</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" data-parsley-required="true" data-parsley-maxlength="20" data-parsley-equalto="#Password">
+                        </div>
+                    </div>
+                    <input type="hidden" name="userId" id="userId" value="" />
+
+                    <hr />
+                    <button data-toggle="tooltip" title="Save" type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right; margin-top:5px;"><i class="fas fa-save"></i> Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ValidatModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="width:1040px;">
+            <div class="modal-header">
+                <label class="modal-title pull-left" id="myModalLabel" style="color:rgb(9, 7, 161);font-size:1em;">
+                    Login Access <span id="UserId"></span>
+                </label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <br />
+            </div>
+            <div class="modal-body">
+                <form asp-area="Auth" asp-controller="Account" asp-action="EditRole" method="post" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-sm-6">
+
+                            <div class="form-group row">
+                                <label for="employeeCode" class="col-sm-4 col-form-label"> Employee Code <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="employeeCode" value="" name="employeeCode" readonly>
+                                    <input type="hidden" id="aspUserId" value="" name="aspUserId">
+                                    <input type="hidden" id="employeeId" value="" name="employeeId">
+                                    <input type="hidden" id="EuserName" value="" name="EuserName">
+                                    <input type="hidden" id="PreRoleId" value="" name="PreRoleId">
+
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="name" class="col-sm-4 col-form-label"> Employee Name <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="name" id="name" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+
+                            <div class="form-group row">
+                                <label for="roleId" class="col-sm-4 col-form-label">Role <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <select type="text" class="form-control" name="roleId" id="roleId">
+                                        <option value="0" selected="selected">Select User Role</option>
+                                        @foreach (var data in Model.userRoles)
+                                        {
+                                            <option value="@data.RoleName">@data.RoleName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="leaveFrom" class="col-sm-4 col-form-label">Designation<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="designation" id="designation" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#NomineeTable').DataTable();
+
+            Common.Ajax('GET', '/global/api/getEmployeeInfoByOrg/', [], 'json', ajaxEmployeeList, false);
+        });
+
+        function ajaxEmployeeList(response) {
+            console.log(response);
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode + ' - ' + option.nameEnglish;
+                obj.name = option.nameEnglish;
+                obj.designation = option.designation;
+                obj.orgType = option.orgType;
+                obj.nationalID = option.nationalID;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#employeeCode').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#name").val(ui.item.name);
+                    $("#employeeId").val(ui.item.key);
+                    $("#designation").val(ui.item.designation);
+                }
+            });
+        }
+
+        function SetEmpCode(userName,empcode) {
+            $("#userName").val(userName);
+            $("#Name").val(empcode);
+        }
+
+        function Edit(Id, name, empCode, empName, designation, roleId) {
+            //alert(name);
+            $("#UserId").val(Id);
+            $("#EuserName").val(name);
+            $("#aspUserId").val(Id);
+            $("#employeeCode").val(empCode);
+            $("#name").val(empName);
+            $("#designation").val(designation);
+            $("#roleId").val(roleId);
+            $("#PreRoleId").val(roleId);
+            $('#ValidatModal').modal('show');
+
+        }
+
+        function Active(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Active this User!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Active it!'
+            }).then(function () {
+                window.location.href = "/Auth/Account/UpdateStatus?Id=" + index +"&status=1";
+                swal('', 'Updated Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function InActive(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to In Active this User!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, In Active it!'
+            }).then(function () {
+                window.location.href = "/Auth/Account/UpdateStatus?Id=" + index + "&status=0";
+                swal('', 'Updated Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function Remove(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/Auth/Account/Delete?Id=" + index;
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+
+
+    </script>
+}

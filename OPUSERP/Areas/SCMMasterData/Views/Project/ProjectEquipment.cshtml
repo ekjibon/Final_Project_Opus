@@ -1,0 +1,164 @@
+﻿@model ProjectEquipmentModel
+@{
+    ViewData["TitleMD"] = "Project Equipment";
+    Layout = "~/Areas/Auth/Views/Shared/_MasterLayout.cshtml";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Project Wise Equipment</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="SCMMasterData" asp-controller="Project" asp-action="ProjectEquipment" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="projectEquipmentId" id="projectEquipmentId" value="0" />
+
+                    <label for="projectId" class="col-sm-3 col-form-label">Project Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="projectId" id="projectId" data-parsley-required="true">
+                            <option value="">Select</option>
+                            @foreach (var data in Model.Projects)
+                            {
+                                <option value="@data.Id">@data.projectName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                    <div class="form-group row">
+                        <label for="specName" class="col-sm-3 col-form-label">Equipment Name <span style="float:right;" class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="specName" data-parsley-required="true" />
+                        </div>
+                        <input type="hidden" id="itemspecificationId" name="itemspecificationId" data-parsley-required="true" />
+                    </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Project Wise Equipment List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="unitTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Project Name</th>
+                            <th>Equipment Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.ProjectWiseEquipment)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.project.projectName</td>
+                                    <td>@data.itemSpecification.specificationName</td>
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edit(@data.Id, @data.projectId,@data.itemSpecificationId,'@data.itemSpecification.specificationName')" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                        <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                                }
+                            }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#unitTable').DataTable();
+            GetItemSpecificationListApiCall();
+        });
+
+        function Edit(Id, projectId,specId,specName) {
+            $("#projectEquipmentId").val(Id);
+            $("#projectId").val(projectId);
+            $("#specName").val(specName);
+            $("#itemspecificationId").val(specId);
+        }
+
+        function GetItemSpecificationListApiCall() {
+
+            $.ajax({
+                url: "/global/api/GetAllItemSpecification",
+                type: "get",
+                success: function (res) {
+                    //console.log(res);
+                    GetItemSpecificationList(res)
+                }
+            })
+        }
+
+        function GetItemSpecificationList(response, i) {
+            //console.log(i);
+            var lstPOP = [];
+            // console.log(response);
+            $.each(response, function (i, option) {
+                //  alert(option.itemName);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                lstPOP[lstPOP.length] = obj;
+            });
+            $('#specName').autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+                    $("#itemspecificationId").val(ui.item.key);
+
+                }
+            });
+            return false;
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteProjectEquipmentById", "Project")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.reload();
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+    </script>
+}

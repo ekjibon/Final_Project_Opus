@@ -1,0 +1,436 @@
+﻿@model GratuityViewModel
+
+@{
+    ViewData["Title"] = "Gratuity Policy";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">Gratuity Policy</h5>
+            </div>
+            @*<div class="col-4">
+                    <a href='/HRPMSEmployee/Photograph/EditGrid/@Model.employeeID' style="text-decoration:none;"><h6 class="identity-box">@Model.employeeNameCode</h6></a>
+                </div>*@
+        </div>
+        <hr>
+        <div class="container">
+            <form id="myForm" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="sbuName" class="col-sm-4 col-form-label">SBU Name <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" data-parsley-required="true" name="sbuId" id="sbuId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.branches)
+                                    {
+                                        <option value="@data.Id">@data.branchUnitName</option>
+                                    }
+                                </select>
+                                <input type="hidden" name="Id" id="Id" value="0" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="daysDiv" class="col-sm-4 col-form-label">Days Divided By <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="daysDiv" value="" name="daysDiv" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="startFrom" class="col-sm-4 col-form-label">Gratuity Start From<span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <div id="txtProficiency" class="form-control" style="padding-top:4px;">
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="radJoinDate" value="1" name="isJoiningDate">
+                                        <label class="form-check-label" for="Reading">Joining Date</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" id="radConDate" value="0" name="isJoiningDate">
+                                        <label class="form-check-label" for="Writing">Confirmation Date</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="roundMode" class="col-sm-4 col-form-label">Round Method <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" data-parsley-required="true" name="roundMode" id="roundMode">
+                                    <option value="">Select</option>
+                                    <option value="1">Floor</option>
+                                    <option value="2">Ceiling</option>
+                                    <option value="3">Round</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group row">
+                            <label for="fromYear" class="col-sm-6 col-form-label">From Year<strong style="float:right;">:</strong></label>
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control" min="0" id="fromYear">
+                                <input type="hidden" name="txtFromYear" id="txtFromYear">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="form-group row">
+                            <label for="toYear" class="col-sm-6 col-form-label">To Year<strong style="float:right;">:</strong></label>
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control" min="0" id="toYear">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="form-group row">
+                            <label for="times" class="col-sm-6 col-form-label">Times<strong style="float:right;">:</strong></label>
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control" id="times">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="form-group row">
+                            <label for="amount" class="col-sm-6 col-form-label">&nbsp;</label>
+                            <div class="col-sm-6">
+                                <input type="button" value="Add" onclick="AddItemInfo()" style="width:100%;" class="btn btn-sm btn-info" name="AddExtraItem" id="AddExtraItem">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row" style="max-height:150px;overflow-x:scroll;">
+                    <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                    <table class="table table-striped table-bordered" id="tblfuelDetails">
+                        <thead>
+                            <tr>
+                                <th>From Year</th>
+                                <th>To Year</th>
+                                <th>Times</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <input type="button" id="saveForm" value="Submit" class="btn btn-success ml-1" style="float:right; margin-top:5px;" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Policy</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="itemPriceTable">
+                    <thead>
+                        <tr>
+                            <th>Office Name</th>
+                            <th>Days Div</th>
+                            <th>Mode</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Times</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.gratuityPolicyDetails)
+                        {
+                        <tr>
+                            <td>@data.gratuityPolicy?.sbu?.branchUnitName</td>
+                            <td>@data.gratuityPolicy?.daysDIv</td>
+                            <td>@data.gratuityPolicy?.roundMode</td>
+                            <td>@data?.fromYear</td>
+                            <td>@data?.toYear</td>
+                            <td>@data?.Times</td>
+
+                            @*<td><barcode content="@data.barCode" width="200" height="70"></barcode><br /><span style="text-align:right;padding-left:22%;">@data.barCode</span></td>*@
+                            @*<td><button onclick="showdetail(@data.Id)" title="Show Detail" class="btn btn-sm btn-info"><i class="fa fa-info fa-fw"></i></button></td>*@
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+
+            $("#award").addClass("active");
+            $('#txtAwardDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#itemPriceTable').DataTable();
+
+            //Save confirmation
+            $("#saveForm").click(function () {
+                var data = $("#myForm").serialize();
+                let sbuId = $('#sbuId').val();
+                let daysDiv = $('#daysDiv').val();
+                let Reading = $('#Reading').val();
+                let roundMode = $('#roundMode').val();
+
+
+                if (sbuId == "") {
+                    swal('Warning', 'SBU name can not be null', 'warning');
+                    return false;
+                }
+                if (daysDiv == "") {
+                    swal('Warning', 'Days Divided By can not be null', 'warning');
+                    return false;
+                }
+                if (Reading == "") {
+                    swal('Warning', 'Is Joining Date can not be null', 'warning');
+                    return false;
+                }
+                if (roundMode == "") {
+                    swal('Warning', 'Round Mode can not be null', 'warning');
+                    return false;
+                }
+
+
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/HRPMSEmployee/Gratuity/GratuityPolicy",
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            window.location.href = "/HRPMSEmployee/Gratuity/GratuityPolicy";
+                        }
+                    });
+                });
+
+                return false;
+            });
+
+        });
+        //});
+
+        function AddItemInfo() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+
+
+            let id = parseInt($("#detailid").val()) ? parseInt($("#detailid").val()) : 0;
+
+            let fromYear = $('#fromYear').val();
+            if (fromYear == null || fromYear == '') {
+                alert("Please enter from year");
+                return
+            }
+
+            let toYear = $('#toYear').val();
+            if (toYear == null || toYear == '') {
+                alert("Please enter to year");
+                return
+            }
+
+            let times = $('#times').val();
+            if (times == null || times == '') {
+                alert("Please enter times");
+                return
+            }
+
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblfuelDetails tbody>tr").length;
+
+            var dtTable = $("#tblfuelDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fromYear + '<input type="hidden" name="FromYear" id="fromYear" class="clsId" value="' + fromYear + '"/></td>' +
+                '<td>' + toYear + '<input type="hidden"name="ToYear" id="toYear" class="clsId" value="' + toYear + '"/></td>' +
+                '<td>' + times + '<input type="hidden"name="Times" id="times" class="clsId" value="' + times + '"/></td>' +
+
+            '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                //'<a onclick="EditconTbl(' + index + "', '" + phone + "','" + mobile + ", " + resouceid + ", " +id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            index = index + 1;
+            Refresh();
+        }
+
+
+        //function AddItemInfo() {
+        //    var ifExistIndex = window.localStorage.getItem("holdIndex");
+        //    var index = "0";
+        //    if (ifExistIndex == "null" || ifExistIndex == null) {
+        //        index = $("#tblfuelDetails tbody>tr").length;
+        //    }
+        //    else {
+        //        index = ifExistIndex;
+        //        tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+        //    }
+
+        //    let fuelTypeName = $('#txtFromYear').val();
+        //    var RowCount = $("#tblfuelDetails tbody>tr").length;
+        //    var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+
+
+        //    let fromYear = $('#fromYear').val();
+        //    if (fromYear == null || fromYear == '') {
+        //        alert("Please enter from year");
+        //        return
+        //    }
+
+        //    let toYear = $('#toYear').val();
+        //    if (toYear == null || toYear == '') {
+        //        alert("Please enter to year");
+        //        return
+        //    }
+
+        //    let times = $('#times').val();
+        //    if (times == null || times == '') {
+        //        alert("Please enter times");
+        //        return
+        //    }
+
+        //    //for (i = 0; i < RowCount; i++) {
+
+        //    //    var _itemId = $('#headAll' + i + '').val();
+        //    //    if (_itemId == fuelTypeName) {
+        //    //        swal('Warning', 'You have already added this Head!', 'warning');
+        //    //        return false
+        //    //    }
+        //    //}
+
+        //    var dtTable = $("#tblfuelDetails");
+        //    var tableBody = dtTable.find('tbody');
+        //    var trHtml = '<tr id=' + index + '>' +
+
+        //        '<td>' + fromYear + '<input type="hidden" id="fromYear" name="FromYear" class="clsId" value="' + fromYear + '"></td>' +
+
+        //        '<td>' + toYear + '<input type="hidden" id="toYear" name="ToYear" class="clsId" value="' + toYear + '"></td>' +
+
+        //        '<td>' + times + '<input type="hidden" id="times" name="Times" class="clsId" value="' + times + '"></td>' +
+
+        //        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+        //        '</tr>';
+
+        //    if (ifExistIndex == null || ifExistIndex == "null") {
+        //        tableBody.append(trHtml);
+        //    }
+        //    else {
+        //        var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+        //        rowUpdate.replaceWith(trHtml);
+        //        window.localStorage.setItem("holdIndex", null);
+        //        ifExistIndex = null;
+        //    }
+        //    index = index + 1;
+        //    Refresh();
+        //}
+
+        function Refresh() {
+            $('#fromYear').val('');
+            $('#toYear').val('');
+            $('#times').val('');
+        }
+
+        function Delete(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblfuelDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+
+        var index = 1;
+                //function AddExtraFeeItem() {
+                //    if ($("#sbuId").val() == null || $("#sbuId").val() == '') {
+                //        alert("Please Select Valid SBU");
+                //        return false;
+                //    }
+                //    var dtTable = $("#extraFeeItemTable");
+                //    var tableBody = dtTable.find('tbody');
+
+                //    tableBody.append('<tr id=' + index + '>' +
+
+                        //'<td>' + $("#selectItem").val() + '<input type="text" id="ItemName' + index + '" name ="itemName[]" style="display:none" value="' + $("#selectItem").val() + '"/><input type="text" id="ItemID' + index + '" name ="itemId[]" style="display:none" value="' + $("#selectItemId").val() + '"/></td>' +
+                        //'<td>' + $("#remarks").val() + '<input type="text" id="Remarks' + index + '" name ="itemRemarks[]" style="display:none" value="' + $("#remarks").val() + '"/></td>' +
+                        //'<td style="text-align:center;">' + $("#fromYear").val() + '<input type="text" id="FromYear' + index + '" name ="itemFromYear[]" style="display:none" value="' + $("#fromYear").val() + '"/></td>' +
+                        //'<td style="text-align:right;">' + $("#toYear").val() + '<input type="text" id="ToYear' + index + '" name ="itemToYear[]" style="display:none" value="' + $("#toYear").val() + '"/></td>' +
+                        //'<td style="text-align:right;">' + $("#times").val() + '<input type="text" id="Times' + index + '" name ="itemTimes[]" style="display:none" value="' + $("#times").val() + '"/></td>' +
+                        //'<td style="text-align:center;"><a href="#" data-toggle="tooltip" title="Delete" class="btn btn-danger" onclick="DeleteExtraFeeItem(' + index + ',' + $("#amount").val() + ')"><i class="fa fa-trash"></i></a></td>' +
+                        //'</tr>')
+
+                //    var totalAmt = 0;
+                //    if ($("#totalExtra").val() != '') {
+                //        totalAmt = parseFloat($("#totalExtra").val());
+                //    }
+                //    var totalAmt = totalAmt + parseFloat($("#amount").val());
+                //    $("#totalExtra").val(totalAmt.toFixed(2));
+                //    finalTotal();
+
+                //    index = index + 1;
+
+                //    $("#fromYear").val('');
+                //    $("#toYear").val('');
+                //    $("#times").val('');
+                //}
+
+    </script>
+}
+

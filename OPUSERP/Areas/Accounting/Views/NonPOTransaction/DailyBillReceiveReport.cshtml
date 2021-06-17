@@ -1,0 +1,79 @@
+﻿@model IEnumerable<DailyBillReceiveReportViewModel>
+@{
+    ViewData["Title"] = "ContraVoucherPDF";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<div>
+    <div>
+        <!-- Card Header - Dropdown -->
+        <div>
+            <div>
+                <div>
+                    <div style="float:left">
+                        @*<img src="~/images/bKashLogo.png" style="margin:0px 0px 0px 0px;" height="100" width="180" />*@
+                        @*<img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />*@
+                    </div>
+                    <div style="color:black">
+
+                        @*<p style="font-weight:900;padding-left:350px">@Model.companies.FirstOrDefault().companyName</p>*@
+                        @*<p style="width:650px;padding-left:300px;text-align:center">@Model.companies.FirstOrDefault().tinNo</p>*@
+
+                        @*<p style="font-weight:800;padding-left:410px">Fiscal Year:@Model.VoucherMaster.fiscalYear.yearName</p>
+                    <p style="width:650px;padding-left:300px;text-align:center">Contra Voucher</p>*@
+
+                    </div>
+                </div>
+            </div> <br /> <br />
+
+            <div style="margin-bottom:30px;color:black">
+                <span style="float:left;font-weight:600">Process No:@Model.FirstOrDefault()?.ProcessNo</span>
+                <br />
+                <span style="float:left">Invoice No:@Model.FirstOrDefault()?.InvoiceNo</span>
+
+                <span style="text-align:right;float:right;font-weight:600">Supplier Name: @Model.FirstOrDefault()?.supplierName</span>
+                <br />
+                <span style="text-align:right;float:right;font-weight:600">Bill Receive Date: @Model.FirstOrDefault()?.BillReceiveDate?.ToString()</span>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div>
+            <table class="table" style="border-color:black" id="voucherList">
+                <thead style="background-color:#96c1e2">
+                    <tr>
+                        <th width="40%">Supplier Name</th>
+
+                        <th width="20%" style="text-align:right">Amount(Tk)</th>
+                        <th width="20%" style="text-align:right">VAT</th>
+                        <th width="20%" style="text-align:right">Total</th>
+                </thead>
+
+                <tbody style="color:black;border-color:black;">
+                    @{
+                        @foreach (var data in Model)
+                        {
+                            <tr>
+                                <td>@data?.supplierName</td>
+                                <td>@data?.GBamount</td>
+                                <td style="text-align:right">@data?.Vat</td>
+                                <td style="text-align:right">@data?.Total</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

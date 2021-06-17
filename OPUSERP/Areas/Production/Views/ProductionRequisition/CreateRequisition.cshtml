@@ -1,0 +1,289 @@
+﻿@model ProductionRequsitionViewModel
+@{
+    ViewData["Title"] = "Production Requisition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row card">
+    <div class="col-sm-12">
+        <span style="font-size:1.5em;font-weight:700;color:gray;">Production Requisition</span>
+        <button type="button" class="btn btn-default btn-sm pull-right" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("Index", "ProductionRequisition")'">Back To List</button>
+    </div>
+</div>
+
+<form id="frmProduction" data-parsley-validate="parsley" autocomplete="off">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-1 m-0 p-0"></div>
+        <div class="card col-md-10">
+
+            <div class="card-header p-0 m-0">
+                <h6 class="card-title">Production Requisition Basic</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 p-0">
+                        <div class="form-group row">
+                            <label for="requisitionNo" class="col-sm-4 col-form-label">Requisition No<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" id="requisitionNo" name="requisitionNo" value="@Model.requisitionNo" class="form-control input-group-sm" data-parsley-required="true" readonly />
+                                <input type="hidden" id="requisitionId" name="requisitionId" value="@Model.requisitionId" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="planNumber" class="col-sm-4 col-form-label text-left">Plan No<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input name="planNumber" id="planNumber" class="form-control input-group-sm" value="" data-parsley-required="true" />
+                                <input type="hidden" id="bOMId" name="bOMId" value="" />
+                                <input type="hidden" id="planId" name="planId" value="@Model.planId" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="requisitionQty" class="col-sm-4 col-form-label text-left">Production Qty</label>
+                            <div class="col-sm-8">
+                                <input name="productionQty" id="productionQty" value="@Model.requisitionQty" class="form-control input-group-sm" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="requisitionDate" class="col-sm-4 col-form-label text-left">Requisition Date<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input name="requisitionDate" id="requisitionDate" value="@Model.requisitionDate?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" data-parsley-required="true" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="BatchId" class="col-sm-4 col-form-label text-left">Production Batch<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select name="BatchId" id="BatchId" class="form-control input-group-sm" data-parsley-required="true">
+                                   
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="requisitionQty" class="col-sm-4 col-form-label text-left">Requisition Qty<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input name="requisitionQty" id="requisitionQty" value="@Model.requisitionQty" class="form-control input-group-sm" data-parsley-required="true" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+
+                <div style="height:5px;"></div>
+
+                <div class="row">
+                    <div class="col-md-11"></div>
+                    <div class="col-md-1">
+                        <input type="button" onclick="fnLoadBOMDetails()" class="btn btn-sm btn-info pull-right" value="Add" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div style="height:10px;"></div>
+    <div class="row">
+        <div class="col-md-1 m-0 p-0"></div>
+        <div class="card col-md-10">
+            <div class="card-header p-0 m-0">
+                <h6 class="card-title">Production Requisition Details</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="productionDetailsTable">
+                    <thead>
+                        <tr>
+                            <th style="width:12%">Item Code</th>
+                            <th style="width:20%">Item Name</th>
+                            <th style="width:8%">BoM Qty</th>
+                            <th style="width:7%">Qty</th>
+                            <th style="width:10%">Default Price</th>
+                            @*<th style="width:12%">Default Supplier</th>*@
+                            <th style="width:3%">Action</th>
+                    </thead>
+                    <tbody></tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div style="height:20px;"></div>
+    <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <input type="button" onclick="RefreshAll()" value="Refresh" class="btn btn-info btn-sm" style="width:100px;" />&nbsp;&nbsp;
+            <input type="submit" value="Save" id="btnPSave" class="btn btn-success btn-sm" style="width:100px;" />
+
+        </div>
+
+    </div>
+</form>
+
+@section Scripts{
+    <script type="text/javascript">
+        function GetproductionPlans() {
+            var result =@Html.Raw(Json.Serialize(Model.productionPlans));
+            //console.log(result);
+            var lstPOP = [];
+            $.each(result, function (i, option) {
+                var obj = new Object();
+                obj.key = option.bOMMasterId;
+                obj.value = option.planNumber;
+                obj.planId = option.Id;
+                obj.productionQty = option.quantity;
+                lstPOP[lstPOP.length] = obj;
+            });
+            $('#planNumber').autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+                    $("#bOMId").val(ui.item.key);
+                    $("#planId").val(ui.item.planId);
+                    $("#productionQty").val(ui.item.productionQty);
+                    Common.Ajax('GET', '/api/Production/GetProductionBatchByPlanId/' + ui.item.planId, [], 'json', ajaxBatch, false);
+                }
+            });
+            if (@Model.planId > 0) {
+                for (var i = 0; i < lstPOP.length; i++) {
+                    if (lstPOP[i].planId == '@Model.planId') {
+                        $("#bOMId").val(lstPOP[i].key);
+                        $("#planId").val(lstPOP[i].planId);
+                        $("#planNumber").val(lstPOP[i].value);
+                        if (@Model.planId > 0) {
+                            Common.Ajax('GET', '/api/Production/GetBOMDetailsByBOMId/' + lstPOP[i].key + '/' + @Model.requisitionQty, [], 'json', GetBOMDetailList);
+                        }
+                        Common.Ajax('GET', '/api/Production/GetProductionBatchByPlanId/@Model.planId', [], 'json', ajaxBatch, false);
+                    }
+                }
+            }
+        }
+
+        function ajaxBatch(response) {
+            arrBatch = response;
+            var options = '<option value="">Select All</option>';
+            var id = 0;
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.batchNumber + '</option>';
+                id = item.Id;
+            });
+            $('#BatchId').empty();
+            $('#BatchId').append(options);
+        }
+
+        function fnLoadBOMDetails() {
+            let bomId = $('#bOMId').val();
+            let qty = parseFloat($('#requisitionQty').val()) ? parseFloat($('#requisitionQty').val()):0;
+
+            if (bomId == '') {
+                swal('Attention', 'Please select BoM Item', 'warning');
+                return false;
+            }
+            else if (qty == 0) {
+                swal('Attention', 'Please Enter Requisition Qty', 'warning');
+                return false;
+            }
+            Common.Ajax('GET', '/api/Production/GetBOMDetailsByBOMId/' + bomId + '/' + qty, [], 'json', GetBOMDetailList);
+        }
+
+        function GetBOMDetailList(response) {
+            $("#productionDetailsTable tbody>tr").empty();
+
+            $.each(response, function (key, value) {
+
+                index = $("#productionDetailsTable tbody>tr").length;
+                var dtTable = $("#productionDetailsTable");
+                var tableBody = dtTable.find('tbody');
+                let id = value.Id;
+                let itemCode = value.itemCode;
+                let itemName = value.itemName;
+                let unitName = value.unitName;
+                let quantity = value.quantity;
+                let productQty = value.productQty;
+                let defaultPrice = value.productPrice;
+                //let batchId = value.productPrice;
+
+                var trHtml = '<tr>' +
+                    '<td>' + itemCode + '<input type="hidden" name="itemCode" value="' + itemCode + '" /></td>' +
+                    '<td>' + itemName + '<input type="hidden" name="itemCode" value="' + itemName + '" /></td>' +
+                    '<td>' + quantity + '<input type="hidden" name="bOMDetailId" value="' + id + '" /></td>' +
+                    '<td>' + productQty + '<input type="hidden" name="qty" value="' + productQty + '" /></td>' +
+                    '<td><input  name="defaultPrice" value="' + defaultPrice + '" style="width:100%;text-align:right;padding:0px 0px 0px 0px;" /></td>' +
+                    //'<td><input id="txtSupplier' + index + '" style="width:100%;padding:0px 0px 0px 0px;"  name="supplierId"></td>' +
+                    '<td><a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="DeleteBOM(' + index + ')"><i class="fa fa-trash"></i></a>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+        }
+
+        function DeleteBOM(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#productionDetailsTable #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function RefreshAll() {
+            $("#productionDetailsTable tbody>tr").empty();
+            $('#bomQty').val('');
+            $('#productionDate').val('');
+            $('#bOMId').val('');
+            $('#bomItem').val('');
+            $('#productionId').val(0);
+            $('#productionNo').val('');
+            location.reload();
+        }
+
+        $(document).ready(function () {
+            $('#requisitionDate').datepicker({
+                uiLibrary: 'bootstrap4'
+            });
+            GetproductionPlans();
+
+            $("#btnPSave").click(function (e) {
+                let vid = parseInt($('#bOMId').val()) ? parseInt($('#bOMId').val()) : 0;
+                let pdate = $('#productionDate').val();
+                let tcount = $("#productionDetailsTable tbody>tr").length;
+
+                if (vid == 0) {
+                    alert("Please Select BoM Item!!!");
+                    return false;
+                } else if (pdate=='') {
+                    alert("Please Select Production Date!!!");
+                    return false;
+                } else if (tcount==0) {
+                    alert("Invalid Attempt!!!");
+                    return false;
+                }
+                e.preventDefault();
+
+                var form = $("#frmProduction");
+                $.ajax({
+                    url: '@Url.Action("CreateRequisition", "ProductionRequisition")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        alert("Save Successfull!!!");
+                        var url = "@Url.Action("Index", "ProductionRequisition")";
+                        window.location.href = url;
+                    }
+                });
+            });
+
+
+        });
+
+    </script>
+}
+
+@section Style{
+    <style>
+    </style>
+}
+

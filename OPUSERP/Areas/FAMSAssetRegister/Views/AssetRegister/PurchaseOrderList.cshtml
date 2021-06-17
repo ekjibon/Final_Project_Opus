@@ -1,0 +1,80 @@
+﻿@model AssetRegistrationViewModel
+@{
+    ViewData["Title"] = "Purchase Order List";
+    //Layout = "~/Areas/FAMSAssetRegister/Views/Shared/_AssetRegisterForm.cshtml";
+}
+
+
+@section Style{
+    <style>
+        #assetTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+
+           
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="assetTable">
+                    <thead>
+                        <tr>
+                            <th>PO No</th>
+                            <th>PO Date</th>
+                            <th>Supplier Name</th>
+                            
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.purchaseOrderViewModels)
+                        {
+                        <tr>
+
+                            <td><span style="display:none">-@data.purchaseId-</span>@data.PONO</td>
+                            <td>@data.purchaseDate</td>
+                            <td>@data.supplierName</td>
+                           
+                            <td>
+                                <a class="btn btn-success" data-toggle="tooltip" title="Edit" href="/FAMSAssetRegister/AssetRegister/AssetRegisterfromPOS/?id=@data.purchaseId"><i class="fa fa-edit"></i></a>
+
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            $('#assetTable').DataTable();
+            var table = $('#assetTable').DataTable();
+
+            //$('#assetTable tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var assetid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/FAMSAssetRegister/AssetRegister/AssetRegisterDetails/?id=" + assetid;
+            //});
+            //$('#assetTable tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+        });
+
+    </script>
+}
+
+
+

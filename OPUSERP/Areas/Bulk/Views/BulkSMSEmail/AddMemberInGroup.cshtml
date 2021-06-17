@@ -1,0 +1,157 @@
+﻿@model GroupViewModel
+@{
+    ViewData["Title"] = "Add Member";
+}
+
+@section Style{
+    <style>
+        /* Styles for wrapping the search box */
+        /* Bootstrap 4 text input with search icon */
+
+        .has-search .form-control {
+            padding-left: 2.375rem;
+        }
+
+        .has-search .form-control-feedback {
+            position: absolute;
+            z-index: 2;
+            display: block;
+            width: 2rem;
+            height: 2rem;
+            line-height: 2rem;
+            text-align: center;
+            pointer-events: none;
+            color: #aaa;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+
+}
+
+
+<div class="row" style="margin-top:8px;">
+    <div class="col-6">
+        <div class="card" style="width: 100%;">
+            <div class="card-header" style="background: linear-gradient(to bottom, #990000 0%, #ff9999 100%);">
+                <h5 class="card-title" style="color:white;">Select Members from List</h5>
+            </div>
+            <div class="card-body" style="background: linear-gradient(to bottom, #ff9999 0%, #ffffff 100%);">
+
+                <div class="container">
+                    <!-- Actual search box -->
+                    <div class="form-group has-search">
+                        <span class="fa fa-search form-control-feedback"></span>
+                        <input type="text" id="myInput" class="form-control" placeholder="Search" />
+                    </div>
+                    <hr />
+                    <div class="" style="max-height:400px;overflow-y:scroll">
+                        <table id="mycontent" width="100%">
+                            @foreach (var data in Model.employeeInfos)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox mb-3">
+                                            <input type="checkbox" class="custom-control-input" id="mem-@data.Id" name="@data.nameEnglish" onclick="AddMember(this,@data.Id);">
+                                            <label class="custom-control-label" for="mem-@data.Id" style="font-size:15px;">
+                                                @data.employeeCode
+                                                <span>-</span>@data.nameEnglish
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card" style="width: 100%;">
+            <div class="card-header" style="background: linear-gradient(to bottom, #990000 0%, #ff9999 100%);">
+                <h5 class="card-title" style="color:white;">Members & Selected List</h5>
+            </div>
+            <div class="card-body" style="background: linear-gradient(to bottom, #ff9999 0%, #ffffff 100%); min-height:65vh;">
+                <div class="container">
+                    <div  style="max-height:150px;overflow-y:scroll">
+                        <br />
+                        @if (@Model.rlnMemberGroups.Count() > 0)
+                        {
+                            @foreach (var data in Model.rlnMemberGroups)
+                            {
+                                <p style="color:black">@data.employee.nameEnglish <a href="~/Bulk/BulkSMSEmail/DeleteMemberfromGroup/@data.Id"> <span class="crossButton">X</span></a></p>
+                            }
+                        }
+                    </div>
+                    <hr />
+                    <form asp-area="Bulk" asp-controller="BulkSMSEmail" asp-action="AddMemberInGroup" method="post" data-parsley-validate="parsley">
+                        <input type="hidden" id="groupId" name="groupId" value="@Model.groupId">
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div id="ApproversListView" class="row" style="max-height:200px;overflow-y:scroll">
+
+
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="submit" class="btn btn-success btn-sm" name="send" value="Add Member" style="float:right;margin-top:20px;" />
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#mycontent tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        function AddMember(arg, memberId) {
+            var id = arg.getAttribute('id');
+            var value = arg.getAttribute('name');
+            if (document.getElementById(id).checked == true) {
+                $('#ApproversListView').append('<input type="hidden" name="ids[]" id="txt' + memberId + '" value="' + memberId + '"><span class="spanClass" id="txt' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="Delete(' + "'" + id + "'" + ',' + "'" + memberId + "'" + ')">X</span></a></span>');
+            } else {
+                $('#txt' + id).remove();
+                $('#txt' + memberId).remove();
+            }
+        }
+
+        function Delete(id, memberId) {
+            $('#txt' + id).remove();
+            $('#txt' + memberId).remove();
+            $('#' + id).prop('checked', false);
+        }
+
+    </script>
+}

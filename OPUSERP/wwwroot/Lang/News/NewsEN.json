@@ -1,0 +1,14 @@
+{
+  "title": "Create News",
+  "newsTitle": "News Title",
+  "newsImage": "News Image",
+  "date": "Date",
+  "description": "Description",
+  "upcoming": "News List",
+  "list": "News List",
+  "newsRegister": "News Register",
+  "transaction": "Transaction",
+  "register": "Register",
+  "cancel": "Cancel",
+  "action": "Action"
+}

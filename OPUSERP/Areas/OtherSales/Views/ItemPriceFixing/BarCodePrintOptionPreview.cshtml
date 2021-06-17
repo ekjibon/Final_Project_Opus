@@ -1,0 +1,31 @@
+﻿@model ItemPriceFixingViewModel
+@{
+    ViewData["Title"] = "BarCodePrintOptionPreview";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+
+@section Style{
+    <style>
+    </style>
+}
+    @*<div style="padding-top:20px;">
+        <div width="220" height="70" style="text-align:center;color:black">
+            <span style="text-align:right;padding-left:13%;color:black">@Model.itemPriceFixings.FirstOrDefault().itemName</span>
+            <span> BarCode Print</span>
+           
+        </div><br />
+        <span style="text-align:right;padding-left:27%;color:black">@Model.itemPriceFixings.FirstOrDefault().itemName</span>
+        <span style="text-align:right;padding-left:27%;color:black">Price: @Model.itemPriceFixings.FirstOrDefault().price</span>
+    </div>*@
+                    @foreach (var data in Model.itemPriceFixings)
+                    {
+                        <div style="padding:0px 0px 0px 0px;color:black;text-align:center;margin:0px 0px 0px 0px">
+                            <span style="text-align:center;padding:0px 0px 0px 0px;width:100%;font-size:11pt;">@data.itemSpecification.specificationName</span>
+                            <barcode content="@data.barCode" width="140" height="50"></barcode><br />
+                            <span style="text-align:center;padding:0px 0px 0px 0px;width:100%;height:50%">@data.barCode</span><br />
+                            <span style="text-align:center;padding:0px 0px 0px 0px;width:100%;font-size:11pt;margin-top:0px;margin:0px 0px 0px 0px">Price: @data.price Tk</span>
+                        </div>
+                    }
+               
+

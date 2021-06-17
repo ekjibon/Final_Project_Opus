@@ -1,0 +1,246 @@
+﻿@model SalesCollectionViewModel
+
+@{
+    ViewData["Title"] = " Sales Collection";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Sales Collection</h6>
+                <a class="btn btn-dark" href="~/OtherSales/SalesCollection/CustomerList/" style="float:right;">Back</a>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="container">
+                    <form asp- method="post" asp-area="OtherSales" asp-controller="SalesCollection" asp-action="Index" id="logoutForm" class="navbar-right" data-parsley-validate="parsley" enctype="multipart/form-data">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label">Select Customer <span class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="customerId" name="customerId" required>
+                                    <option value="">Select One</option>
+                                    @foreach (var data in Model.customerWithDues)
+                                    {
+                                        <option value="@data.relSupplierCustomerResourse.Id">@data.relSupplierCustomerResourse.Leads.leadName (@data.relSupplierCustomerResourse.Leads.leadNumber)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label">Bill Payment<span class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <table class="table table-bordered table-striped" id="modalTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Select</th>
+                                            <th>Invoice Number</th>
+                                            <th>Due</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                        <tr>
+                                            <th colspan="3" class="text-center">Total Amount to pay</th>
+                                            <td><input data-parsley-type="number" data-parsley-trigger="keyup" id="total" name="total" readonly class="form-control" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label">Sales Collection Date <span class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="date" value="" name="date" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label">Payment Mode <span class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <select type="text" class="form-control" id="paymentModeId" name="paymentModeId">
+
+                                    @foreach (var data in Model.paymentModes)
+                                    {
+                                        <option value="@data.Id">@data.paymentModeName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-9 row">
+                                <div class="col-sm-6 row" id="cash">
+                                    <label class="col-sm-6 col-form-label"> Amount</label>
+                                    <input data-parsley-type="number" class="col-sm-6 form-control" id="cashAmount" value="" name="cashAmount">
+                                </div>
+                                <div class="col-sm-6 row" id="bank" style="display:none">
+
+                                    <label class="col-sm-6 col-form-label">Bank Amount</label>
+                                    <input data-parsley-type="number" class="col-sm-6 form-control" id="bankAmount" value="" name="bankAmount">
+                                </div>
+
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+            <label for="accountLedgerId" class="col-sm-3 col-form-label">Store Name</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="storeId" id="storeId">
+
+                    @foreach (var data in Model.storeAssigns.Where(x => x.store.Id == ViewBag.storeId))
+                    {
+                        <option value="@data.Id">@data.store.storeName</option>
+                    }
+                </select>
+            </div>
+        </div>*@
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-3 col-form-label"> Remarks</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="remarks" value="" name="remarks">
+                                <input type="hidden" class="form-control" id="relSupplierCustomerResourseId"  name="relSupplierCustomerResourseId">
+                            </div>
+                        </div>
+
+                        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;" title="Payment"><i class="fas fa-shopping-cart"></i></button>
+                        <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            $('#date').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('#date1').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('.clsInvoiceDate').flatpickr({ dateFormat: "m/d/Y" });
+            $('#memberTable').DataTable({
+                colReorder: true
+            });
+
+            $("#customerId").change(function () {
+                var id = $('#customerId').val();
+                //alert(id);
+                $('#relSupplierCustomerResourseId').val(id);
+                Common.Ajax('GET', '/global/api/GetSalesCollectionBillInfoByCustomerId/' + id, [], 'json', ajaxDueInvoice, false);
+            })
+
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+
+            $('#customFile').on('change', function (e) {
+                //get the file name
+                //var fileName = $(this).val();
+                var fileName = e.target.files[0].name;
+                //replace the "Choose a file" label
+                $(this).next('.custom-file-label').html(fileName);
+            })
+            
+        });
+
+        function ajaxDueInvoice(response) {
+            $("#modalTable").find("tbody>tr:not(:last)").remove();
+            console.log(response);
+            if (response != null) {
+                $.each(response, function (i, item) {
+                    $("#modalTable").find('tbody').prepend('<tr><th><div class="custom-control custom-checkbox mb-3"><input type="checkbox" class="custom-control-input" value="' + item.Id + '" id="select-' + item.Id + '" onclick="AddQuantity(' + item.Id + ');"><label class="custom-control-label" for="select-' + item.Id + '"></label></div></th><th><input type="text" class="form-control" value="' + item.billPaymentNo + '" id="paymentHead-' + item.Id + '" readonly /></th><th><input data-parsley-type="number" style="text-align:right" class="form-control" value="' + item.Amount + '" id="paymentDue-' + item.Id + '" readonly /></th><th><input style="text-align:right" data-parsley-type="number" onkeyup="TotalCalculation();" onclick="TotalCalculation();" class="form-control paymentAmount" data-parsley-trigger="keyup" min="0" max="' + item.Amount + '" value="" id="paymentAmount-' + item.Id + '" readonly /></th></tr>');
+                });
+            }
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Payment(employeeId) {
+            $('#employeeId').val(employeeId);
+        }
+
+        function AddQuantity(id) {
+            if ($("#select-" + id).prop("checked") == true) {
+                var x = $("#paymentDue-" + id).val();
+                $("#paymentAmount-" + id).val($("#paymentDue-" + id).val());
+                //$("#paymentAmount-" + id).removeAttr("readonly");
+                $("#select-" + id).attr("name","selectPaymentHeadIds[]");
+                $("#paymentAmount-" + id).attr("name","selectPaymentHeadAmounts[]");
+                $("#paymentDue-" + id).attr("name","selectPaymentHeadDues[]");
+            } else {
+                $("#paymentAmount-" + id).val("");
+                $("#paymentAmount-" + id).attr("readonly", true);
+                $("#select-" + id).removeAttr("name");
+                $("#paymentAmount-" + id).removeAttr("name");
+                $("#paymentDue-" + id).removeAttr("name");
+            }
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+            var total = $("#total").val();
+            $('#cashAmount').val(total);
+            $('#bankAmount').val(total);
+        }
+
+        function TotalCalculation() {
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+            var total = $("#total").val();
+            $('#cashAmount').val(total);
+            $('#bankAmount').val(total);
+        }
+
+        function SelectAll() {
+            if ($("#selectAll").prop('checked') == true) {
+                var trCount = $("#salesCollectionList tbody tr").length;
+                for (var i = 1; i <= trCount; i++) {
+                    $("#select-" + i).prop('checked', true);
+                    AddQuantity(i);
+                }
+            }
+            else {
+                var trCount = $("#salesCollectionList tbody tr").length;
+                for (var i = 1; i <= trCount; i++) {
+                    $("#select-" + i).prop('checked', false);
+                    AddQuantity(i);
+                }
+            }
+        }
+    </script>
+}

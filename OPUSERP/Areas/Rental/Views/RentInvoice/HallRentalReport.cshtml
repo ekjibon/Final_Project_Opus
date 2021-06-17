@@ -1,0 +1,181 @@
+﻿@model HallRentalViewModel
+@{
+    ViewData["Title"] = "HallRentalReport";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+<style>
+    p {
+    }
+</style>
+
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            @*<div class="fa-pull-right">
+                    <p style="font-size:smaller;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+                </div>*@
+            <div class="row" style="padding-top:0px;">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div style="color:black;text-align:center;">
+                        <img src="/Upload/logo/PressClub.jpg" alt="OPUS ERP" style="height:80px;">
+                        <h1 style="margin-bottom:-5px; font-size:40px">জাতীয়  প্রেস ক্লাব</h1>
+                        <label style="margin-bottom:-2px; font-size:19px">১৮, তোপখানা রোড ,ঢাকা-১০০০</label>
+                        <h4 style="font-size:34px">হল ভাড়ার আবেদন</h4>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-1"></div>
+            </div>
+        </div>
+
+        <br />
+        <div class="container-fluid" style="color:black;">
+
+            <div class="row">
+                <div class="col-12" style="font-family:SolaimanLipi;font-size:18px;">
+                    <p style="margin-bottom:-5px;">তারিখঃ:&nbsp; &nbsp; @DateTime.Now.ToString("dd-MMM-yyyy")</p>
+                    @*<p style="margin-bottom:-5px;">তারিখঃ:&nbsp; &nbsp; @Model.hallRentalApplicationInfo.rentalDate</p>*@
+
+                    <p style="margin-bottom:-5px;">সম্মানিত</p>
+                    <p style="margin-bottom:-5px;">সাধারণ সম্পাদক</p>
+                </div>
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-12" style="font-family:SolaimanLipi;font-size:18px;">
+
+
+                    <span style="color:black;font-size:18px">জনাব</span><br />
+                    <p style="font-size:18px; text-align:justify;margin-bottom:-2px;">
+                        আমি/আমরা নিম্নোক্ত প্রতিষ্ঠানের পক্ষে জাতীয় প্রেস ক্লাবে সংবাদ সম্মেলন/ সেমিনার/ গোল টেবিল
+                        বৈঠক/ পুনর্মিলনী/ আলোচনা সভা/ সামাজিক অনুষ্ঠান করতে চাই। আমি/ আমরা ক্লাবের শর্তাবলী
+                        পুরোপুরি মেনে অনুষ্ঠান করব এই আঙ্গীকার করছিঃ
+                    </p>
+                    <br />
+                    <p style="font-size:19px; font:bold; text-align:justify;"> <u>শর্তাবলী</u></p>
+
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">
+                        ১. হলের নাম &nbsp;&nbsp;
+                        <span>
+                            @Model.hallRentalApplicationInfo?.hallInfo?.hallName
+                        </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                        তারিখ &nbsp;&nbsp;
+                        <span>
+                            @*@Model.hallRentalApplicationInfo.hallInfo.hallName*@
+                            @Model.hallRentalApplicationInfo?.rentalDate?.ToString("dd-MMM-yyyy")
+                        </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                        সময়&nbsp;&nbsp;
+                        <span>
+                            @Model.hallRentalApplicationInfo.hallRentalShift?.shiftName
+                            @*@DateTime.Now.ToLongTimeString()*@
+                        </span>
+                    </p>
+
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">
+                        ২. হল ভাড়াঃ &nbsp;&nbsp;
+                        <span>
+                            @Model.hallRentalApplicationInfo.hallRent Tk.
+                        </span>
+                        @*	অডিটরিয়াম- ৳ ১০০০০ অর্ধ দিবস, ৳ ২০,০০০ পূর্ণ দিবস
+                            	জহুর হোসেন চৌধুরী হল- ৳ ১২০০০
+                            	তফাজ্জল হোসেন মানিক মিয়া হল- ৳ ১৩০০০
+                            	৩য় তলাঃ মাওলানা মোহাম্মদ আকরাম খাঁ হল-৳ ১০০০০
+                            	আবদুস সালাম হল- ৳ ১৩০০০*@
+
+                    </p>
+                    @*<p style="font-size:16px; font:bold; text-align:justify;margin-bottom:2px;">
+                            ৩. অনুষ্ঠানের সময় সূচিঃ&nbsp;&nbsp;@Model.hallRentalApplicationInfo.hallRentalShift?.shiftName
+                            @if (@Model.hallRentalApplicationInfo.hallRentalShift.Id == 1)
+                                {
+                                    <span>
+                                        সকালঃ ১০ টা থেকে দুপুর ২ টা
+                                    </span>
+                                }
+                                else if (@Model.hallRentalApplicationInfo.hallRentalShift.Id == 2)
+                                {
+                                    <span>
+                                        বিকালঃ ৩ টা থেকে সন্ধ্যা ৭ টা পর্যন্ত
+                                    </span>
+                                }
+                                else if (@Model.hallRentalApplicationInfo.hallRentalShift.Id == 3)
+                                {
+                                    <span>
+                                        সকালঃ ১০ টা থেকে সন্ধ্যা ৭ টা পর্যন্ত
+                                    </span>
+                                }
+
+                           *	সকালঃ ১০ টা থেকে দুপুর ২ টা
+                                	বিকালঃ ৩ টা থেকে সন্ধ্যা ৭ টা পর্যন্ত
+                                	সকালঃ ১০ টা থেকে সন্ধ্যা ৭ টা পর্যন্ত
+                        </p>*@
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">৩. হল ভাড়া (নির্ধারিত) পে- অর্ডার/নগদ অগ্রিম প্রদান করতে হবে</p>
+
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">৪. ক্লাব অভ্যন্তরে কোন শ্লোগান – মিছিল করা যাবে না</p>
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">৫. সংবাদ সম্মেলন হলে আয়োজকদের ১০ (দশ) জনের বেশী অংশ নেবেন না</p>
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">৬. সেমিনার/ সিম্পোজিয়াম/গোল টেবিল / পুনর্মিলনী/ অলোচনা সভা/ সামাজিক অনুষ্ঠানের ক্ষেত্রে হলের ধারন ক্ষমতা অনুযায়ী অংশ নেবেন</p>
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">৭. অনুষ্ঠানের আলোচ্যসূচীঃ &nbsp;&nbsp; <span>@Model.hallRentalApplicationInfo.remarks</span> </p>
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">৮. অনুষ্ঠানের প্রধান অতিথি ও বিশেষ অতিথিঃ  &nbsp;&nbsp; <span>@Model.hallRentalApplicationInfo.chiefGuest&nbsp;&nbsp;@Model.hallRentalApplicationInfo.specialGuest</span></p>
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">৯. অনুষ্ঠান স্থলের বাইরে মাইক/সাউন্ড বক্স লগানো যাবে না</p>
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">১০. ক্লাবের অভ্যন্তরে পোষ্টার/ ব্যানার লাগানো যাবে না</p>
+                    <p style="font-size:18px; font:bold; text-align:justify;margin-bottom:5px;">১১. সর্বোপরি ক্লাবের সার্বিক আইন-শৃঙ্খলা রক্ষায় সচেষ্ট থাকতে হবে</p>
+                    <p style="font-size:18px; font:bold; text-align:justify;">১২. কর্মসূচির সময় ক্লাবের ভেতর ক্ষয়ক্ষতি হলে তা পূরণ করতে আয়োজক ব্যাক্তি/ প্রতিষ্ঠান বাধ্য থাকবে</p>
+                    <p style="font-size:18px; font:bold; text-align:justify;">** ক্লাব কর্তৃপক্ষ যে কোন সময় কোন কারন না দর্শীয়ে ভাড়ার অনুমতি বাতিলের অধিকার সংরক্ষন করেন</p>
+
+                </div>
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-7" style="font-family:SolaimanLipi;font-size:18px;">
+                    <p>আবেদনকারীর নামঃ &nbsp;@Model.hallRentalApplicationInfo.applicantName</p>
+                    <p>প্রতিষ্ঠানের নামঃ &nbsp;@Model.hallRentalApplicationInfo.applicantOrganization</p>
+                    <p>ঠিকানাঃ &nbsp;@Model.hallRentalApplicationInfo.applicantAddress</p>
+                    <p>ফোনঃ &nbsp;@Model.hallRentalApplicationInfo.mobileNo</p>
+                </div>
+                <div class="col-5" style="font-family:SolaimanLipi;font-size:18px;text-align:center;margin-top:95px;">
+                    <hr style="border:1px solid black; height:50%;width:50%;margin-bottom:0px; " />
+                    <p>আবেদনকারীর স্বাক্ষর</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div style="border-top: dotted black;margin-top:5px;"></div>
+<div style="border:1px solid black; margin-top:15px;">
+    <div class="row" style="font-family:SolaimanLipi;font-size:18px;text-align:center; color:black">
+        <h2 style="margin-left:40%">প্রাপ্তি স্বীকার</h2>
+
+    </div>
+    <div class="row">
+        <div class="col-7" style="margin:20px 0 0 4px;">
+            <p class="ml-4" style="font-size:16px; color:black; font:bold; text-align:justify;margin-bottom:5px;">
+                হলের নামঃ &nbsp;&nbsp;
+                <span>
+                    @Model.hallRentalApplicationInfo?.hallInfo?.hallName
+                </span>&nbsp;&nbsp;&nbsp;&nbsp; <br />
+                তারিখঃ &nbsp;&nbsp;
+                <span>
+                    @*@Model.hallRentalApplicationInfo.hallInfo.hallName*@
+                    @Model.hallRentalApplicationInfo?.rentalDate?.ToString("dd-MMM-yyyy")
+                </span>&nbsp;&nbsp;&nbsp;&nbsp;<br />
+                সময়ঃ&nbsp;&nbsp;
+                <span>
+                    @Model.hallRentalApplicationInfo.hallRentalShift?.shiftName
+                    @*@DateTime.Now.ToLongTimeString()*@
+                </span>
+            </p> <br />
+            <p class="ml-4" style="font-size:18px; color:black; font:bold; text-align:justify;">হল ভাড়া বাবদ <span>@Model.hallRentalApplicationInfo.hallRent</span>/= টাকা ধন্যবাদের সহিত গৃহীত হইল</p>
+        </div>
+
+        <div class="col-5" style="font-family:SolaimanLipi;font-size:16px;text-align:center; color:black;margin-top:130px;">
+            <hr style="border:1px solid black; height:50%;width:50%; margin-bottom:0px;" />
+            <p>কোষাধ্যক্ষ স্বাক্ষর</p>
+        </div>
+
+    </div>
+</div>
+

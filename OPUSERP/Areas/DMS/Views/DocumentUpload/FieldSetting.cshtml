@@ -1,0 +1,138 @@
+﻿@model FieldSettingViewModel
+@{
+    ViewData["TitleMD"] = "Field Setting";
+    Layout = "~/Areas/DMS/Views/Shared/_DMSForm.cshtml";
+}
+
+@section StyleDMS{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Field Setting Info</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="DMS" asp-controller="DocumentUpload" asp-action="FieldSetting" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" name="fieldSettingId" id="fieldSettingId" value="0" />
+
+                <div class="form-group row">
+                    <label for="documentCategoryId" class="col-sm-3 col-form-label">Document Category <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="documentCategoryId" id="documentCategoryId" data-parsley-required="true">
+                            <option value="">Select Category</option>
+                            @foreach (var data in Model.documentCategories)
+                            {
+                                <option value="@data.Id">@data.categoryName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="fieldTypeId" class="col-sm-3 col-form-label">Field Type Name <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="fieldTypeId" id="fieldTypeId" data-parsley-required="true">
+                            <option value="">Select Field Type</option>
+                            @foreach (var data in Model.fieldTypes)
+                            {
+                                <option value="@data.Id">@data.fieldTypeName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group row">
+                    <label for="fieldName" class="col-sm-3 col-form-label">Field Name <span class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="fieldName" id="fieldName" data-parsley-required="true">
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right;">Save</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Field Setting List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Field Type</th>
+                            <th>Document Category</th>
+                            <th>Field Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.fieldSettings)
+                        {
+                            <tr>
+                                <td>@data?.fieldType?.fieldTypeName</td>
+                                <td>@data?.documentCategory?.categoryName</td>
+                                <td>@data?.fieldName</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.fieldTypeId', '@data.documentCategoryId', '@data.fieldName')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsDMS{
+    <script>
+        $(document).ready(function () {
+            $("#degree").addClass("active");
+            $('#departmentTable').DataTable();
+        });       
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteFieldSettingsById", "DocumentUpload")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/DMS/DocumentUpload/FieldSetting";
+                    })
+                    .fail(function () {
+                        alert("Unable to Delete. Please Try Again");
+                    });
+            });
+        }
+
+        function Edit(fieldSettingId, fieldTypeId, documentCategoryId, fieldName) {
+            $("#fieldSettingId").val(fieldSettingId);
+            $("#fieldTypeId").val(fieldTypeId);
+            $("#documentCategoryId").val(documentCategoryId);
+            $("#fieldName").val(fieldName);           
+        }
+    </script>
+}

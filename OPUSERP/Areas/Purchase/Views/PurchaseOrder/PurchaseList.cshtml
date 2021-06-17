@@ -1,0 +1,91 @@
+﻿@model PurchaseViewModel
+@{
+    ViewData["Title"] = "Purchase List";
+    Layout = "~/Areas/Purchase/Views/shared/_PurchaseLayout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Purchase List</h4>
+                <a href="/Purchase/PurchaseOrder/Index?id=0" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Add New</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="PurchaseList">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th width="15%">Purchase No</th>
+                            <th width="10%">Purchase Date</th>
+                            <th width="25%">Supplier Name</th>
+                            <th width="10%">Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+
+
+                            @foreach (var data in Model.purchaseOrderMasters)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.poNo</td>
+                                    <td>@data.poDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.supplier?.organizationName</td>
+                                    <td>
+                                        <a class="btn btn-success" href="/Purchase/PurchaseOrder/Index?id=@data.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                        <a class="btn btn-success" href="/Purchase/PurchaseOrder/PurchaseOrderPdfAction?MasterId=@data.Id" target="_blank" title="Purchase Invoice"><i class="fa fa-print"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsV{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#PurchaseList').DataTable();
+
+
+            var table = $('#PurchaseList').DataTable();
+
+            $('#PurchaseList tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[1];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var vid = parseInt(id.split('-')[1]);
+                window.location.href = "/Purchase/PurchaseOrder/PurchaseDetail/?id=" + vid;
+            });
+            $('#PurchaseList tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+
+        });
+    </script>
+}
+
+
+@section StyleV{
+    <style>
+        #PurchaseList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+

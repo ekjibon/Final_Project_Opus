@@ -1,0 +1,261 @@
+﻿@model SalesInvoiceViewModel
+@{
+    ViewData["Title"] = "InvoiceList";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        #tblInvoiceList tbody tr {
+            cursor: pointer;
+        }
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .loader-gif {
+            width: 20%;
+            position: relative;
+            top: 30%;
+        }
+
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Sales Invoice List</h5>
+            </div>
+            <div class="col-6">
+                <a href="/OtherSales/SalesInvoice/Index?id=0" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Add New</a>
+            </div>
+        </div>
+        <div class="col-md-12" style="display:none">
+            <div class="form-group row">
+                <label for="customerId" class="col-sm-2 col-form-label">Customer Name</label>
+                <div class="col-sm-8">
+                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="customerName" id="customerName" placeholder="Select Customer" value="">
+                    <input type="hidden" name="customerId" id="customerId" value="" />
+                </div>
+                <label for="customerId" class="col-sm-2 col-form-label"></label>
+            </div>
+            <div class="form-group row">
+                <label for="customerId" class="col-sm-2 col-form-label">Mobile Number</label>
+                <div class="col-sm-8">
+                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="binNo" id="binNo" placeholder="Mobile Number" value="">
+                </div>
+                <label for="customerId" class="col-sm-2 col-form-label"></label>
+            </div>
+            <div class="form-group row">
+                <label for="customerId" class="col-sm-2 col-form-label">Shipping Address</label>
+                <div class="col-sm-8">
+                    <textarea name="address" id="address" class="form-control input-group-sm"></textarea>
+                </div>
+                <label for="customerId" class="col-sm-2 col-form-label"></label>
+            </div>
+            <div class="form-group row">
+                <label for="customerId" class="col-sm-2 col-form-label">Shipping Date</label>
+                <div class="col-sm-4">
+                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="shippingDate" id="shippingDate" placeholder="" value="">
+                </div>
+                <label for="customerId" class="col-sm-6 col-form-label"></label>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-10"></label>
+                <div class="col-sm-2">
+                    <br />
+                    <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-sm"><i class="fas fa-sync"></i></button>&nbsp;
+                    <button id="LoadButton" class="btn btn-success btn-sm" title="Load"><i class="fas fa-shower"></i></button>
+                </div>
+            </div>
+        </div>
+
+
+        @*<div style="text-align:center;">
+                <img src="~/images/loader-64x/Preloader_3.gif" id="loaderr" />
+            </div>*@
+        <div class="row">
+            <input type="hidden" id="rowCount" name="rowCount" value="0" />
+            <div class="col-12">
+                <table class="table table-bordered table-striped table-responsive" id="tblInvoiceList" data-parsley-required="true">
+                    <thead style="width:100%;background-color:lightgray;">
+                        <tr>
+                            <th width="10%">Action</th>
+                            <th width="4%">SL#</th>
+                            <th width="10%">Invoice No</th>
+                            <th width="10%">Invoice Date</th>
+                            <th width="15%">Customer</th>
+                            <th width="15%">Mobile</th>
+                            <th width="15%">Address</th>
+                            <th width="10%">Gross Total</th>
+                            <th width="10%">Net Total</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="col-10 offset-5">
+            <div class="loader">
+                <img src="~/images/Loading6 .gif"  class="loader-gif" style="height:50px; width:auto" />
+         
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(function () {
+            $('.loader').fadeOut();
+        });
+        $(document).ready(function () {
+
+            $("#shippingDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker();
+            Common.Ajax('GET', '/global/api/getAllRentRelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomer, false);
+            Common.Ajax('GET', '/global/api/getAllRentRelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomerM, false);
+
+            Common.Ajax('GET', '/global/api/getAllPInvoiceLIstS/' + null + '/' + 'NoData' + '/' + null, [], 'json', ajaxgetdata);
+            $("#LoadButton").click(function () {
+                var address = $("#address").val();
+                if (address == "") {
+                    address = "NoData";
+                }
+                var shippingDate = $("#shippingDate").val();
+                if (shippingDate == "") {
+                    shippingDate = null;
+                }
+                Common.Ajax('GET', '/global/api/getAllPInvoiceLIstS/' + $("#customerId").val() + '/' + address + '/' + shippingDate, [], 'json', ajaxgetdata);
+            });
+        });
+
+        function ajaxAllCustomerM(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response.relSupplierCustomerResourses, function (id, option) {
+                var jj = "";
+                $.each(response.Contacts, function (j, ff) {
+                    if (ff.leadsId == option.LeadsId) {
+                        jj = ff ?.resource ?.mobile;
+                    }
+                });
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option ?.Leads ?.leadNumber;
+                obj.customer = option ?.Leads ?.leadName + '(' + option ?.Leads ?.leadNumber + ')';
+                obj.bin = jj;
+                obj.orgId = option.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#binNo').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#binNo").val(ui.item.bin);
+                    $("#customerName").val(ui.item.customer);
+                }
+            });
+        }
+
+        function ajaxAllCustomer(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response.relSupplierCustomerResourses, function (id, option) {
+                var jj = "";
+                $.each(response.Contacts, function (j, ff) {
+                    if (ff.leadsId == option.LeadsId) {
+                        jj = ff ?.resource ?.mobile;
+                    }
+                });
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option ?.Leads ?.leadName + '(' + option ?.Leads ?.leadNumber + ')';
+                obj.bin = option.resource ?.mobile;
+                obj.orgId = option.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#customerName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#binNo").val(ui.item.bin);
+                }
+            });
+        }
+
+        function ajaxgetdata(response) {
+        
+            console.log(response.salesInvoiceMasters);
+            $("#tblInvoiceList").DataTable().destroy();
+            $("#tblInvoiceList tbody>tr").remove();
+            var dtTable = $("#tblInvoiceList");
+            var tableBody = dtTable.find('tbody');
+            if (response != null) {
+                var x = 0;
+                var index = 1;
+                $.each(response.salesInvoiceMasters, function (i, ite) {
+                    var address = "";
+                    $.each(response.GetAddresses, function (j, f) {
+                        if (f.leadsId == ite ?.relSupplierCustomerResourse ?.LeadsId) {
+                            address = f.maillingAddress;
+                        }
+                    });
+                    var mobile = "";
+                    $.each(response.Contacts, function (j, ff) {
+                        if (ff.leadsId == ite ?.relSupplierCustomerResourse ?.LeadsId) {
+                            mobile = ff ?.resource ?.mobile;
+                        }
+                    });
+
+                    x = i + 1;
+                    var trHtml = '<tr id=' + index + '>' +
+                        '<td><a class="btn btn-success" href="/OtherSales/SalesInvoice/Index?id=' + ite ?.Id + '" title="Invoice Edit"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;' + '<a class="btn btn-success" href="/OtherSales/SalesInvoice/InvoicePDFAction?id=' + ite ?.Id + '" target="_blank" title="Invoice Report"><i class="fa fa-eye-dropper"></i></a></td>' +
+                            '<td>' + x + '</td>' +
+                            '<td><span style="display:none">-' + ite ?.Id + '-</span>' + ite ?.invoiceNumber + '</td>' +
+                                '<td>' + getPurchaseDate(ite ?.invoiceDate) + '</td>' +
+                                '<td>' + ite ?.relSupplierCustomerResourse ?.Leads ?.leadName + '</td>' +
+                                    '<td>' + mobile + '</td>' +
+                                    '<td>' + address + '</td>' +
+                                    '<td style="text-align:right;">' + ite ?.totalAmount + '</td>' +
+                                        '<td style="text-align:right;">' + ite ?.NetTotal + '</td>' +
+                                        '</tr>';
+                    tableBody.append(trHtml);
+                    index = index + 1;
+                    $("#rowCount").val(index);
+                })
+                $("#tblInvoiceList").DataTable();
+            }
+            $("#loaderr").hide();
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+    </script>
+}

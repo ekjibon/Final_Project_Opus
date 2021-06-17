@@ -1,0 +1,258 @@
+﻿@model PatientAddressViewModel
+@{
+    ViewData["Title"] = "Recipient's Address";
+    Layout = "~/Areas/Patient/Views/Shared/_PatientForm.cshtml";
+}
+
+@section StylePatient{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">        
+        <div class="row">
+            <div class="col-6">
+                <h6 class="card-title" style="color: black">Recipient's Address</h6>
+            </div>
+            <div class="col-6">
+                <a href='/Patient/Patient/Index/@ViewBag.patientId' style="text-decoration:none;"><h6 class="identity-box"><span id="leadNameCode" name="leadNameCode"></span></h6></a>
+            </div>
+        </div>
+        <hr>
+        <form asp-area="Patient" asp-controller="Patient" asp-action="PatientAddress" method="post" data-parsley-validate="parsley">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" id="patientAddressId" name="patientAddressId" value="0">
+            <input type="hidden" id="patientInfoId" name="patientInfoId" value="@ViewBag.patientId" />
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <label for="addressTypeId" class="col-sm-3 col-form-label">Address Type <span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="hidden" id="Id" name="Id" value="0">
+                                        <select class="form-control" name="addressTypeId" id="addressTypeId" data-parsley-required="true">
+                                            <option value="">select</option>
+                                            @foreach (var data in Model.addressTypes)
+                                            {
+                                                <option value="@data.Id">@data.typeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="m-0 font-weight-bold text-primary">Address Info</h6>
+                                <hr />
+                                <div class="form-group row">
+                                    <label for="divisionId" class="col-sm-3 col-form-label">Division<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="divisionId" id="divisionId" required></select>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="districtId" class="col-sm-3 col-form-label">District<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="districtId" id="districtId" required></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="thanaId" class="col-sm-3 col-form-label">Thana<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="thanaId" id="thanaId" required></select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="maillingAddress" class="col-sm-3 col-form-label">Mailing Address<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="maillingAddress" value="" name="maillingAddress" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="postOfficeName" class="col-sm-3 col-form-label">Post Office</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="postOfficeName" value="" name="postOfficeName">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="postCode" class="col-sm-3 col-form-label">Post Code</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="postCode" value="" name="postCode">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <button type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right; ">Save</button>
+        </form>
+
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Recipient's Address List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="addressTable">
+                    <thead>
+                        <tr>
+                            <th>Mailing Address</th>
+                            <th>Division</th>
+                            <th>District</th>
+                            <th>Thana</th>                            
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.patientAddresses)
+                        {
+                            <tr>
+                                <td>@data?.maillingAddress</td>
+                                <td>@data?.division?.divisionName</td>
+                                <td>@data?.district?.districtName</td>
+                                <td>@data?.thana?.thanaName</td>                                
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,@data.leadsId,'@data.maillingAddress','@data.divisionId','@data.districtId','@data.thanaId','@data.addressTypeId','@data.postCode','@data.postOfficeName')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id,@data.leadsId)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsPatient{
+    <script>
+        $(document).ready(function () {
+
+            $("#paddress").addClass("active");
+
+            $('#addressTable').DataTable();
+
+            Common.Ajax('GET', '/global/api/divisions/' + @ViewBag.bangladeshcountryId, [], 'json', ajaxDivision, false);
+            Common.Ajax('GET', '/Patient/Patient/GetLeadNameAndCodeById/?id=' + @ViewBag.patientId, [], 'json', ajaxGetLeadNameAndCodeById);
+
+            $("#divisionId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', ajaxDistrict, false);
+            });
+
+            $("#districtId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', ajaxThana, false);
+                Common.Ajax('GET', '/global/api/GetPostOfficeByDistrictId/' + id, [], 'json', ajaxGetPostOfficeByDistrictId, false);
+            });
+
+              if (@Model.company.divisionId > 0) {
+                  $('#divisionId').val();
+                var divisionId = @Model.company.divisionId;
+                Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', ajaxDistrict, false);
+
+                  $('#districtId').val();
+                var districtId = @Model.company.districtId;
+                Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', ajaxThana, false);
+
+                  $('#thanaId').val();
+
+                  Common.Ajax('GET', '/global/api/GetPostOfficeByDistrictId/' + districtId, [], 'json', ajaxGetPostOfficeByDistrictId, false);
+                  $('#postOfficeId').val();
+            }
+
+        });
+
+        function ajaxGetLeadNameAndCodeById(response) {
+            $("#leadNameCode").html(response);
+        }
+
+        function Edit(patientAddressId, patientInfoId, maillingAddress, divisionId, districtId, thanaId, addressTypeId, postCode, postOfficeName) {
+            $("#patientAddressId").val(patientAddressId);
+            $("#patientInfoId").val(patientInfoId);
+            $("#maillingAddress").val(maillingAddress);
+            $("#divisionId").val(divisionId);
+            Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', ajaxDistrict, false);
+            $("#districtId").val(districtId);
+            Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', ajaxThana, false);
+            $("#thanaId").val(thanaId);
+            $("#addressTypeId").val(addressTypeId);
+            $("#postCode").val(postCode);
+            $("#postOfficeName").val(postOfficeName);               
+        }
+
+
+        function ajaxDivision(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#divisionId').empty();
+            $('#divisionId').append(options);
+        }
+
+
+        function ajaxDistrict(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#districtId').empty();
+            $('#districtId').append(options);
+        }
+
+        function ajaxThana(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#thanaId').empty();
+            $('#thanaId').append(options);
+        }
+
+        function ajaxGetPostOfficeByDistrictId(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.postalName + '</option>';
+            });
+            $('#postOfficeId').empty();
+            $('#postOfficeId').append(options);
+        }
+
+        function DeleteMaster(Id, patientInfoId) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/Patient/Patient/DeletePatientAddressById?Id=" + Id + '&patientInfoId=' + patientInfoId;
+                swal('', 'Deleted Successfully!', 'success')
+            });
+        }
+
+    </script>
+}
+
+
+

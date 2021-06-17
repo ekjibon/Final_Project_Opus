@@ -1,0 +1,14 @@
+{
+  "title": "PMS History",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "supervisorName": "Supervisor's Name",
+  "supervisorDesignation": "Supervisor's Desg.",
+  "signatoryName": "Approver's Name",
+  "signatoryDesignation": "Approver's Desg.",
+  "advanceComment": "Recommendation",
+  "remarks": "Overall Comments",
+  "action": "Action",
+  "year": "Year",
+  "score": "Score"
+}

@@ -1,0 +1,178 @@
+﻿@model FDRRenewalViewModel
+@{
+    ViewData["Title"] = "FdrEncashmentReportPdf";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <br /><br /><br />
+            <div class="row">
+                <label>Ref No: @Model.fDRReportViewModel.FirstOrDefault()?.ftInstructionNo</label>
+                <br />
+                <label>Date: @Model.fDRReportViewModel.FirstOrDefault()?.ftDate</label>
+                <br /><br /><br />
+                <label><b>The Manager</b></label>
+                <br />
+                <label>@Model.fDRReportViewModel.FirstOrDefault()?.desitinationBank</label>
+                <br />
+                <label>@Model.fDRReportViewModel.FirstOrDefault()?.destinationBranch</label>
+                <br />
+                <label>@Model.fDRReportViewModel.FirstOrDefault()?.address</label>
+                <br /><br />
+                <label><b>Attention: Cash Management/ Treasury/ @Model.fDRReportViewModel.FirstOrDefault()?.desitinationBank</b></label>
+                <br /><br />
+                <label><b>Subject: Encashment of Fixed Deposit</b></label>
+                <br /><br />
+                <label>Dear Manager,</label>
+                <br /><br />
+                <label>Please encash the following Fixed Deposits (FDR certificates are attached herewith):</label>
+            </div>
+            <br />
+            <div class="row">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:8%;text-align:center;">SL. No.</th>
+                            <th style="width:20%;text-align:center;">FDR No</th>
+                            <th style="width:16%;text-align:center;">Branch Name</th>
+                            <th style="width:13%;text-align:center;">Maturity Date</th>
+                            <th style="width:17%;text-align:center;">Amount (BDT)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.fDRReportViewModel)
+                            {
+                                <tr>
+                                    <td style="text-align:center;">@i</td>
+                                    <td style="text-align:center;">@data.accountName</td>
+                                    <td style="text-align:center;">@data.destinationBranch</td>
+                                    <td style="text-align:center;">@data.maturityDate</td>
+                                    <td style="text-align:right;">@data.totalAmount?.ToString("0,0.00")</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                    <thead>
+                        <tr>
+
+                            <td colspan="4" style="text-align:right;font-weight:bold;">Total : </td>
+                            <td style="text-align:right;font-weight:bold;">@Model.fDRReportViewModel.Sum(x => x.totalAmount)?.ToString("0,0.00")</td>
+
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <br />
+            <div class="row">
+                <label>You are requested to transfer the principal and interest amount of the above mentioned FDR to our following Bank account:</label>
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="tdFontSize" style="width:50%;">Account Name</td>
+                            <td style="width:48%;text-align:left;">@Model.companies.FirstOrDefault()?.companyName</td>
+                        </tr>
+                        <tr>
+                            <td class="tdFontSize" style="width:50%;">Principal & Interest</td>
+                            <td style="width:50%;text-align:left;">@Model.fDRReportViewModel.FirstOrDefault()?.accountNumber</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-2"></div>
+
+            </div>
+            <br /><br />
+            <div class="row">
+                <label>You are requested to execute the transaction at your earliest as per the above mentioned modality.</label>
+                <br /><br /><br /><br /><br />
+                <label>Yours sincerely,</label>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+<style>
+
+
+
+    .divstyle {
+        color: black;
+    }
+
+
+
+    .print-card-body {
+        width: 100%;
+        padding-bottom: 10px;
+    }
+
+    .vartical-table th {
+        width: 25%;
+        text-align: center;
+        vertical-align: top;
+    }
+
+
+    .table td, .table th {
+        padding: .3rem;
+        font-size: 15px;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    label {
+        color: black;
+        font-family: Calibri;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: black;
+        font-family: Calibri;
+    }
+
+    ul, li {
+        color: black;
+        font-family: Calibri;
+    }
+</style>
+
+

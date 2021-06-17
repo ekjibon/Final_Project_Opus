@@ -1,0 +1,380 @@
+﻿@model BillGenerateViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="card-title" style="color:black;text-align:center;">Create Invoice</h5>
+                <a href="/CRMLead/BillGenerate/BillGenerateList" class="btn btn-success btn-sm pull-right">Invoice List</a>
+            </div>
+            <hr>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-bordered table-responsive" id="InvoiceTable" style="width:100%;"></table>
+                    </div>
+                </div>
+                <hr />
+                <form asp-area="CRMLead" asp-controller="BillGenerate" asp-action="Index" method="post" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" id="billGenerateId" name="billGenerateId" value=0>
+                    <input type="hidden" id="approvedforCroId" name="approvedforCroId">
+                    <h5 class="card-title" style="color: black">Agreement Information</h5>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="leadName" class="col-sm-4 col-form-label">Client Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="clientName" name="clientName" data-parsley-required="true" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="agreementNo" class="col-sm-4 col-form-label">Agreement Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="agreementDate" name="agreementDate" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="invoiceNumber" class="col-sm-4 col-form-label">Client's Bank</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="clientBank" name="clientBank" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="billAmount" class="col-sm-4 col-form-label">Agreement Type</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="agreementType" name="agreementType" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatType" class="col-sm-4 col-form-label">Agreement Ref.</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="agreementRef" name="agreementRef" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatAmount" class="col-sm-4 col-form-label">Client's Bank Branch</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="clientBranch" name="clientBranch" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <h5 class="card-title" style="color: black">Bank Account Details</h5>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="bankBranchDetailsId" class="col-sm-4 col-form-label">Bank Name</label>
+                                <div class="col-sm-8">
+                                    @*<select name="bankBranchDetailsId" id="bankBranchDetailsId" class="form-control" data-parsley-required="true">
+                                        <option value="">Select Bank</option>
+                                        @foreach (var data in Model.bankBranchDetails.Where(x => x.collectionType == "Yes").Distinct())
+                                        {
+                                            <option value="@data?.Id">@data?.bank?.bankName</option>
+                                        }
+                                    </select>*@
+                                    <input type="text" id="bankName" class="form-control" name="bankName" value=""/>
+                                    <input type="hidden" id="bankBranchDetailsId" class="form-control" name="bankBranchDetailsId" value=""/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="accountNo" class="col-sm-4 col-form-label">Bank Account No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="accountNo" name="accountNo" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+
+                            <div class="form-group row">
+                                <label for="branchName" class="col-sm-4 col-form-label">Branch Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="branchName" name="branchName" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <h5 class="card-title" style="color: black">Previous Invoice List</h5>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-striped table-bordered table-responsive" id="tblfuelDetails" style="width:100%;">
+                                <thead style="width:100%">
+                                    <tr>
+                                        <th width="40%">Invoice Order</th>
+                                        <th width="40%">Invoice Date</th>
+                                        <th width="20%">Amount</th>
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <hr />
+                    <h5 class="card-title" style="color: black">Invoice Details</h5>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="billNo" class="col-sm-4 col-form-label">Bill Order</label>
+                                <div class="col-sm-8">
+                                    <select name="invoiceOrder" id="invoiceOrder" class="form-control" data-parsley-required="true">
+                                        <option value="First Invoice">First Invoice</option>
+                                        <option value="Second Invoice">Second Invoice</option>
+                                        <option value="Third Invoice">Third Invoice</option>
+                                        <option value="Fourth Invoice">Fourth Invoice</option>
+                                        <option value="Final Invoice">Final Invoice</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="billNo" class="col-sm-4 col-form-label">Bill No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="billNo" name="billNo" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="ratingInfo" class="col-sm-4 col-form-label">Rating Info</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="ratingInfo" name="ratingInfo" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="billDate" class="col-sm-4 col-form-label">Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="billDate" name="billDate">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="agreementAmount" class="col-sm-4 col-form-label">Agreement Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="agreementAmount" name="agreementAmount" style="text-align:right">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea type="text" class="form-control" id="remarks" name="remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="vatType" class="col-sm-4 col-form-label">VAT Type</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="vatType" name="vatType" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatPercentage" class="col-sm-4 col-form-label">VAT Percentage</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="vatPercentage" name="vatPercentage" style="text-align:right" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="ratingAmount" class="col-sm-4 col-form-label">Rating Fees</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="ratingAmount" name="ratingAmount" style="text-align:right" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatAmount" class="col-sm-4 col-form-label">VAT Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="vatAmount" name="vatAmount" style="text-align:right" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="totalAmount" class="col-sm-4 col-form-label">Total Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="totalAmount" name="totalAmount" style="text-align:right" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="AIT" class="col-sm-4 col-form-label">AIT</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="AIT" name="AIT" style="text-align:right" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="AITAmount" class="col-sm-4 col-form-label">AIT Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="AITAmount" name="AITAmount" style="text-align:right" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="NETAmount" class="col-sm-4 col-form-label">Net Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="NETAmount" name="NETAmount" style="text-align:right" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="invoiceAmount" class="col-sm-4 col-form-label">Invoice Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="invoiceAmount" name="invoiceAmount" style="text-align:right" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" value="Submit" title="Save" class="btn btn-success btn-sm" style="float:right; margin-top:5px;">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#billDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            
+            Common.Ajax('GET', '/CRMLead/BillGenerate/getbankbranchlist/', [], 'json', ajaxGetBanklist);
+            $("#bankBranchDetailsId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/CRMLead/BillGenerate/GetBankDetails/?detailsId=' + id, [], 'json', ajaxGetBankDetails);
+            });
+
+            GetAllPendingData();
+        });
+
+
+
+        function GetAllPendingData() {
+
+            $('#InvoiceTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("BillGeneratePendingList", "BillGenerate")',
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        title: "Action", width: "6%",
+                        "render": function (data, type, e, meta) {
+                            return '<a class="btn btn-info" href="javascript:void(0)" title="Select Job" onclick="SelectJob(' + e.Id + ')"><i class="fa fa-plus-square"></i></a>';
+                        }
+                    },
+                    { data: "leadName", title: "Client Name", width: "20%" },
+                    { data: "leadOwner", title: "Owner", width: "20%" },
+                    { data: "agreementCategoryName", title: "Category", width: "10%" },
+                    { data: "ratingTypeYear", title: "Rating Type & Year", width: "10%" },
+                    { data: "agreementDate", title: "Agreement Date", width: "10%" },
+                    { data: "bankName", title: "Bank", width: "5%" },
+                    { data: "branchName", title: "Branch", width: "5%" },
+                    { data: "remarks", title: "Remarks", width: "14%" },
+
+
+                ]
+            });
+        }
+
+        function SelectJob(id) {
+            $('#approvedforCroId').val(id);
+
+            Common.Ajax('GET', '/CRMLead/BillGenerate/BillGeneratePendingListById/?id=' + id, [], 'json', ajaxGetBillGenerateInfoById);
+            Common.Ajax('GET', '/CRMLead/BillGenerate/InvoiceListById/?id=' + id, [],'json',ajaxInvoive);
+        }
+
+        function ajaxGetBillGenerateInfoById(response) {
+            $('#clientName').val(response.leadName);
+            $('#agreementDate').val(response.agreementDate);
+            $('#agreementType').val(response.agreementTypeName);
+            $('#agreementRef').val(response.agreementNo);
+            $('#billNo').val(response.agreementCategoryName + '/' +'@ViewBag.billNo');
+            $('#ratingInfo').val(response.ratingTypeName);
+            $('#agreementAmount').val(response.agreementAmount);
+            $('#clientBank').val(response.bankName);
+            $('#clientBranch').val(response.branchName);
+
+            $('#vatType').val(response.vatCategoryName);
+            $('#vatPercentage').val(response.vatRate);
+            $('#ratingAmount').val(response.ratingAmount.toFixed(0));
+            $('#vatAmount').val(response.vatAmount.toFixed(0));
+            $('#totalAmount').val(response.totalAmount.toFixed(0));
+            $('#AIT').val(response.taxRate);
+            $('#AITAmount').val(response.taxAmount.toFixed(0));
+            $('#NETAmount').val(response.totalAmount.toFixed(0));
+            $('#invoiceAmount').val(response.totalAmount.toFixed(0));
+            
+        }
+      
+        function ajaxGetBanklist(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bank ?.bankName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#bankName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#bankName").val(ui.item.value);
+                    $("#bankBranchDetailsId").val(ui.item.key);
+                    Common.Ajax('GET', '/CRMLead/BillGenerate/GetBankDetails/?detailsId=' + ui.item.key, [], 'json', ajaxGetBankDetails);
+                    //Common.Ajax('GET', '/CRMLead/Agreement/GetAllContactsByLeadsId/?LeadsId=' + ui.item.key, [], 'json', ajaxGetAllContactsByLeadsId);
+                }
+            });
+           
+        }
+        function ajaxGetBankDetails(response) {
+            $('#branchName').val(response.bankBranch.branchName);
+            $('#accountNo').val(response.accountNo);
+        }
+        function ajaxInvoive(response) {
+            console.log(response);
+                var ifExistIndex = window.localStorage.getItem("holdIndex");
+                var index = "0";
+                if (ifExistIndex == "null" || ifExistIndex == null) {
+                    index = $("#tblfuelDetails tbody>tr").length;
+                }
+                else {
+                    index = ifExistIndex;
+                    tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+                }
+                $("#tblfuelDetails tbody>tr").empty();
+
+                var itemtotalAmount = 0;
+                $.each(response, function (key, value) {
+
+                    index = $("#tblfuelDetails tbody>tr").length;
+                    var dtTable = $("#tblfuelDetails");
+                    var tableBody = dtTable.find('tbody');
+                    var trHtml = '<tr id=' + index + '>' +
+                        '<td>' + value.billNo + '<input type="hidden" name="fuelidall"class="clsId" value="' + value.billNo + '"><input type="hidden" name="itemidall"  id="txtitemId" class="clsitemId"value="' + value.billNo + '"/></td>' +
+                        '<td>' + value.billDate + '<input type="hidden" name="fuelidall"class="clsId" value="' + value.billDate + '"><input type="hidden" name="itemidall"  id="txtitemId" class="clsitemId"value="' + value.billDate + '"/></td>' +
+                        '<td>' + value.invoiceAmount + '<input type="hidden" name="fuelidall"class="clsId" value="' + value.invoiceAmount + '"><input type="hidden" name="itemidall"  id="txtitemId" class="clsitemId"value="' + value.invoiceAmount + '"/></td>' +
+
+                        
+
+                        '</tr>';
+
+                    if (ifExistIndex == null || ifExistIndex == "null") {
+                        tableBody.append(trHtml);
+                    }
+                    else {
+                        var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                        rowUpdate.replaceWith(trHtml);
+                        window.localStorage.setItem("holdIndex", null);
+                        ifExistIndex = null;
+                    }
+                })
+
+                index = index + 1;
+            }
+
+    </script>
+}
+
+

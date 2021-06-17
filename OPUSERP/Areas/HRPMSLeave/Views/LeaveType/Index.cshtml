@@ -1,0 +1,103 @@
+﻿@model LeaveTypeViewModel
+@{
+    ViewData["TitleMD"] = Model.fLang.title;
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSLeave" asp-controller="LeaveType" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group row">
+                            <label for="leaveTypeNameEn" class="col-sm-3 col-form-label">@Model.fLang.leaveType <span class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="leaveTypeNameEn" id="leaveTypeNameEn" data-parsley-required="true">
+                                <input type="hidden" class="form-control" name="id" id="id" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="leaveTypeNameBn" class="col-sm-3 col-form-label">@Model.fLang.leaveTypeBn</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="leaveTypeNameBn" id="leaveTypeNameBn">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="description" class="col-sm-3 col-form-label">@Model.fLang.description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" name="description" id="description"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" value="Submit" class="btn btn-success" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="leaveTypeTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.leaveType</th>
+                            <th>@Model.fLang.leaveTypeBn</th>
+                            <th>@Model.fLang.description</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.leaveTypes)
+                        {
+                            <tr>
+                                <td>@data.nameEn</td>
+                                <td>@data.nameBn</td>
+                                <td>@data.description</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.nameEn','@data.nameBn','@data.description')" data-toggle="tooltip" title="Edit" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" data-toggle="tooltip" title="Remove" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#leaveType').addClass("active");
+            $('#leaveTypeTable').DataTable();
+        });
+
+        function Edit(Id, nameEn, nameBn, description) {
+            $("#id").val(Id);
+            $("#leaveTypeNameEn").val(nameEn);
+            $("#leaveTypeNameBn").val(nameBn);
+            $("#description").val(description);
+        }
+    </script>
+}

@@ -1,0 +1,92 @@
+﻿
+@model LeadViewModel
+@{
+    ViewData["Title"] = "Lead List";
+}
+
+@section Style{
+    <style>
+        #clientTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Lead List</h4>
+                <a href="/CRMLead/LeadManagement/LeadInfoPersonal?Id=0"  class="btn btn-success btn-sm pull-right">Add New</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="clientTable">
+                    <thead>
+                        <tr>
+                            <th>SL No</th>
+                            <th>Lead Number</th>
+                            <th>Lead Name</th>
+                            <th>Mobile No</th>
+
+                            <th>Address</th>
+                            <th>Lead Source</th>
+                            <th>Lead Owner</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 0;
+                            @foreach (var data in Model.getLeadInfoListViewModels.OrderByDescending(x => x.Id))
+                            {
+                                i = i + 1;
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.leadNumber</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.leadName</td>
+                                    <td>@data.mobile</td>
+
+                                    <td>@data.maillingAddress</td>
+                                    <td>@data.sourceDescription</td>
+                                    <td>@data.leadOwner</td>
+                                    <td>
+                                        <a class="btn btn-success" data-toggle="tooltip" title="Edit" href="/CRMLead/LeadManagement/LeadInfoPersonal/?Id=@data.Id&leadName=@data.leadName"><i class="fa fa-edit"></i></a>
+
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            $('#clientTable').DataTable();
+            var table = $('#clientTable').DataTable();
+
+            $('#clientTable tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[0];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var lid = parseInt(id.split('-')[1]);
+                window.location.href = "/CRMLead/LeadManagement/LeadDetail/?Id=" + lid;
+            });
+            $('#clientTable tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+        });
+
+    </script>
+}
+

@@ -1,0 +1,483 @@
+﻿@model OrganoOrganizationViewModel
+@{
+    ViewData["Title"] = "Organogram";
+    Layout = "~/Areas/HRPMSOrganogram/Views/Shared/_OrganogramForm.cshtml";
+}
+
+@section StyleOrg{
+    <style>
+        .node {
+            cursor: pointer;
+            width: 240px;
+        }
+
+            .node circle {
+                fill: #fff;
+                stroke: steelblue;
+                stroke-width: 2px;
+            }
+
+            .node text {
+                font: 6px sans-serif;
+            }
+
+        .link {
+            fill: none;
+            stroke: #C80;
+            stroke-width: 2px;
+        }
+
+        body {
+            /*overflow: hidden;*/
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+
+    <div class="card-body" style="min-height: 600px;">
+        <div class="row">
+            <div class="col-8">
+                <div class="container-fluid">
+                    <div class="input-group mb-3 input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Selected Node</span>
+                        </div>
+                        <input id="selectedInputName" type="text" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="btn-group">
+                    <a href="#" class="btn btn-info" data-toggle="modal" data-target="#addClusterModel" style="font-size:12px;">
+                        <span data-toggle="tooltip" title='Add New Cluster'>
+                            <i class="fas fa-tree"></i>
+                        </span>     
+                    </a>
+                    
+                    <a href="#"  class="btn btn-info" data-toggle="modal" data-target="#addPostModel" style="font-size:12px;">
+                        <span data-toggle="tooltip" title='Add & Edit Post'>
+                            <i class="fas fa-plus"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="organoDiv">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addClusterModel" tabindex="-1" role="dialog" aria-labelledby="exampleaddClusterModel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:50px; width:50px;" />
+                    </div>
+                    <div class="col-8">
+                        <h2 class="modal-title text-center" id="exampleModalLabel" style="padding-top: 14px;">@Model.fLang.titleCls </h2>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form asp-area="HRPMSOrganogram" asp-controller="Organization" asp-action="Index" method="post">
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group row">
+                            <label for="organizationName" class="col-sm-4 col-form-label">@Model.fLang.pOrganizationName</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="organizationName" readonly>
+                                <input type="hidden" name="organoOrganizationParrentId" id="organoOrganizationParrentId">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="organizationTypeId" class="col-sm-4 col-form-label">@Model.fLang.organizationType</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="organizationTypeId" name="organizationTypeId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.organizationTypes)
+                                    {
+                                        <option value="@data.Id">@data.nameEN</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="nameEN" class="col-sm-4 col-form-label">@Model.fLang.organizationNameEN</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="nameEN" id="nameEN">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="nameBN" class="col-sm-4 col-form-label">@Model.fLang.organizationNameBN</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="nameBN" id="nameBN">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-4 col-form-label">@Model.fLang.remarks</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="remarks" id="remarks">
+                            </div>
+                        </div>
+
+                        <hr />
+                        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPostModel" tabindex="-1" role="dialog" aria-labelledby="exampleaddPostModel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:50px; width:50px;" />
+                    </div>
+                    <div class="col-8">
+                        <h4 class="modal-title text-center" id="exampleModalLabel" style="padding-top: 14px;">@Model.fLangPost.titleCls</h4>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+
+                <div class="container">
+                    <form asp-area="HRPMSOrganogram" asp-controller="Organization" asp-action="JobPost" method="post" data-parsley-validate="parsley">
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="form-group row">
+                            <label for="organoOrganizationId" class="col-sm-4 col-form-label">@Model.fLangPost.organization</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" class="form-control" id="organoOrganizationName" readonly>
+                                <input type="hidden" name="organoOrganizationId" id="organoOrganizationId" value="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="designationId" class="col-sm-4 col-form-label">@Model.fLangPost.designation</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" name="postId" id="postId" value="0">
+                                <select class="form-control" id="designationId" name="designationId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.designations)
+                                    {
+                                        <option value="@data.Id">@data.designationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="altDesignationId" class="col-sm-4 col-form-label">@Model.fLangPost.altDesignation</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="altDesignationId" name="altDesignationId" data-parsley-required="false">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.designations)
+                                    {
+                                        <option value="@data.Id">@data.designationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="numberOfPost" class="col-sm-4 col-form-label">@Model.fLangPost.numberOfPost</label>
+                            <div class="col-sm-8">
+                                <input type="number" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="numberOfPost" id="numberOfPost">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="IsHead" class="col-sm-4 col-form-label">@Model.fLangPost.IsHead</label>
+                            <div class="col-sm-8">
+                                <select data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="IsHead" id="IsHead">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsOrg{
+
+
+    <script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+    <script>
+         $(document).ready(function () {
+            $('#organization').addClass("active");
+            $('#organizationTable').DataTable();
+             Common.Ajax('GET', '/HRPMSOrganogram/Organization/GetOrganizationsJson/?org=@Model.organizationType', [], 'json', ajaxHandle);
+        });
+
+        function ajaxHandle(response) {
+            console.log(response);
+            GenerateTree(response.menus);
+        }
+
+        function wrap(text, width) {
+            text.each(function () {
+                var text = d3.select(this),
+                    words = d3.select(this).data()[0].name.split("|").reverse(),
+                    word,
+                    line = [],
+                    lineNumber = 0,
+                    lineHeight = 1.1,
+                    y = text.attr("y"),
+                    dy = parseFloat(text.attr("dy")),
+                    tspan = text.text(null).append("tspan").attr("x", 5).attr("y", y).attr("dy", dy + "em");
+                while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(" "));
+                    //if (tspan.node().getComputedTextLength() > width) {
+                        line.pop();
+                        tspan.text(line.join(" "));
+                        line = [word];
+                        tspan = text.append("tspan").attr("x", 5).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                   // }
+                }
+                d3.select(this.parentNode.children[0]).attr("height", 13 * (lineNumber + 1));
+            });
+        };
+
+        var margin = {
+            top: 20,
+            right: 120,
+            bottom: 20,
+            left: 20
+        },
+            width = 960 - margin.right - margin.left,
+            height = 800 - margin.top - margin.bottom;
+
+        var i = 0,
+            duration = 750,
+            rectW = 105,
+            fontSize = 10,
+            rectH = 20;
+        var root;
+        var tree = d3.layout.tree().nodeSize([120, 110]);
+        var diagonal = d3.svg.diagonal()
+            .projection(function (d) {
+                return [d.x + rectW / 2, d.y + rectH / 2];
+            });
+
+        var svg = d3.select("#organoDiv").append("svg").attr("width", 1000).attr("height", 1000)
+            .call(zm = d3.behavior.zoom().scaleExtent([1, 3]).on("zoom", redraw)).append("g")
+            .attr("transform", "translate(" + 350 + "," + 20 + ")");
+
+        //necessary so that zoom knows where to zoom and unzoom from
+        zm.translate([350, 20]);
+        //
+
+        d3.select("#organoDiv").style("height", "600px");
+
+        function GenerateTree(tempData, tempdepth) {
+
+            root = JSON.parse(tempData);
+            console.log(root);
+           
+            root.x0 = 0;
+            root.y0 = height / 2;
+            root.children.forEach(collapse);
+            update(root);
+            
+        }
+
+
+        function collapse(d) {
+            if (d.children) {
+                d._children = d.children;
+                d._children.forEach(collapse);
+                d.children = null;
+            }
+        }
+
+
+        function update(source) {
+
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse(),
+                links = tree.links(nodes);
+
+            // Normalize for fixed-depth.
+            nodes.forEach(function (d) {
+                d.y = d.depth * 180;
+            });
+
+            // Update the nodes…
+            var node = svg.selectAll("g.node")
+                .data(nodes, function (d) {
+                    return d.id || (d.id = ++i);
+                });
+
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) {
+                    return "translate(" + source.x0 + "," + source.y0 + ")";
+                }).on("click", click);
+
+            nodeEnter.append("rect")
+                .attr("width", rectW)
+                //.attr("height", rectH)
+                //.attr("height", function (d) { if(d.size == 1)  return rectH;  else return 80})
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .style("fill", function (d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                });
+
+            nodeEnter.append("text")
+                .attr("x", 10)
+                .attr("y", 10)
+                .attr("dy", "0")
+                .attr("text-anchor", "start")
+                .text(function (d) { return d.name; });
+
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+
+            nodeUpdate.select("rect")
+                .attr("width", rectW)
+                //.attr("height", function (d) { if(d.size == 1)  return rectH;  else return 80})
+                .attr("stroke", "black")
+                .attr("stroke-width", 1)
+                .style("fill", function (d) {
+                    return d._children ? "lightsteelblue" : "#fff";
+                });
+
+            nodeUpdate.select("text")
+                .style("fill-opacity", 1);
+            nodeUpdate.select("text").call(wrap, rectW);
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + source.x + "," + source.y + ")";
+                }).remove();
+
+            nodeExit.select("rect")
+                .attr("width", rectW)
+                //.attr("height", function (d) { if(d.size == 1)  return rectH;  else return 80})
+                .attr("stroke", "black")
+                .attr("stroke-width", 1);
+
+            nodeExit.select("text");
+
+            // Update the links…
+            var link = svg.selectAll("path.link")
+                .data(links, function (d) {
+                    return d.target.id;
+                });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("x", rectW / 2)
+                .attr("y", rectH / 2)
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x0,
+                        y: source.y0
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x,
+                        y: source.y
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                }).remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function (d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        // Toggle children on click.
+        function click(d) {
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                d.children = d._children;
+                d._children = null;
+            }
+            $("#selectedInputName,#organizationName,#organoOrganizationName").val(d.nameBN);
+            $("#organoOrganizationParrentId,#organoOrganizationId").val(d.data);
+            
+            update(d);
+        }
+
+        //Redraw for zoom
+        function redraw() {
+            //console.log("here", d3.event.translate, d3.event.scale);
+            svg.attr("transform",
+                "translate(" + d3.event.translate + ")"
+                + " scale(" + d3.event.scale + ")");
+        }
+
+    </script>
+   }

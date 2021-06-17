@@ -1,0 +1,525 @@
+﻿@model ProgramWorkPlanViewModel
+@{
+    ViewData["Title"] = "Program Plan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .rack-cls {
+        border: 5px solid #004577;
+        padding: 15px;
+    }
+
+    .rack-cls-two {
+        border: 2px solid #004577;
+        padding: 10px;
+    }
+
+    .TableInput {
+        width: 100px;
+        padding: 0px 0px 0px 0px;
+        margin: 0px 0px 0px 0px;
+        text-align: right;
+    }
+    .redStar {
+        color: red;
+    }
+</style>
+
+<section>
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title"><i class="fa fa-th-list"></i> Program Plan</span>
+            <span style="float:right"><a asp-area="Program" asp-controller="ProgramPlan" asp-action="ProgramPlanList" class="btn btn-success btn-sm">Back To List</a></span>
+        </div>
+        <div class="container">
+            <form asp-area="Program" asp-controller="ProgramPlan" asp-action="SaveWorkPlan" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" name="masterId" id="masterId" value="@ViewBag.masterId">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <div class="form-group row">
+                            <label for="programYearId" class="col-md-4 col-form-label">Plan Year</label>
+                            <div class="col-md-8">
+                                <select class="form-control" name="programYearId" id="programYearId" data-parsley-required="true">
+                                    <option value="">Select Year</option>
+                                    @foreach (var data in Model.programYears)
+                                    {
+                                        <option value="@data.Id">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-6">
+                        <div class="form-group row">
+                            <label for="remarks" class="col-md-4 col-form-label">Remarks</label>
+                            <div class="col-md-8">
+                                <textarea name="remarks" id="remarks" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+                <div class="row">
+                    <table class="table table-bordered table-responsive" id="detailsInfoListTable" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th style="width:20%">Activity</th>
+                                <th style="width:10%">Measuring Indicator</th>
+                                <th style="width:10%">Planned Target</th>
+                                <th style="width:5%">January</th>
+                                <th style="width:5%">February</th>
+                                <th style="width:5%">March</th>
+                                <th style="width:5%">April</th>
+                                <th style="width:5%">May</th>
+                                <th style="width:5%">June</th>
+                                <th style="width:5%">July</th>
+                                <th style="width:5%">August</th>
+                                <th style="width:5%">September</th>
+                                <th style="width:5%">October</th>
+                                <th style="width:5%">November</th>
+                                <th style="width:5%">December</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-9"></div>
+                    <div class="col-md-3">
+                        <button type="submit" value="Submit" class="btn btn-success btn-sm" style="width:80px;">Save</button>
+                    </div>
+                </div>
+                <br />
+            </form>
+        </div>
+    </div>
+
+</section>
+
+<div class="modal fade" id="modalFinal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Location</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmDraft" method="post" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" id="editId" name="editId" value="0" />
+                    <input type="hidden" id="clickMonthName" name="clickMonthName" />
+                    <input type="hidden" id="programActivityId" name="programActivityId" />
+                    <input type="hidden" id="clickprogramYearId" name="clickprogramYearId" />
+                    <input type="hidden" id="targetQuantity" name="targetQuantity" />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group row">
+                                <label for="divisionId" class="col-sm-3 col-form-label">Division <span class="redStar">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="divisionId" id="divisionId" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="districtId" class="col-sm-3 col-form-label">District <span class="redStar">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="districtId" id="districtId" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="thanaId" class="col-sm-3 col-form-label">Thana <span class="redStar">*</span></label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" name="thanaId" id="thanaId" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="maillingAddress" class="col-sm-3 col-form-label">Address <span class="redStar">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="maillingAddress" name="maillingAddress" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="planQuantity" class="col-sm-3 col-form-label">Quantity <span class="redStar">*</span></label>
+                                <div class="col-sm-3">
+                                    <input type="number" class="form-control" id="planQuantity" name="planQuantity" required>
+                                </div>
+                                <label for="remQuantity" class="col-sm-3 col-form-label">Remaining Quantity</label>
+                                <div class="col-sm-3">
+                                    <input type="number" class="form-control" id="remQuantity" name="remQuantity" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label"></label>
+                                <div class="col-sm-9">
+                                    <input type="button" class="btn btn-success btn-sm" value="Save" id="btnSubmit" style="width:80px;" onclick="SaveSubmit()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="statusTable" style="width:100%;"></table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            Common.Ajax('GET', '/global/api/divisions/' + @ViewBag.bangladeshcountryId, [], 'json', ajaxDivision, false);
+            $("#divisionId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', ajaxDistrict, false);
+            });
+            $("#districtId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', ajaxThana, false);
+            });
+
+            let masterId = parseInt(@ViewBag.masterId) ? parseInt(@ViewBag.masterId) : 0;
+            let workPlanId = parseInt(@ViewBag.workPlanId) ? parseInt(@ViewBag.workPlanId) : 0;
+            let programYearId = parseInt(@ViewBag.programYearId) ? parseInt(@ViewBag.programYearId) : 0;
+
+            if (workPlanId == null || workPlanId == 0) {
+                PODetails(masterId);
+            }
+            else {
+                Common.Ajax('GET', '/Program/ProgramPlan/GetProgramWorkPlanById/?yearId=' + programYearId + '&masterId=' + masterId, [], 'json', ajaxGetProgramWorkPlanById);
+                //Common.Ajax('GET', '/Program/ProgramPlan/GetProgramWorkPlanByMasterYearId/?yearId=' + $("#programYearId").val() + '&masterId=' + masterId, [], 'json', ajaxGetProgramWorkPlanByMasterYearId);
+            }
+
+            $(".money").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+        });
+        
+        function ajaxGetProgramWorkPlanById(response) {
+            $("#programYearId").val(response.programYearId);
+            $("#remarks").val(response.remarks);
+
+            Common.Ajax('GET', '/Program/ProgramPlan/GetProgramWorkPlanByMasterYearId/?yearId=' + response.programYearId + '&masterId=' + @ViewBag.masterId, [], 'json', ajaxGetProgramWorkPlanByMasterYearId);
+        }
+
+        function PODetails(masterid) {
+            $.ajax({
+                url: "/Program/ProgramPlan/GetActivityDetailsByMasterId",
+                type: "get",
+                data: { masterid: masterid },
+                success: function (res) {
+                    showDetails(res);
+                }
+            });
+        }
+
+        function isDigit(evt, txt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var c = String.fromCharCode(charCode);
+            if (txt.indexOf(c) > 0 && charCode == 46) {
+                return false;
+            }
+            else if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+
+        function showDetails(res) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#detailsInfoListTable tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#detailsInfoListTable tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+            var tbody = $("#detailsInfoListTable").find('tbody');
+            tbody.empty();
+            $.each(res.programActivities,
+                function (i, e) {
+
+                    //if (e.totalCount == 0) {
+                    //    swal("Invaild or Duplicate PO Number!!!");
+                    //    return false;
+                    //}
+                    //else {
+                    var tr = '<tr>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + e.activity + '<input type="hidden" id="programActivityIdAll' + index + '" name="programActivityIdAll" class="clsId" value="' + e.Id + '"></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + e.indicator + '<input type="hidden" ></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + e.values + '<input type="hidden" ></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="firstMonthAll' + index + '" name="firstMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "January" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="secondMonthAll' + index + '" name="secondMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "February" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="thirdMonthAll' + index + '" name="thirdMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "March" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="fourthMonthAll' + index + '" name="fourthMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "April" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="fifthMonthAll' + index + '" name="fifthMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "May" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="sixthMonthAll' + index + '" name="sixthMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "June" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="seventhMonthAll' + index + '" name="seventhMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "July" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="eighthMonthAll' + index + '" name="eighthMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "August" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="ninethMonthAll' + index + '" name="ninethMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "September" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="tenthMonthAll' + index + '" name="tenthMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "October" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="eleventhMonthAll' + index + '" name="eleventhMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "November" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="twelvethMonthAll' + index + '" name="twelvethMonthAll" value="0" class="form-control TableInput" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + e.Id + ',' + 0 + ',' + "'" + "December" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                        '</tr>';
+                    tbody.append(tr);
+                    //}
+                }
+
+            );
+
+        }
+
+       
+
+        function ajaxGetProgramWorkPlanByMasterYearId(response) {
+            $("#detailsInfoListTable tbody>tr").remove();
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#detailsInfoListTable tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#detailsInfoListTable tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            $.each(response, function (key, value) {
+                index = $("#detailsInfoListTable tbody>tr").length;
+                var dtTable = $("#detailsInfoListTable");
+                var tableBody = dtTable.find('tbody');
+
+                let slNo = parseInt(index) ? parseInt(index) : 0;
+                slNo = slNo + 1;
+
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + value.programActivity.activity + '<input type="hidden" id="programActivityIdAll' + index + '" name="programActivityIdAll" class="clsId" value="' + value.programActivityId + '"></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + value.programActivity.indicator + '<input type="hidden" ></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + value.programActivity.values + '<input type="hidden" ></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="firstMonthAll' + index + '" name="firstMonthAll" class="form-control TableInput" value="' + value.firstMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.firstMonth + ',' + "'" + "January" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="secondMonthAll' + index + '" name="secondMonthAll" class="form-control TableInput" value="' + value.secondMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.secondMonth + ',' + "'" + "February" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="thirdMonthAll' + index + '" name="thirdMonthAll" class="form-control TableInput" value="' + value.thirdMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.thirdMonth + ',' + "'" + "March" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="fourthMonthAll' + index + '" name="fourthMonthAll" class="form-control TableInput" value="' + value.fourthMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.fourthMonth + ',' + "'" + "April" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="fifthMonthAll' + index + '" name="fifthMonthAll" class="form-control TableInput" value="' + value.fifthMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.fifthMonth + ',' + "'" + "May" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="sixthMonthAll' + index + '" name="sixthMonthAll" class="form-control TableInput" value="' + value.sixthMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.sixthMonth + ',' + "'" + "June" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="seventhMonthAll' + index + '" name="seventhMonthAll" class="form-control TableInput" value="' + value.seventhMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.seventhMonth + ',' + "'" + "July" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="eighthMonthAll' + index + '" name="eighthMonthAll" class="form-control TableInput" value="' + value.eighthMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.eighthMonth + ',' + "'" + "August" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="ninethMonthAll' + index + '" name="ninethMonthAll" class="form-control TableInput" value="' + value.ninethMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.ninethMonth + ',' + "'" + "September" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="tenthMonthAll' + index + '" name="tenthMonthAll" class="form-control TableInput" value="' + value.tenthMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.tenthMonth + ',' + "'" + "October" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="eleventhMonthAll' + index + '" name="eleventhMonthAll" class="form-control TableInput" value="' + value.eleventhMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.eleventhMonth + ',' + "'" + "November" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px">' + '<input type="text" id="twelvethMonthAll' + index + '" name="twelvethMonthAll" class="form-control TableInput" value="' + value.twelvethMonth + '" onkeypress = "return isDigit(event,this.value);"><a href="javascript:void(0)"  title="Add Location" class="btn btn-info btn-xs" onclick="AddLocation(' + value.programActivityId + ',' + value.twelvethMonth + ',' + "'" + "December" + "'" + ')"><i class="fa fa-plus"></i></a></td>' +
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#detailsInfoListTable tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function ajaxDivision(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#divisionId').empty();
+            $('#divisionId').append(options);
+        }
+
+
+        function ajaxDistrict(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#districtId').empty();
+            $('#districtId').append(options);
+        }
+
+        function ajaxThana(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#thanaId').empty();
+            $('#thanaId').append(options);
+        }
+
+        function AddLocation(activityid, targetValue, monthhh) {
+            let yearId = $('#programYearId').val();
+            if (yearId == "" || yearId == null) {
+                swal("Please select year.");
+                return false;
+            }
+            $('#modalFinal').modal('show');
+            $('#clickMonthName').val(monthhh);
+            $('#programActivityId').val(activityid);
+            $('#clickprogramYearId').val(yearId);
+
+            $('#targetQuantity').val(targetValue);
+            GetLocation(yearId, activityid, monthhh);  
+            if (targetValue == 0) {
+                $("#remQuantity").val(targetValue);
+            }
+            else {
+                Common.Ajax('GET', '/Program/ProgramPlan/GetBalanceBeforeExecution/?yearId=' + yearId + '&activityId=' + activityid + '&month=' + monthhh, [], 'json', ajaxGetBalanceBeforeExecution);
+            }
+        }
+
+        function ajaxGetBalanceBeforeExecution(response) {
+            $("#remQuantity").val(response);
+        }  
+
+        function SaveSubmit() {            
+            let divisionId = $('#divisionId').val();
+            let districtId = $('#districtId').val();
+            let thanaId = $('#thanaId').val();
+            let activityId = $('#programActivityId').val();
+            let month = $('#clickMonthName').val();
+            let yearId = $('#programYearId').val();
+
+            //if (divisionId == "") {
+            //    swal("Please select division.");
+            //    return false;
+            //}
+            //else if (districtId == "") {
+            //    swal("Please select district.");
+            //    return false;
+            //}
+            //else if (thanaId == "") {
+            //    swal("Please select thana.");
+            //    return false;
+            //}
+            swal({
+                title: 'Are you sure?', text: 'Do you want to save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, save!'
+            }).then(function () {
+            var form = $("#frmDraft");
+                $.ajax({
+                    url: '@Url.Action("SaveProgramPlanLocation", "ProgramPlan")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Save Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+                            //$('#modalFinal').modal('hide');
+                            GetLocation(yearId, activityId, month);
+                            Common.Ajax('GET', '/Program/ProgramPlan/GetBalanceBeforeExecution/?yearId=' + yearId + '&activityId=' + activityId + '&month=' + month, [], 'json', ajaxGetBalanceBeforeExecution);
+                            ClearLocation();
+                        });
+                    }
+                });
+            });
+        }
+
+        function GetLocation(yearId, activityId, month) {
+            $('#statusTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetProgramPlanLocationByActivityMonthYearId", "ProgramPlan")',
+                    dataSrc: "",
+                    data: { yearId: yearId, activityId: activityId, month }
+                },
+                processing: true,
+                destroy: true,
+                columns: [
+                    { data: "division.divisionName", title: "Division", width: "15%" },
+                    { data: "district.districtName", title: "District", width: "15%" },
+                    { data: "thana.thanaName", title: "Thana", width: "20%" },
+                    { data: "maillingAddress", title: "Address", width: "30%" },
+                    { data: "planQuantity", title: "Quantity", width: "10%" },
+                    {
+                        title: "Action", "width": "10%",
+                        "render": function (data, type, e, meta) {
+                            return '<a class="btn btn-info" href="javascript:void(0)" title="Edit" onclick="EditLocation(' + e.Id + ',' + e.programActivityId + ',' + e.programYearId + ',' + e.divisionId + ',' + e.districtId + ',' + e.thanaId + ',' + "'" + e.monthName + "'" + ',' + "'" + e.planQuantity + "'" + ',`' + e.maillingAddress + '`)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;<a class="btn btn-danger" href="javascript:void(0)" title="Delete" onclick="DeleteMaster(' + e.Id + ',' + e.programYearId + ',' + e.programActivityId + ',' + "'" + e.monthName + "'" + ')"><i class="fa fa-trash-alt"></i></a>';
+                        }
+                    },
+                ],
+                stateSave: true,
+            });
+        }
+
+        function EditLocation(id, programActivityId, programYearId, divisionId, districtId, thanaId, monthName, planQuantity, maillingAddress) {
+            $('#editId').val(id);
+            $('#programActivityId').val(programActivityId);
+            $('#clickprogramYearId').val(programYearId);
+            $("#divisionId").val(divisionId);
+            Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', ajaxDistrict, false);
+            $("#districtId").val(districtId);
+            Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', ajaxThana, false);
+            $("#thanaId").val(thanaId);
+            $('#clickMonthName').val(monthName);
+            $('#planQuantity').val(planQuantity);
+            $('#maillingAddress').val(maillingAddress);
+        }
+
+        function DeleteMaster(id, programYearId, programActivityId, monthName) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteProgramPlanLocationById", "ProgramPlan")',
+                    data: { id: id},
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');                        
+                        GetLocation(programYearId, programActivityId, monthName);                    
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+        function ClearLocation() {
+            $('#divisionId').val('');
+            $('#districtId').val('');
+            $('#thanaId').val('');
+            $('#maillingAddress').val('');
+            $('#planQuantity').val('');
+        }
+
+    </script>
+}
+

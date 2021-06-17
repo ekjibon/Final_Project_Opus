@@ -1,0 +1,96 @@
+﻿@model ProgramAttendeeView
+@{
+    ViewData["Title"] = "ProgramMaster";
+}
+@section Style{
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <style>
+        div.justified {
+            display: flex;
+            justify-content: center;
+        }
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<br />
+<section>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                <h5 style="font-weight:bold; color:black">Program Attendee</h5>
+            </div>
+            <div class="card-body">
+                <table id="tblAttendes" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Project Number</th>
+                            <th>Program Activity</th>
+                            <th>Attendee Name</th>
+                            <th>Gender</th>
+                            <th>ID Number Type</th>
+                            <th>ID Number</th>
+                            <th>Mobile</th>
+                            <th>Word</th>
+                            <th> Village</th>
+                            <th>Benificiary Type</th>
+                            <th>Age Range</th>
+                            <th>People Type</th>
+                            <th>Is Ethnic</th>
+                            <th>Is Female Headed</th>
+                            <th>Benificiary Active Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model?.programPeopleAttendee?.programMasterId</td>
+                            <td>@Model?.programPeopleAttendee?.programActivityId</td>
+                            <td>@Model.programPeopleAttendee?.name</td>
+                            <td>@Model?.programPeopleAttendee?.genderId</td>
+                            <td>@Model?.programPeopleAttendee?.idTypeId</td>
+                            <td>@Model.programPeopleAttendee?.idNumber</td>
+                            <td>@Model.programPeopleAttendee?.mobile</td>
+                            <td>@Model.programPeopleAttendee?.union</td>
+                            <td>@Model.programPeopleAttendee?.village</td>
+                            <td>@Model?.programPeopleAttendee?.benificiaryTypeId</td>
+                            <td>@Model?.programPeopleAttendee?.dateRangeId</td>
+                            <td>@Model?.programPeopleAttendee?.peopleTypeId</td>
+                            <td>@Model?.programPeopleAttendee?.isEthnic</td>
+                            <td>@Model?.programPeopleAttendee?.isFemaleHeaded</td>
+                            <td>@Model?.programPeopleAttendee?.benificiaryActiveTypeId</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#tblAttendes').DataTable({
+                "scrollX": true,
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel"></i> Excel',
+                    titleAttr: 'Excel',
+                    exportOptions: {
+                        stripHtml: false,
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+                    },
+                    title: 'Jatiya Press Club',
+                    messageTop: 'List Of Members',
+                    class: 'btn btn-info'
+                }]
+            });
+    </script>
+}
+

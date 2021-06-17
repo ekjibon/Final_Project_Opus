@@ -1,0 +1,500 @@
+﻿
+
+@model VisitorEntryViewModel
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout";
+}
+
+
+<style>
+
+    body {
+        font-family: Helvetica, sans-serif;
+    }
+
+    h2, h3 {
+        margin-top: 0;
+    }
+
+    form {
+        margin-top: 15px;
+    }
+
+        form > input {
+            margin-right: 15px;
+        }
+
+
+    #buttonhide {
+        background: transparent;
+        border: none !important;
+        font-size: 0;
+    }
+</style>
+
+<br />
+
+<div class="container-fluid">
+    <form id="myForm">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <h5 class="card-title" style="color: black; font-weight:bold">Contact Information</h5>
+                </div>
+            </div>
+            <div class="container">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-lg-8 col-md-8 col-sm-12">
+                            <div class="form-group row">
+                                <label for="officerName" class="col-md-4 col-form-label">Contact Person <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <select id="officerName" onchange="officerNameChangeFun()" class="form-control customSelect"></select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="email" class="col-md-4 col-form-label">Email <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="hidden" id="Id" name="Id" class="form-control" />
+                                    <input type="text" id="email" class="form-control" readonly="readonly" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mobile" class="col-md-4 col-form-label">Mobile <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="text" id="mobile" class="form-control" readonly="readonly" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="department" class="col-md-4 col-form-label">Department <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="text" id="department" class="form-control" readonly="readonly" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="designation" class="col-md-4 col-form-label">Designation <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="text" id="designation" class="form-control" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-lg-2 col-md-2"></div>*@
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="font-weight-bold" style="color: black">Image</h5>
+                                </div>
+                                <div class="card-body" id="officer_img_id" style="text-align: center">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <h5 class="card-title" style="color: black; font-weight:bold">Visitor Information</h5>
+                </div>
+            </div>
+            <div class="container">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="form-group row">
+                                <label for="visitorName" class="col-md-4 col-form-label">Visitor Name <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="text" id="visitorName" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="form-group row">
+                                <label for="visitorMobile" class="col-md-4 col-form-label">Mobile <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="text" id="visitorMobile" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="form-group row">
+                                <label for="visitorEmail" class="col-md-4 col-form-label">Email <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="email" id="visitorEmail" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="form-group row">
+                                <label for="companyName" class="col-md-4 col-form-label">Company <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="text" id="companyName" class="form-control" />
+                                    <input type="hidden" id="imgUrl" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="form-group row">
+                                <label for="date" class="col-md-4 col-form-label">Date <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="date" id="date" value="@DateTime.Now.Date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="form-group row">
+                                <label for="time" class="col-md-4 col-form-label">Time <span style="color:red">*</span> </label>
+                                <div class="col-md-8">
+                                    <input type="time" id="time" value="@DateTime.Now.TimeOfDay" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card">
+                                <div class="card-header">Camera</div>
+                                <div class="card-body" style="background: antiquewhite; text-align: center">
+                                    <div id="my_camera" style="margin: auto"></div>
+                                    <!-- A button for taking snaps -->
+                                    <br />
+                                    <input type="button" class="btn btn-success" value="Take Snapshot" style="margin-left: auto" onClick="take_snapshot()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Your captured image
+                                </div>
+                                <div class="card-body" style="background: antiquewhite; text-align: center">
+                                    <div id="results" style="margin: auto">
+                                        Your captured image will appear here...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button type="button" onclick="addBtnFun()" class="btn btn-success" style="float: right; margin-top: 5px; margin-bottom: 5px;"><i class="fas fa-plus"></i></button>
+        
+        <table class="table table-bordered table-striped" id="selected_list_table">
+            <thead>
+            <tr>
+                <th>Visitor Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Company</th>
+                <th>Image</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        
+
+        <button type="button" onclick="formSubmitFun()" class="btn btn-success" style="float: right; margin-top: 5px;"><i class="fas fa-save"></i></button>
+
+    </form>
+</div>
+
+<script src="~/webcam-capture-picture/webcamjs/webcam.min.js"></script>
+
+@section Scripts{
+    @*<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>*@
+    <script language="javascript">
+
+        Webcam.set({
+            width: 320,
+            height: 240,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+        Webcam.attach('#my_camera');
+
+        // preload shutter audio clip
+        //var shutter = new Audio();
+        //shutter.autoplay = true;
+        //shutter.src = navigator.userAgent.match(/Firefox/) ? 'shutter.ogg' : 'shutter.mp3';
+
+        function take_snapshot() {
+            // play sound effect
+            //shutter.play();
+
+            // take snapshot and get image data
+            Webcam.snap(function(data_uri) {
+                // display results in page
+                document.getElementById('results').innerHTML =
+                    '<img src="' + data_uri + '"/>';
+
+                Webcam.upload(data_uri,
+                    '/Shagotom/Camera/Capture',
+                    function(code, text) {
+                        alert('Photo Captured');
+                        $("#imgUrl").val(data_uri);
+                    });
+
+            });
+        }
+
+        $(document).ready(function() {
+
+            //$('#issueDate').flatpickr({ dateFormat: "d-M-Y" });
+            //$('#returnDate').flatpickr({ dateFormat: "d-M-Y" });
+
+            $.ajax({
+                url: "/global/api/VisitorEntry/GetAllEmployeeInfo",
+                type: "get",
+                success: function(res) {
+
+                    if (res != null) {
+
+                        $("#officerName").append('<option value="0">select contact person</option>');
+
+                        $.each(res,
+                            function(i, e) {
+                                $("#officerName").append("<option value=" + e.Id + ">" + e.nameEnglish + "</option>");
+                            });
+                    }
+                }
+            });
+
+        });
+
+        var index = 1;
+
+        function addBtnFun() {
+
+            var name = $('#visitorName').val();
+            var email = $('#visitorEmail').val();
+            var phone = $('#visitorMobile').val();
+            var company = $('#companyName').val();
+            var img = $("#imgUrl").val();
+            var date = $("#date").val();
+            var time = $("#time").val();
+
+
+            if (name == null) {
+
+                swal({
+                    title: 'Invalid Input',
+                    text: 'Please enter visitor name!',
+                    type: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK!'
+                });
+
+                return false;
+            }
+            else if (email == null) {
+
+                swal({
+                    title: 'Invalid Input',
+                    text: 'Please enter visitor email!',
+                    type: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK!'
+                });
+
+                return false;
+            }
+            else if (phone == null) {
+
+                swal({
+                    title: 'Invalid Input',
+                    text: 'Please enter visitor phone number!',
+                    type: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK!'
+                });
+
+                return false;
+            }
+            else if (company == null) {
+
+                swal({
+                    title: 'Invalid Input',
+                    text: 'Please enter visitor company name!',
+                    type: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK!'
+                });
+
+                return false;
+            }
+            else if (img == '') {
+
+                swal({
+                    title: 'Invalid Input',
+                    text: 'Please take visitor picture !',
+                    type: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK!'
+                });
+
+                return false;
+            }
+
+            var tbody = $("#selected_list_table").find('tbody');
+
+            var tr = '<tr id="index_' +index +'">' +
+                '<td>' +name +'</td>' +
+                '<td>' +email +'</td>' +
+                '<td>' +phone +'</td>' +
+                '<td>' +company +'</td>' +
+                '<td><img src="' +img +'" height="70" width="70"/></td>' +
+                '<td>' +'<button type="button" onclick="deleteInfo(' +index +')" class="btn btn-danger" style="float: right; margin-top: 5px;"><i class="fas fa-trash"></i></button>' +
+                '<input type="hidden" name="nameArray" value="' +name +'" />' +
+                '<input type="hidden" name="mobileArray" value="' +mobile +'" />' +
+                '<input type="hidden" name="emailArray" value="' +email +'" />' +
+                '<input type="hidden" name="companyArray" value="' +company +'" />' +
+                '<input type="hidden" name="imgUrlArray" value="' +img +'" />' +
+                '<input type="hidden" name="dateArray" value="' +date +'" />' +
+                '<input type="hidden" name="timeArray" value="' +time +'" />' +
+                '</td>' +
+                '</tr>';
+
+            tbody.append(tr);
+            index++;
+            refreshForm();
+        }
+
+        function formSubmitFun() {
+
+            var myData = $("#myForm").serialize();
+
+            swal({
+                title: 'Are you sure?',
+                text: 'Do you want save this record!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Save it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: "/Shagotom/VisitorEntry/Index",
+                    type: "post",
+                    data: myData,
+                    success: function (response) {
+
+                        if (response == "success") {
+
+                            swal({
+                                title: 'Success!',
+                                text: 'Save Successfully!',
+                                type: 'success',
+                                confirmButtonColor: '#3085d6'
+
+                            }).then(function () {
+                                window.location.href = "/Shagotom/ShagotomDashboard/Index";
+                            });
+
+                        }
+                        else {
+                            swal('Warning!', 'Unable to save!', 'warning').then(function() {
+                                window.location.href = "/Shagotom/VisitorEntry/Index";
+                            });
+                        }
+
+                    }
+                });
+            });
+        }
+
+        function officerNameChangeFun() {
+
+            //var id = $("#officerName").select2("val");
+            var id = $("#officerName option:selected").val();
+
+            $.ajax({
+                url: "/Shagotom/VisitorEntry/GetEmployeeInfoById",
+                type: "get",
+                data: { id: id },
+                success: function(res) {
+
+                    if (res != null) {
+
+                        $("#email").val('');
+                        $("#mobile").val('');
+                        $("#department").val('');
+                        $("#designation").val('');
+                        $("#officer_img_id").empty();
+
+                        // set new data
+                        $("#Id").val(res.Id);
+                        $("#email").val(res.emailAddress);
+                        $("#mobile").val(res.mobileNumberPersonal);
+                        $("#department").val(res.department);
+                        $("#designation").val(res.designation);
+
+                        var img = '<img src="/' + res.imgUrl + '" style="height: 140px; width: 140px;"/>';
+
+                        $("#officer_img_id").append(img);
+                    } else {
+
+                        $("#email").val('');
+                        $("#mobile").val('');
+                        $("#department").val('');
+                        $("#designation").val('');
+
+                        $("#officer_img_id").empty();
+
+                    }
+                }
+            });
+        }
+
+        function deleteInfo(index) {
+
+            swal({
+                title: 'Are you sure?',
+                text: 'Do you want delete this record!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then(function() {
+                
+                var tbody = $("#selected_list_table").find('tbody');
+
+                tbody.find('#index_' + index).remove();
+            });
+        }
+      
+        function refreshForm() {
+
+            $('#visitorName').val('');
+            $('#visitorEmail').val('');
+            $('#visitorMobile').val('');
+            $('#companyName').val('');
+            $("#imgUrl").val('');
+            $("#date").val('@DateTime.Now.Date');
+            $("#imgUrl").val('@DateTime.Now.TimeOfDay');
+            $("#results").empty();
+            $("#results").append('<p>Your captured image will appear here...</p>');
+
+        }
+
+    </script>
+}

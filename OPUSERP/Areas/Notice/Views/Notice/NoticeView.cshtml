@@ -1,0 +1,81 @@
+﻿@model NoticeInfoViewModel
+@{
+    ViewData["Title"] = "NoticeView";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+<style>
+    .logo {
+        height: 100px;
+        width: 130px;
+        margin-top: 28px;
+    }
+
+    hr {
+        color: darkgreen;
+        border: .2em solid;
+    }
+
+    h5 {
+        color: black;
+        margin-bottom: 15px;
+    }
+
+    p {
+        color: black;
+        font-size: 18px;
+    }
+</style>
+
+<div class="container-fluid">
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-2">
+            <img src="~/images/Key-Club-International-Logo.jpg" height="120" width="140" />
+        </div>
+        <div class="col-10 text-center">
+            <h1 style="color:darkgreen;font-size: 55px;">বাংলাদেশ ইঞ্জিনিয়ার্স  ক্লাব লিমিটেড </h1>
+            <h1 style="color:red;font-size: 38px;">Bangladesh Engineers Club Ltd</h1>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-9">
+            <p>@Model.fLang.memoNo- @Model.noticeInfo.noticeType <span style="font-size:30px;">:</span> @DateTime.Now.ToString("MM/dd/yyyy")  </p>
+        </div>
+        <div class="col-3" style="text-align:right;">
+            <p>@Model.fLang.date - @DateTime.Now.ToString("MM/dd/yyyy")</p>
+        </div>
+    </div>
+
+
+    <br />
+    <br />
+    <br />
+
+    <div class="col-12">
+        <h3 class="text-center" style="color:red">@Model.noticeInfo.subject</h3>
+    </div>
+
+    <br />
+    <br />
+
+    <div class="col-12 text-justify">
+        <p>@Model.noticeInfo.notice</p>
+    </div>
+
+    <br />
+    @if (Model.rlnNoticeAuthors != null)
+    {
+        @foreach (var data in Model.rlnNoticeAuthors)
+        {
+            <div class="col-12">
+                <img src="~/@data.noticeAuthor.signature" height="60" width="150" />
+                <h5> @data.noticeAuthor.name </h5>
+                <h6 style="color:black"> @data.noticeAuthor.designation </h6>
+                <h6 style="color:black"><i>Bangladesh Engineers Club Ltd</i></h6>
+            </div>
+        }
+    }
+</div>
+

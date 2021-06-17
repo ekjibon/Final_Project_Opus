@@ -1,0 +1,133 @@
+﻿
+@model LeadBankViewModel
+@{
+    ViewData["Title"] = "Lead Bank Info";
+    Layout = "~/Areas/CRMLead/Views/Shared/_LeadFormPersonal.cshtml";
+}
+
+@section StyleLead{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <hr>
+        <div class="container">
+            <form asp-area="CRMLead" asp-controller="LeadManagement" asp-action="LeadBankInfo" method="post" id="infoCreateForm" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <input type="hidden" id="Id" name="Id" value="0">
+                                <div class="form-group row">
+                                    <div class="col-sm-9">
+                                        <input type="hidden" id="leadsId" name="leadsId" value="@ViewBag.leadId">
+                                        <input type="hidden" id="leadName" name="leadName" value="@ViewBag.leadName">
+                                        <input type="hidden" id="isPersonal" name="isPersonal" value="1">
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+
+                                    <label for="bankId" class="col-sm-3 col-form-label">Bank<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="bankId" name="bankId" data-parsley-required="true">
+                                            <option value="">-Select-</option>
+                                            @{
+                                                    foreach (var data in Model.banks)
+                                                    {
+                                                <option value="@data.Id">@data.bankName</option>
+                                                    }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="bankBranchDetailsId" class="col-sm-3 col-form-label">Bank Branch<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" name="bankBranchDetailsId" id="bankBranchDetailsId" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="bankType" class="col-sm-3 col-form-label">Bank Type<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="bankType" name="bankType" data-parsley-required="true">
+                                            <option value="">-Select-</option>
+                                            <option value="Primary">Primary</option>
+                                            <option value="Secondary">Secondary</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsLead{
+    <script>
+
+        $(document).ready(function () {
+            $("#BankList").addClass("active");
+
+
+            $("#bankId").change(function () {
+                var bankId = $("#bankId").val();
+                Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + bankId, [], 'json', ajaxGetBranchByBankId);
+            });
+             if (@ViewBag.masterId>0) {
+                 Common.Ajax('GET', '/CRMLead/LeadManagement/GeLeadsBankInfoById/?Id=' + @ViewBag.masterId, [], 'json', ajaxGeLeadsBankInfoById);
+            }
+        });
+
+        function ajaxGetBranchByBankId(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            });
+            $('#bankBranchDetailsId').empty();
+            $('#bankBranchDetailsId').append(options);
+        }
+        var bankBranchDetailsId = 0;
+        function ajaxGeLeadsBankInfoById(response) {
+            $("#Id").val(response.Id);
+            $("#leadsId").val(response.leadsId);
+            $("#bankId").val(response.bankBranchDetails.bankId);
+            $("#bankType").val(response.bankType);
+            bankBranchDetailsId = response.bankBranchDetailsId;
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + response.bankBranchDetails.bankId, [], 'json', ajaxGetBranchByBankIdEdit);
+
+        }
+        function ajaxGetBranchByBankIdEdit(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            });
+            $('#bankBranchDetailsId').empty();
+            $('#bankBranchDetailsId').append(options);
+            $("#bankBranchDetailsId").val(bankBranchDetailsId);
+        }
+
+
+
+    </script>
+}
+

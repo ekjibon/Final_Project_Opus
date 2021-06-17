@@ -1,0 +1,196 @@
+﻿@model EmployeeInfoViewModel
+@{
+    ViewData["Title"] = "All Employee Information";
+}
+
+@section Style{
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.title</h6>
+            </div>
+            @*<div class="row">
+
+                <div class="col-md-6" style="margin-left:25px;">
+                    <div class="form-group row">
+                        <label for="empStatus" class="col-sm-4 col-form-label">Employee Status</label>
+                        <div class="col-sm-8">
+                            <select id="empStatus" class="form-control">
+                                <option value="">All Employee</option>
+                                <option value="1">Active Employee</option>
+                                <option value="0">Inactive Employee</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+            @*<div class="card-body" style="display:block;">
+            <div class="container">
+                <form>
+                    <div class="row">
+                        <div class="col-4 card" style="padding: 15px 15px 10px 25px;">
+                            <div class="form-group row">
+                                <h6 class="m-0 font-weight-bold text-primary">Query Builder</h6>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="key" class="col-sm-3 col-form-label">Key</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" id="key" value="" name="key">
+                                        <option value="">Select</option>
+                                        <option value="EmpType">Employee Type</option>
+                                        <option value="PRL">PRL In Next</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="value" class="col-sm-3 col-form-label">Value</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" id="value" value="" name="value"></select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-5">
+                                    <button type="button" onclick="AddFilter()" class="btn btn-success btn-sm" style="float:right;"><i class="fas fa-plus"></i></button>
+                                </div>
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-4">
+                                    <button type="button" onclick="LoadByFilter()" class="btn btn-success btn-sm" style="float:right;"><i class="fas fa-search"></i> Load</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-8 card" style="padding: 15px 15px 10px 25px;">
+                            <div class="form-group row" id="allFilterString"></div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>*@
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" style="width:100%;" id="allEmployeeListTable">
+                    <thead>
+                        <tr>
+                            <th>User Image</th>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>@Model.fLang.name</th>
+                            <th>@Model.fLang.designation</th>
+                            <th>@Model.fLang.mobileNumber</th>
+                            <th>@Model.fLang.emailAddress</th>
+                            <th width="100px">@Model.fLang.action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model?.allEmployeeJsons)
+                        {
+                        <tr>
+                            <td>
+                                @if (data.imageUrl != null)
+                                {
+                                    <img src="~/@data.imageUrl" height="80" width="80" alt="profile Image" />
+                                }
+                                else
+                                {
+                                    <img src="~/images/user-icon-png.png" height="80" width="80" alt="profile Image" />
+                                }
+                            </td>
+                            <td>@data.employeeCode</td>
+                            <td>@data.nameEnglish</td>
+                            <td>@data.designation</td>
+                            <td>@data.mobileNumberOffice</td>
+                            <td>@data.emailAddress</td>
+                            <td><a class='btn btn-success' data-toggle='tooltip' title='Edit' target='_blank' href='/HRPMSEmployee/Photograph/EditGrid/@data.employeeId'><i class='fa fa-edit'></i></a> <a class='btn btn-success' data-toggle='tooltip' title='Preview' target='_blank' href='/HRPMSEmployee/InfoView/Index/@data.employeeId'><i class='fas fa-eye'></i></a> <a class='btn btn-info' data-toggle='tooltip' title='Print' target='_blank' href='/HRPMSEmployee/InfoView/pdspdf/@data.employeeId'><i class='fa fa-print'></i></a>
+                            </td>
+                        </tr>
+                        }
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var table;
+        $(document).ready(function () {
+
+            table = $('#allEmployeeListTable').DataTable({
+                //ajax: {
+                //    url: "/global/api/allEmpList/all",
+                //    dataSrc: ""
+                //},
+                //scrollX: true,
+                //columns: [
+                //    { data: "imageUrl" },
+                //    { data: "employeeCode" },
+                //    { data: "nameEnglish" },
+                //    { data: "designation" },
+                //    { data: "mobileNumberOffice" },
+                //    { data: "emailAddress" },
+                //    { data: "action" }
+                //],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5]
+                        },
+                        title: "@Model.allEmployeeJsons.FirstOrDefault().companies",
+                        messageTop: 'List Of Employee',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5]
+                        },
+                        title: "@Model.allEmployeeJsons.FirstOrDefault().companies",
+                        messageTop: 'List Of Employee'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "@Model.allEmployeeJsons.FirstOrDefault().companies",
+                        messageTop: 'List Of Employee',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+
+
+            $("#empStatus").change(function () {
+                if ($("#empStatus").val() != "") {
+                    var status = $("#empStatus").val();
+                    table.ajax.url("/global/api/allEmployeeList/" + status).load();
+                }
+            });
+        });
+
+
+    </script>
+}

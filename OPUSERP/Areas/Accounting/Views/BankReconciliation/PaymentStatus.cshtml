@@ -1,0 +1,455 @@
+﻿@model PaymentStatusViewModel
+@{
+    ViewData["Title"] = "Cheque Process";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+
+<div class="card p-0 m-0">
+    <div class="row">
+        <div class="col-sm-10">
+            <span style="font-size:1.5em;font-weight:700;color:gray;">Cheque Process</span>
+        </div>
+        @*<div class="col-sm-2 text-right">
+                <a class="btn btn-sm btn-dark" href="/Accounting/PaymentVoucher/PaymentVoucherList">Back To List</a>
+            </div>*@
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="formPaymentStatus" aria- data-parsley-validate="parsley" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Approved Voucher</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="fromDate" class="col-sm-4 col-form-label text-left">Date From</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" name="fromDate" id="fromDate" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="postedBy" class="col-sm-4 col-form-label text-left">Posted By</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="postedBy" id="postedBy" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="toDate" class="col-sm-4 col-form-label text-left">To</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" name="toDate" id="toDate" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="noofVoucher" class="col-sm-4 col-form-label text-left">No of Voucher</label>
+                                <div class="col-sm-8">
+                                    <input type="number" name="noofVoucher" id="noofVoucher" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <!-- Card Header - Dropdown -->
+                        @*<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">List</h6>
+                            </div>*@
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="voucherListTable">
+                                <thead>
+                                    <tr>
+                                        <th>Voucher No</th>
+                                        <th>Voucher Date</th>
+                                        <th>Vendor Name</th>
+                                        <th>Voucher Amount</th>
+                                        <th>Payment Due Date</th>
+                                        <th>Action</th>
+                                </thead>
+                                <tbody>
+                                    @*<tr>
+                                        <td>P123456</td>
+                                        <td>01/01/2020</td>
+                                        <td>M/S Business Trading</td>
+                                        <td>2451360</td>
+                                        <td>09/01/2020</td>
+                                        <td>View</td>
+                                    </tr>*@
+                                    @foreach (var data in Model.voucherMasters)
+                                        {
+                                    <tr>
+                                        <td><span style="display:none">-@data.Id-</span>@data.voucherNo</td>
+                                        <td>@data.voucherDate?.ToString("dd-MMM-yyyy")</td>
+                                        <td>@data.companyId</td>
+                                        <td style="text-align:right">@data.voucherAmount?.ToString("0,0.00")
+                                        </td>
+                                        <td>@data.remarks</td>
+
+                                        <td>
+                                            <a class="btn btn-success" href="/Accounting/PaymentVoucher/Index?id=@data.Id&actionType=defaultOpen" title="Voucher Edit"><i class="fa fa-edit"></i></a>
+                                            <button class="btn btn-success" onclick="AddParticular()" value="Add" title="Voucher Report"><i class="fa fa-eye-dropper"></i></button>
+                                        </td>
+                                    </tr>
+                                        }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div><br />
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Voucher List to Payment</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="tblParticular">
+                                <thead>
+                                    <tr>
+                                        <th>Voucher No</th>
+                                        <th>Voucher Date</th>
+                                        <th>Vendor Name</th>
+                                        <th>Voucher Amount</th>
+                                        <th>Bank Amount</th>
+                                        <th>Payment Due Date</th>
+                                        <th>Action</th>
+                                </thead>
+                                <tbody>
+                                    @*<tr>
+                                        <td>P123456</td>
+                                        <td>01/01/2020</td>
+                                        <td>M/S Business Trading</td>
+                                        <td>2451360</td>
+                                        <td>09/01/2020</td>
+                                        <td>9202000</td>
+                                        <td>View</td>
+                                    </tr>*@
+                                    @*@foreach (var data in Model.voucherMasters)
+                                        {
+                                    <tr>
+                                        <td><span style="display:none">-@data.Id-</span>@data.voucherNo</td>
+                                        <td>@data.voucherDate?.ToString("dd-MMM-yyyy")</td>
+                                        <td>@data.companyId</td>
+                                        <td style="text-align:right">
+                                            @data.voucherAmount?.ToString("0,0.00")
+                                    </td>
+                                    <td>@data.remarks</td>
+
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                                    </td>
+                                    </tr>
+                                        }*@
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Approved Voucher</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="chQRefNo" class="col-sm-4 col-form-label text-left">Cheque Ref No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" name="chQRefNo" id="chQRefNo" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="issueDate" class="col-sm-4 col-form-label text-left">Cheque Issue Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" name="issueDate" id="issueDate" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="chqAmount" class="col-sm-4 col-form-label text-left">Cheque Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="number" name="chqAmount" id="chqAmount" class="form-control input-group-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group row" style="float:right;">
+                                <div class="col-sm-8" style="margin-left:250px;">
+                                    <input type="button" id="btnPrevInvAmt" class="btn btn-danger" value="Refresh" />&nbsp;&nbsp;
+                                    <input type="button" id="btnPrevInvAmt" class="btn btn-info" value="Save" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Paid List</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="paidFromDate" class="col-sm-4 col-form-label text-left">Date From</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" name="paidFromDate" id="paidFromDate" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="paidToDate" class="col-sm-4 col-form-label text-left">To</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="paidToDate" id="paidToDate" value="" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group row" style="float:right;">
+                                <div class="col-sm-8" style="margin-left:250px;">
+                                    <input type="button" id="btnLoad" class="btn btn-danger" value="Load" />&nbsp;&nbsp;
+                                    <input type="button" id="btnExcel" class="btn btn-info" value="Export to Excel" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-12">
+                    <div class="card mb-4">
+
+                        <div class="card-body">
+                            <table class="table table-striped table-bordered" id="invoiceReceivedTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Voucher No</th>
+                                        <th>Cheque No</th>
+                                        <th>Issue Date</th>
+                                        <th>Amount</th>
+                                </thead>
+                                <tbody>
+                                    @*<tr>
+                                        <td>P123456</td>
+                                        <td>01/01/2020</td>
+                                        <td>M/S Business Trading</td>
+                                        <td>2451360</td>
+                                        <td>09/01/2020</td>
+                                    </tr>*@
+                                    @foreach (var data in Model.voucherMasters)
+                                    {
+                                            <tr>
+                                                @*<td>@data.AssetYearName</td>*@
+
+                                                <td>
+                                                    @*<a class="btn btn-success" onclick="Edit(@data.Id,'@data.AssetYearName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>*@
+
+                                                </td>
+                                            </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section ScriptsV{
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.haveSubledger').hide();
+            window.localStorage.clear("holdIndex");
+            //$('#voucherDate').datepicker({
+            //    uiLibrary: 'bootstrap4'
+            //});
+            $('#paymentInvoiceTable').DataTable();
+            $('#tblParticular').DataTable();
+            $('#voucherListTable').DataTable();
+
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#issueDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#paidFromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#paidToDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            $("#pNo").on('click', function () {
+                //$('input[name="forProcessNo"]').show();
+                $("#forProcessNo").show();
+                $("#forSupplier").hide();
+            });
+        });
+
+        function AddParticular() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblParticular tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblParticular tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .particularId").val();
+            }
+
+            let LPRID = $('#hdnPaymentAccId').val();
+            let PACCName = $('#txtPaymentAccount').val();
+            let PAAccounrCode = $('#txtPaymentAccountCode').val();
+
+            let ledgerRelationId = $('#txtLedgerRelationId').val();
+            let particularId = $('#particularId').val();
+            let particular = $('#particular').val();
+            let subLedgerId = parseInt($('#txtSubLedgerId').val()) ? parseInt($('#txtSubLedgerId').val()) : 0;
+            let subLedger = $('#txtSubLedger').val();
+            let amount = $('#txtAmount').val();
+            let bankAmt = amount;
+            let trMode = $('#txtTrMode').val();
+            let haveSubldgr = $('#txtHaveSubLedger').val();
+            let accountCode = $('#txtAccountCode').val();
+            let totaldetailvalue = $('#txtAmount').val();
+            let drAmt = 0.00;
+            let crAmt = 0.00;
+            let costCentreName = "";
+            let costcentreId = "";
+            if (trMode == 1) {
+                drAmt = amount;
+            } else {
+                crAmt = amount;
+            }
+
+            let particularBL = $('#txtParticularBL').val();
+
+            if (particularId == '' || particular == '') {
+                swal("Please Select Valid Pariticular");
+                return false;
+            } else if ((subLedgerId == '' || subLedger == '') && haveSubldgr == 1) {
+                swal("Please Select SubLedger");
+                return false;
+            } else if (amount == '') {
+                swal("Please Enter Amount");
+                return false;
+            }
+
+            let totalRow = $("#tblParticular tbody>tr").length;
+            for (var i = 0; i < totalRow; i++) {
+                let _ledgerRelationId = $('#ledgerRelationId' + i + '').val();
+
+                if (_ledgerRelationId == ledgerRelationId && isEdit == 0) {
+                    swal('Warning', 'This Particular Already Exist', 'warning');
+                    return false;
+                }
+            }
+            var accountName = "";
+            if (subLedger == '') {
+                accountName = particular;
+            }
+            else {
+                accountName = particular + ' - ' + subLedger;
+            }
+
+
+            var dtTable = $("#tblParticular");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + accountCode + '>' +
+                '<td>' + accountName + '<input type="hidden" id="txtAccountCode' + index + '" name="accountCode" class="clsAccountCode" value="' + accountCode + '"><input type="hidden" id="txtSubledgerId' + index + '" name="costHeadId" class="clsSubledgerId" value="' + subLedgerId + '"><input type="hidden" id="subLedgerName' + index + '" name="subLedgerName" class="clsSubLedgerName" value="' + particular + ' - ' + subLedger + '"></td>' +
+                '<td type="hidden">' + costCentreName + '<input type="hidden" id="txtcostcentreId' + index + '" name="costCentreallId" class="clstxtcostcentreId" value="' + costcentreId + '"></td>' +
+                '<td style="text-align:right">' + addCommas(drAmt) + '<input type="hidden" name="drAmount" class="clsDRAmount" value="' + drAmt + '"/><input type="hidden" id="ledgerRelationId' + index + '" name="ledgerRelationId" class="clsLedgerRelationId" value="' + ledgerRelationId + '"><input type="hidden" name="isPrincAcc" id="txtIsPrincAcc' + index + '" value="0"></td>' +
+                '<td style="text-align:right">' + addCommas(crAmt) + '<input type="hidden" name="crAmount" class="clsCRAmount" value="' + crAmt + '"/><input type="hidden" id="transectionModeId' + index + '" name="transectionModeId" class="clsTransectionModeId" value="' + trMode + '"><input type="hidden" id="txtParticularBL' + index + '" value="' + particularBL + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-warning btn-xs" onclick="Delete(' + accountCode + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTbl(' + index + ',' + particularId + ', ' + "'" + particular + "'" + ' ,' + subLedgerId + ', ' + "'" + subLedger + "'" + ',' + trMode + ',' + haveSubldgr + ',' + ledgerRelationId + ',' + drAmt + ',' + crAmt + ',' + totaldetailvalue + ',' + "'" + accountCode + "'" + ',' + particularBL + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblParticular tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+
+            let rowCount = $("#tblParticular tbody>tr").length;
+            var tableFoot = dtTable.find('tfoot');
+            if (rowCount == 1 && isEdit == 0) {
+                tableFoot.append(
+                    '<tr id=' + 100 + '>' +
+                    '<td>' + PACCName + '<input type="hidden" id="ledgerRelationId' + index + '" name="ledgerRelationId" class="clsLedgerRelationId" value="' + LPRID + '"><input type="hidden" id="txtAccountCode' + index + '" name="accountCode" class="clsAccountCode" value="' + PAAccounrCode + '"><input type="hidden" id="txtSubledgerId' + index + '" name="costHeadId" class="clsSubledgerId" value="' + 0 + '"><input type="hidden" id="subLedgerName' + index + '" name="subLedgerName" class="clsSubLedgerName" value="' + particular + ' - ' + subLedger + '"></td>' +
+                    '<td>' + '' + '<input type="hidden" id="txtcostcentreId' + index + '" name="costCentreallId" class="clstxtcostcentreId" value="' + 0 + '"><input type="hidden" name="isPrincAcc" id="txtIsPrincAcc' + index + '" value="1"></td>' +
+                    '<td style="text-align:center"><span id="bankAMT" style="width:100%">' + bankAmt + '</span><input type="hidden" id="bankDRAmount" name="drAmount" value="0" class="clsbankDRAmount"/><input type="hidden" id="transectionModeId' + 100 + '" name="transectionModeId" class="clsTransectionModeId" value="' + 1 + '"></td>' +
+                    '<td style="text-align:center">' + 0.00 + '<input type="hidden" name="crAmount" value="' + 0.00 + '"/><input type="hidden" id="subLedgerName' + 100 + '" name="subLedgerName" class="clsSubLedgerName" value="' + PACCName + '"></td>' +
+                    '<td></td >' +
+                    '</tr>'
+                );
+            };
+
+            fnAmountCalculator();
+            Refresh();
+            isEdit = 0;
+        }
+        
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+    </script>
+}
+
+@section StyleV{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+
+
+

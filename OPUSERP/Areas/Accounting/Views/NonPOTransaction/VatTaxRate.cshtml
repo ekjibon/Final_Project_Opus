@@ -1,0 +1,137 @@
+﻿@model VatTaxRateViewModel
+@{
+    ViewData["Title"] = "Vat Tax Rate";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+
+@section StyleV{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Vat Tax Rate Information</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="NonPOTransaction" asp-action="VatTaxRate" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="vatTaxRateId" id="vatTaxRateId" value="0" />
+                    <label for="rateTypeId" class="col-sm-2 col-form-label">Rate Type<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select class="form-control" data-parsley-required="true" name="rateTypeId" id="countryId">
+                            <option value="">select</option>
+                            @foreach (var data in Model.rateTypes)
+                            {
+                                <option value="@data.Id">@data.RateTypeName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="taxYearId" class="col-sm-2 col-form-label">Tax Year<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select class="form-control" data-parsley-required="true" name="taxYearId" id="taxYearId">
+                            <option value="">select</option>
+                            @foreach (var data in Model.taxYears)
+                            {
+                                <option value="@data.Id">@data.taxYearName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="rate" class="col-sm-2 col-form-label">Rate</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" data-parsley-required="true" name="rate" id="rate">
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of VAT Tax Rate</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="vatTaxRateTable">
+                    <thead>
+                        <tr>
+                            <th>Rate Type</th>
+                            <th>Tax Year</th>
+                            <th>Rate</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.vatTaxRates)
+                        {
+                            <tr>
+                                <td>@data.rateType?.RateTypeName</td>
+                                <td>@data.taxYear?.taxYearName</td>
+                                <td>@data.rate</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.rateTypeId','@data.taxYearId','@data.rate')" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsV{
+    <script>
+        $(document).ready(function () {
+            $('#vatTaxRateTable').DataTable();
+        });
+
+        function Edit(Id, rateType, taxYear, rate) {
+            $("#vatTaxRateId").val(Id);
+            $("#rateTypeId").val(rateType);
+            $("#taxYearId").val(taxYear);
+            $("#rate").val(rate);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteVatTaxRateById", "NonPOTransaction")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Accounting/NonPOTransaction/VatTaxRate";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+    </script>
+}

@@ -1,0 +1,66 @@
+﻿@model DocumentViewModel
+@{
+    ViewData["Title"] = "Review Note List";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="m-0 font-weight-bold text-primary">Notes For review</h5>
+                @*<a class="btn btn-dark" href="#" style="float:right;" data-toggle="modal" data-target="#registerModal">Payment</a>*@
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Serial No.</th>
+                            <th>Note Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.docWithReviewIdModels)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.doc.subject</td>
+                                    <td>
+                                        <a title="Note Preview" class="btn btn-success" href="~/Workflow/Document/DocReView/@data.doc.Id/@data.reviewId"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#departmentTable').DataTable();
+            $('#departmentTable1').DataTable();
+        });
+    </script>
+}

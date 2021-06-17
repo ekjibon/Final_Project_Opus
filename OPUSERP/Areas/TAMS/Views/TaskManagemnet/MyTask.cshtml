@@ -1,0 +1,2372 @@
+﻿@model TaskManagemnetViewModel
+@{
+    ViewData["Title"] = "My Task";
+}
+
+@section Style{
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .has-search .form-control {
+            padding-left: 2.375rem;
+        }
+
+        .has-search .form-control-feedback {
+            position: absolute;
+            z-index: 2;
+            display: block;
+            width: 2rem;
+            height: 2rem;
+            line-height: 2rem;
+            text-align: center;
+            pointer-events: none;
+            color: #aaa;
+        }
+    </style>
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">My Task</h4>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-9 row">
+                        @*<h5 class="m-0 font-weight-bold">Name - @Model.projectViewModel.taskProject.name</h5>
+                            <h6>@Model.projectViewModel.taskProject.shortDescription</h6>
+                            <h6>Start Date - @Model.projectViewModel.taskProject.satrtDate?.ToString("dd-MMM-yyyy")</h6>*@
+
+                        <div class="input-group mb-3 col-sm-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-align-justify"></i></span>
+                                <span class="input-group-text"><i class="fas fa-signal"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3 col-sm-6">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-eye"></i></span>
+                            </div>
+                            <select type="text" class="form-control" placeholder="Username">
+                                <option>User</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group has-search">
+                                <span class="fa fa-search form-control-feedback"></span>
+                                <input type="text" id="myInput" class="form-control" placeholder="Search" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-2">
+                        @*<a class="btn btn-info ml-1" style="color:white" data-toggle="modal" data-target="#sectionModal"><i class="fa fa-plus"></i>Add Section</a>*@
+                        <a class="btn btn-success ml-1" style="color:white" data-toggle="modal" data-target="#CreateTaskModal"><i class="fa fa-plus"></i>Add Task</a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12" style="margin-bottom:35px;">
+                        <div class="card">
+                            <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Task List</label>
+                            </div>
+                            <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                @foreach (var task in Model.taskInformationHistories)
+                                {
+                                    string owner = "Assigned By " + task.taskInformation?.employee?.nameEnglish;
+                                    if (task.taskInformation.employeeId == Model.empId)
+                                    {
+                                        owner = "Own";
+                                    }
+                                    <table class="table table-striped mycontent" id="Suppliertbl">
+                                        <tr>
+                                            <th onclick="CallSingelTask(@task.taskInformation.Id)">@task.taskInformation.name</th>
+                                            <th><p class="text-primary">@owner</p></th>
+                                            <th><a title="Follower - @task.followers" onclick="FollowerModal(@task.taskInformation.Id,'@task.taskInformation.name',0)"><i class="fa fa-users"></i></a></th>
+                                            <th><a title="Comments -@task.Comments" onclick="CommentModal(@task.taskInformation.Id,'@task.taskInformation.name',0)"><i class="fas fa-comment-dots"></i></a></th>
+                                            <th><a title="Tags - @task.Tags" onclick="TagsModal(@task.taskInformation.Id,'@task.taskInformation.name',0)"><i class="fas fa-list"></i></a></th>
+                                            <th><a title="Attachments - @task.files" onclick="FileModal(@task.taskInformation.Id,'@task.taskInformation.name',0)"><i class="fas fa-paperclip"></i></a></th>
+                                            <th title="Sub-Task" id="sun-@task.taskInformation.Id">@task.doneSubtusk/@task.unDoneSubtusk</th>
+                                            <th title="follow-up">@task.Following</th>
+                                            <th title="File"><a href="/TAMS/TaskManagemnet/TaskPriviewPdf/@task.taskInformation.Id" target="_blank"><i class="fa fa-file-pdf"></i></a></th>
+                                            <th><p class="text-info">@task.taskInformation?.satrtDate?.ToString("dd-MMM-yyyy h:mm tt")</p></th>
+                                            <th><p class="text-danger">@task.taskInformation?.endDate?.ToString("dd-MMM-yyyy h:mm tt")</p></th>
+                                            <th><p class="text-success">@task.taskInformation?.estimatedHours Hr.</p></th>
+                                        </tr>
+                                    </table>
+                                }
+                            </div>
+                            <div class="card-footer">
+                                <a href="#" onclick="AddNewTask()"><i class="fa fa-plus"></i>Add new Task</a>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CreateTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Add Task</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form asp-area="TAMS" asp-controller="TaskManagemnet" asp-action="TaskSave" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-group row">
+                                <label for="taskSectionId" class="col-sm-2 col-form-label">Project<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <select type="text" class="form-control" name="taskProjectId" id="taskProjectId" required>
+                                        <option value="">Select One</option>
+                                        @foreach (var data in Model.taskProjects)
+                                        {
+                                            <option value="@data.Id">@data.name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="taskSectionId" class="col-sm-2 col-form-label">Section<scan class="redStar">*</scan></label>
+                                <div class="col-sm-4">
+                                    <select type="text" class="form-control" name="taskSectionId" id="taskSectionId" required>
+                                        <option value="">Select One</option>
+
+                                    </select>
+                                </div>
+
+                                <label for="name" class="col-sm-2 col-form-label">Task Name<scan class="redStar">*</scan></label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" name="name" id="name" required>
+                                    <input type="hidden" class="form-control" name="myTask" id="myTask" value="1">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="activityCategoryId" class="col-sm-2 col-form-label">Activity Category<scan class="redStar">*</scan></label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" name="activityCategoryId" id="activityCategoryId" data-parsley-required="true">
+                                        <option value="">Select</option>
+                                        @foreach (var data in Model.ActivityCategories)
+                                        {
+                                            <option value="@data.Id">@data.activityCategoryName</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <label for="activitySessionId" class="col-sm-2 col-form-label">Activity Session<scan class="redStar">*</scan></label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" name="activitySessionId" id="activitySessionId" data-parsley-required="true">
+                                        <option value="">Select</option>
+                                        @foreach (var data in Model.ActivitySessions)
+                                        {
+                                            <option value="@data.Id">@data.activitySessionName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="activityTypeId" class="col-sm-2 col-form-label">Activity Type<scan class="redStar">*</scan></label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" name="activityTypeId" id="activityTypeId" data-parsley-required="true">
+                                        <option value="">Select</option>
+                                        @foreach (var data in Model.ActivityTypes.Where(x => x.Id == 1))
+                                        {
+                                            <option value="@data.Id">@data.activityTypeName</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <label for="activityStatusId" class="col-sm-2 col-form-label">Activity Status<scan class="redStar">*</scan></label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" name="activityStatusId" id="activityStatusId" data-parsley-required="true">
+                                        <option value="">Select</option>
+                                        @foreach (var data in Model.activityStatuses)
+                                        {
+                                            <option value="@data.Id">@data.status</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Content<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" id="description" name="description" required></textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label for="satrtDate" class="col-sm-2 col-form-label">Satrt Date Time<scan class="redStar">*</scan></label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" name="satrtDate" id="satrtDate" required>
+                                </div>
+
+                                <label for="endDate" class="col-sm-2 col-form-label">
+                                    End Date Time<scan class="redStar">*</scan>
+                                </label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" name="endDate" id="endDate" onchange="TimeCalculation()" required>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <input type="text" class="form-control" name="estimatedHours" id="estimatedHours" readonly>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group row">
+
+                                <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Assign</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="verifier">
+                                    <input type="hidden" class="form-control" id="supervisorName">
+                                    <input type="hidden" class="form-control" id="supervisorEmpID" name="employeeAssignId">
+                                </div>
+
+                                <label for="activitiesDate" class="col-sm-2 col-form-label">Notify?</label>
+                                <div class="col-sm-2">
+                                    <input type="checkbox" class="form-control" name="isreminder" id="isreminder" value="1">
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CommentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Add Comments</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form asp-area="TAMS" asp-controller="TaskManagemnet" asp-action="Comments" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-group row">
+                                <label for="taskProjectId" class="col-sm-2 col-form-label">Task<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="TasknameForComment" id="TasknameForComment" value="" readonly required>
+                                    <input type="hidden" name="taskIdForComment" id="taskIdForComment">
+                                    <input type="hidden" name="projectIdForComment" id="projectIdForComment" value="">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="name" class="col-sm-2 col-form-label">Comments<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" rows="5" class="form-control" name="Comment" id="Comment" required></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="FollowerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Add Followers</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form asp-area="TAMS" asp-controller="TaskManagemnet" asp-action="Follower" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-group row">
+                                <label for="taskProjectId" class="col-sm-2 col-form-label">Task<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="TasknameForFollower" id="TasknameForFollower" value="" readonly required>
+                                    <input type="hidden" name="taskIdForFollower" id="taskIdForFollower">
+                                    <input type="hidden" name="projectIdForFollower" id="projectIdForFollower" value="">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Add Follower</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="verifierFollower">
+                                    <input type="hidden" class="form-control" id="supervisorNameFollower">
+                                    <input type="hidden" class="form-control" id="supervisorEmpIDFollower">
+                                </div>
+                                <div class="col-sm-1">
+                                    <a class="btn btn-success" title="Add Verifier" onclick="AddGroup()" style="color:white" id="addVerifier"><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-2">
+
+                                </div>
+                                <div id="SubLedgerList" class="col-sm-10 row">
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="TagsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Add Tags</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form asp-area="TAMS" asp-controller="TaskManagemnet" asp-action="Tags" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-group row">
+                                <label for="taskProjectId" class="col-sm-2 col-form-label">Task<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="TasknameForTags" id="TasknameForTags" value="" readonly required>
+                                    <input type="hidden" name="taskIdForTags" id="taskIdForTags">
+                                    <input type="hidden" name="projectIdForTags" id="projectIdForTags" value="">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Tags</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="verifierTags">
+                                </div>
+                                <div class="col-sm-1">
+                                    <a class="btn btn-success" title="Add Verifier" onclick="AddGroupTags()" style="color:white"><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-2">
+
+                                </div>
+                                <div id="SubLedgerListTags" class="col-sm-10 row">
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="FileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Add File</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form asp-area="TAMS" asp-controller="TaskManagemnet" asp-action="File" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-group row">
+                                <label for="TasknameForFile" class="col-sm-2 col-form-label">Task<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="TasknameForFile" id="TasknameForFile" value="" readonly required>
+                                    <input type="hidden" name="taskIdForFile" id="taskIdForFile">
+                                    <input type="hidden" name="projectIdForFile" id="projectIdForFile" value="">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="title" class="col-sm-2 col-form-label">Title<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="title" id="title" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="title" class="col-sm-2 col-form-label">Attachment<scan class="redStar">*</scan></label>
+                                <div class="col-sm-10" enctype="multipart/form-data">
+                                    <input class="form-control input-sm" style="width:100%;" type="file" id="docformFile" name="formFile" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CompleteTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title" id="taskTitle" style="font-size: 20px;padding-top: 14px; color:black">Task View</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" style="overflow-y:scroll;max-height:500px;">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                           aria-controls="pills-home" aria-selected="true">Task</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
+                           aria-controls="pills-profile" aria-selected="false">SubTask</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-followup" role="tab"
+                           aria-controls="pills-profile" aria-selected="false">Follow Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab"
+                           aria-controls="pills-contact" aria-selected="false">Task Hour</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-comments" role="tab"
+                           aria-controls="pills-contact" aria-selected="false">Comments</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                        <div class="row">
+
+                            <div class="col-sm-12" style="margin-bottom:15px;">
+                                <div class="card">
+                                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Task Information</label>
+                                    </div>
+                                    <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                        <table class="table">
+                                            <tr>
+                                                <th>Project :</th>
+                                                <td><b id="TaskProjectName"></b></td>
+                                                <th>Section :</th>
+                                                <td><b id="TaskSectionName"></b></td>
+                                                <th>Assign To :</th>
+                                                <td><b id="TaskAssignToName"></b></td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Title : </th>
+                                                <td colspan="5"><b id="TaskCompleteName"></b></td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Description :  </th>
+                                                <td colspan="5"><b id="TaskCompleteDescription"></b></td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Start DateTime :</th>
+                                                <td><b id="TaskCompleteStartDate"></b></td>
+                                                <th>End DateTime :</th>
+                                                <td><b id="TaskCompleteEndDate"></b></td>
+                                                <th>Hour : </th>
+                                                <td><b id="TaskCompleteHour"></b></td>
+                                            </tr>
+
+                                            <tr>
+                                                <th>Category :</th>
+                                                <td><b id="TaskCompleteCategory"></b></td>
+                                                <th>Session :</th>
+                                                <td><b id="TaskCompleteSession"></b></td>
+                                                <th>Status : </th>
+                                                <td><b id="TaskCompleteStatus"></b></td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom:15px;">
+                                <div class="card">
+                                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Task Follower</label>
+                                    </div>
+                                    <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                        <form id="followerForm">
+                                            <div class="row" id="TaskCompleteFollowerList" style="padding:10px;"></div><br />
+                                            <div class="form-group row">
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="AutoFollower">
+                                                    <input type="hidden" class="form-control" id="TaskEmpIDFollower" name="ids">
+                                                    <input type="hidden" class="form-control" id="TaskModalId" name="TaskModalId" value="1">
+                                                    <input type="hidden" class="form-control" id="TaskIDEmpIDFollower" name="taskIdForFollower">
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <a class="btn btn-success" title="Add Follower" onclick="AddGroupFollower()" style="color:white" id="addVerifier"><i class="fa fa-plus"></i></a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom:15px;">
+                                <div class="card">
+                                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Task Tags</label>
+                                    </div>
+                                    <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                        <form id="TagsForm">
+                                            <div class="row" id="TaskCompleteTagsList" style="padding:10px;"></div><br />
+                                            <div class="form-group row">
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" id="AutoTags" name="Tags">
+                                                    <input type="hidden" class="form-control" id="TaskIDEmpIDTags" name="taskIdForTags">
+                                                    <input type="hidden" class="form-control" id="TaskModalId" name="TaskModalId" value="1">
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <a class="btn btn-success" title="Add Verifier" onclick="AddGroupFormTags()" style="color:white" id="addVerifier"><i class="fa fa-plus"></i></a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom:15px;">
+                                <div class="card">
+                                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Task Attachments</label>
+                                    </div>
+                                    <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                        <table class="table table-bordered" id="tblfuelDetails">
+                                            <thead>
+                                                <tr>
+                                                    <th>File Name</th>
+                                                    <th>Preview</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom:15px;">
+                                <div class="card">
+                                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Task Status</label>
+                                    </div>
+                                    <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                        <table class="table table-bordered" id="tblTaskStatusForm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                    <th>Remarks</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                        <br />
+                                        <form id="TaskStatusForm">
+                                            <div class="form-group row" style="padding:10px;">
+                                                <label for="content" class="col-sm-2 col-form-label">Status</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="TaskStatusName" name="TaskStatusName">
+                                                    <input type="hidden" class="form-control" id="TaskStatusTaskID" name="taskIdForFollower">
+                                                    <input type="hidden" class="form-control" value="@DateTime.Now" id="TaskStatusDate" name="TaskStatusDate">
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <textarea class="form-control" name="TaskStatusNameremarks" id="TaskStatusNameremarks"></textarea>
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    <a class="btn btn-success" title="Add Status" onclick="AddGroupTaskStatus()" style="color:white"><i class="fa fa-plus"></i></a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        <div class="row">
+
+                            <table class="table table-bordered" id="SubtaskTable">
+                                <thead>
+                                    <tr>
+                                        <th>Choose Done</th>
+                                        <th>Name</th>
+                                        <th>start Time</th>
+                                        <th>End Time</th>
+                                        <th>Remarks</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div class="col-sm-12">
+                                <form id="SubtaskForm">
+
+                                    <div class="form-group row">
+                                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Start Time<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" name="starttimeSubtask" id="starttimeSubtask" required>
+                                        </div>
+
+                                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">End Time<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" name="endtimeSubtask" id="endtimeSubtask" required>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Subtask</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" id="SubTaskName" name="SubTaskName">
+                                            <input type="hidden" class="form-control" id="SubTaskTaskID" name="taskIdForFollower">
+                                        </div>
+
+                                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Remarks<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <textarea class="form-control" name="remarksSubtask" id="remarksSubtask" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription"></label>
+                                        <div class="col-sm-9">
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <a class="btn btn-success" title="Add Verifier" onclick="AddGroupSubtask()" style="color:white" id="addVerifier"><i class="fa fa-plus"></i></a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-followup" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form id="FollowUpForm">
+                                    <input type="hidden" class="form-control" id="FollowUpTaskID" name="taskIdForFollower">
+                                    <div class="form-group row">
+                                        <label for="name" class="col-sm-2 col-form-label">Subject<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="followupname" id="followupname" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="followupactivityCategoryId" class="col-sm-2 col-form-label">Activity Category<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="followupactivityCategoryId" id="followupactivityCategoryId" data-parsley-required="true">
+                                                <option value="">Select</option>
+                                                @foreach (var data in Model.ActivityCategories)
+                                                {
+                                                    <option value="@data.Id">@data.activityCategoryName</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <label for="activitySessionId" class="col-sm-2 col-form-label">Activity Session<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="followupactivitySessionId" id="followupactivitySessionId" data-parsley-required="true">
+                                                <option value="">Select</option>
+                                                @foreach (var data in Model.ActivitySessions)
+                                                {
+                                                    <option value="@data.Id">@data.activitySessionName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="followupactivityTypeId" class="col-sm-2 col-form-label">Target Date<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" name="targetDate" id="targetDate" required>
+                                        </div>
+
+                                        <label for="followupactivityStatusId" class="col-sm-2 col-form-label">Activity Status<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="followupactivityStatusId" id="followupactivityStatusId" data-parsley-required="true">
+                                                <option value="">Select</option>
+                                                @foreach (var data in Model.activityStatuses)
+                                                {
+                                                    <option value="@data.Id">@data.status</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="followupactivityTypeId" class="col-sm-2 col-form-label">Execution Date<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="form-control" name="executionDate" id="executionDate">
+                                        </div>
+
+                                        <label for="followupactivityStatusId" class="col-sm-2 col-form-label">is Remainder ?<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-1">
+                                            <input type="checkbox" class="form-control" id="remainderStatus" name="remainderStatus" value="1" />
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                            <input type="text" class="form-control" id="reminderDate" name="reminderDate" />
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="form-group row">
+                                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Remarks<scan class="redStar">*</scan></label>
+                                        <div class="col-sm-10">
+                                            <textarea type="text" class="form-control" id="followupRemarks" name="followupRemarks" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+                                    <a onclick="AddTaskFollowup()" class="btn btn-success btn-lg" style="float:right; margin-top:5px;color:white;margin-bottom:10px;"><i class="fas fa-save"></i></a>
+                                </form>
+                            </div>
+                            <br />
+                            <table class="table table-bordered" id="FollowUpTable">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Category</th>
+                                        <th>Session</th>
+                                        <th>Status</th>
+                                        <th>Target Date</th>
+                                        <th>Execution Date</th>
+                                        <th>Remarks</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <br />
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                        <div class="row">
+
+                            <table class="table table-bordered" id="TaskHourTable">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Hours</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div class="col-sm-12">
+                                <form id="TaskHourForm">
+                                    <div class="form-group row">
+                                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Add Task Hour</label>
+                                        <div class="col-sm-9">
+                                            <input type="number" class="form-control" id="TaskHourName" name="TaskHourName">
+                                            <input type="hidden" class="form-control" id="TaskHourTaskID" name="taskIdForFollower">
+                                            <input type="hidden" class="form-control" value="@DateTime.Now" id="TaskHourDate" name="TaskHourDate">
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <a class="btn btn-success" title="Add Verifier" onclick="AddGroupTaskHour()" style="color:white" id="addVerifier"><i class="fa fa-plus"></i></a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-comments" role="tabpanel" aria-labelledby="pills-contact-tab">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card">
+                                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;Task Comments</label>
+                                    </div>
+                                    <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                                        <div class="row" id="commentListTask" style="margin-left:20px">
+
+                                        </div>
+                                        <br />
+                                        <br />
+                                        <div class="col-sm-12">
+                                            <form id="CommentForm">
+                                                <textarea name="Comment" id="commentsText" class="form-control" rows="3"></textarea>
+                                                <input type="hidden" class="form-control" id="TaskIDEmpIDComments" name="taskIdForComment">
+                                                <input type="hidden" class="form-control" name="TaskModalId" value="1">
+                                                <input type="hidden" id="EmpIDComments" name="EmpIDComments" value="@Model.empId">
+                                                <input type="hidden" id="EmpIDCommentsName" name="EmpIDCommentsName" value="@Model.empname">
+                                                <a class="btn btn-success" onclick="SendComment()" style="float:right;color:white;margin-top:10px;">Send</a>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="SubTaskEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Edit Subtask</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="SubtaskFormEdit">
+
+                    <div class="form-group row">
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Start Time<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="starttimeSubtask" id="starttimeSubtaskEdit" required>
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">End Time<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="endtimeSubtask" id="endtimeSubtaskEdit" required>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Subtask</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="SubTaskNameEdit" name="SubTaskName">
+                            <input type="hidden" class="form-control" id="SubTaskTaskIDEdit" name="taskIdForFollower">
+                            <input type="hidden" class="form-control" id="Id" name="Id">
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Remarks<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <textarea class="form-control" name="remarksSubtask" id="remarksSubtaskEdit" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Comments<scan class="redStar">*</scan></label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" name="commentsSubtask" id="commentsSubtaskEdit" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <hr>
+                        <a onclick="AddGroupSubtaskEditCancel()" class="btn btn-info btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Cancel</a>
+                        <a onclick="AddGroupSubtaskEdit()" class="btn btn-success btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Save</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="SubTaskUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Update Subtask</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="SubtaskFormUpdate">
+
+                    <div class="form-group row">
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Start Time<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="starttimeSubtask" id="starttimeSubtaskUpdate" required readonly>
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">End Time<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="endtimeSubtask" id="endtimeSubtaskUpdate" required readonly>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Subtask</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="SubTaskNameUpdate" name="SubTaskName" readonly>
+                            <input type="hidden" class="form-control" id="SubTaskTaskIDUpdate" name="taskIdForFollower">
+                            <input type="hidden" class="form-control" id="IdUpdate" name="Id">
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Remarks<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <textarea class="form-control" name="remarksSubtask" id="remarksSubtaskUpdate" required readonly></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Comments<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <textarea class="form-control" name="commentsSubtask" id="commentsSubtaskUpdate" required readonly></textarea>
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Status<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="satusSubtask" id="satusSubtaskUpdate" required>
+                                <option>Select One</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Inprocess">Inprocess</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <hr>
+                        <a onclick="AddGroupSubtaskUpdateCancel()" class="btn btn-info btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Cancel</a>
+                        <a onclick="AddGroupSubtaskUpdate()" class="btn btn-success btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Save</a>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="SubTaskPreviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Preview Subtask</h3>
+                    </div>
+                    <div class="col-1">
+                        @*<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>*@
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="preview">
+
+                    <div class="form-group row">
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Start Time<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="starttimeSubtask" id="starttimeSubtaskPreview" required readonly>
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">End Time<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="endtimeSubtask" id="endtimeSubtaskPreview" required readonly>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Subtask</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="SubTaskNamePreview" name="SubTaskName" readonly>
+                            <input type="hidden" class="form-control" id="SubTaskTaskIDPreview" name="taskIdForFollower">
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Status<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="satusSubtask" id="satusSubtaskPreview" required readonly>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Comments<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <textarea class="form-control" name="commentsSubtask" id="commentsSubtaskPreview" required readonly></textarea>
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Remarks<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <textarea class="form-control" name="remarksSubtask" id="remarksSubtaskPreview" required readonly></textarea>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="EditFollowUpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Edit Follow Up</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="EditFollowUpModalForm">
+
+                    <input type="hidden" class="form-control" id="FollowUpTaskIDEdit" name="taskIdForFollower">
+                    <input type="hidden" class="form-control" id="FollowUpEditID" name="Id">
+                    <div class="form-group row">
+                        <label for="name" class="col-sm-2 col-form-label">Subject<scan class="redStar">*</scan></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="followupname" id="followupnameEdit" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="followupactivityCategoryId" class="col-sm-2 col-form-label">Activity Category<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="followupactivityCategoryId" id="followupactivityCategoryIdEdit" data-parsley-required="true">
+                                <option value="">Select</option>
+                                @foreach (var data in Model.ActivityCategories)
+                                {
+                                    <option value="@data.Id">@data.activityCategoryName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <label for="activitySessionId" class="col-sm-2 col-form-label">Activity Session<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="followupactivitySessionId" id="followupactivitySessionIdEdit" data-parsley-required="true">
+                                <option value="">Select</option>
+                                @foreach (var data in Model.ActivitySessions)
+                                {
+                                    <option value="@data.Id">@data.activitySessionName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="followupactivityTypeId" class="col-sm-2 col-form-label">Target Date<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="targetDate" id="targetDateEdit" required>
+                        </div>
+
+                        <label for="followupactivityStatusId" class="col-sm-2 col-form-label">Activity Status<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="followupactivityStatusId" id="followupactivityStatusIdEdit" data-parsley-required="true">
+                                <option value="">Select</option>
+                                @foreach (var data in Model.activityStatuses)
+                                {
+                                    <option value="@data.Id">@data.status</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="followupactivityTypeId" class="col-sm-2 col-form-label">Execution Date<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="executionDate" id="executionDateEdit">
+                        </div>
+
+                        <label for="followupactivityStatusId" class="col-sm-2 col-form-label">is Remainder ?<scan class="redStar">*</scan></label>
+                        <div class="col-sm-1">
+                            <input type="checkbox" class="form-control" id="remainderStatusEdit" name="remainderStatus" value="1" />
+                        </div>
+
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="reminderDateEdit" name="reminderDate" />
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Remarks<scan class="redStar">*</scan></label>
+                        <div class="col-sm-10">
+                            <textarea type="text" class="form-control" id="followupRemarksEdit" name="followupRemarks" required></textarea>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <a onclick="AddTaskFollowupEdit()" class="btn btn-success btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Save</a>
+                    <a onclick="AddTaskFollowupEditCancel()" class="btn btn-info btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Cancel</a>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="UpdateFollowUpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Update Follow Up</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="UpdateFollowUpModalForm">
+
+                    <input type="hidden" class="form-control" id="FollowUpTaskIDUpdate" name="taskIdForFollower">
+                    <input type="hidden" class="form-control" id="FollowUpUpdateID" name="Id" value="0">
+                    <div class="form-group row">
+                        <label for="name" class="col-sm-2 col-form-label">Subject<scan class="redStar">*</scan></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="followupname" id="followupnameUpdate" required readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="followupactivityCategoryId" class="col-sm-2 col-form-label">Activity Category<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="followupactivityCategoryId" id="followupactivityCategoryIdUpdate" data-parsley-required="true" readonly>
+                                <option value="">Select</option>
+                                @foreach (var data in Model.ActivityCategories)
+                                {
+                                    <option value="@data.Id">@data.activityCategoryName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <label for="activitySessionId" class="col-sm-2 col-form-label">Activity Session<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="followupactivitySessionId" id="followupactivitySessionIdUpdate" data-parsley-required="true" readonly>
+                                <option value="">Select</option>
+                                @foreach (var data in Model.ActivitySessions)
+                                {
+                                    <option value="@data.Id">@data.activitySessionName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="followupactivityTypeId" class="col-sm-2 col-form-label">Target Date<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="targetDate" id="targetDateUpdate" required>
+                        </div>
+
+                        <label for="followupactivityStatusId" class="col-sm-2 col-form-label">Activity Status<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="followupactivityStatusId" id="followupactivityStatusIdUpdate" data-parsley-required="true" readonly>
+                                <option value="">Select</option>
+                                @foreach (var data in Model.activityStatuses)
+                                {
+                                    <option value="@data.Id">@data.status</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="followupactivityTypeId" class="col-sm-2 col-form-label">Execution Date<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="executionDate" id="executionDateUpdate" readonly>
+                        </div>
+
+                        <label for="followupactivityStatusId" class="col-sm-2 col-form-label">is Remainder ?<scan class="redStar">*</scan></label>
+                        <div class="col-sm-1">
+                            <input type="checkbox" class="form-control" id="remainderStatusUpdate" name="remainderStatus" value="1" readonly />
+                        </div>
+
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="reminderDateUpdate" name="reminderDate" readonly />
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Remarks<scan class="redStar">*</scan></label>
+                        <div class="col-sm-10">
+                            <textarea type="text" class="form-control" id="followupRemarksUpdate" name="followupRemarks" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="content" class="col-sm-2 col-form-label" id="lbldescription">Notes<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <textarea type="text" class="form-control" id="followupNoteUpdate" name="followupNotes" required></textarea>
+                        </div>
+
+                        <label for="starttimeSubtask" class="col-sm-2 col-form-label">Status<scan class="redStar">*</scan></label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="satusfollowup" id="satusfollowupUpdate" required>
+                                <option>Select One</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Inprocess">Inprocess</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <hr>
+                    <a onclick="AddTaskFollowupUpdate()" class="btn btn-success btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Save</a>
+                    <a onclick="AddTaskFollowupUpdateCancel()" class="btn btn-info btn-xs ml-1" style="float:right; margin-top:5px;color:white;margin-bottom:10px;">Cancel</a>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ViewFollowUpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-11">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">View Follow Up</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" width="100%">
+                    <tr>
+                        <th width="30%">Subject</th>
+                        <td width="70%" id="subjectView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Activity Category</th>
+                        <td width="70%" id="categoryView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Activity Session</th>
+                        <td width="70%" id="sessionView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Target Date</th>
+                        <td width="70%" id="targetView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Activity Status</th>
+                        <td width="70%" id="StatusView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Execution Date</th>
+                        <td width="100%" id="executionView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">is Remainder ?</th>
+                        <td width="70%" id="IsReminderView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Remainder Date</th>
+                        <td width="70%" id="ReminderView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Remarks</th>
+                        <td width="70%" id="RemarksView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Notes</th>
+                        <td width="70%" id="NotesView"></td>
+                    </tr>
+                    <tr>
+                        <th width="30%">Status</th>
+                        <td width="70%" id="StatusUpView"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $(".mycontent tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $('#description').summernote({
+                tabsize: 2,
+                height: 300
+            });
+
+            $('#satrtDate').flatpickr({
+                enableTime: true,
+            });
+
+            $('#endDate').flatpickr({
+                enableTime: true,
+            });
+
+            $('#starttimeSubtask').flatpickr({
+                enableTime: true,
+            });
+
+            $('#starttimeSubtaskEdit').flatpickr({
+                enableTime: true,
+            });
+
+            $('#starttimeSubtaskUpdate').flatpickr({
+                enableTime: true,
+            });
+
+            $('#endtimeSubtask').flatpickr({
+                enableTime: true,
+            });
+
+            $('#endtimeSubtaskEdit').flatpickr({
+                enableTime: true,
+            });
+
+            $('#endtimeSubtaskUpdate').flatpickr({
+                enableTime: true,
+            });
+
+            $('#targetDate').flatpickr({
+                enableTime: false,
+            });
+            $('#executionDate').flatpickr({
+                enableTime: false,
+            });
+            $('#reminderDate').flatpickr({
+                enableTime: false,
+            });
+
+            $('#targetDateEdit').flatpickr({
+                enableTime: false,
+            });
+            $('#executionDateEdit').flatpickr({
+                enableTime: false,
+            });
+            $('#reminderDateEdit').flatpickr({
+                enableTime: false,
+            });
+
+            $("#reminderDate").hide();
+            $('#remainderStatus').change(function () {
+                if (this.checked == true) {
+                    $("#reminderDate").show();
+                } else {
+                    $("#reminderDate").hide();
+                    $("#reminderDate").val('');
+                }
+            });
+
+            $('#remainderStatusEdit').change(function () {
+                if (this.checked == true) {
+                    $("#reminderDateEdit").show();
+                } else {
+                    $("#reminderDateEdit").hide();
+                    $("#reminderDateEdit").val('');
+                }
+            });
+
+            $('#taskProjectId').change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetAllTaskSectionByProjectId/' + id, [], 'json', ajaxGetAllTaskSectionByProjectId, false);
+            });
+
+
+            $('#departmentTable').DataTable();
+
+            Common.Ajax('GET', '/global/api/getEmployeeInfoByOrg/', [], 'json', ajaxEmployeeList, false);
+        });
+
+        function ajaxGetAllTaskSectionByProjectId(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.name + '</option>';
+            });
+            $('#taskSectionId').empty();
+            $('#taskSectionId').append(options);
+        }
+
+        function AddNewTask() {
+            $("#CreateTaskModal").modal();
+        }
+
+        function RemoveReadonly() {
+            $("#taskSectionId").val('');
+            $("#taskSectionId").attr('readonly', false);
+        }
+
+        function TimeCalculation() {
+            let start = $("#satrtDate").val();
+            let end = $("#endDate").val();
+
+            if (start == null || start == "") {
+                swal('Attention', 'Please select valid Start Date Time', 'warning');
+                return false;
+            }
+
+            var dt1 = new Date(start);
+            var dt2 = new Date(end);
+
+            var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+            diff /= (60 * 60);
+            var timeInhour = Math.abs(Math.round(diff));
+            $("#estimatedHours").val(timeInhour);
+        }
+
+        function ajaxEmployeeList(response) {
+            //console.log(response);
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode + ' - ' + option.nameEnglish;
+                obj.name = option.nameEnglish;
+                obj.designation = option.designation;
+                obj.orgType = option.orgType;
+                obj.nationalID = option.nationalID;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#verifier').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#supervisorName").val(ui.item.name);
+                    $("#supervisorEmpID").val(ui.item.key);
+                }
+            });
+
+            $('#verifierFollower').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#supervisorNameFollower").val(ui.item.name);
+                    $("#supervisorEmpIDFollower").val(ui.item.key);
+                }
+            });
+
+            $('#AutoFollower').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#TaskEmpIDFollower").val(ui.item.key);
+                }
+            });
+        }
+
+        function CommentModal(Id, name, projectId) {
+            $("#TasknameForComment").val(name);
+            $("#taskIdForComment").val(Id);
+            $("#projectIdForComment").val(projectId);
+
+            $("#CommentModal").modal();
+        }
+
+        function FollowerModal(Id, name, projectId) {
+            $("#TasknameForFollower").val(name);
+            $("#taskIdForFollower").val(Id);
+            $("#projectIdForFollower").val(projectId);
+
+            $("#FollowerModal").modal();
+        }
+
+        function TagsModal(Id, name, projectId) {
+            $("#TasknameForTags").val(name);
+            $("#taskIdForTags").val(Id);
+            $("#projectIdForTags").val(projectId);
+
+            $("#TagsModal").modal();
+        }
+
+        function FileModal(Id, name, projectId) {
+            $("#TasknameForFile").val(name);
+            $("#taskIdForFile").val(Id);
+            $("#projectIdForFile").val(projectId);
+
+            $("#FileModal").modal();
+        }
+
+        function AddGroup() {
+            var id = $('#supervisorEmpIDFollower').val();
+            if (id == null || id == "") {
+                swal('Warning', 'Incorrect Employee Please Try Correct Employee!!', 'warning');
+                return false;
+            }
+            var value = $('#verifierFollower').val();
+            $('#SubLedgerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroup(' + "'" + id + "'" + ')">X</span></a></span>');
+            $('#verifierFollower').val('');
+            $('#supervisorEmpIDFollower').val('');
+            $('#supervisorNameFollower').val('');
+        }
+
+        function AddGroupFollower() {
+            var id = $('#TaskEmpIDFollower').val();
+            var id = $('#TaskEmpIDFollower').val();
+            if (id == null || id == "") {
+                swal('Warning', 'Incorrect Employee Please Try Correct Employee!!', 'warning');
+                return false;
+            }
+            var value = $('#AutoFollower').val();
+
+            var data = $("#followerForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/Follower",
+                data: data,
+                success: function (response) {
+                    $('#TaskCompleteFollowerList').append('<input type="hidden" name="ids[]" id="Lg' + response + '" value="' + id + '"><span class="spanClass" id="LgId' + response + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroupModal(' + "'" + response + "'" + ')">X</span></a></span>');
+                    $('#AutoFollower').val('');
+                    $('#TaskEmpIDFollower').val('');
+                }
+            });
+        }
+
+        function AddGroupTags() {
+            var id = $('#verifierTags').val();
+            if (id == null || id == "" || /\s/.test(id)) {
+                swal('Warning', 'Please Try Correct Tags[Tags have no whitespace and emply]!!', 'warning');
+                return false;
+            }
+            var value = $('#verifierTags').val();
+            $('#SubLedgerListTags').append('<input type="hidden" name="Tags[]" id="Tg' + id + '" value="' + id + '"><span class="spanClass" id="TgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroupTg(' + "'" + id + "'" + ')">X</span></a></span>');
+            $('#verifierTags').val('');
+        }
+
+        function AddGroupFormTags() {
+            var id = $('#AutoTags').val();
+            if (id == null || id == "" || /\s/.test(id)) {
+                swal('Warning', 'Please Try Correct Tags[Tags have no whitespace and emply]!!', 'warning');
+                return false;
+            }
+            var value = $('#AutoTags').val();
+
+            var data = $("#TagsForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/Tags",
+                data: data,
+                success: function (response) {
+                    $('#TaskCompleteTagsList').append('<input type="hidden" name="Tags[]" id="Tg' + response + '" value="' + id + '"><span class="spanClass" id="TgId' + response + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroupTgModal(' + "'" + response + "'" + ')">X</span></a></span>');
+                    $('#AutoTags').val('');
+                }
+            });
+
+        }
+
+        function DeleteGroup(id) {
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+
+        function DeleteGroupTg(id) {
+            $('#Tg' + id).remove();
+            $('#TgId' + id).remove();
+        }
+
+        function DeleteGroupModal(id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/DeleteTaskFollower/" + id + "",
+                    success: function (response) {
+                        if (response == true) {
+                            $('#Lg' + id).remove();
+                            $('#LgId' + id).remove();
+                            swal('', 'Deleted Successfully!', 'success');
+                        }
+                    }
+                });
+            });
+            return false;
+        }
+
+        function DeleteGroupTgModal(id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/DeleteTaskTags/" + id + "",
+                    success: function (response) {
+                        if (response == true) {
+                            $('#Tg' + id).remove();
+                            $('#TgId' + id).remove();
+                            swal('', 'Deleted Successfully!', 'success');
+                        }
+                    }
+                });
+            });
+            return false;
+        }
+
+        function CallSingelTask(id) {
+            Common.Ajax('GET', '/global/api/GetSingleTaskViewModelById/' + id, [], 'json', ajaxCallSingelTask, false);
+        }
+
+        function ajaxCallSingelTask(response) {
+            $('#TaskProjectName').text(response.taskInformation.taskSection.taskProject.name);
+            $('#TaskSectionName').text(response.taskInformation.taskSection.name);
+            $('#TaskAssignToName').text(response.taskInformation.employeeAssign.nameEnglish);
+            $('#TaskCompleteName').text(response.taskInformation.name);
+            $('#TaskIDEmpIDFollower').val(response.taskInformation.Id);
+            $('#FollowUpTaskID').val(response.taskInformation.Id);
+            $('#TaskIDEmpIDTags').val(response.taskInformation.Id);
+            $('#TaskIDEmpIDComments').val(response.taskInformation.Id);
+            $('#TaskStatusTaskID').val(response.taskInformation.Id);
+            $('#SubTaskTaskID').val(response.taskInformation.Id);
+            $('#TaskHourTaskID').val(response.taskInformation.Id);
+            $('#TaskCompleteStartDate').text(response.taskInformation.satrtDate);
+            $('#TaskCompleteEndDate').text(response.taskInformation.endDate);
+            $('#TaskCompleteHour').text(response.taskInformation.estimatedHours);
+            $('#TaskCompleteDescription').text(response.taskInformation.description);
+
+            $('#TaskCompleteCategory').text(response.taskInformation.activityCategory.activityCategoryName);
+            $('#TaskCompleteSession').text(response.taskInformation.activitySession.activitySessionName);
+            $('#TaskCompleteStatus').text(response.taskInformation.activityStatus.status);
+
+            $('#TaskCompleteFollowerList').empty();
+            $.each(response.followers, function (i, item) {
+                var id = item.employee.Id;
+                var value = item.employee.employeeCode + '-' + item.employee.nameEnglish;
+                $('#TaskCompleteFollowerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroupModal(' + "'" + item.Id + "'" + ')">X</span></a></span>');
+            });
+
+            $('#TaskCompleteTagsList').empty();
+            $.each(response.Tags, function (i, item) {
+                var id = item.tag;
+                var value = item.tag;
+                $('#TaskCompleteTagsList').append('<input type="hidden" name="Tags[]" id="Tg' + id + '" value="' + id + '"><span class="spanClass" id="TgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroupTgModal(' + "'" + item.Id + "'" + ')">X</span></a></span>');
+            });
+
+            $('#commentListTask').empty();
+            $.each(response.Comments, function (i, item) {
+                var id = item.comments;
+                var employeeFComments = item.name;
+                var employeeFPhotoComments = item.photo;
+                $('#commentListTask').append('<div class="col-sm-12"><img height="30" width="30" src="/../../../' + employeeFPhotoComments + '" /><p style="margin-left: 25px;margin-top: -23px;"><b style="padding-left: 10px;">' + employeeFComments + ' : </b> ' + id + '</p></div>');
+            });
+
+
+            $("#tblfuelDetails tbody>tr").empty();
+            $.each(response.files, function (key, value) {
+                index = $("#tblfuelDetails tbody>tr").length;
+                var dtTable = $("#tblfuelDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr>' +
+                    '<td>' + value.fileTitle + '</td>' +
+                    '<td><a target="_blank" href="' + value.url + '"style="color:white" title="Preview" class="btn btn-success btn-xs"><i class="fa fa-eye"></i></a></td >' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            })
+
+            $("#SubtaskTable tbody>tr").empty();
+            $.each(response.taskSubtasks, function (key, value) {
+                var dtTable = $("#SubtaskTable");
+                var check = "";
+                if (value.status == 1) {
+                    check = "checked"
+                }
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id="' + value.Id + '">' +
+                    '<td><input ' + check + ' type="checkbox" id="check' + value.Id + '" value="' + value.Id + '" onclick="UpdateSubTask(this)"></td>' +
+                    '<td>' + value.name + '</td>' +
+                    '<td>' + value.satrtDate + '</td>' +
+                    '<td>' + value.endDate + '</td>' +
+                    '<td>' + value.remarks + '</td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs ml-1" onclick="DeleteSubTask(' + value.Id + ')"><i class="fa fa-trash"></i></a><a href="javascript:void(0)"style="background-color:green;border-color:green" title="Edit" class="btn btn-danger btn-xs ml-1" onclick="EditSubTask(' + value.Id + ')"><i class="fa fa-edit"></i></a><a href="javascript:void(0)"style="background-color:yellow;border-color:yellow" title="Update" class="btn btn-danger btn-xs ml-1" onclick="UpdateSubTaskModal(' + value.Id + ')"><i class="fa fa-info"></i></a><a href="javascript:void(0)"style="background-color:blue;border-color:blue" title="Preview" class="btn btn-danger btn-xs ml-1" onclick="PreviewSubTask(' + value.Id + ')"><i class="fa fa-eye"></i></a></td >';
+                tableBody.append(trHtml);
+            })
+
+
+            $("#FollowUpTable tbody>tr").empty();
+            $.each(response.taskFollowUps, function (key, value) {
+                var dtTable = $("#FollowUpTable");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id="' + value.Id + '">' +
+                    '<td>' + value.name + '</td>' +
+                    '<td>' + value.activityCategory.activityCategoryName + '</td>' +
+                    '<td>' + value.activitySession.activitySessionName + '</td>' +
+                    '<td>' + value.activityStatus.status + '</td>' +
+                    '<td>' + value.targetDate + '</td>' +
+                    '<td>' + value.executionDate + '</td>' +
+                    '<td>' + value.description + '</td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs ml-1" onclick="DeleteFollowup(' + value.Id + ')"><i class="fa fa-trash"></i></a><a href="javascript:void(0)"style="background-color:green;border-color:green" title="Edit" class="btn btn-danger btn-xs ml-1" onclick="EditFollowup(' + value.Id + ')"><i class="fa fa-edit"></i></a><a href="javascript:void(0)"style="background-color:yellow;border-color:yellow" title="Action" class="btn btn-danger btn-xs ml-1" onclick="UpdateFollowup(' + value.Id + ')"><i class="fa fa-info"></i></a><a href="javascript:void(0)"style="background-color:blue;border-color:blue" title="View" class="btn btn-danger btn-xs ml-1" onclick="ViewFollowup(' + value.Id + ')"><i class="fa fa-eye"></i></a></td >' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            })
+
+
+            $("#TaskHourTable tbody>tr").empty();
+            $.each(response.taskHours, function (key, value) {
+                index = $("#TaskHourTable tbody>tr").length;
+                var dtTable = $("#TaskHourTable");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id="' + value.Id + '">' +
+                    '<td>' + value.date + '</td>' +
+                    '<td>' + value.hours + '</td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteTaskHour(' + value.Id + ')"><i class="fa fa-trash"></i></a></td >' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            })
+
+            $("#tblTaskStatusForm tbody>tr").empty();
+            $.each(response.taskStatusLists, function (key, value) {
+                index = $("#tblTaskStatusForm tbody>tr").length;
+                var dtTable = $("#tblTaskStatusForm");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id="' + value.Id + '">' +
+                    '<td>' + value.date + '</td>' +
+                    '<td>' + value.status + '</td>' +
+                    '<td>' + value.remarks + '</td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteTaskStatus(' + value.Id + ')"><i class="fa fa-trash"></i></a></td >' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            })
+
+            $("#CompleteTaskModal").modal();
+
+        }
+
+        function SendComment() {
+            var id = $('#commentsText').val();
+            var employeeFComments = $('#EmpIDCommentsName').val();
+            if (id == null || id == "") {
+                swal('Warning', 'Please Try Correct Comments', 'warning');
+                return false;
+            }
+
+            var data = $("#CommentForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/Comments",
+                data: data,
+                success: function (response) {
+                    $('#commentListTask').append('<div class="col-sm-12"><img class="img-rounded" height="30" width="30" src="/../../../images/cuser.jpg" /><p style="margin-left: 25px;margin-top: -23px;"><b style="padding-left: 10px;">' + employeeFComments + ' : </b> ' + id + '</p></div>');
+                    $('#commentsText').val('');
+                }
+            });
+        }
+
+        function AddGroupSubtask() {
+            var data = $("#SubtaskForm").serialize();
+            var subTask = $("#SubTaskName").val();
+            var starttimeSubtask = $("#starttimeSubtask").val();
+            var endtimeSubtask = $("#endtimeSubtask").val();
+            var remarksSubtask = $("#remarksSubtask").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/Subtask",
+                data: data,
+                success: function (response) {
+                    index = $("#SubtaskTable tbody>tr").length;
+                    var dtTable = $("#SubtaskTable");
+                    var tableBody = dtTable.find('tbody');
+                    var trHtml = '<tr id="' + response + '">' +
+                        '<td><input type="checkbox" id="check' + response + '" value="' + response + '" onclick="UpdateSubTask(this)"></td>' +
+                        '<td>' + subTask + '</td>' +
+                        '<td>' + starttimeSubtask + '</td>' +
+                        '<td>' + endtimeSubtask + '</td>' +
+                        '<td>' + remarksSubtask + '</td>' +
+                        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs ml-1" onclick="DeleteSubTask(' + response + ')"><i class="fa fa-trash"></i></a><a href="javascript:void(0)"style="background-color:green;border-color:green" title="Edit" class="btn btn-danger btn-xs ml-1" onclick="EditSubTask(' + response + ')"><i class="fa fa-edit"></i></a><a href="javascript:void(0)"style="background-color:yellow;border-color:yellow" title="Update" class="btn btn-danger btn-xs ml-1" onclick="UpdateSubTaskModal(' + response + ')"><i class="fa fa-info"></i></a><a href="javascript:void(0)"style="background-color:blue;border-color:blue" title="Preview" class="btn btn-danger btn-xs ml-1" onclick="PreviewSubTask(' + response + ')"><i class="fa fa-eye"></i></a></td >' +
+                        '</tr>';
+                    tableBody.append(trHtml);
+                    $("#SubTaskName").val('');
+                }
+            });
+        }
+
+        function AddGroupTaskHour() {
+            var data = $("#TaskHourForm").serialize();
+            var subTask = $("#TaskHourName").val();
+            var DateTask = $("#TaskHourDate").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/TaskHours",
+                data: data,
+                success: function (response) {
+                    index = $("#TaskHourTable tbody>tr").length;
+                    var dtTable = $("#TaskHourTable");
+                    var tableBody = dtTable.find('tbody');
+                    var trHtml = '<tr id="' + response + '">' +
+                        '<td>' + DateTask + '</td>' +
+                        '<td>' + subTask + '</td>' +
+                        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteTaskHour(' + response + ')"><i class="fa fa-trash"></i></a></td >' +
+                        '</tr>';
+                    tableBody.append(trHtml);
+                    $("#TaskHourName").val('');
+                }
+            });
+        }
+
+        function AddGroupTaskStatus() {
+            var data = $("#TaskStatusForm").serialize();
+            var statusTask = $("#TaskStatusName").val();
+            var TaskStatusDate = $("#TaskStatusDate").val();
+            var TaskStatusDate = $("#TaskStatusDate").val();
+            var TaskStatusNameremarks = $("#TaskStatusNameremarks").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/TaskStatus",
+                data: data,
+                success: function (response) {
+                    index = $("#tblTaskStatusForm tbody>tr").length;
+                    var dtTable = $("#tblTaskStatusForm");
+                    var tableBody = dtTable.find('tbody');
+                    var trHtml = '<tr id="' + response + '">' +
+                        '<td>' + TaskStatusDate + '</td>' +
+                        '<td>' + statusTask + '</td>' +
+                        '<td>' + TaskStatusNameremarks + '</td>' +
+                        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteTaskStatus(' + response + ')"><i class="fa fa-trash"></i></a></td >' +
+                        '</tr>';
+                    tableBody.append(trHtml);
+                    $("#TaskHourName").val('');
+                }
+            });
+        }
+
+        function UpdateSubTask(arg) {
+            var value = arg.getAttribute('value');
+            var id = arg.getAttribute('id');
+            if (document.getElementById(id).checked == true) {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/UpdateTaskDone/" + value + "",
+                    success: function (response) {
+
+                    }
+                });
+            } else {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/UpdateTaskUnDone/" + value + "",
+                    data: value,
+                    success: function (response) {
+
+                    }
+                });
+            }
+        }
+
+        function DeleteSubTask(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/DeleteSubtask/" + index + "",
+                    success: function (response) {
+                        if (response == true) {
+                            $("#SubtaskTable #" + index).remove();
+                            swal('', 'Deleted Successfully!', 'success');
+                        }
+                    }
+                });
+            });
+            return false;
+        }
+
+        function DeleteTaskHour(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/DeleteTaskHour/" + index + "",
+                    success: function (response) {
+                        $("#TaskHourTable #" + index).remove();
+                        swal('', 'Deleted Successfully!', 'success');
+                    }
+                });
+            });
+            return false;
+        }
+
+        function DeleteTaskStatus(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/DeleteTaskStatusListById/" + index + "",
+                    success: function (response) {
+                        $("#tblTaskStatusForm #" + index).remove();
+                        swal('', 'Deleted Successfully!', 'success');
+                    }
+                });
+            });
+            return false;
+        }
+
+        function AddTaskFollowup() {
+            var data = $("#FollowUpForm").serialize();
+            var followup = $("#followupname").val();
+            var category = $("#followupactivityCategoryId :selected").text();
+            var session = $("#followupactivitySessionId :selected").text();
+            var type = $("#followupactivityTypeId :selected").text();
+            var status = $("#followupactivityStatusId :selected").text();
+            var executionDate = $("#executionDate").val();
+            var targetDate = $("#targetDate").val();
+            var remarks = $("#followupRemarks").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/FollowUp",
+                data: data,
+                success: function (response) {
+                    index = $("#FollowUpTable tbody>tr").length;
+                    var dtTable = $("#FollowUpTable");
+                    var tableBody = dtTable.find('tbody');
+                    var trHtml = '<tr id="' + response + '">' +
+                        '<td>' + followup + '</td>' +
+                        '<td>' + category + '</td>' +
+                        '<td>' + session + '</td>' +
+                        '<td>' + status + '</td>' +
+                        '<td>' + targetDate + '</td>' +
+                        '<td>' + executionDate + '</td>' +
+                        '<td>' + remarks + '</td>' +
+                        '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" title="Delete" class="btn btn-danger btn-xs ml-1" onclick="DeleteFollowup(' + response + ')"><i class="fa fa-trash"></i></a><a href="javascript:void(0)"style="background-color:green;border-color:green" title="Edit" class="btn btn-danger btn-xs ml-1" onclick="EditFollowup(' + response + ')"><i class="fa fa-edit"></i></a><a href="javascript:void(0)"style="background-color:yellow;border-color:yellow" title="Action" class="btn btn-danger btn-xs ml-1" onclick="UpdateFollowup(' + response + ')"><i class="fa fa-info"></i></a><a href="javascript:void(0)"style="background-color:blue;border-color:blue" title="View" class="btn btn-danger btn-xs ml-1" onclick="ViewFollowup(' + response + ')"><i class="fa fa-eye"></i></a></td >';
+                    tableBody.append(trHtml);
+                    $("#followupname").val('');
+                    $("#followupactivityCategoryId").val('');
+                    $("#followupactivitySessionId").val('');
+                    $("#followupactivityTypeId").val('');
+                    $("#followupactivityStatusId").val('');
+                    $("#followupRemarks").val('');
+                }
+            });
+        }
+
+        function DeleteFollowup(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/TAMS/TaskManagemnet/DeleteTaskFollowup/" + index + "",
+                    success: function (response) {
+                        $("#FollowUpTable #" + index).remove();
+                        swal('', 'Deleted Successfully!', 'success');
+                    }
+                });
+            });
+            return false;
+        }
+
+        function EditSubTask(id) {
+            Common.Ajax('GET', '/global/api/GetTaskSubtaskById/' + id, [], 'json', ajaxEditSubTask, false);
+        }
+
+        function ajaxEditSubTask(response) {
+            $("#Id").val(response.Id);
+            $("#starttimeSubtaskEdit").val(response.satrtDate);
+            $("#endtimeSubtaskEdit").val(response.endDate);
+            $("#SubTaskNameEdit").val(response.name);
+            $("#SubTaskTaskIDEdit").val(response.taskInformationId);
+            $("#remarksSubtaskEdit").val(response.remarks);
+            $("#commentsSubtaskEdit").val(response.details);
+
+            $("#SubTaskEditModal").modal();
+            $("#CompleteTaskModal").modal('hide');
+        }
+
+        function UpdateSubTaskModal(id) {
+            Common.Ajax('GET', '/global/api/GetTaskSubtaskById/' + id, [], 'json', ajaxUpdateSubTask, false);
+        }
+
+        function ajaxUpdateSubTask(response) {
+            $("#IdUpdate").val(response.Id);
+            $("#starttimeSubtaskUpdate").val(response.satrtDate);
+            $("#endtimeSubtaskUpdate").val(response.endDate);
+            $("#SubTaskNameUpdate").val(response.name);
+            $("#SubTaskTaskIDUpdate").val(response.taskInformationId);
+            $("#remarksSubtaskUpdate").val(response.remarks);
+            $("#commentsSubtaskUpdate").val(response.details);
+
+            $("#SubTaskUpdateModal").modal();
+            $("#CompleteTaskModal").modal('hide');
+        }
+
+        function PreviewSubTask(id) {
+            Common.Ajax('GET', '/global/api/GetTaskSubtaskById/' + id, [], 'json', ajaxPreviewSubTask, false);
+        }
+
+        function ajaxPreviewSubTask(response) {
+            $("#Id").val(response.Id);
+            $("#starttimeSubtaskPreview").val(response.satrtDate);
+            $("#endtimeSubtaskPreview").val(response.endDate);
+            $("#SubTaskNamePreview").val(response.name);
+            $("#SubTaskTaskIDPreview").val(response.taskInformationId);
+            $("#remarksSubtaskPreview").val(response.remarks);
+            $("#commentsSubtaskPreview").val(response.details);
+            $("#satusSubtaskPreview").val(response.statusDetails);
+
+            $("#SubTaskPreviewModal").modal();
+            //$("#CompleteTaskModal").modal('hide');
+        }
+
+        function AddGroupSubtaskEdit() {
+            var data = $("#SubtaskFormEdit").serialize();
+            var taskId = $("#SubTaskTaskIDEdit").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/UpdateSubtask",
+                data: data,
+                success: function (response) {
+                    if (response > 0) {
+                        $("#SubTaskEditModal").modal('hide');
+                        CallSingelTask(taskId);
+                    } else {
+                        alert("Something Went Wrong!!");
+                    }
+                }
+            });
+        }
+
+        function AddGroupSubtaskUpdate() {
+            var data = $("#SubtaskFormUpdate").serialize();
+            var taskId = $("#SubTaskTaskIDUpdate").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/UpdateSubtask",
+                data: data,
+                success: function (response) {
+                    if (response > 0) {
+                        $("#SubTaskUpdateModal").modal('hide');
+                        CallSingelTask(taskId);
+                    } else {
+                        alert("Something Went Wrong!!");
+                    }
+                }
+            });
+        }
+
+        function EditFollowup(id) {
+            Common.Ajax('GET', '/global/api/GetTaskFollowUpById/' + id, [], 'json', ajaxGetTaskFollowUpById, false);
+        }
+
+        function ajaxGetTaskFollowUpById(response) {
+            $("#FollowUpEditID").val(response.Id);
+            $("#FollowUpTaskIDEdit").val(response.taskInformationId);
+            $("#followupnameEdit").val(response.name);
+            $("#followupactivityCategoryIdEdit").val(response.activityCategoryId);
+            $("#followupactivitySessionIdEdit").val(response.activitySessionId);
+            $("#targetDateEdit").val(response.targetDate);
+            $("#followupactivityStatusIdEdit").val(response.activityStatusId);
+            $("#executionDateEdit").val(response.executionDate);
+            $("#reminderDateEdit").val(response.reminderDate);
+            $("#followupRemarksEdit").val(response.description);
+
+            if (response.remainderStatus == 1) {
+                $("#remainderStatusEdit").attr('checked', true);
+            }
+
+            $("#EditFollowUpModal").modal();
+            $("#CompleteTaskModal").modal('hide');
+        }
+
+        function UpdateFollowup(id) {
+            Common.Ajax('GET', '/global/api/GetTaskFollowUpById/' + id, [], 'json', ajaxGetTaskFollowUpByIdUpdate, false);
+        }
+
+        function ajaxGetTaskFollowUpByIdUpdate(response) {
+            $("#FollowUpUpdateID").val(response.Id);
+            $("#FollowUpTaskIDUpdate").val(response.taskInformationId);
+            $("#followupnameUpdate").val(response.name);
+            $("#followupactivityCategoryIdUpdate").val(response.activityCategoryId);
+            $("#followupactivitySessionIdUpdate").val(response.activitySessionId);
+            $("#targetDateUpdate").val(response.targetDate);
+            $("#followupactivityStatusIdUpdate").val(response.activityStatusId);
+            $("#executionDateUpdate").val(response.executionDate);
+            $("#reminderDateUpdate").val(response.reminderDate);
+            $("#followupRemarksUpdate").val(response.description);
+
+            if (response.remainderStatus == 1) {
+                $("#remainderStatusUpdate").attr('checked', true);
+            }
+
+            $("#UpdateFollowUpModal").modal();
+            $("#CompleteTaskModal").modal('hide');
+        }
+
+        function ViewFollowup(id) {
+            Common.Ajax('GET', '/global/api/GetTaskFollowUpById/' + id, [], 'json', ajaxGetTaskFollowUpByIdView, false);
+        }
+
+        function ajaxGetTaskFollowUpByIdView(response) {
+            $("#subjectView").text(response.name);
+            $("#categoryView").text(response.activityCategory.activityCategoryName);
+            $("#sessionView").text(response.activitySession.activitySessionName);
+            $("#targetView").text(response.targetDate);
+            $("#StatusView").text(response.activityStatus.status);
+            $("#executionView").text(response.executionDate);
+            $("#ReminderView").text(response.reminderDate);
+            $("#RemarksView").text(response.description);
+            $("#NotesView").text(response.note);
+            $("#StatusUpView").text(response.status);
+
+            if (response.remainderStatus == 1) {
+                $("#IsReminderView").text('Yes');
+            } else {
+                $("#IsReminderView").text('No');
+            }
+
+            $("#ViewFollowUpModal").modal();
+        }
+
+        function AddTaskFollowupEdit() {
+            var data = $("#EditFollowUpModalForm").serialize();
+            var taskId = $("#FollowUpTaskIDEdit").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/UpdateFollowUp",
+                data: data,
+                success: function (response) {
+                    if (response > 0) {
+                        $("#EditFollowUpModal").modal('hide');
+                        CallSingelTask(taskId);
+                    } else {
+                        alert("Something Went Wrong!!");
+                    }
+                }
+            });
+        }
+
+        function AddTaskFollowupEditCancel() {
+            var taskId = $("#FollowUpTaskIDEdit").val();
+            $("#EditFollowUpModal").modal('hide');
+            CallSingelTask(taskId);
+        }
+
+        function AddTaskFollowupUpdate() {
+            var data = $("#UpdateFollowUpModalForm").serialize();
+            var taskId = $("#FollowUpTaskIDUpdate").val();
+            $.ajax({
+                type: "POST",
+                url: "/TAMS/TaskManagemnet/UpdateFollowUp",
+                data: data,
+                success: function (response) {
+                    if (response > 0) {
+                        $("#UpdateFollowUpModal").modal('hide');
+                        CallSingelTask(taskId);
+                    } else {
+                        alert("Something Went Wrong!!");
+                    }
+                }
+            });
+        }
+
+        function AddTaskFollowupUpdateCancel() {
+            var taskId = $("#FollowUpTaskIDUpdate").val();
+            $("#UpdateFollowUpModal").modal('hide');
+            CallSingelTask(taskId);
+        }
+
+
+        function AddGroupSubtaskEditCancel() {
+            var taskId = $("#SubTaskTaskIDEdit").val();
+            $("#SubTaskEditModal").modal('hide');
+            CallSingelTask(taskId);
+        }
+
+        function AddGroupSubtaskEditCancel() {
+            var taskId = $("#SubTaskTaskIDUpdate").val();
+            $("#SubTaskUpdateModal").modal('hide');
+            CallSingelTask(taskId);
+        }
+
+
+    </script>
+}
+

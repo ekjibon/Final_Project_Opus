@@ -1,0 +1,1162 @@
+﻿@{
+    ViewData["Title"] = "Accounting Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Accounting Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label for="report" class="col-sm-3 col-form-label">Select Report Name <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="report" name="report" required>
+                                <option value="">Select One</option>
+                                <option value="1">Ledger Book Reports</option>
+                                <option value="2">Sub Ledger Book Reports</option>
+                                <option value="3">Day Book Reports</option>
+                                <option value="4">Trial Balance</option>
+                                <option value="5">Daily Bill Receive</option>
+                                <option value="6">Chart Of Accounts</option>
+                                <option value="7">CC Wise Report</option>
+                                <option value="8">Ledger Details</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Select Ledger <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="ledgerName" name="ledgerName" />
+                            <input type="hidden" class="form-control" id="ledgerId" name="ledgerId" value="0" />
+                        </div>
+                    </div>
+                    <div class="form-group row" id="subLedgerSelect">
+                        <label for="subLedgerId" class="col-sm-3 col-form-label">Select Sub Ledger <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="subLedgerName" name="subLedgerName" />
+                            <input type="hidden" class="form-control" id="subLedgerId" name="subLedgerId" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="voucherTypeSelect">
+                        <label for="voucherType" class="col-sm-3 col-form-label">Select Voucher Type <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="hidden" class="form-control" id="voucherTypeName" name="voucherTypeName" />
+                            <select class="form-control" id="voucherTypeId" name="voucherTypeId" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="supplierSelect">
+                        <label for="supplier" class="col-sm-3 col-form-label">Select Supplier<span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="vendorName" id="vendorName" />
+                            <input type="hidden" class="form-control" name="supplierId" id="supplierId" value="0" />
+                        </div>
+                    </div>
+                    <div class="form-group row" id="costCenterSelect">
+                        <label for="supplier" class="col-sm-3 col-form-label">Select Cost Centre<span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="centreName" id="centreName" />
+                            <input type="hidden" class="form-control" name="centreNameId" id="centreNameId" value="0" />
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" readonly />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <br />
+                            <button type="button" onclick="Refresh()" title="Load" style="float:right" class="btn btn-info btn-xs">Load</button>&nbsp;&nbsp;&nbsp;
+                            <button id="SubmitButton" style="margin-left: 160px;"  class="btn btn-success btn-xs" title="Preview">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row" id="LedgerDetailsTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblLedgerDetails">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Account Code</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="COATable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblCOA">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Account Code</th>
+                            <th>Group Name</th>
+                            <th>Nature Name</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="LedgerTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblSalesItem">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Date</th>
+                            <th>Voucher No.</th>
+                            <th>Voucher Type</th>
+                            <th>Account Code</th>
+                            <th>Account Name</th>
+                            <th>Subledger Name</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="BillReceiveTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblBillReceive">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Bill Receive Date</th>
+                            <th>Process No</th>
+                            <th>Invoice No</th>
+                            <th>Supplier Name</th>
+                            <th>Amount</th>
+                            <th>VAT</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="TrialBalanceTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName1" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblTrialItem">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Account Code</th>
+                            <th>Account Name</th>
+                            <th>Opening Balance</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Closing Balance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/JasonLogo.png" style="height:66px; width:168px;" />
+                    </div>
+                    <div class="col-8">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Ledger Information</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" id="tblModalItem">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Date</th>
+                            <th>Voucher No.</th>
+                            <th>Voucher Type</th>
+                            <th>Account Code</th>
+                            <th>Account Name</th>
+                            <th>Subledger Name</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#toDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+            $('#fromDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+
+            Common.Ajax('GET', '/global/api/GetVoucherType/', [], 'json', ajaxGetDuesCustomerList, false);
+            Common.Ajax('GET', '/global/api/GetLedger/', [], 'json', GetLedgerForSubLedger);
+            Common.Ajax('GET', '/global/api/GetAllSubLedger/', [], 'json', GetSubLedger);
+            Common.Ajax('GET', '/global/api/GetSupplier', [], 'json', GetSupplier);
+            Common.Ajax('GET', '/global/api/GetCostCentres', [], 'json', ajaxGetCostCentres);
+
+            $('#LedgerSelect').hide();
+            $('#subLedgerSelect').hide();
+            $('#voucherTypeSelect').hide();
+            $('#DateRangeSelect').hide();
+            $('#supplierSelect').hide();
+            $('#costCentreSelect').hide();
+            $('#TrialBalanceTable').hide();
+            $('#BillReceiveTable').hide();
+            $('#LedgerTable').hide();
+            $('#COATable').hide();
+            $('#LedgerDetailsTable').hide();
+
+            $('#report').change(function () {
+                var dtTable = $("#tblSalesItem");
+                var tableBody = dtTable.find('tbody');
+                tableBody.empty();
+                let report = $('#report').val();
+                if (report == 1) {
+                    $('#levelName').html('  Ledger Book');
+                    $('#LedgerSelect').show();
+                    $('#subLedgerSelect').show();
+                    $('#voucherTypeSelect').hide();
+                    $('#DateRangeSelect').show();
+                    $('#supplierSelect').hide();
+                    $('#costCentreSelect').hide();
+
+                    $('#TrialBalanceTable').hide();
+                    $('#LedgerDetailsTable').hide();
+                    $('#COATable').hide();
+                    $('#BillReceiveTable').hide();
+                    $('#LedgerTable').show();
+                    $('#costCenterSelect').hide();
+                } else if (report == 2) {
+                    $('#levelName').html('  Sub Ledger Book');
+                    $('#LedgerSelect').hide();
+                    $('#subLedgerSelect').show();
+                    $('#voucherTypeSelect').hide();
+                    $('#supplierSelect').hide();
+                    $('#costCentreSelect').hide();
+                    $('#DateRangeSelect').show();
+
+                    $('#TrialBalanceTable').hide();
+                    $('#BillReceiveTable').hide();
+                    $('#COATable').hide();
+                    $('#LedgerDetailsTable').hide();
+                    $('#LedgerTable').show();
+                    $('#costCenterSelect').hide();
+                } else if (report == 3) {
+                    $('#levelName').html('  Day Book');
+                    $('#LedgerSelect').hide();
+                    $('#subLedgerSelect').hide();
+                    $('#voucherTypeSelect').show();
+                    $('#DateRangeSelect').show();
+                    $('#supplierSelect').hide();
+                    $('#costCentreSelect').hide();
+
+                    $('#TrialBalanceTable').hide();
+                    $('#BillReceiveTable').hide();
+                    $('#COATable').hide();
+                    $('#LedgerDetailsTable').hide();
+                    $('#LedgerTable').show();
+                    $('#costCenterSelect').hide();
+                }
+                else if (report == 4){
+                    $('#levelName1').html('  Trial Balance');
+                    $('#LedgerSelect').hide();
+                    $('#subLedgerSelect').hide();
+                    $('#voucherTypeSelect').hide();
+                    $('#DateRangeSelect').show();
+                    $('#supplierSelect').hide();
+                    $('#costCentreSelect').hide();
+
+                    $('#TrialBalanceTable').show();
+                    $('#LedgerTable').hide();
+                    $('#COATable').hide();
+                    $('#LedgerDetailsTable').hide();
+                    $('#BillReceiveTable').hide();
+                }
+                else if (report == 5){
+                    $('#levelName1').html('  Daily Bill Receive');
+                    $('#LedgerSelect').hide();
+                    $('#subLedgerSelect').hide();
+                    $('#voucherTypeSelect').hide();
+                    $('#supplierSelect').show();
+                    $('#costCentreSelect').hide();
+                    $('#DateRangeSelect').show();
+
+                    $('#TrialBalanceTable').hide();
+                    $('#BillReceiveTable').show();
+                    $('#LedgerDetailsTable').hide();
+                    $('#COATable').hide();
+                    $('#LedgerTable').hide();
+                    $('#costCenterSelect').hide();
+                }
+                else if (report == 6) {
+                    $('#levelName1').html('  Chart Of Accounts');
+                    $('#LedgerSelect').hide();
+                    $('#subLedgerSelect').hide();
+                    $('#voucherTypeSelect').hide();
+                    $('#supplierSelect').hide();
+                    $('#costCentreSelect').hide();
+                    $('#DateRangeSelect').hide();
+                    $('#TrialBalanceTable').hide();
+                    $('#LedgerTable').hide();
+
+                    $('#costCenterSelect').hide();
+                }
+                else if (report == 7) {
+                    $('#levelName1').html('  CC Wise Report');
+                    $('#LedgerSelect').hide();
+                    $('#subLedgerSelect').hide();
+                    $('#voucherTypeSelect').hide();
+                    $('#supplierSelect').hide();                    
+                    $('#TrialBalanceTable').hide();
+                    $('#LedgerDetailsTable').hide();
+                    $('#COATable').show();
+                    $('#LedgerTable').hide();
+                    $('#DateRangeSelect').show();
+                }
+                else if (report == 8) {
+                    $('#levelName1').html('  Ledger Details');
+                    $('#LedgerSelect').show();
+                    $('#subLedgerSelect').hide();
+                    $('#voucherTypeSelect').hide();
+                    $('#supplierSelect').hide();
+                    $('#costCentreSelect').hide();
+                    $('#DateRangeSelect').show();
+
+                    $('#TrialBalanceTable').hide();
+                    $('#COATable').hide();
+                    $('#LedgerDetailsTable').show();
+                    $('#LedgerTable').hide();
+
+                    $('#DateRangeSelect').show();
+                    $('#costCenterSelect').hide();
+                }
+            });
+
+            $("#SubmitButton").click(function (e) {
+                let report = $('#report').val();
+                if (report == '' || report == 0) {
+                    swal('Warning', 'Please Select Report', 'warning');
+                    return false;
+                }
+                let ledgerId = $('#ledgerId').val();
+                let subLedgerId = $('#subLedgerId').val();
+                let voucherTypeId = $('#voucherTypeId').val();
+                let supplierId = $('#supplierId').val();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                let centreNameId = $('#centreNameId').val();
+
+                if (report == 1) {
+                    if (ledgerId == 0) {
+                        swal('Warning', 'Select Customer', 'warning');
+                        return false;
+                    } else if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/AccountingReport/LedgerBookReportDataViewpdf?ledgerId=' + ledgerId + "&subledgerId=" + subLedgerId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+
+                } else if (report == 2) {
+                    if (subLedgerId == '' || subLedgerId == 0) {
+                        swal('Warning', 'Please Select sub Ledger', 'warning');
+                        return false;
+                    } else if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/AccountingReport/SubLedgerBookReportDataViewpdf?subledgerId=' + subLedgerId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                } else if (report == 3) {
+                    if (voucherTypeId == '' || voucherTypeId == 0) {
+                        swal('Warning', 'Please Select voucher Type', 'warning');
+                        return false;
+                    } else if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/AccountingReport/DayBookReportDataViewpdf?voucherTypeId=' + voucherTypeId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (report == 4) {
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/AccountingReport/TrialBalanceReportDatapdf?fromDate=' + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (report == 5){
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/NonPOTransaction/DailyBillReceivePdf?supplierId=' + supplierId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (report == 6) {
+                    window.open('/Accounting/AccountingReport/chartofAccountspdf', '_blank');
+                }
+                else if (report == 7) {                    
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/AccountingReport/CCReportDataViewpdf?costcentreId=' + centreNameId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+                else if (report == 8) {
+
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/AccountingReport/LedgerDetailsPdf?ledgerId=' + ledgerId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+                }
+            });
+        });
+
+        function Refresh() {
+            let report = $('#report').val();
+            if (report == '' || report == 0) {
+                swal('Warning', 'Please Select Report', 'warning');
+                return false;
+            }
+            let ledgerId = $('#ledgerId').val();
+            let subLedgerId = $('#subLedgerId').val();
+            let supplierId = $('#supplierId').val();
+            let voucherTypeId = $('#voucherTypeId').val();
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+
+            if (report == 1) {
+                $('#levelName').html('  Ledger Book');
+                if (ledgerId == '' || ledgerId == 0) {
+                    swal('Warning', 'Please Select Ledger', 'warning');
+                    return false;
+                } else if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }               
+                GetLedgerBookReportEx(ledgerId, subLedgerId, fromDate, toDate)
+            }
+            else if (report == 2) {
+                $('#levelName').html('  Sub Ledger Book');
+                if (subLedgerId == '' || subLedgerId == 0) {
+                    swal('Warning', 'Please Select sub Ledger', 'warning');
+                    return false;
+                } else if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }                
+                GetSubLedgerBookReportDataEx(subLedgerId,fromDate, toDate);
+            }
+            else if (report == 3) {
+                $('#levelName').html('  Day Book');
+                if (voucherTypeId == '' || voucherTypeId == 0) {
+                    swal('Warning', 'Please Select voucher Type', 'warning');
+                    return false;
+                } else if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }               
+                GetDayBookReportDataEx(voucherTypeId, fromDate, toDate);
+            }
+
+            else if (report == 4){
+                $('#levelName').html('  Trial Balance');
+                if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                GetTrialBalanceReportDataEx(fromDate, toDate);
+            }
+            else if (report == 5) {
+                $('#levelName').html('  Daily Bill Receive');
+                if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                GetDailyBillReceiveReportDataEx(supplierId, fromDate, toDate);
+            }
+            else if (report == 6) {
+                $('#levelName').html('  Chart Of Accounts');
+                GetChartOfAccounts();
+            }
+            else if (report == 8) {
+                $('#levelName').html('  Ledger Details');
+                GetLedgerDetailsDataEx(ledgerId, fromDate, toDate);
+            }
+        }
+
+        function GetDailyBillReceiveReportDataEx(supplierId, fromDate, toDate) {
+            $('#tblBillReceive').DataTable().destroy();
+            table = $('#tblBillReceive').DataTable({
+                ajax: {
+                    url: "/global/api/GetdailyBillReceive/" + supplierId + "/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "billReceiveId" },
+                    { data: "BillReceiveDate" },
+                    { data: "ProcessNo" },
+                    { data: "InvoiceNo" },
+                    { data: "supplierName" },
+                    { data: "GBamount" },
+                    { data: "Vat" },
+                    { data: "Total" },
+                    { data: "billStatus" },
+                    { data: "action" }
+
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+        
+        function GetChartOfAccounts() {
+            $('#tblCOA').DataTable().destroy();
+            table = $('#tblCOA').DataTable({
+                ajax: {
+                    url: "/global/api/GetCOA/",
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "accountCode" },
+                    { data: "accountName" },
+                    { data: "accountGroup" },
+                    { data: "natureName" }   
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        title: "COA",
+                        messageTop: 'COA Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        title: "COA",
+                        messageTop: 'COA Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "COA",
+                        messageTop: 'COA Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+        function GetDayBookReportDataEx(voucherTypeId, fromDate, toDate) {
+            $('#tblLedgerDetails').DataTable().destroy();
+            table = $('#tblSalesItem').DataTable({
+                ajax: {
+                    url: "/global/api/GetDayBookReportData/" + voucherTypeId + "/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "VoucherId" },
+                    { data: "voucherDate" },
+                    { data: "voucherNo" },
+                    { data: "voucherType" },
+                    { data: "accountCode" },
+                    { data: "accountName" },
+                    { data: "subledgerName" },
+                    { data: "debit" },
+                    { data: "credit" },
+                    { data: "action" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Day Book",
+                        messageTop: 'Day Book Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Day Book",
+                        messageTop: 'Day Book Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Day Book",
+                        messageTop: 'Day Book Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetSubLedgerBookReportDataEx(subLedgerId, fromDate, toDate) {
+            $('#tblSalesItem').DataTable().destroy();
+            table = $('#tblSalesItem').DataTable({
+                ajax: {
+                    url: "/global/api/GetSubLedgerBookReportData/"  + subLedgerId + "/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "VoucherId" },
+                    { data: "voucherDate" },
+                    { data: "voucherNo" },
+                    { data: "voucherType" },
+                    { data: "accountCode" },
+                    { data: "accountName" },
+                    { data: "subledgerName" },
+                    { data: "debit" },
+                    { data: "credit" },
+                    { data: "action" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Sub Ledger Book",
+                        messageTop: 'Sub Ledger Book Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Sub Ledger Book",
+                        messageTop: 'Sub Ledger Book Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Sub Ledger Book",
+                        messageTop: 'Sub Ledger Book Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetLedgerBookReportEx(ledgerId, subLedgerId, fromDate, toDate) {
+            $('#tblSalesItem').DataTable().destroy();
+            table = $('#tblSalesItem').DataTable({
+                ajax: {
+                    url: "/global/api/GetLedgerBookReportData/" + ledgerId + "/" + subLedgerId + "/"+ fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "VoucherId" },
+                    { data: "voucherDate" },
+                    { data: "voucherNo" },
+                    { data: "voucherType" },
+                    { data: "accountCode" },
+                    { data: "accountName" },
+                    { data: "subledgerName" },
+                    { data: "debit" },
+                    { data: "credit" },
+                    { data: "action" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Ledger Book",
+                        messageTop: 'Ledger Book Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Ledger Book",
+                        messageTop: 'Ledger Book Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Ledger Book",
+                        messageTop: 'Ledger Book Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetTrialBalanceReportDataEx(fromDate, toDate) {
+            table = $('#tblTrialItem').DataTable({
+                ajax: {
+                    url: "/global/api/GetTrialBalanceReportData/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "accountId" },
+                    { data: "accountCode" },
+                    { data: "accountName" },
+                    { data: "openingBalance" },
+                    { data: "debit" },
+                    { data: "credit" },
+                    { data: "closing" },
+                    { data: "action" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5,6]
+                        },
+                        title: "Trial Balance",
+                        messageTop: 'Trial Balance Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5,6]
+                        },
+                        title: "Trial Balance",
+                        messageTop: 'Trial Balance Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Trial Balance",
+                        messageTop: 'Trial Balance Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5,6]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetLedgerDetailsDataEx(ledgerId, fromDate, toDate) {
+            $('#tblLedgerDetails').DataTable().destroy();
+            table = $('#tblLedgerDetails').DataTable({
+                ajax: {
+                    url: "/global/api/GetLedgerDetailsData/" + ledgerId + "/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "accountName" },
+                    { data: "accountCode" },
+                    { data: "Amount" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "Ledger Details",
+                        messageTop: 'Ledger Details Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "Ledger Details",
+                        messageTop: 'Ledger Details Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Ledger Details",
+                        messageTop: 'Ledger Details Report',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetLedgerForSubLedger(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.name = option.accountName;
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                obj.accountCode = option.accountCode;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#ledgerName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#ledgerId').val(ui.item.key);
+                    $("#ledgerName").val(ui.item.name);
+                }
+            });
+        }
+
+        function GetSubLedger(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.name = option.accountName;
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                obj.accountCode = option.accountCode;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#subLedgerName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#subLedgerId').val(ui.item.key);
+                    $("#subLedgerName").val(ui.item.name);
+                }
+            });
+        }
+
+        function GetSupplier(response) {           
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.organizationName;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#vendorName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#supplierId').val(ui.item.key);
+                    $("#vendorName").val(ui.item.value);
+                }
+            });
+        }
+
+        function ajaxGetCostCentres(response) {           
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.centreName;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#centreName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#centreNameId').val(ui.item.key);
+                    $("#centreName").val(ui.item.value);
+                }
+            });
+        }
+
+        function ajaxGetDuesCustomerList(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.voucherTypeName + '</option>';
+            });
+            $('#voucherTypeId').empty();
+            $('#voucherTypeId').append(options);            
+        }
+
+        function ViewModal(Id) {
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+            let subLedgerId = 0;
+            Common.Ajax('GET', '/global/api/GetLedgerBookReportData/' + Id + '/' + subLedgerId + '/' + fromDate + '/' + toDate, [], 'json', GetModalLedgerBookReport);
+        }
+
+        function GetModalLedgerBookReport(response) {
+            var dtTable = $("#tblModalItem");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            var trHtml1 = '<tr><td>0</td><td colspan="4"></td><td colspan="2">Opening Balance</td><td>' + response.obDebit + '</td><td>' + response.obCredit + '</td></td><td></tr>';
+            tableBody.append(trHtml1);
+            var i = 1;
+            $.each(response.ledgerBookReportViewModels, function (key, value) {
+                if (value.voucherType == "Payment") {
+                    var url = "/Accounting/PaymentVoucher/PaymentVoucherPdfAction?MasterId=";
+                } else if (value.voucherType == "Received") {
+                    var url = "/Accounting/ReceiptVoucher/ReceiptVoucherPdfAction?MasterId=";
+                } else if (value.voucherType == "Journal") {
+                    var url = "/Accounting/JournalVoucher/JournalVoucherPdfAction?MasterId=";
+                } else {
+                    var url = "/Accounting/ContraVoucher/ContraVoucherPdfAction?MasterId=";
+                }
+                var trHtml = '<tr><td>' + i + '</td><td>' + value.voucherDate + '</td><td>' + value.voucherNo + '</td><td>' + value.voucherType + '</td><td>' + value.accountCode + '</td><td>' + value.accountName + '</td><td>' + value.subledgerName + '</td><td>' + value.debit + '</td><td>' + value.credit + '</td><td><a class="btn btn-success" target="_blank" href="' + url + value.VoucherId + '" style="color:white;"><i class="fa fa-eye"></i></a></td></tr>';
+                tableBody.append(trHtml);
+                i++;
+            });
+        }
+    </script>
+}

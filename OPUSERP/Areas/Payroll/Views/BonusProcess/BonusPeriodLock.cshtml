@@ -1,0 +1,126 @@
+﻿@model BonusProcessViewModel
+@{
+    ViewData["Title"] = "Bonus Period Lock";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+    </style>
+}
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Bonus Period Lock List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Period Name</th>
+                            <th>Year</th>
+                            <th>Month Name</th>
+                            <th>Tax Year</th>
+                            <th>Salary Type</th>
+                            <th>Lock Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.salaryPeriods.Where(a => a.lockLabel == 5 && a.salaryTypeId == 2))
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.periodName</td>
+                                    <td>@data.salaryYear.yearName</td>
+                                    <td>@data.monthName</td>
+                                    <td>@data.taxYear.taxYearName</td>
+                                    <td>@data.salaryType.salaryTypeName</td>
+                                    @if (@data.lockLabel == 5)
+                                    {
+                                        <td>Locked</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Un-locked</td>
+                                    }
+                                    <td>
+                                        <a class="btn btn-success" title="View" onclick="Edit(@data.Id)" href="javascript:void(0)"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                                    i++;
+                                }
+                            }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Bonus Log </h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-responsive" id="statusTable" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th width="25%">Period Name</th>
+                            <th width="15%">Status</th>
+                            <th width="10%">Remarks</th>
+                            <th width="10%">Created By</th>
+                            <th width="25%">Created At</th>
+                            <th width="15%">IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#educationalTable').DataTable();
+            $("#lockDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+        });       
+
+        function Edit(id) {
+            GetStatusLog(id);
+        }
+
+        function GetStatusLog(salaryPeriodId) {
+            $('#statusTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetSalaryStatusLogByPeriodId", "SalaryProcess")',
+                    dataSrc: "",
+                    data: { salaryPeriodId: salaryPeriodId }
+                },
+                processing: true,
+                destroy: true,
+                columns: [
+                    { data: "salaryPeriod.periodName" },
+                    { data: "statusType" },
+                    { data: "remarks" },
+                    { data: "createdBy" },
+                    { data: "createdAt" },
+                    { data: "ipAddress" }
+                ],
+                stateSave: true,
+            });
+        }
+
+    </script>
+}

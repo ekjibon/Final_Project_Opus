@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "Cash Book";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+
+        .numericCol {
+            text-align: right;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Cash Book</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="SBUSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">SBU</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="sbuId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerProject">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Project</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="projectId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Select Cash Ledger <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="ledgerId" name="ledgerId"></select>
+                            @*<input type="text" class="form-control" id="ledgerName" name="ledgerName" />
+                                <input type="hidden" class="form-control" id="ledgerId" name="ledgerId" value="0" />*@
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" readonly />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <br />
+                            <button id="SubmitButton" style="margin-left: 160px;" class="btn btn-success btn-xs" title="Preview">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#toDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+            $('#fromDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+            $("#sbuId").change(function () {
+                var branchid = $(this).val();
+                Common.Ajax('GET', '/global/api/GetProject/' + branchid, [], 'json', GetProject,false);
+                Common.Ajax('GET', '/api/global/GetOnlyCashLedger/' + branchid, [], 'json', ajaxGetOnlyCashLedger);
+            });
+
+            $("#SubmitButton").click(function (e) {
+                let ledgerId = $('#ledgerId').val();
+                let subLedgerId = 0;
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                let sbuId = $('#sbuId').val();
+                let projectId = $('#projectId').val();
+
+                if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                window.open('/Accounting/AccountingReport/CashBookReportDataViewpdf?ledgerId=' + ledgerId + "&subledgerId=" + subLedgerId + "&fromDate=" + fromDate + "&toDate=" + toDate + "&sbuId=" + sbuId + "&projectId=" + projectId, '_blank');
+            });
+        });
+
+        function GetSBU(response) {
+            $('#sbuId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+            });
+            $('#sbuId').append(options);
+        }
+
+        function GetProject(response) {
+            $('#projectId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+            });
+            $('#projectId').append(options);
+        }
+
+        function ajaxGetOnlyCashLedger(response) {
+            $('#ledgerId').empty();
+            var options = '<option value="0">All Cash Ledger</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.ledgerId + '">' + item.accountName + ' (' + item.accountCode + ')' + '</option>';
+            });
+            $('#ledgerId').append(options);            
+        }
+    </script>
+}

@@ -1,0 +1,127 @@
+﻿@model HallRentalViewModel
+@{
+    ViewData["Title"] = "HallRentalShedule";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Hall Rental Shedule</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Rental" asp-controller="RentInvoice" asp-action="HallRentalShedule" method="post" enctype="multipart/form-data">
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Shedule Shift Name<span style="color:red">*</span></label>
+                    <div class="col-md-9">
+                        <input type="text" id="shiftName" name="shiftName" class="form-control" autocomplete="off" required />
+                        <input type="hidden" id="Id" name="Id" value="0" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Shift Start Time<span style="color:red">*</span></label>
+                    <div class="col-md-9">
+                        <input type="time" name="startTime" id="startTime" autocomplete="off" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">End Time<span style="color:red">*</span></label>
+                    <div class="col-md-9">
+                        <input type="time" name="endTime" id="endTime" autocomplete="off" class="form-control" />
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Rental Shedule List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table id="tblVehicleList" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Shift Name</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.hallRentalShifts)
+                        {
+                            <tr>
+                                <td>@data.shiftName</td>
+                                <td>@data.startTime</td>
+                                <td>@data.endTime</td>
+                                <td>
+                                    <a href="javascript:void(0)" onclick="Edit(@data.Id,'@data.shiftName','@data.startTime','@data.endTime','Active')" title="Edit" class="btn btn-info"><i class="fas fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#tblVehicleList').DataTable();
+        });
+
+        function Edit(id, shiftName, startTime, endTime, isActive) {
+            $('#Id').val(id);
+            $('#shiftName').val(shiftName);
+            $('#startTime').val(startTime);
+            $('#endTime').val(endTime);
+            $('#isActive').val(isActive);
+
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+        
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteHallRentalSheduleById", "RentInvoice")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Rental/RentInvoice/HallRentalShedule";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}
+
+
+

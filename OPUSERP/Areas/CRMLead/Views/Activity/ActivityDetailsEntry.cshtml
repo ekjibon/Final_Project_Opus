@@ -1,0 +1,200 @@
+﻿
+
+@model ActivityDetailsViewModel
+@{
+    ViewData["Title"] = "Activity Deatils";
+    Layout = "~/Areas/CRMMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: #4e73df;">Activities</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="CRMLead" asp-controller="Activity" asp-action="ActivityMaster" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Lead name</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="leadsID" id="leadsID" value="@Model.activityMaster.leads.leadName" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Subject</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="subject" id="subject" value="@Model.activityMaster.subject" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Activity Category</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="category" id="category" value="@Model.activityMaster.activityCategory.activityCategoryName" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Priority</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="priority" id="priority" value="@Model.activityMaster.priority" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+
+
+
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Description</label>
+                            <div class="col-sm-8">
+                                <textarea type="text" class="form-control" id="descriptionM" value="@Model.activityMaster.description" name="descriptionM" readonly></textarea>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title" style="color: #4e73df;">Activities Details</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="CRMLead" asp-controller="Activity" asp-action="ActivityDetailsEntry" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <input type="hidden" name="Id" id="Id" value="0" />
+                            <input type="hidden" id="activityMasterId" name="activityMasterId" value="@ViewBag.activityMasterId">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Contact  Name</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="contactsId" name="contactsId" data-parsley-required="true">
+                                    <option>-Select-</option>
+                                    @foreach (var data in Model.contacts)
+                                    {
+                                        <option value="@data.Id">@data.resource.resourceName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activitiyStatusId" class="col-sm-4 col-form-label">Status</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="activityStatusId" name="activityStatusId" data-parsley-required="true">
+                                    <option>-Select-</option>
+                                    @foreach (var data in Model.activityStatus)
+                                    {
+                                        <option value="@data.Id">@data.status</option>
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="activitiesDate" class="col-sm-4 col-form-label">Activities Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="activitiesDate" id="activitiesDate">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="activityCategoryName" class="col-sm-4 col-form-label">Description</label>
+                            <div class="col-sm-8">
+                                <textarea type="text" class="form-control" id="description" name="description"></textarea>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Activity Deatils list</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="ActivityDetailsTable">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            @*<th>Contact Name</th>*@
+                            <th>Activities Date</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.activityDetails)
+                        {
+                            <tr>
+                                <td>@data.activityMaster.subject</td>
+                                @*<td>@data.contacts.resource.resourceName</td>*@
+
+
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,@data.activityMasterId,@data.contactsId)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="javascript:void(0)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+                $('#activitiesDate').datepicker({ uiLibrary: 'bootstrap4' });
+                $('#ActivityDetailsTable').DataTable();
+            });
+
+
+        function Edit(Id, activityMasterId, contactsId) {
+            $("#Id").val(Id);
+            $("#activityMasterId").val(activityMasterId);
+            $("#contactsId").val(contactsId);
+
+        }
+    </script>
+}
+
+
+
+
+

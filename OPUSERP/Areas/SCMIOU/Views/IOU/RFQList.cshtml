@@ -1,0 +1,132 @@
+﻿@model RFQViewModel
+@{
+    ViewData["Title"] = "RFQ List";
+}
+
+<br />
+
+<div class="card">
+
+    <div class="card-header">
+        <div class="row">
+            <div class="col-6">
+                <h6 class="m-0 font-weight-bold text-primary">RFQ LIST</h6>
+            </div>
+            <div class="col-6">
+                <button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("RFQ", "IOU")'">Create RFQ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table class="table table-striped table-bordered" id="returnIOUListTable">
+            <thead>
+                <tr>
+                    <th>RFQ Date</th>
+                    <th>RFQ No</th>
+                    <th>Purpose</th>
+
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                    @foreach (var data in Model.rFQMasters)
+                    {
+                <tr>
+                    <td style="display:none"><span style="display:none">@data.Id</span>@i</td>
+                    <td>@data.rfqDate?.ToString("dd-MMM-yyyy")</td>
+                    <td>@data.rfqNo</td>
+                    <td>@data.rfqSubject</td>
+
+                    <td>
+                        @if (data.status == 3)
+                        {
+                            <a class="btn btn-info" onclick="ViewModal(@data.Id,'@data.rfqNo')"><i class="fa fa-eye"></i></a>
+                        }
+
+
+                    </td>
+                </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="coscentre" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+           
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">RFQ No :</label>
+                        <input type="text" class="form-control" id="rfqNo" readonly name="">
+                        <input type="hidden" id="rfqId" name="rfqId" />
+                    </div>
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">Select Supplier :</label>
+                        <select class="form-control" id="supplierId" name="">
+                            @*<option></option>
+                            @foreach (var data in Model.costCentres)
+                            {
+                                <option value="@data.Id">@data.centreName</option>
+                            }*@
+                        </select>
+                    </div>
+                   
+
+
+                </div>
+               
+
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:void(0)" style="color:deepskyblue" id="btnCancel" data-dismiss="modal">Cancel</a>&nbsp;
+                <button type="button" style="background-color:#024972;" onclick="AddParticularWithCostCentre()" class="btn-primary btn-sm">Print</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#newIOUListTable').DataTable();
+            $('#returnIOUListTable').DataTable();
+            $('#rejectedIOUListTable').DataTable();
+        });
+        function ViewModal(Id,no)
+        {
+            $("#rfqNo").val(no);
+            $("#rfqId").val(Id);
+            Common.Ajax('GET', '/SCMIOU/IOU/getsupp/' + Id, [], 'json', ajaxSup, false);
+            $("#coscentre").modal("show");
+        }
+        function AddParticularWithCostCentre()
+        {
+            var id = $("#rfqId").val();
+            var supid = $("#supplierId").val();
+            //window.open('/Accounting/AccountingReport/BalanceSheetReportDatapdf?fromDate=' + fromDate + "&toDate=" + toDate + "&sbuId=" + sbuId + "&projectId=" + projectId, '_blank');
+            window.open('/SCMReport/ReportMaster/PurchaseRequisitionRFQPdf?reqId=' + id + "&suppId=" + supid, '_blank');
+            $("#coscentre").modal("hide");
+        }
+        function ajaxSup(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.supplierId + '">' + item.supplier.organizationName + '</option>';
+            });
+            $('#supplierId').empty();
+            $('#supplierId').append(options);
+        }
+    </script>
+}
+

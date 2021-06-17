@@ -1,0 +1,199 @@
+﻿@model PayrollReportViewModel
+@{
+    ViewData["Title"] = "Monthly Salary Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<table class="report-container">
+    <thead class="report-header">
+        <tr>
+            <th>
+                <div class="header-info">
+                    For the month off @Model.monthlySalaryReportViewModels.FirstOrDefault().periodName
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody class="report-content">
+        <tr>
+            <td>
+                <div class="main">
+                    <div class="row" style="padding: 0px 15px 0px 15px;">
+                        <table class="table table-striped table-bordered vartical-table">
+                            <thead style="background-color:lightgray;">
+                                <tr>
+                                    <th style="width:3%;vertical-align:middle;">Sl no</th>
+                                    <th style="width:3%;vertical-align:middle;">Software Code</th>
+                                    <th style="width:10%;vertical-align:middle;">Name</th>
+                                    <th style="width:10%;vertical-align:middle;">Designation</th>
+                                    <th style="width:13%;vertical-align:middle;">Join Date</th>
+                                    <th style="width:3%;vertical-align:middle;">Previous Basic Salary</th>
+                                    <th style="width:3%;vertical-align:middle;">Basic Salary (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">House Rent (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Medical Allowance (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Conveyance Allowance (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Up Keep Allowance (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Utility Allowance (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Personal Pay (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Site Allowance (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Gross Salary (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Total OT Allowance (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Gross Salary with OT (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Deduction (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Absent Deduction (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Tax Deduction (Tk)</th>
+                                    <th style="width:3%;vertical-align:middle;">Meal</th>
+                                    <th style="width:3%;vertical-align:middle;">Payable Salary</th>
+                                    <th style="width:3%;vertical-align:middle;">Signature</th>
+                                    <th style="width:10%;vertical-align:middle;">Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    @foreach (var project in Model.monthlySalaryReportViewModels.Select(x => x.projectName).Distinct())
+                                    {
+                                        int i = 1;
+                                        <tr>
+                                            <td colspan="24" style="background-color:peachpuff;font-family:Cambria;font-size:medium;">Project : @project</td>
+                                        </tr>
+                                        @foreach (var c in Model.monthlySalaryReportViewModels.Where(x => x.projectName == project))
+                                        {
+                                            <tr>
+                                                <td style="text-align:center;">@i</td>
+                                                <td>@c.employeeCode</td>
+                                                <td>@c.nameEnglish</td>
+                                                <td>@c.designation</td>
+                                                <td>@c.joiningDatePresentWorkstation</td>
+                                                <td style="text-align:right;"></td>
+                                                <td style="text-align:right;">@c.Basic?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.HouseRent?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.Medical?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.Conveyance?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.UpKeepAllowance?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.UtilityAllowance?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.PersonalPay?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.SpecialAllowance?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.GROSS?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.OverTime?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.GROSSWPF?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.OtherDeduction?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.AbsentDeduction?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.IncomeTax?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;">@c.MealCharge?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;font-weight:bolder;">@c.NET?.ToString("0,0.00")</td>
+                                                <td style="text-align:right;"></td>
+                                                <td>@c.Remarks</td>
+                                            </tr>
+                                            i++;
+                                        }
+                                        <tr>
+                                            <td colspan="5" style="background-color:floralwhite;font-family:Cambria;font-size:small;">Sub Total Employees : @Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Count()</td>
+                                            <td colspan="9" style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">Sub Total Amount (Tk) : </td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.GROSS)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.OverTime)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.GROSSWPF)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.OtherDeduction)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.AbsentDeduction)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.IncomeTax)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.MealCharge)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;font-weight:bolder;">@Model.monthlySalaryReportViewModels.Where(a => a.projectName == project).Sum(a => a.NET)?.ToString("0,0.00")</td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;"></td>
+                                            <td style="background-color:floralwhite;font-family:Cambria;font-size:small;text-align:right;"></td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <thead style="background-color:lightgray;">
+                                <tr>
+                                    <td colspan="5" style="text-align:left;font-weight:bold;font-size:small;">Total Employees : @Model.monthlySalaryReportViewModels.Count()</td>
+                                    <td colspan="9" style="text-align:right;font-weight:bold;font-size:small;">Total Amount (Tk) : </td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.GROSS)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.OverTime)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.GROSSWPF)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.OtherDeduction)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.AbsentDeduction)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.IncomeTax)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.MealCharge)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;font-size:smaller;">@Model.monthlySalaryReportViewModels.Sum(x => x.NET)?.ToString("0,0.00")</td>
+                                    <td style="text-align:right;font-weight:bold;"></td>
+                                    <td style="text-align:right;font-weight:bold;"></td>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot class="report-footer">
+        <tr>
+            <td>
+                <div class="footer-info">
+                    <div class="row">
+                        <div class="col-4 divstyleee">
+                            <span class="boldspanStyle">_________________________</span><br />
+                            <span class="spanStyle">Prepared by:</span>
+                        </div>
+                        <div class="col-4 divstyleee">
+                            <span class="boldspanStyle">__________________________</span><br />
+                            <span class="spanStyle">Checked by:</span>
+                        </div>
+                        <div class="col-4 divstyleee">
+                            <span class="boldspanStyle">__________________________</span><br />
+                            <span class="spanStyle">Approved by:</span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+@section Scripts{
+    
+}
+<style>
+    .divstyle {
+        color: black;
+    }
+    .divstyleee {
+        text-align: center;
+        vertical-align: middle;
+        padding-top: 70px;
+    }
+    .spanStyle {
+        color: black;
+        font-size: small;
+        text-align: center;
+    }
+    .boldspanStyle {
+        color: black;
+        font-weight: bolder;
+        text-align: center;
+    }
+    .print-card-body {
+        width: 100%;
+        padding-bottom: 10px;
+    }
+    .vartical-table th {
+        width: 25%;
+        text-align: center;
+        vertical-align: top;       
+    }
+    .table td, .table th {
+        padding: .3rem;
+        font-size: 10px;        
+    }   
+    thead.report-header {
+        display: table-header-group;
+        text-align: center;         
+    }
+    tfoot.report-footer {
+        display: table-footer-group;        
+    }
+    table.report-container {
+        display: table-row-group;
+        page-break-after: always;       
+    }    
+</style>

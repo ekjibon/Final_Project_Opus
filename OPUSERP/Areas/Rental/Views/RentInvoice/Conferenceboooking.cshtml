@@ -1,0 +1,1275 @@
+﻿
+@model HallRentalViewModel
+@{
+    ViewData["Title"] = "Conferenceboooking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link href="~/lib/main.css" rel="stylesheet" />
+
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .addtocart {
+            padding: 5px;
+        }
+
+        .fa-minus {
+            color: #FB4C5D;
+        }
+
+        .fa-plus {
+            color: #F0BA02;
+        }
+
+        #addtocart {
+            padding-bottom: 0px;
+            margin-bottom: 5px;
+            background-color: #3CACF4;
+            border: none;
+            padding: 2px;
+            text-align: center;
+            font-size: 20px;
+            color: white;
+            height: 43px;
+            width: 95%;
+            padding-top: 5px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .list-item-cart img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .list-item-cart span {
+            color: black;
+            font-size: 15px;
+        }
+
+        .list-item-cart a:first-child {
+            color: #EF5160;
+        }
+
+        .list-item-cart a:last-child {
+            color: #EEB907;
+        }
+
+        .list-item-cart input {
+            width: 25px;
+            text-align: center;
+            font-size: 15px;
+            outline: none;
+        }
+
+
+        .list-item-bottom {
+            display: flex;
+            align-items: center;
+        }
+
+        .list-group .list-group-item {
+            border-top: none;
+            padding: 5px !important;
+            border-bottom: none;
+            border-left: 1px solid #949494;
+            border-right: 1px solid #949494;
+        }
+
+            .list-group .list-group-item:first-child {
+                border-top: 1px solid #949494;
+            }
+
+            .list-group .list-group-item:last-child {
+                border-bottom: 1px solid #949494;
+            }
+
+        .list-img {
+            width: 40px;
+        }
+
+        .list-text {
+            padding-left: 6px;
+            font-size: 22px;
+        }
+
+        .list-num {
+            font-size: 20px;
+            text-align: right;
+        }
+
+        .box {
+            width: 14.28%;
+            transition: background-color 2s, color 2s;
+            border-radius: 15px;
+        }
+
+            .box:hover {
+                background-color: #E5E5E5 !important;
+            }
+
+        .clicked {
+            background-color: #1E2E41 !important;
+            color: white !important;
+        }
+
+        .box a {
+            transition: color 2s;
+        }
+
+            .box a:hover {
+                color: black !important;
+            }
+
+        .counterBox1 {
+            width: 60%;
+            font-size: 140%;
+            margin-left: 14px;
+            float: right;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .leftImgBox i {
+            font-size: 45px;
+            margin-left: 24px;
+        }
+
+        #itemDetails .list-group {
+            width: 92%;
+            margin-left: 8px;
+        }
+
+            #itemDetails .list-group .div:first-child {
+                width: 25%;
+            }
+
+        #itemDetails .list-group-item {
+            justify-content: space-between;
+        }
+
+        #del {
+            cursor: pointer;
+        }
+
+
+        .itemCard {
+            border-radius: 10px 10px 0 0;
+        }
+
+        button {
+            box-shadow: none !important;
+        }
+
+        .counter1 {
+            font-size: 16px;
+        }
+
+        .itemCard .card-body {
+            font-size: 22px !important;
+        }
+
+        .itemCard .card-img-top {
+            padding: 19px;
+            height: 130px;
+            width: 130px;
+            margin: 0 auto;
+            transition: transform 0.5s ease-in-out;
+        }
+
+            .itemCard .card-img-top:hover {
+                transform: scale(1.2)
+            }
+
+        #myInput {
+            font-size: 20px !important;
+        }
+
+        #description {
+            font-size: 20px;
+            text-align: left;
+        }
+
+            #description table tbody tr td {
+                text-align: left;
+            }
+
+        #previewData {
+            font-size: 20px;
+        }
+
+        #AllItemLists {
+            height: 470px;
+            overflow: scroll;
+        }
+
+            #AllItemLists .card {
+            }
+
+        .itemCard .card-footer {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            height: 26px !important;
+        }
+
+        #AllItemLists .card-body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            ;
+        }
+
+        #AllItemLists .col-2 {
+            padding: 2px !important;
+        }
+
+
+
+        #cart {
+            position: absolute;
+            background-color: #888A83;
+            right: 0;
+            top: 40%;
+            height: 50px;
+            color: #FEE29B;
+            font-size: 18px !important;
+            box-shadow: 5px 5px 5px 5px #888888;
+            cursor: pointer;
+        }
+
+        .itemCard:hover {
+            opacity: 0.8;
+        }
+
+        #AllItemLists .card-footer {
+            background-color: #ECE8E7;
+            padding: 5px 10px;
+        }
+
+        .list-item-cart {
+            border: none !important;
+        }
+
+        .decrescimo {
+            color: black;
+        }
+
+        .acrescimo {
+            color: red;
+        }
+
+        .cartFoot {
+            padding: 5px;
+            background-color: #EAE9E7;
+            font-size: 16px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            margin: 0;
+            left: 0;
+        }
+
+        .addCart .card {
+            border: 1px solid gray;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .addCart .card-header {
+            text-align: center;
+            font-size: 24px;
+            padding: 0;
+            background-color: #3CACF4;
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+
+
+
+        #reqModal {
+            background-color: white;
+            width: 1190px;
+        }
+
+
+        #mainBody {
+            margin-left: 48px;
+        }
+
+        .ui-state-default {
+            color: black !important;
+        }
+
+        .labelcart {
+            background: gray;
+            width: fit-content;
+            padding: 5px 10px;
+            border-left: 4px solid red;
+            margin-left: -4px;
+            color: white;
+        }
+
+        .itemCard p {
+            height: 138px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: font-size 1s ease-in-out;
+        }
+
+            .itemCard p:hover {
+                font-size: 25px;
+            }
+    </style>
+}
+@*<input type="text" hidden id="date" value="@ViewBag.date" />id="frmConferenceBooking" asp-action="SaveConferenceboooking" asp-controller="IssueStock" asp-area="SCMStock"*@
+<form id="frmConferenceBooking" method="post" enctype="multipart/form-data">
+    <div class="card" style="width: 100%;">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="card-title" style="color: black">Conference Room Booking</h5>
+                </div>
+                <div class="col-md-4">
+                    @Model.hallInfo?.hallName
+                </div>
+                <div class="col-md-4">
+                    <a href="/Rental/RentInvoice/CalenderView" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Go To Calender</a>
+                </div>
+            </div>
+            <hr>
+            <div class="container">
+
+                <div class="form-group row">
+                    <label for="salesInvoiceNo" class="col-sm-2 col-form-label">Submission Number</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="salesInvoiceNo" id="salesInvoiceNo" value="@Model.AgreementNumber" readonly>
+                        <input type="hidden" name="masterId" id="masterId" value="0" />
+                    </div>
+                    <label for="invoiceDate" class="col-sm-2 col-form-label text-left">Submission Date</label>
+                    <div class="col-sm-4 input-group">
+                        <input id="rentalDate" name="submissionDate" class="form-control input-group-sm" value="@DateTime.Now.ToString("dd-MM-yyyy")" readonly />
+
+                    </div>
+                </div>
+
+                <hr />
+                <div class="form-group row">
+                    <label for="hallName" class="col-sm-2 col-form-label">Conference Center Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" readonly value="@Model.hallInfo?.hallName" name="hallName" id="conferenceName" class="form-control" />
+
+                    </div>
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Booking Date<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input class="form-control" value="@Model.rentalDate?.ToString("dd-MM-yyyy")" name="bookingDate" readonly id="bookingDate" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Start Booking Time<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" readonly class="form-control" id="startTime" name="startTime" value="@Model.startTime" />
+                    </div>
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">End Booking Time<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" readonly class="form-control" id="endTime" name="endTime" value="@Model.endTime" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="customerName" class="col-sm-2 col-form-label">Applicant Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.applicantName != null)
+                        {
+                            <input type="text" class="form-control input-group-sm" id="applicantName" name="applicantName" value="@Model.hallRentalApplicationInfo?.applicantName" readonly>
+                        }
+                        else
+                        {
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control input-group-sm" name="applicantName" id="applicantName" value="@Model.hallRentalApplicationInfo?.applicantName">
+                        }
+
+
+                    </div>
+                    <label class="col-sm-2 col-form-label text-left">Organization Name<span style="float:right;" class="redStar">*</span></label>
+
+                    <div class="col-sm-4 ">
+                        @if (@Model.hallRentalApplicationInfo?.applicantOrganization != null)
+                        {
+                            <input type="text" class="form-control input-group-sm" id="applicantOrganization" name="applicantOrganization" value="@Model.hallRentalApplicationInfo?.applicantName" readonly>
+                        }
+                        else
+                        {
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" name="applicantOrganization" id="applicantOrganization" class="form-control input-group-sm" value="@Model.hallRentalApplicationInfo?.applicantOrganization" />
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Phone<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        @if (@Model.hallRentalApplicationInfo?.mobileNo != null)
+                        {
+                            <input type="text" class="form-control input-group-sm" id="mobileNo" name="mobileNo" value="@Model.hallRentalApplicationInfo?.mobileNo" readonly />
+                        }
+                        else
+                        {
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control input-group-sm" id="mobileNo" name="mobileNo" value="@Model.hallRentalApplicationInfo?.mobileNo" />
+                        }
+
+                    </div>
+
+                    <label for="applicantAddress" class="col-sm-2 col-form-label text-left">Address</label>
+                    <div class="col-sm-4 input-group">
+                        @if (@Model.hallRentalApplicationInfo?.applicantAddress != null)
+                        {
+                            <textarea name="applicantAddress" id="applicantAddress" class="form-control input-group-sm" readonly>@Model.hallRentalApplicationInfo?.applicantAddress</textarea>
+                        }
+                        else
+                        {
+                            <textarea name="applicantAddress" id="applicantAddress" class="form-control input-group-sm"></textarea>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-2 col-form-label">Meeting Title<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <textarea type="text" data-parsley-required="true" class="form-control" name="meetingTitle" id="subject"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-2 col-form-label">Cheif Gaust<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input class="form-control" data-parsley-required="true" id="presidedBy" name="presidedBy" />
+                    </div>
+                    <label for="perticipants" class="col-sm-2 col-form-label">Number of Pa rticipants</label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control" id="perticipants" name="noOfPerticipent" />
+                    </div>
+                </div>
+                <div class="form-group row" style="float:right;" id="btnMainGroup">
+                    @*<button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            &nbsp;&nbsp;*@
+                    <a onclick="SaveHallBookingInfo()" href="javascript:void(0)" value="Submit" class="btn btn-info btn-lg" style="float:right; margin-top:5px;margin-right:20px;">Submit</a>
+
+                </div>
+
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                <label class="form-check-label" for="exampleCheck1"><strong>Food Service</strong></label>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="boxbottom">
+        <div class="row py-3" style="margin-left: 12px; background-color: white;">
+            <div class="col-md-12">
+                <div class="btn-group btn-group-justified">
+                    <a href="javascript:void(0)" class="btn btn-primary" id="beverageBtn">Beverage</a>
+                    <a href="javascript:void(0)" class="btn btn-warning" id="snacksBtn">Snacks</a>
+                    <a href="javascript:void(0)" class="btn btn-secondary" id="launchBtn">Lunch</a>
+                    <a href="javascript:void(0)" class="btn btn-danger" style="display:none;" id="dinnerBtn">Dinner</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-right: 20px; background-color: white;">
+            <div class="col-md-12">
+                <div id="filtered-items" class="col-md-8" style="float: left;">
+                    <!-- Filtered Items (Departmental) -->
+                    <div id="department">
+                        <!-- First Row -->
+                        <div class="row mx-2 sec" id="beverage">
+                            <div class="col-md-12">
+                                <i class="fas fa-list-alt listbtn"></i>
+                                <i class="fas fa-th gridbtn"></i>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row" id="beverageList">
+                                    <table class="table table-bordered table-warning">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="row" id="beveragegrid">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mx-2 sec" id="snacks">
+                            <div class="col-md-12">
+                                <i class="fas fa-list-alt listbtn"></i>
+                                <i class="fas fa-th gridbtn"></i>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row" id="snacksList">
+                                    <table class="table table-bordered table-warning">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="row" id="snacksgrid">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mx-2 sec" id="launch">
+                            <div class="col-md-12">
+                                <i class="fas fa-list-alt listbtn"></i>
+                                <i class="fas fa-th gridbtn"></i>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row" id="launchList">
+                                    <table class="table table-bordered table-warning">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="row" id="launchgrid">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mx-2 sec" id="dinner">
+                            <div class="col-md-12">
+                                <i class="fas fa-list-alt listbtn"></i>
+                                <i class="fas fa-th gridbtn"></i>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row" id="dinnerList">
+                                    <table class="table table-bordered table-warning">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                                <div class="row" id="dinnergrid">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="float:right;">
+                    <div class="row addCart cart1" id="cartfordepartmental" style="width: 102%;">
+                        <div class="card w-100">
+                            <div class="card-header">
+                                <span class="cartheader"><i class="fas"></i></span> Cart
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="col-md-12 px-1">
+                                    <div class="row">
+                                        <div class="col-md-12" style="height:385px; overflow: auto; top: 0;">
+                                            <div class="labelcart">Beverage</div>
+                                            <ul class="list-group dept1 px-0" id="itemDetails" style="margin-bottom: 40px"></ul>
+                                            <div class="labelcart">Snacks</div>
+                                            <ul class="list-group dept2 px-0" id="itemDetails" style="margin-bottom: 40px"></ul>
+                                            <div class="labelcart">Lunch</div>
+                                            <ul class="list-group dept3 px-0" id="itemDetails" style="margin-bottom: 40px"></ul>
+                                            <div style="display:none;" class="labelcart">Dinner</div>
+                                            <ul class="list-group dept4 px-0" id="itemDetails" style="margin-bottom: 40px"></ul>
+                                        </div>
+                                    </div>
+                                    <div class="row cartFoot">
+                                        <div class="col-md-6">
+                                            Total Items:
+                                        </div>
+                                        <div class="col-md-6" id="itemCount" style="text-align: right; padding-right: 34px;">
+                                            0
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer p-0">
+                                <a href="#" class="btn btn-primary btn-block px-0 mx-0" onclick="Preview()">Preview</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="PreviewModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-xl">
+
+                <!-- Modal content-->
+                <div class="modal-content" id="reqModal">
+                    <div class="modal-header py-1">
+                        <h4 class="modal-title"><span class="cartheader"><i class="fas"></i></span> Requisition Preview: <strong><span id="displaySection"></span></strong>, <span id="sectionName1"></span></h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body" id="printSelect">
+                        <div id="description">
+                            <div id="topsec" style="background: beige; padding: 1px 10px;">
+                                <div class="row">
+                                    <div class="col-md-2">Submission No.:</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="subid" type="text" name="subid" /></div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2">Submission Date:</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="subdate" type="text" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">User Name :</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="username" type="text" /></div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2">User Designation :</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="designation" type="text" /></div>
+                                </div>
+                            </div>
+                            <div id="bottomsec" style="background: beige; padding: 1px 10px; margin-top: 5px">
+                                <div class="row">
+                                    <div class="col-md-2">Conference Center:</div>
+                                    <input type="hidden" name="hallInfoId" id="hallInfoId" value="@Model.hallInfoId" />
+                                    <div class="col-md-3"><input class="form-control" readonly id="centername" type="text" /></div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2">Booking Date:</div>
+                                    <div class="col-md-3"><input class="form-control" readonly type="text" value="@Model.rentalDate" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">Start Time:</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="starttime" type="text" /></div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2">End Time:</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="endtime" type="text" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">Meeting Title:</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="meetingtitle" type="text" /></div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-2">Presided By:</div>
+                                    <div class="col-md-3"><input class="form-control" readonly id="presidedby" type="text" /></div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+
+                        <table class="table table-hover mt-4" id="previewData">
+                            <thead>
+                                <tr>
+                                    <td hidden></td>
+                                    <td>SL</td>
+                                    <td>Items</td>
+                                    <td>Quantity</td>
+                                    <td>Food Type</td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <a onclick="SaveHallBookingInfo()" href="javascript:void(0)" class="btn btn-info btn-sm" style="background-color: #00D249; border: none;">Submit</a>
+                        <button type="button" class="btn btn-default btn-sm" style="background-color: #248BFD;" onclick="printDiv('printSelect')">Print</button>
+                        <button type="button" class="btn btn-default btn-sm" style="background-color: #E84B3F;" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        function SaveHallBookingInfo() {
+
+            var fromData = $('#frmConferenceBooking').serialize();
+            if ($('#presidedBy').val() == '' || $('#subject').val() == '' || $('#userName').val() == '') {
+                alert("Presided by, Invited By and Meeting Title are mandatory.");
+				return false;
+			}
+			else {
+				swal({
+                title: 'Are you sure?', text: 'Do you want to submit this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#007ACC', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Submit it!'
+					}).then(function () {
+						$.ajax({
+							url: '@Url.Action("SaveConferenceboooking", "RentInvoice")',
+							type: 'POST',
+							data: fromData
+						})
+							.done(function () {
+								swal('Success', 'Submited Successfully!', 'success');
+								$('#PreviewModal').modal('toggle');
+                                window.location.href = '/Rental/RentInvoice/CalenderView';
+							})
+							.fail(function () {
+								swal("Unable to Submit. Please Try Again");
+
+							});
+					});
+
+				}
+			}
+
+
+		$(document).ready(function () {
+            $('#boxbottom').hide();
+            $(".sec").hide();
+            $("#beverageBtn").click();
+            $('.designation').text()
+            loadBeverage();
+            loadSnacks();
+            loadLaunch();
+            loadDinner();
+
+			$("#exampleCheck2").change(function () {
+				//console.log($('#perticipants').val())
+				if ($('#perticipants').val() == '') {
+					swal('Number of participants is required to get the food service.')
+					$("#exampleCheck2").prop('checked', false);
+				}
+				else {
+					if (this.checked) {
+						swal({
+							title: 'Are you sure?', text: 'Do you need food service!', type: 'warning', showCancelButton: true, confirmButtonColor: '#007ACC', cancelButtonColor: '#d33', confirmButtonText: 'Yes!'
+						}).then(function () {
+							$('#isFoodFacility').val(1);
+							$('#btnMainGroup').hide();
+							$('#boxbottom').show();
+						}, function (dismiss) {
+							if (dismiss == 'cancel') {
+								$('#isFoodFacility').val(0);
+								$("#exampleCheck2").prop('checked', false);
+								$('#btnMainGroup').show();
+							}
+						});
+
+					}
+					else {
+						$('#boxbottom').hide();
+					}
+				}
+            });
+
+            $("#beverageBtn").click(function () {
+                $(".sec").hide();
+                $("#beverage").show();
+				$("#beverageList").show();
+				$("#beveragegrid").hide();
+            })
+            $("#snacksBtn").click(function () {
+                $(".sec").hide();
+				$("#snacks").show();
+				$("#snacksList").show();
+				$("#snacksgrid").hide();
+            })
+            $("#launchBtn").click(function () {
+                $(".sec").hide();
+				$("#launch").show();
+				$("#launchList").show();
+				$("#launchgrid").hide();
+            })
+            $("#dinnerBtn").click(function () {
+                $(".sec").hide();
+				$("#dinner").show();
+				$("#dinnerList").show();
+				$("#dinnergrid").hide();
+			})
+			$("#beverage .listbtn").click(function () {
+				$("#beverageList").show();
+				$("#beveragegrid").hide();
+			})
+			$("#beverage .gridbtn").click(function () {
+				$("#beverageList").hide();
+				$("#beveragegrid").show();
+			})
+			$("#snacks .listbtn").click(function () {
+				$("#snacksList").show();
+				$("#snacksgrid").hide();
+			})
+			$("#snacks .gridbtn").click(function () {
+				$("#snacksList").hide();
+				$("#snacksgrid").show();
+			})
+			$("#launch .listbtn").click(function () {
+				$("#launchList").show();
+				$("#launchgrid").hide();
+			})
+			$("#launch .gridbtn").click(function () {
+				$("#launchList").hide();
+				$("#launchgrid").show();
+			})
+			$("#dinner .listbtn").click(function () {
+				$("#dinnerList").show();
+				$("#dinnergrid").hide();
+			})
+			$("#dinner .gridbtn").click(function () {
+				$("#dinnerList").hide();
+				$("#dinnergrid").show();
+			})
+
+        });
+
+        function Refresh() {
+            location.reload();
+        }
+
+
+
+
+
+		function loadBeverage() {
+			Common.Ajax('GET', '/SCMRequisition/RequisitionDashbord/GetAdminItemsByCategoryId/' + 1, [], 'json', ajaxAdminItems1, false);
+        }
+        function ajaxAdminItems1(response) {
+            var option = "";
+            var option1 = "";
+            $.each(response, function (i, item) {
+                option += `<div class="col-xl-3 col-xl-2 col-md-3 col-sm-4 px-1" title="Title">
+                                <div class="card itemCard text-center mb-1">
+                                    <p class="desc" onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})">${item.description}</p>
+                                    <div class="card-footer text-center px-0">
+                                        <span style="font-size: 20px;">${item.itemName}</span>
+                                    </div>
+                                </div>
+                            </div>`
+				option1 += `<tr>
+								<td>${i+1}</td>
+								<td>${item.itemName}</td>
+								<td>${item.description}</td>
+								<td><a onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})" class="btn btn-info"><i class="fa fa-plus"></i></a></td>
+							</tr>`
+			});
+			$('#beveragegrid').empty();
+			$('#beveragegrid').append(option);
+
+			$('#beverageList tbody').empty();
+			$('#beverageList tbody').append(option1);
+        }
+
+        function loadSnacks() {
+            Common.Ajax('GET', '/SCMRequisition/RequisitionDashbord/GetAdminItemsByCategoryId/' + 2, [], 'json', ajaxAdminItems2, false);
+        }
+        function ajaxAdminItems2(response) {
+			var option = "";
+			var option1 = "";
+			$.each(response, function (i, item) {
+				option += `<div class="col-xl-3 col-xl-2 col-md-3 col-sm-4 px-1" title="Title">
+                                <div class="card itemCard text-center mb-1">
+                                    <p class="desc" onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})">${item.description}</p>
+                                    <div class="card-footer text-center px-0">
+                                        <span style="font-size: 20px;">${item.itemName}</span>
+                                    </div>
+                                </div>
+                            </div>`
+				option1 += `<tr>
+								<td>${i + 1}</td>
+								<td>${item.itemName}</td>
+								<td>${item.description}</td>
+								<td><a onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})" class="btn btn-info"><i class="fa fa-plus"></i></a></td>
+							</tr>`
+			});
+			$('#snacksgrid').empty();
+			$('#snacksgrid').append(option);
+
+			$('#snacksList tbody').empty();
+			$('#snacksList tbody').append(option1);
+        }
+
+        function loadLaunch() {
+            Common.Ajax('GET', '/SCMRequisition/RequisitionDashbord/GetAdminItemsByCategoryId/' + 3, [], 'json', ajaxAdminItems3, false);
+        }
+        function ajaxAdminItems3(response) {
+			var option = "";
+			var option1 = "";
+			$.each(response, function (i, item) {
+				option += `<div class="col-xl-3 col-xl-2 col-md-3 col-sm-4 px-1" title="Title">
+                                <div class="card itemCard text-center mb-1">
+                                    <p class="desc" onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})">${item.description}</p>
+                                    <div class="card-footer text-center px-0">
+                                        <span style="font-size: 20px;">${item.itemName}</span>
+                                    </div>
+                                </div>
+                            </div>`
+				option1 += `<tr>
+								<td>${i + 1}</td>
+								<td>${item.itemName}</td>
+								<td>${item.description}</td>
+								<td><a onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})" class="btn btn-info"><i class="fa fa-plus"></i></a></td>
+							</tr>`
+			});
+			$('#launchgrid').empty();
+			$('#launchgrid').append(option);
+
+			$('#launchList tbody').empty();
+			$('#launchList tbody').append(option1);
+        }
+
+        function loadDinner() {
+            Common.Ajax('GET', '/SCMRequisition/RequisitionDashbord/GetAdminItemsByCategoryId/' + 4, [], 'json', ajaxAdminItems5, false);
+        }
+        function ajaxAdminItems5(response) {
+			var option = "";
+			var option1 = "";
+			$.each(response, function (i, item) {
+				option += `<div class="col-xl-3 col-xl-2 col-md-3 col-sm-4 px-1" title="Title">
+                                <div class="card itemCard text-center mb-1">
+                                    <p class="desc" onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})">${item.description}</p>
+                                    <div class="card-footer text-center px-0">
+                                        <span style="font-size: 20px;">${item.itemName}</span>
+                                    </div>
+                                </div>
+                            </div>`
+				option1 += `<tr>
+								<td>${i + 1}</td>
+								<td>${item.itemName}</td>
+								<td>${item.description}</td>
+								<td><a onclick="clickNow(event,5,'${item.itemName}','${item.imageUrl}', '${item.categoryId}', '${item.description}',${item.Id})" class="btn btn-info"><i class="fa fa-plus"></i></a></td>
+							</tr>`
+			});
+			$('#dinnergrid').empty();
+			$('#dinnergrid').append(option);
+
+			$('#dinnerList tbody').empty();
+			$('#dinnerList tbody').append(option1);
+        }
+
+        //add product
+        function clickNow(event, itemSpecId, name, imgUrl, categoryId, description,id) {
+            var addbutton = event.target
+            var items = addbutton.parentElement.parentElement
+            //var cardImage = items.getElementsByClassName('card-img-top')[0].src
+            //var cardImage = items.getElementsByClassName('desc')[0].innerText
+			var cardImage = imgUrl;
+            //var cardBody = items.getElementsByClassName('card-footer')[0].innerText
+			var cardBody = name;
+            addItems(cardImage, cardBody, itemSpecId, cardImage, categoryId, description,id);
+
+            //Switch drawer on adding cart
+            var existBtnClass = $('.arlo_tm_resize').attr('class');
+            var existDrawerClass = $('.arlo_tm_leftpart_wrap').attr('class');
+
+            if (existBtnClass == 'arlo_tm_resize opened' && existDrawerClass == 'arlo_tm_leftpart_wrap opened') {
+                $(".arlo_tm_resize").removeClass('opened');
+                $(".arlo_tm_leftpart_wrap").removeClass('opened');
+            }
+        }
+
+
+        function addItems(cardImage, cardBody, itemSpecId, imgUrl, categoryId, description,id) {
+            var deptId = $('#deptId').val();
+            var typename = "";
+
+            $('.addCart').hide();
+            $('#selectorId').text(deptId);
+
+            var addRow = document.createElement('div')
+            addRow.classList.add('list-group')
+            addRow.innerText = cardBody
+            if (deptId == 1) {
+                $('#cartfordepartmental').show();
+                var cartItem = document.getElementsByClassName('dept1')[0]
+
+                var a = $("#cartfordepartmental #itemDetails li").length;
+                $("#cartfordepartmental #itemCount").text(a + 1);
+                $("#cartfordepartmental #itemCount").css('font-weight', 'bold');
+            }
+            else if (deptId == 2) {
+                $('#cartforcomputer').show();
+                var cartItem = document.getElementsByClassName('dept2')[0]
+
+                var a = $("#cartforcomputer #itemDetails li").length;
+                $("#cartforcomputer #itemCount").text(a + 1);
+                $("#cartforcomputer #itemCount").css('font-weight', 'bold');
+            }
+            else if (deptId == 3) {
+                $('#cartforstationary').show();
+                var cartItem = document.getElementsByClassName('dept3')[0]
+
+                var a = $("#cartforstationary #itemDetails li").length;
+                $("#cartforstationary #itemCount").text(a + 1);
+                $("#cartforstationary #itemCount").css('font-weight', 'bold');
+            }
+            else if (deptId == 4) {
+                $('#cartforclothing').show();
+                var cartItem = document.getElementsByClassName('dept4')[0]
+
+                var a = $("#cartforclothing #itemDetails li").length;
+                $("#cartforclothing #itemCount").text(a + 1);
+                $("#cartforclothing #itemCount").css('font-weight', 'bold');
+            }
+            else {
+                $('#cartfordepartmental').show();
+                var cartItem = document.getElementsByClassName('dept1')[0]
+                var cartItem1 = document.getElementsByClassName('dept2')[0]
+                var cartItem2 = document.getElementsByClassName('dept3')[0]
+                var cartItem3 = document.getElementsByClassName('dept4')[0]
+
+                var a = $("#cartfordepartmental #itemDetails li").length;
+                $("#cartfordepartmental #itemCount").text(a + 1);
+                $("#cartfordepartmental #itemCount").css('font-weight', 'bold');
+            }
+            if (categoryId == 1) {
+                typename = "Beverage"
+            }
+            else if (categoryId == 2) {
+                typename = "Snacks"
+            }
+            else if (categoryId == 3) {
+                typename = "Lunch"
+            }
+            else {
+                typename = "Dinner"
+			}
+
+			var count = parseInt($('#perticipants').val());
+
+            var cartrowitem = `
+                <li class="list-group-item list-item-cart clsLI d-flex">
+                    <div class="div" style="float: left;">
+                         <span><i class="fa fa-trash del text-danger mr-1 ml-0 pl-0" id="del"></i></span>
+                        <input type="hidden" class="totalItem" value="${id}" name="itemSpecificationId" />
+						<input type="text" hidden class="deptId" value="${deptId}" name="deptId" />
+                        <input type="text" hidden class="typename" value="${typename}" name="deptId" />
+                    </div>
+                    <div style="position: absolute; left: 62px;"><span class="validItem" name="validItems" style="font-size:16px">${cardBody}</span></div>
+                    <div style="float: right; margin-right: -16px; display: flex; justify-content: center; align-items: center;">
+                        <i class="fa fa-minus pr-0 altera decrescimo" aria-hidden="true" id="subs${itemSpecId}" onclick="subst(${itemSpecId})"></i>
+                        <input type="text" min="1" id="reqQty${itemSpecId}" class="clsreqQty numeric" name="reqQty" style="width:40px;" value="${count}">
+                        <i class="fa fa-plus pl-0 altera  acrescimo" aria-hidden="true" id="adds${itemSpecId}" onclick="add(${itemSpecId})"></i>
+                    </div>
+                </li>`
+
+            //alert($('.div span').hasClass('validItem'));
+
+            if ($('.div span').hasClass("validItem") == false) {
+                if (categoryId == 1) {
+                    addRow.innerHTML = cartrowitem
+                    cartItem.append(addRow);
+                }
+                else if (categoryId == 2) {
+                    addRow.innerHTML = cartrowitem
+                    cartItem1.append(addRow);
+                }
+                else if (categoryId == 3) {
+                    addRow.innerHTML = cartrowitem
+                    cartItem2.append(addRow);
+                }
+                else {
+                    addRow.innerHTML = cartrowitem
+                    cartItem3.append(addRow);
+                }
+
+            } else {
+                $('.validItem').each(function () {
+                    var name = $(this).text();
+                    if (name === cardBody) {
+                        alert("Product Is already in Cart");
+                        return false;
+                    }
+                });
+                addRow.innerHTML = cartrowitem
+                cartItem.append(addRow);
+            }
+            fnNumericClass();
+        }
+
+        function fnNumericClass() {
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+        }
+        //end
+
+        //delete
+        $(document).on('click', ' #del', function () {
+            $(this).closest('li').toggleClass('strike').fadeOut('slow', function () {
+                $(this).remove(); var a = $("#itemDetails li").length;
+                $("#addtocart span").text(a);
+                $("#addtocart span").css('background-color', 'red');
+                $("#addtocart span").css('border-radius', '50%');
+                $("#addtocart span").css('padding', '2px 8px');
+
+                var a = $("#itemDetails li").length;
+                $("#itemCount").text(a);
+                $("#itemCount").css('font-weight', 'bold');
+            });
+
+        });
+        //end
+        //increment
+        function add(specId) {
+            var a = $("#reqQty" + specId).val();
+            a++;
+            if (a => 1) {
+                $("#subs" + specId).removeAttr("disabled");
+            }
+            $("#reqQty" + specId).val(a);
+        };
+
+        function subst(specId) {
+            var b = $("#reqQty" + specId).val();
+            if (b.length > 0 && b >= 1) {
+                b--;
+                $("#reqQty" + specId).val(b);
+            }
+            else {
+                $("#subs" + specId).attr("disabled", "disabled");
+            }
+        };
+
+        //end
+
+
+        function Preview() {
+            var date = $("#reqDate").val();
+            var subject = $("#subject").val();
+            var type = $("#reqType").val();
+            //$('#displaySection').text($('#sectionName').text());
+            $('#displaySection').text($('#select2-personSection-container').text());
+            $('#sectionName1').text($('#sectionName').text());
+
+            //$("#description").text('');
+            //$("#description").append('<div class="row"><div class="col-md-2"> Requisition no.: </div><div class="col-md-3"> <input class="form-control" readonly id="reqNo" type="text" name="req" /></div><div class="col-md-1"></div><div class="col-md-2"> Date: </div><div class="col-md-3"> <input class="form-control" id="reqDate" readonly type="text" name="date" /></div></div><div class="row"><div class="col-md-2"> Remarks : </div><div class="col-md-3"> <input class="form-control" id="subject" type="text" name="subject" /></div><div class="col-md-1"></div><div class="col-md-2"> Status : </div><div class="col-md-3"> <select class="form-control" id="reqType" name="status"><option value="Final">Final</option><option value="Draft">Draft</option> </select></div></div>');
+            $('#subid').val($("#salesInvoiceNo").val());
+            $('#subdate').val($("#rentalDate").val());
+            //$('#username').val($("#userName").val());
+            $('#username').val($(".loggedUserName").text());
+			$('#userDesignation').val($("#designationnav").text());
+            $('#centername').val($("#conferenceName").val());
+            $('#bookingdate').val($("#bookingDate").val());
+            $('#starttime').val($("#startTime").val());
+            $('#endtime').val($("#endTime").val());
+            $('#meetingtitle').val($("#subject").val());
+            $('#presidedby').val($("#presidedBy").val());
+
+            var itemDetails = [];
+
+            if ($('#selectorId').text() == 1) {
+                $("#cartfordepartmental #itemDetails").find('li').each(function () {
+                    itemDetails.push({
+                        itemSpecificationId: $(this).find(".totalItem").val(),
+                        itemSpecificationName: $(this).find(".validItem").html(),
+                        itemSpecificationImage: $(this).find("img").attr('src'),
+                        reqQty: $(this).find(".clsreqQty").val(),
+                        typename: $(this).find(".typename").val()
+                    });
+                });
+            }
+            else if ($('#selectorId').text() == 2) {
+                $("#cartforcomputer #itemDetails").find('li').each(function () {
+                    itemDetails.push({
+                        itemSpecificationId: $(this).find(".totalItem").val(),
+                        itemSpecificationName: $(this).find(".validItem").html(),
+                        itemSpecificationImage: $(this).find("img").attr('src'),
+                        reqQty: $(this).find(".clsreqQty").val(),
+                        typename: $(this).find(".typename").val()
+                    });
+                });
+            }
+            else if ($('#selectorId').text() == 3) {
+                $("#cartforstationary #itemDetails").find('li').each(function () {
+                    itemDetails.push({
+                        itemSpecificationId: $(this).find(".totalItem").val(),
+                        itemSpecificationName: $(this).find(".validItem").html(),
+                        itemSpecificationImage: $(this).find("img").attr('src'),
+                        reqQty: $(this).find(".clsreqQty").val(),
+                        typename: $(this).find(".typename").val()
+                    });
+                });
+            }
+            else if ($('#selectorId').text() == 4) {
+                $("#cartforclothing #itemDetails").find('li').each(function () {
+                    itemDetails.push({
+                        itemSpecificationId: $(this).find(".totalItem").val(),
+                        itemSpecificationName: $(this).find(".validItem").html(),
+                        itemSpecificationImage: $(this).find("img").attr('src'),
+                        reqQty: $(this).find(".clsreqQty").val(),
+                        typename: $(this).find(".typename").val()
+                    });
+                });
+            }
+            else {
+                $("#cartfordepartmental #itemDetails").find('li').each(function () {
+                    itemDetails.push({
+                        itemSpecificationId: $(this).find(".totalItem").val(),
+                        itemSpecificationName: $(this).find(".validItem").html(),
+                        itemSpecificationImage: $(this).find("img").attr('src'),
+                        reqQty: $(this).find(".clsreqQty").val(),
+                        typename: $(this).find(".typename").val()
+                    });
+                });
+            }
+
+
+
+            $("#previewData tbody").text("");
+
+            var qty = parseInt('0');
+            for (var i = 0; i < itemDetails.length; i++) {
+                qty += parseInt(itemDetails[i].reqQty);
+                var sl = parseInt(i) + parseInt('1');
+                $("#previewData tbody").append('<tr><input type="hidden" name="itemSpecId" value="' + itemDetails[i].itemSpecificationId +'"><td>' + sl + '</td><td name="Items">' + itemDetails[i].itemSpecificationName + '</td><td><input style="width: 80px;" type="number" min="1" onchange="qtyChange(' + itemDetails[i].itemSpecificationId + ',event)" class="form-control" name="qty"" value="' + itemDetails[i].reqQty + '" /></td><td>' + itemDetails[i].typename + '</td></tr>');
+            }
+            //$("#previewData tbody").append('<tr><td></td><td></td><td></td><td><strong>Total: </strong>' + qty +'</td><td></td><td></td></tr>');
+            $('#PreviewModal').modal('show');
+        }
+
+
+    </script>
+}

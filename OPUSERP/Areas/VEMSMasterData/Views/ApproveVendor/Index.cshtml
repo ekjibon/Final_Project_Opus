@@ -1,0 +1,159 @@
+﻿@model ApproveViewModel
+@{
+    ViewData["Title"] = "Vendor List";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">Pending List For Approve</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<a class="btn btn-sm btn-info" style="float:right;" href="/VEMSMasterData/RequiredDoc/Create/">Add New</a>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="pendingTable">
+                    <thead>
+                        <tr>
+                            <th>SL</th>
+                            <th>Company Name</th>
+                            <th>Trade License</th>
+                            <th>Contact Person</th>
+                            <th>Contact Number</th>
+                            <th>Company Email</th>
+                            <th>Product/Service</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sl = 1;
+                            @foreach (var data in Model.pendingRegistrationForms)
+                            {
+                                <tr>
+                                    <td style="width:5%;">@sl</td>
+                                    <td style="width:90%;">@data.companyName</td>
+                                    <td style="width:90%;">@data.tradeLicenseNumber</td>
+                                    <td style="width:90%;">@data.contactPersonName</td>
+                                    <td style="width:90%;">@data.contactNumber</td>
+                                    <td style="width:90%;">@data.companyEmail</td>
+                                    <td style="width:90%;">@data.productServiceName</td>
+                                    <td style="width:5%;">
+                                        <a class="btn btn-success" href="/VEMSMasterData/ApproveVendor/Approve/@data.Id"><i class="fa fa-cogs"></i></a>
+                                    </td>
+                                </tr>
+                                sl++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">Approved List of Vendor</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<a class="btn btn-sm btn-info" style="float:right;" href="/VEMSMasterData/RequiredDoc/Create/">Add New</a>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="approvedTable">
+                    <thead>
+                        <tr>
+                            <th>SL</th>
+                            <th>Company Name</th>
+                            <th>Trade License</th>
+                            <th>Contact Person</th>
+                            <th>Contact Number</th>
+                            <th>Company Email</th>
+                            <th>Product/Service</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int slApp = 1;
+                            @foreach (var data in Model.approvedRegistrationForms)
+                            {
+                                <tr>
+                                    <td style="width:5%;">@slApp</td>
+                                    <td style="width:90%;">@data.companyName</td>
+                                    <td style="width:90%;">@data.tradeLicenseNumber</td>
+                                    <td style="width:90%;">@data.contactPersonName</td>
+                                    <td style="width:90%;">@data.contactNumber</td>
+                                    <td style="width:90%;">@data.companyEmail</td>
+                                    <td style="width:90%;">@data.productServiceName</td>
+                                    @*<td style="width:5%;">
+                                        <a class="btn btn-success" href="/VEMSMasterData/RequiredDoc/Create/@data.Id"><i class="fa fa-cogs"></i></a>
+                                    </td>*@
+                                </tr>
+                                slApp++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">Rejected List of Vendor</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<a class="btn btn-sm btn-info" style="float:right;" href="/VEMSMasterData/RequiredDoc/Create/">Add New</a>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="rejectedTable">
+                    <thead>
+                        <tr>
+                            <th>SL</th>
+                            <th>Company Name</th>
+                            <th>Trade License</th>
+                            <th>Contact Person</th>
+                            <th>Contact Number</th>
+                            <th>Company Email</th>
+                            <th>Product/Service</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int slRej = 1;
+                            @foreach (var data in Model.rejectedRegistrationForms)
+                            {
+                                <tr>
+                                    <td style="width:5%;">@slRej</td>
+                                    <td style="width:90%;">@data.companyName</td>
+                                    <td style="width:90%;">@data.tradeLicenseNumber</td>
+                                    <td style="width:90%;">@data.contactPersonName</td>
+                                    <td style="width:90%;">@data.contactNumber</td>
+                                    <td style="width:90%;">@data.companyEmail</td>
+                                    <td style="width:90%;">@data.productServiceName</td>
+                                    @*<td style="width:5%;">
+                                        <a class="btn btn-success" href="/VEMSMasterData/RequiredDoc/Create/@data.Id"><i class="fa fa-cogs"></i></a>
+                                    </td>*@
+                                </tr>
+                                slRej++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#pendingTable').DataTable();
+            $('#approvedTable').DataTable();
+            $('#rejectedTable').DataTable();
+        });
+    </script>
+}

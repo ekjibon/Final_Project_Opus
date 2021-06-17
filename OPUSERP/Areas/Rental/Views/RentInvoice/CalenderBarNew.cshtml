@@ -1,0 +1,1037 @@
+﻿@model HallRentalViewModel
+@{
+    ViewData["Title"] = "CalenderBarNew";
+
+    // 1 Auditorium
+    var Shapla = Model.hallRentalApplicationInfos.Where(x => x.hallInfoId == 2).ToList();
+    // 2 Johur Hossain Chowdhori Hall
+    var Krisnochura = Model.hallRentalApplicationInfos.Where(x => x.hallInfoId == 10).ToList();
+    // 3 Tofazzal Hossain Manik Miya Hall
+    var Kopotakkho = Model.hallRentalApplicationInfos.Where(x => x.hallInfoId == 11).ToList();
+    // 4 Mowlana Mohammad Akram Kha Hall
+    var Dhanshiri = Model.hallRentalApplicationInfos.Where(x => x.hallInfoId == 12).ToList();
+    // 5 Abdus Salam Hall
+    var Shurma = Model.hallRentalApplicationInfos.Where(x => x.hallInfoId == 13).ToList();
+}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+<style>
+    .col-md-12 {
+        padding-right: 20px !important;
+    }
+
+    .slot-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 50px;
+    }
+
+    .slot {
+        width: 33.34%;
+        height: 65px;
+        border-right: 1px solid gray;
+        border-top: 1px solid gray;
+        border-bottom: 1px solid gray;
+        position: relative;
+    }
+
+    .s1 {
+        border-left: 1px solid gray;
+        border-radius: 20px 0 0 20px !important;
+    }
+
+    .s3 {
+        border-left: 1px solid gray;
+        border-radius: 0 20px 20px 0 !important;
+    }
+
+
+
+    .fa-users {
+        color: darkgreen;
+    }
+
+    .fa-desktop {
+        color: darkmagenta;
+    }
+
+    .card-header {
+        background-color: #E7EAED;
+    }
+
+    .card-body {
+        background-color: linen;
+    }
+
+    .card-footer {
+        padding-bottom: 4px;
+    }
+
+    .modal-body {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .modal-footer {
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+    .card-header h2 {
+        font-size: 1.5rem;
+        font-weight: 400;
+    }
+
+    .card-header .fa-desktop {
+        margin-left: 20px;
+    }
+
+    h1.main-heading {
+        font-size: 1.8rem !important;
+        font-weight: 800;
+        font-family: sans-serif;
+    }
+
+    .slot span {
+        position: absolute;
+        font-size: 20px;
+        top: -31px;
+        left: -18px;
+    }
+
+    .slot input[type="checkbox"] {
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+    }
+
+
+    .not-booked {
+        background-color: greenyellow;
+    }
+
+    .pending {
+        background-color: green;
+    }
+
+    .booked {
+        background-color: red;
+        color: red;
+    }
+
+    #header {
+        padding: 5px;
+        border: 1px solid gray;
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .outer-slot-section {
+        height: 693px;
+        overflow: scroll;
+    }
+
+    .booked span:first-child {
+        color: black;
+    }
+
+    .s1:before {
+        content: '10.00am To 2.00pm';
+        position: absolute;
+        top: -31px;
+        right: 10px;
+        font-size: 20px;
+        color: black;
+    }
+
+    .s2:before {
+        content: '03.00pm To 7.00pm';
+        position: absolute;
+        top: -31px;
+        right: 10px;
+        font-size: 20px;
+        color: black;
+    }
+
+    .s3:before {
+        content: '10.00am To 7.00pm';
+        position: absolute;
+        top: -31px;
+        right: 10px;
+        font-size: 20px;
+        color: black;
+    }
+
+
+    .slot span {
+        display: none;
+    }
+</style>
+<script>
+    var shapla = 0;
+    var krisnochura = 0;
+    var kopotakkho = 0;
+    var dhanshiri = 0;
+    var shurma = 0;
+
+</script>
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-md-12" id="header">
+            <div class="row">
+                <div class="col-md-4">
+                    <span>Booking Date: </span><span id="bookingDateValue">@ViewBag.date</span>
+                </div>
+                <div class="col-md-4">
+                    <span id="conferenceName"></span>
+                </div>
+                <div class="col-md-4" style="text-align: right !important;">
+                    <span>Time: </span><span class="time-difference" id="shaplatiming">0.00-0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row outer-slot-section">
+
+        @* Auditorium *@
+
+        <div class="col-md-12">
+            <div class="card row">
+                <div class="card-header">
+                    <div class="col-md-12">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h2>1. Auditorium  [<i class="fa fa-users"></i>  -100 &nbsp;&nbsp;<i class="fa fa-desktop"></i>  -5]</h2>
+                            @*<h2 class="time-difference" id="shaplatiming"></h2>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body lead">
+
+                    @if (Shapla.Count() > 0)
+                    {
+                    var starttimeshapla = "";
+                    var endtimeshapla = "";
+                    var hallInfoId = "";
+
+                    @foreach (var item in Shapla)
+                    {
+                    starttimeshapla += item.rentalTime.Split('-')[0] + ",";
+                    endtimeshapla += item.rentalTime.Split('-')[1] + ",";
+                    hallInfoId += item.Id + ",";
+                    }
+                    @if (starttimeshapla.Length > 1)
+                    {
+                    starttimeshapla = starttimeshapla.Remove(starttimeshapla.Length - 1);
+                    endtimeshapla = endtimeshapla.Remove(endtimeshapla.Length - 1);
+                    hallInfoId = hallInfoId.Remove(hallInfoId.Length - 1);
+                    }
+                    <script>
+                        shapla = 1;
+                    </script>
+                    <div class="col-md-12 slot-section shapla">
+                        <input type="hidden" id="startshapla" value="@starttimeshapla" />
+                        <input type="hidden" id="endshapla" value="@endtimeshapla" />
+                        <input type="hidden" id="hallIdShapla" class="hallidvalue" value="2" />
+                        @*<input type="text" class="hallId" value="@hallInfoId" />*@
+                        <input type="hidden" class="confName" value="Auditorium" />
+
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+                    else
+                    {
+                    <div class="col-md-12 slot-section shapla">
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+                    <div class="col-md-12 mt-1">
+                        <a href="javascript:void(0)" type="button" class="btn btn-success fa-pull-right" onclick="next(2,'@ViewBag.date')" name="name">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*Johur Hossain Chowdhori Hall*@
+        <div class="col-md-12 mt-2">
+            <div class="card row">
+                <div class="card-header">
+                    <div class="col-md-12">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h2>2.Johur Hossain Chowdhori Hall [ <i class="fa fa-users"></i>  -150 &nbsp;&nbsp;<i class="fa fa-desktop"></i>  -4]</h2>
+                            @*<h2 class="time-difference" id="krisnochuratiming"></h2>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body lead">
+                    @if (Krisnochura.Count() > 0)
+                    {
+                    var starttimekrisnochura = "";
+                    var endtimekrisnochura = "";
+                    var hallInfoId = "";
+
+                    @foreach (var item in Krisnochura)
+                    {
+                    starttimekrisnochura += item.rentalTime.Split('-')[0] + ",";
+                    endtimekrisnochura += item.rentalTime.Split('-')[1] + ",";
+                    hallInfoId += item.Id + ",";
+                    }
+                    @if (starttimekrisnochura.Length > 1)
+                    {
+                    starttimekrisnochura = starttimekrisnochura.Remove(starttimekrisnochura.Length - 1);
+                    endtimekrisnochura = endtimekrisnochura.Remove(endtimekrisnochura.Length - 1);
+                    hallInfoId = hallInfoId.Remove(hallInfoId.Length - 1);
+                    }
+                    <script>
+                        krisnochura = 1;
+                    </script>
+                    <div class="col-md-12 slot-section krisnochura">
+                        <input type="hidden" id="startkrisnochura" value="@starttimekrisnochura" />
+                        <input type="hidden" id="endkrisnochura" value="@endtimekrisnochura" />
+                        <input type="hidden" class="confName" value="Krisnochura (3rd floor)" />
+                        <input type="hidden" id="hallIdKrisnochura" class="hallidvalue" value="@hallInfoId" />
+
+
+
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+
+                    </div>
+                    }
+                    else
+                    {
+                    <div class="col-md-12 slot-section krisnochura">
+
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+
+                    </div>
+                    }
+                    <div class="col-md-12 mt-1">
+                        <a href="javascript:void(0)" type="button" class="btn btn-success fa-pull-right" onclick="next(10,'@ViewBag.date')" name="name">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*Tofazzal Hossain Manik Miya Hall*@
+        <div class="col-md-12">
+            <div class="card row">
+                <div class="card-header">
+                    <div class="col-md-12">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h2>1. Tofazzal Hossain Manik Miya Hall [ <i class="fa fa-users"></i>  -100 &nbsp;&nbsp;<i class="fa fa-desktop"></i>  -4]</h2>
+                            @*<h2 class="time-difference" id="kopotakkhotiming"></h2>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Kopotakkho.Count() > 0)
+                    {
+                    var starttimekopotakkho = "";
+                    var endtimekopotakkho = "";
+                    var hallInfoId = "";
+
+                    @foreach (var item in Kopotakkho)
+                    {
+                    starttimekopotakkho += item.rentalTime.Split('-')[0] + ",";
+                    endtimekopotakkho += item.rentalTime.Split('-')[1] + ",";
+                    hallInfoId += item.Id + ",";
+                    }
+                    @if (starttimekopotakkho.Length > 1)
+                    {
+                    starttimekopotakkho = starttimekopotakkho.Remove(starttimekopotakkho.Length - 1);
+                    endtimekopotakkho = endtimekopotakkho.Remove(endtimekopotakkho.Length - 1);
+                    hallInfoId = hallInfoId.Remove(hallInfoId.Length - 1);
+                    }
+
+                    <script>
+                        kopotakkho = 1;
+                    </script>
+                    <div class="col-md-12 slot-section kopotakkho">
+                        <input type="text" id="startkopotakkho" hidden value="@starttimekopotakkho" />
+                        <input type="text" id="endkopotakkho" hidden value="@endtimekopotakkho" />
+                        <input type="text" class="confName" hidden value="Kopotakkho (1st floor)" />
+                        <input type="text" id="hallIdKopotakkho" hidden value="@hallInfoId" />
+
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+                    else
+                    {
+                    <div class="col-md-12 slot-section kopotakkho">
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+                    <div class="col-md-12 mt-1">
+                        <a href="javascript:void(0)" type="button" class="btn btn-success fa-pull-right" onclick="next(11,'@ViewBag.date')" name="name">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Mowlana Mohammad Akram Kha Hall *@
+        <div class="col-md-12 mt-2">
+            <div class="card row">
+                <div class="card-header">
+                    <div class="col-md-12">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h2>2. Mowlana Mohammad Akram Kha Hall [ <i class="fa fa-users"></i>  -17 <i class="fa fa-desktop"></i>  -1]</h2>
+                            @*<h2 class="time-difference" id="dhanshiritiming"></h2>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Dhanshiri.Count() > 0)
+                    {
+                    var starttimedhanshiri = "";
+                    var endtimedhanshiri = "";
+                    var hallInfoId = "";
+                    @foreach (var item in Dhanshiri)
+                    {
+                    starttimedhanshiri += item.rentalTime.Split('-')[0] + ",";
+                    endtimedhanshiri += item.rentalTime.Split('-')[1] + ",";
+                    hallInfoId += item.Id + ",";
+                    }
+                    @if (starttimedhanshiri.Length > 1)
+                    {
+                    starttimedhanshiri = starttimedhanshiri.Remove(starttimedhanshiri.Length - 1);
+                    endtimedhanshiri = endtimedhanshiri.Remove(endtimedhanshiri.Length - 1);
+                    hallInfoId = hallInfoId.Remove(hallInfoId.Length - 1);
+                    }
+                    <script>
+                        dhanshiri = 1;
+                    </script>
+                    <div class="col-md-12 slot-section dhanshiri">
+                        <input type="text" id="startdhanshiri" hidden value="@starttimedhanshiri" />
+                        <input type="text" id="enddhanshiri" hidden value="@endtimedhanshiri" />
+                        <input type="text" class="confName" hidden value="Dhanshiri(2nd floor)" />
+                        <input type="text" id="hallIdDhanshiri" hidden value="@hallInfoId" />
+
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+                    else
+                    {
+                    <div class="col-md-12 slot-section dhanshiri">
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+                    <div class="col-md-12 mt-1">
+                        <a href="javascript:void(0)" type="button" class="btn btn-success fa-pull-right" onclick="next(12,'@ViewBag.date')" name="name">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Abdus Salam Hall *@
+        <div class="col-md-12 mt-2">
+            <div class="card row">
+                <div class="card-header">
+                    <div class="col-md-12">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h2>3. Abdus Salam Hall [ <i class="fa fa-users"></i>  -21 <i class="fa fa-desktop"></i>  -1]</h2>
+                            @*<h2 class="time-difference" id="shurmatiming"></h2>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Shurma.Count() > 0)
+                    {
+                    var starttimeshurma = "";
+                    var endtimeshurma = "";
+                    var hallInfoId = "";
+                    @foreach (var item in Shurma)
+                    {
+                    starttimeshurma += item.rentalTime.Split('-')[0] + ",";
+                    endtimeshurma += item.rentalTime.Split('-')[1] + ",";
+                    hallInfoId += item.Id + ",";
+                    }
+                    @if (starttimeshurma.Length > 1)
+                    {
+                    starttimeshurma = starttimeshurma.Remove(starttimeshurma.Length - 1);
+                    endtimeshurma = endtimeshurma.Remove(endtimeshurma.Length - 1);
+                    hallInfoId = hallInfoId.Remove(hallInfoId.Length - 1);
+                    }
+                    <script>
+                        shurma = 1;
+                    </script>
+                    <div class="col-md-12 slot-section shurma">
+                        <input type="text" id="startshurma" hidden value="@starttimeshurma" />
+                        <input type="text" id="endshurma" hidden value="@endtimeshurma" />
+                        <input type="text" class="confName" hidden value="Shurma (3rd floor)" />
+                        <input type="text" id="hallIdShurma" hidden value="@hallInfoId" />
+
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+
+                    else
+                    {
+                    <div class="col-md-12 slot-section shurma">
+
+                        <div class="slot s1">
+                            <span>10.00AM TO 2.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-2.00">
+                        </div>
+                        <div class="slot s2">
+                            <span>3.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="3.00-7.00">
+                        </div>
+                        <div class="slot s3">
+                            <span>10.00PM TO 7.00PM</span>
+                            <input type="checkbox" name="slotchk" value="10.00-7.00">
+                        </div>
+                    </div>
+                    }
+                    <div class="col-md-12 mt-1">
+                        <a href="javascript:void(0)" type="button" class="btn btn-success fa-pull-right" onclick="next(13,'@ViewBag.date')" name="name">Next</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-size: 18px; font-weight: 700; text-align: center; width: 100%;" class="modal-title text-center" id="exampleModalLabel"></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    var myarray = [];
+    var allSlots = ['10.00-2.00', '3.00-7.00', '10.00-7.00'];
+    var allSlotNumbe = [1, 2, 3];
+
+    $(document).ready(function () {
+        //var allSlots = ['10.00-2.00', '3.00-7.00', '10.00-7.00'.00'];
+
+        //jQuery for Shapla//
+        //-----------------//
+        if (shapla == 1) {
+            loadShapla();
+        }
+
+        //jQuery for Krisnochura//
+        //---------------------//
+        if (krisnochura == 1) {
+            loadKrisnochura();
+        }
+
+        //jQuery for Kopotakkho//
+        //---------------------//
+        if (kopotakkho == 1) {
+            loadKopotakkho();
+        }
+
+        //jQuery for Dhanshiri//
+        //---------------------//
+        if (dhanshiri == 1) {
+            loadDhanshiri();
+        }
+
+        //jQuery for Shurma//
+        //---------------------//
+        if (shurma == 1) {
+            loadShurma();
+        }
+    })
+
+    function formatDate(date) {
+        date = new Date(date);
+        var year = date.getFullYear(),
+            month = date.getMonth() + 1, // months are zero indexed
+            day = date.getDate(),
+            hour = date.getHours(),
+            minute = date.getMinutes(),
+            second = date.getSeconds(),
+            hourFormatted = hour % 12 || 12, // hour returned in 24 hour format
+            minuteFormatted = minute < 10 ? "0" + minute : minute,
+            morning = hour < 12 ? "am" : "pm";
+
+        return day + "/" + + month + "/" + year;
+    }
+
+    $('.slot').click(function () {
+        //var hallid = $(this).closest('.slot').text();
+        var hallid = $(this).closest('.slot-section').find('.hallidvalue').val();
+      
+        var bDate = $('#bookingDateValue').text();
+        //alert(hallid);
+
+        Common.Ajax('GET', '/Rental/RentInvoice/GetHallBookingInfo?id=' + hallid + '&date=' + bDate, [], 'json', ajaxFunction, false);
+
+        function ajaxFunction(response) {
+            console.log(response);
+            //response.bookingDate = formatDate(response.bookingDate);
+            //$('#exampleModalLabel').text(response.hallInfo.hallNameBn);
+            var option = "";
+            option += `<div class="row">
+                        <div class="col-md-5" style="background: aliceblue;">
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div style="display: flex; justify-content: center; align-items: center;">
+                                        <img src="/images/user.png" style="height: 60px; width: 60px; border-radius: 50%;border: 1px solid gray;" />
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="mb-0">Booked by</p>
+                                        <p>${response.applicantOrganization}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div style="display: flex; justify-content: center; align-items: center;">
+                                        <img src="/images/user.png" style="height: 60px; width: 60px; border-radius: 50%;border: 1px solid gray;" />
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="mb-0">Chief Guest:</p>
+                                        <p>${response.chiefGuest}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7" style="background-color: lightyellow">
+                            <div class="row">
+                                <div class="col-md-12" style="padding: 30px 50px; border-bottom: 1px solid lightgray">
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3"><i style="font-size: 16px !important;" class="fas fa-calendar-alt"></i></label>
+                                        <label class="control-label col-md-9" style="font-weight: 500;">${response.rentalDate}</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3"><i style="font-size: 16px !important;" class="far fa-clock"></i></label>
+                                        <label class="control-label col-md-9" style="font-weight: 500;">${response.rentalTime} </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="text-align: center; padding: 20px;font-size: 20px; text-transform: capitalize; font-weight: 600;">
+                                 <p>This Hall Already Booked By   ${response.applicantOrganization} </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
+
+            $('#exampleModal4 .modal-body').empty();
+            $('#exampleModal4 .modal-body').append(option);
+        }
+
+        //alert(hallid);
+
+        var min = '';
+        var max = '';
+
+        $('#conferenceName').text($(this).parent().find('.confName').val());
+        //console.log($(this).parent().find('.confName').text());
+        //var clickedValue = $(this).find('input[type="checkbox"]').val();
+
+        var checkslotname1 = $(this).parent().prop('class').split(' ')[$(this).parent().prop('class').split(' ').length - 1];
+        $('.' + checkslotname1).addClass('active1').siblings('.slot-section').removeClass('active1');
+        $('.' + checkslotname1).addClass('active1').siblings('.slot-section').find('.slot').removeClass('pending').find('input[type="checkbox"]').prop('checked', false);
+
+
+        myarray = [];
+        $('.slot input:checkbox[name=slotchk]:checked').each(function () {
+            if ($(this).closest('.slot').prop('class').indexOf('booked') == -1) {
+                myarray.push($(this).val());
+            }
+        });
+        //console.log($(this).closest('.slot').prop('class').indexOf('booked') >= 0);
+        if ($(this).closest('.slot').prop('class').indexOf('booked') >= 0) {
+            //getBookingInfo();
+
+            $('#exampleModal4').modal('show');
+        }
+        else {
+            $(this).closest('.slot').toggleClass('pending');
+        }
+
+
+        if (myarray.length < 2) {
+            $('#shaplatiming').text(myarray[0])
+        }
+
+        if (myarray.length >= 2) {
+            min = myarray[0];
+            max = myarray[myarray.length - 1];
+
+            var minIndex = jQuery.inArray(min, allSlots);
+            var maxIndex = jQuery.inArray(max, allSlots);
+
+            if (maxIndex - minIndex > 1) {
+                for (var i = minIndex + 1; i < maxIndex; i++) {
+                    if (jQuery.inArray(allSlots[i], myarray) == -1) {
+                        myarray.push(allSlots[i]);
+                    }
+                }
+            }
+        }
+
+        //console.log(myarray)
+        //if (myarray.length > 1) {
+        //    loadShaplaGreen(myarray[0], myarray[1]);
+        //}
+
+        $(this).closest('.s1').siblings('.s1').addClass('pending');
+        //$(this).closest('.slot').next('.slot').addClass('pending');
+        for (var i = 0; i < myarray.length; i++) {
+            var className = '.s_' + myarray[i];
+            $(className).addClass('pending');
+        }
+
+        //console.log(min + ' ' + max);
+        if (min > 0 && max > 0) {
+            //console.log(checkslotname1);
+            //var checkslotname = $(this).parent().prop('class').split(' ')[$(this).parent().prop('class').split(' ').length - 1];
+            //var getid = '#' + checkslotname1 + 'timing';
+            //console.log(grtid);
+
+            $('#shaplatiming').text(min + '-' + max);
+            //console.log($(this).parent().prop('class').split(' ')[$(this).parent().prop('class').split(' ').length - 1]);
+            ////$(this).parent().parent().find('h2.time-difference').text(min + '-' + max);
+            //$(this).prev('.time-difference').text(min + '-' + max);
+        }
+
+    })
+    function next(hallId, date) {
+        var value = $('#shaplatiming').text();
+        window.location.href = '/Rental/RentInvoice/HallRental?hallId=' + hallId + '&duration=' + value + '&date=' + date;
+    }
+
+
+    @* Auditorium *@
+    function loadShapla() {
+        //get array of all start and end time slot
+        var shaplaBookStartArr = $('#startshapla').val().split(",");
+        var shaplaBookEndArr = $('#endshapla').val().split(",");
+        var hallIdArr = $('#hallIdShapla').val().split(",");
+        //console.log("id");
+        //console.log(hallIdArr);
+        $('.booked span.hallidspan').text(hallIdArr[0]);
+
+
+        //create a blank array to store booked time slot
+        var shaplaBooked = [];
+        var shaplaIds = [];
+
+        //loop over the start or end time slot array
+        for (var i = 0; i < shaplaBookStartArr.length; i++) {
+            shaplaIds.push(hallIdArr[i]);
+            shaplaIds.push(hallIdArr[i]);
+            //push start and end time to the array
+            shaplaBooked.push(shaplaBookStartArr[i]);
+            shaplaBooked.push(shaplaBookEndArr[i]);
+            //if there any slot between the start and end time, push the slots to the array
+            for (var i = 0; i < shaplaBookStartArr.length; i++) {
+                var slotValue = shaplaBookStartArr[i] + '-' + shaplaBookEndArr[i];
+                $('.shapla input[value="' + slotValue + '"]').parent('.slot').addClass('booked');
+            }
+
+        }
+        console.log(shaplaBooked);
+
+
+        //fill the slots with styles which are booked
+        var iteration = 0;
+        shaplaBooked.forEach(e => {
+
+            $('.shapla .slot input[value="' + e + '"]').closest('.slot').addClass('booked');
+            $('.shapla .slot input[value="' + e + '"]').closest('.slot').click(false);
+            $('.shapla .slot input[value="' + e + '"]').closest('.slot').text(shaplaIds[iteration]);
+            iteration++;
+        });
+        //console.log(shaplaBooked);
+    }
+    @* Johur Hossain Chowdhori Hall *@
+    function loadKrisnochura() {
+        //get array of all start and end time slot
+        var krisnochuraBookStartArr = $('#startkrisnochura').val().split(",");
+        var krisnochuraBookEndArr = $('#endkrisnochura').val().split(",");
+        var hallIdArr = $('#hallIdKrisnochura').val().split(",");
+        //console.log("id");
+        //console.log(hallIdArr);
+        $('.booked span.hallidspan').text(hallIdArr[0]);
+
+
+        //create a blank array to store booked time slot
+        var krisnochuraBooked = [];
+        var krisnochuraIds = [];
+
+        //loop over the start or end time slot array
+        for (var i = 0; i < krisnochuraBookStartArr.length; i++) {
+            krisnochuraIds.push(hallIdArr[i]);
+            krisnochuraIds.push(hallIdArr[i]);
+            //push start and end time to the array
+            krisnochuraBooked.push(krisnochuraBookStartArr[i]);
+            krisnochuraBooked.push(krisnochuraBookEndArr[i]);
+            //if there any slot between the start and end time, push the slots to the array
+            for (var i = 0; i < krisnochuraBookStartArr.length; i++) {
+                var slotValue = krisnochuraBookStartArr[i] + '-' + krisnochuraBookEndArr[i];
+                $('.krisnochura input[value="' + slotValue + '"]').parent('.slot').addClass('booked');
+            }
+
+        }
+        console.log(krisnochuraBooked);
+
+
+        //fill the slots with styles which are booked
+        var iteration = 0;
+        krisnochuraBooked.forEach(e => {
+
+            $('.krisnochura .slot input[value="' + e + '"]').closest('.slot').addClass('booked');
+            $('.krisnochura .slot input[value="' + e + '"]').closest('.slot').click(false);
+            $('.krisnochura .slot input[value="' + e + '"]').closest('.slot').text(krisnochuraIds[iteration]);
+            iteration++;
+        });
+        //console.log(krisnochuraBooked);
+    }
+    @* Tofazzal Hossain Manik Miya Hall *@
+    function loadKopotakkho() {
+        //get array of all start and end time slot
+        var kopotakkhoBookStartArr = $('#startkopotakkho').val().split(",");
+        var kopotakkhoBookEndArr = $('#endkopotakkho').val().split(",");
+        var hallIdArr = $('#hallIdKopotakkho').val().split(",");
+        //console.log("id");
+        //console.log(hallIdArr);
+        $('.booked span.hallidspan').text(hallIdArr[0]);
+
+
+        //create a blank array to store booked time slot
+        var kopotakkhoBooked = [];
+        var kopotakkhoIds = [];
+
+        //loop over the start or end time slot array
+        for (var i = 0; i < kopotakkhoBookStartArr.length; i++) {
+            kopotakkhoIds.push(hallIdArr[i]);
+            kopotakkhoIds.push(hallIdArr[i]);
+            //push start and end time to the array
+            kopotakkhoBooked.push(kopotakkhoBookStartArr[i]);
+            kopotakkhoBooked.push(kopotakkhoBookEndArr[i]);
+            //if there any slot between the start and end time, push the slots to the array
+            for (var i = 0; i < kopotakkhoBookStartArr.length; i++) {
+                var slotValue = kopotakkhoBookStartArr[i] + '-' + kopotakkhoBookEndArr[i];
+                $('.kopotakkho input[value="' + slotValue + '"]').parent('.slot').addClass('booked');
+            }
+
+        }
+        console.log(kopotakkhoBooked);
+
+
+        //fill the slots with styles which are booked
+        var iteration = 0;
+        kopotakkhoBooked.forEach(e => {
+
+            $('.kopotakkho .slot input[value="' + e + '"]').closest('.slot').addClass('booked');
+            $('.kopotakkho .slot input[value="' + e + '"]').closest('.slot').click(false);
+            $('.kopotakkho .slot input[value="' + e + '"]').closest('.slot').text(kopotakkhoIds[iteration]);
+            iteration++;
+        });
+        //console.log(kopotakkhoBooked);
+    }
+    @* Mowlana Mohammad Akram Kha Hall *@
+    function loadDhanshiri() {
+        //get array of all start and end time slot
+        var dhanshiriBookStartArr = $('#startdhanshiri').val().split(",");
+        var dhanshiriBookEndArr = $('#enddhanshiri').val().split(",");
+        var hallIdArr = $('#hallIdKopotakkho').val().split(",");
+        //console.log("id");
+        //console.log(hallIdArr);
+        $('.booked span.hallidspan').text(hallIdArr[0]);
+
+
+        //create a blank array to store booked time slot
+        var dhanshiriBooked = [];
+        var dhanshiriIds = [];
+
+        //loop over the start or end time slot array
+        for (var i = 0; i < dhanshiriBookStartArr.length; i++) {
+            dhanshiriIds.push(hallIdArr[i]);
+            dhanshiriIds.push(hallIdArr[i]);
+            //push start and end time to the array
+            dhanshiriBooked.push(dhanshiriBookStartArr[i]);
+            dhanshiriBooked.push(dhanshiriBookEndArr[i]);
+            //if there any slot between the start and end time, push the slots to the array
+            for (var i = 0; i < dhanshiriBookStartArr.length; i++) {
+                var slotValue = dhanshiriBookStartArr[i] + '-' + dhanshiriBookEndArr[i];
+                $('.dhanshiri input[value="' + slotValue + '"]').parent('.slot').addClass('booked');
+            }
+
+        }
+        console.log(dhanshiriBooked);
+
+
+        //fill the slots with styles which are booked
+        var iteration = 0;
+        dhanshiriBooked.forEach(e => {
+
+            $('.dhanshiri .slot input[value="' + e + '"]').closest('.slot').addClass('booked');
+            $('.dhanshiri .slot input[value="' + e + '"]').closest('.slot').click(false);
+            $('.dhanshiri .slot input[value="' + e + '"]').closest('.slot').text(dhanshiriIds[iteration]);
+            iteration++;
+        });
+        //console.log(dhanshiriBooked);
+    }
+    @* Abdus Salam Hall *@
+    function loadShurma() {
+        //get array of all start and end time slot
+        var shurmaBookStartArr = $('#startshurma').val().split(",");
+        var shurmaBookEndArr = $('#endshurma').val().split(",");
+        var hallIdArr = $('#hallIdKopotakkho').val().split(",");
+        //console.log("id");
+        //console.log(hallIdArr);
+        $('.booked span.hallidspan').text(hallIdArr[0]);
+
+
+        //create a blank array to store booked time slot
+        var shurmaBooked = [];
+        var shurmaIds = [];
+
+        //loop over the start or end time slot array
+        for (var i = 0; i < shurmaBookStartArr.length; i++) {
+            shurmaIds.push(hallIdArr[i]);
+            shurmaIds.push(hallIdArr[i]);
+            //push start and end time to the array
+            shurmaBooked.push(shurmaBookStartArr[i]);
+            shurmaBooked.push(shurmaBookEndArr[i]);
+            //if there any slot between the start and end time, push the slots to the array
+            for (var i = 0; i < shurmaBookStartArr.length; i++) {
+                var slotValue = shurmaBookStartArr[i] + '-' + shurmaBookEndArr[i];
+                $('.shurma input[value="' + slotValue + '"]').parent('.slot').addClass('booked');
+            }
+
+        }
+        console.log(shurmaBooked);
+
+
+        //fill the slots with styles which are booked
+        var iteration = 0;
+        shurmaBooked.forEach(e => {
+
+            $('.shurma .slot input[value="' + e + '"]').closest('.slot').addClass('booked');
+            $('.shurma .slot input[value="' + e + '"]').closest('.slot').click(false);
+            $('.shurma .slot input[value="' + e + '"]').closest('.slot').text(shurmaIds[iteration]);
+            iteration++;
+        });
+        //console.log(shurmaBooked);
+    }
+
+
+
+</script>

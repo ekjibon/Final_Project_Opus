@@ -1,0 +1,285 @@
+﻿@model BillGenerateViewModel
+@{
+    ViewData["Title"] = "InvoiceReportPdf";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@using OPUSERP.ERPServices.MasterData.Interfaces
+
+@inject IERPCompanyService eRPCompanyService
+@{
+    var companies = await eRPCompanyService.GetAllCompany();
+    var company = companies.FirstOrDefault().filePath;
+}
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <div style="float:left">
+                        @*<img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />*@
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div style="color:black">
+                        @*<img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:100px;" />*@
+                        @*<h3 style="text-align:center;">@Model.companies.FirstOrDefault().companyName</h3>
+                            <p style="text-align:center;">@Model.companies.FirstOrDefault().addressLine</p>*@
+
+                    </div>
+                </div>
+                <div class="col-3"></div>
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-8">
+                    <label>To</label>
+                    <br />
+                    <label>The @Model.billGenerateReportViewModels.FirstOrDefault().designation</label>
+                    <br />
+                    <label>@Model.billGenerateReportViewModels.FirstOrDefault().leadName</label>
+                    <br />
+                    <label>@Model.billGenerateReportViewModels.FirstOrDefault().addres</label>
+                </div>
+                <div class="col-4" style="border:solid 1px;">
+                    <label>Date : @Model.billGenerateReportViewModels.FirstOrDefault().billDate</label>
+                    <br />
+                    <label>Invoice Number : @Model.billGenerateReportViewModels.FirstOrDefault().billNo</label>
+                    <br />
+                    <label>Rating Nature : @Model.billGenerateReportViewModels.FirstOrDefault().ratingTypeName</label>
+                    <br />
+                    <label>BIN : 000444446-0202</label>
+                </div>
+            </div>
+            <br />
+            <div>
+                @if (@Model.billGenerateReportViewModels.FirstOrDefault()?.advanceAmount <= 0)
+                {
+                    if (@Model.billGenerateReportViewModels.FirstOrDefault().invoiceOrder == "First Invoice")
+                    {
+                        <h6>Sub : Letter of Agreement and Invoice for Advance Rating Fee.</h6>
+                        <br />
+                        <h6>Dear Sir</h6>
+                        <br />
+                        <label>We would like to thank you as our valued client. We are enclosing two (2) copies of Agreements along with this invoice out of which one copy of the Agreement may kindly be returned to us after being signed at your end.</label>
+                        <br />
+                        <h4 style="text-align:center;"><u><i>@Model.billGenerateReportViewModels.FirstOrDefault().invoiceOrder</i></u></h4>
+                        <br />
+
+                    }
+                    else
+                    {
+                        <h4 style="text-align:center;"><u><i>@Model.billGenerateReportViewModels.FirstOrDefault().invoiceOrder</i></u></h4>
+                    }
+
+
+                }
+                else
+                {
+                    <h4 style="text-align:center;"><u><i>Bill for Final Payment</i></u></h4>
+                }
+
+                <label>Rating Fees details as follows:</label>
+
+            </div>
+            <div>
+                <table class="table table-bordered">
+                    <thead style="border:1px solid;border-color:black">
+                        <tr style="border:1px solid;border-color:black">
+                            <th style="width:80%;text-align:center;border:1px solid;border-color:black">Particulars</th>
+                            <th style="width:20%;text-align:center;border:1px solid;border-color:black">BDT</th>
+                        </tr>
+                    </thead>
+                    <tbody style="border:1px solid;border-color:black">
+                        @{
+                            decimal? total = 0;
+                            if (Model.billGenerateReportViewModels.FirstOrDefault().vatCategoryName == "Inclusive")
+                            {
+                                total = Model.billGenerateReportViewModels.FirstOrDefault().ratingAmount;
+                            }
+                            else
+                            {
+                                total = Model.billGenerateReportViewModels.FirstOrDefault().ratingAmount + Model.billGenerateReportViewModels.FirstOrDefault().vatAmount;
+                            }
+                            <tr style="border:1px solid;border-color:black">
+                                <td>Fees for the Professional Services in connection with the preparation of @Model.billGenerateReportViewModels.FirstOrDefault().ratingTypeName Credit Rating Report of your esteemed Organization.</td>
+                                <td style="text-align:right;">@Model.billGenerateReportViewModels.FirstOrDefault().ratingAmount?.ToString("0,0")</td>
+                            </tr>
+                            <tr>
+                               
+                                <td>Add: VAT  @Model.billGenerateReportViewModels.FirstOrDefault().vatRate % on Fees </td>
+                                <td style="text-align:right;">@Model.billGenerateReportViewModels.FirstOrDefault().vatAmount?.ToString("0,0")</td>
+                            </tr>
+                            <tr>
+                                <td>Total Bill</td>
+                                <td style="text-align:right;">@Model.billGenerateReportViewModels.FirstOrDefault()?.totalAmount?.ToString("0,0")</td>
+                            </tr>
+                        }
+
+                        @*@if (@Model.billGenerateReportViewModels.FirstOrDefault().ratingType == "Initial")*@
+                        <tr>
+                            <td>Less : Advance Received</td>
+                            <td style="text-align:right;">@Model.billGenerateReportViewModels.FirstOrDefault().advanceAmount?.ToString("0")</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @if (@Model.billGenerateReportViewModels.FirstOrDefault().ratingType == "Initial")
+                                {
+                                    <lable>Payment Due</lable>
+                                }
+                                else
+                                {
+                                    <lable>Final Payment Due</lable>
+                                }
+                                (@Model.billGenerateReportViewModels.FirstOrDefault().inword only)
+                            </td>
+                            <td style="text-align:right;">@Model.billGenerateReportViewModels.FirstOrDefault().finalPaymentDue?.ToString("0,0")</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                @if (@Model.billGenerateReportViewModels.FirstOrDefault()?.advanceAmount <= 0)
+                {
+                    if (@Model.billGenerateReportViewModels.FirstOrDefault().invoiceOrder == "First Invoice")
+                    {
+                        <h6>N.B: Please pay 50% advance as per agreement.</h6>
+                    }
+                    else
+                    {
+
+                    }
+                }
+                <br />
+                <label>
+                    <b>
+                        Thanking You <br />
+                        Yours Faithfully
+                    </b>
+                </label>
+                <br />
+                <label>
+                    <br />
+                    <br />
+                    <img src="~/images/MDSign.jpg" height="80" width="200" /><br />
+                    <b>   ----------------------------------</b><br />
+                    <b>N K A Mobin, FCA, FCS, CFC</b><br />
+                    Managing Director & CEO
+                </label>
+            </div>
+            <br />
+            <div>
+                <h6>Payment Terms:</h6>
+                <ul>
+                    <li>By <b>Account Payee Cheque</b> in the name of <b>Emerging Credit Rating Limited</b>; or </li>
+                    <li>By <b>Direct Deposit</b> to our <b>Islami Bank Bangladesh Ltd</b> Online Account No. <b>20503420100039109</b> and inform us; or</li>
+                    <li> By Direct Deposit to our <b> @Model.billGenerateReportViewModels.FirstOrDefault().bankName, @Model.billGenerateReportViewModels.FirstOrDefault().branchName Branch</b> Account Number: <b>@Model.billGenerateReportViewModels.FirstOrDefault().accountNo</b> and inform us.</li>
+                </ul>
+            </div>
+            <br />
+           
+            <hr />
+
+        </div>
+    </div>
+    <br/>
+  
+ 
+  
+    <div class="row">
+        <div class="col-2" style="float:left">
+            <div style="float:left">
+                @*<img src="@Model.companies.FirstOrDefault()?.filePathTwo" alt="OPUS ERP" style="height:80px;width:80px;" />*@
+            </div>
+        </div>
+        <div class="col-10">
+            <div style="color:black">
+                @*<img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:100px;" />
+                    <h3 style="text-align:center;">@Model.companies.FirstOrDefault().companyName</h3>*@
+                @*<p style="text-align:center;">@Model.companies.FirstOrDefault().addressLine</p>*@
+                @*<p style="text-align:center;">@Model.companies.FirstOrDefault().officeTelephone</p>*@
+
+            </div>
+        </div>
+        @*<div class="col-1"></div>*@
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+<style>
+
+
+
+    .divstyle {
+        color: black;
+    }
+
+
+
+    .print-card-body {
+        width: 100%;
+        padding-bottom: 10px;
+        font-size: 18px;
+    }
+
+    .vartical-table th {
+        width: 25%;
+        text-align: center;
+        vertical-align: top;
+    }
+
+
+    .table td, .table th {
+        padding: .3rem;
+        font-size: 15px;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    label {
+        color: black;
+        font-family: Calibri;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: black;
+        font-family: Calibri;
+    }
+
+    ul, li {
+        color: black;
+        font-family: Calibri;
+    }
+</style>

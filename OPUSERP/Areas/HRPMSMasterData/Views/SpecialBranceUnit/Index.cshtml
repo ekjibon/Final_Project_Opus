@@ -1,0 +1,167 @@
+﻿@model SpecialBranchUnitViewModel
+@{
+    ViewData["TitleMD"] = "Strategic Business Unit";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Strategic Business Unit</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="SpecialBranceUnit" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="id" id="id" value="0" />
+
+                    <label for="companyId" class="col-sm-2 col-form-label">Company<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="companyId" id="companyId" data-parsley-required="true">
+                            @foreach (var data in Model.companies)
+                            {
+                                <option value="@data.Id">@data.companyName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">SBU Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="name" id="name">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="branchCode" class="col-sm-2 col-form-label">SBU Code</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="branchCode" id="branchCode">
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-sm-2" style="overflow:hidden;padding:0;">
+                        <label for="startDate" class="col-sm-12 col-form-label">Is Default?</label>
+
+                    </div>
+                    <div class="col-sm-1">
+                        <input class="form-control" type="checkbox" id="isdefault" value="0" name="isdefault" style="float:left;" />
+                    </div>
+
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Strategic Business Unit List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>SBU Name</th>
+                            <th>SBU Code</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.specialBranchUnits)
+                        {
+                            <tr>
+                                <td>@data.company.companyName</td>
+                                <td>@data.branchUnitName</td>
+                                <td>@data.branchCode</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.branchUnitName', '@data.branchCode', @data.companyId,@data.isdefault)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#SpecialBranchUnit").addClass("active");
+            $('#departmentTable').DataTable();
+            $("#isdefault").click(function () {
+               
+                if ($("#isdefault").val() == 1) {
+                    $("#isdefault").val('0');
+                    $("#isdefault").attr("Checked", false);
+                    }
+                else {
+                    $("#isdefault").val('1');
+                    $("#isdefault").attr("Checked", true);
+                }
+
+            });
+        });
+
+        function Edit(Id, name, code, company,isdefault) {
+
+           
+            $("#id").val(Id);
+            $("#name").val(name);
+            $("#branchCode").val(code);
+            $("#companyId").val(company);
+            $("#isdefault").val(isdefault);
+            if ($("#isdefault").val() == 1) {
+          
+                $("#isdefault").attr("Checked",true);
+            }
+            else {
+          
+                $("#isdefault").attr("Checked",false);
+            }
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteSpecialBranchUnitById", "SpecialBranceUnit")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/HRPMSMasterData/SpecialBranceUnit/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+    </script>
+}
+

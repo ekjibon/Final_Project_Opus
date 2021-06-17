@@ -1,0 +1,176 @@
+﻿@model LeaveRegisterViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black;text-align:center;">Leave Report</h5>
+        <hr>
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <div class="form-group row">
+                        <label for="ReportType" class="col-sm-3 col-form-label">Select Report <span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="ReportType" name="ReportType">
+                                <option value="0">Select One</option>
+                                <option value="LEAVESUMMARY">Leave Summary Report</option>
+                                <option value="LEAVEINDIVL">Leave Individual Report</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forEmployee">
+                        <label for="employeeCode" class="col-sm-3 col-form-label">Select Employee <span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="employeeCode" name="employeeCode">
+                            <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forYear">
+                        <label for="yearId" class="col-sm-3 col-form-label">Select Year <span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="yearId" id="yearId">
+                                <option class="form-control" value="">Please Select</option>
+                                @foreach (var data in Model.years)
+                                {
+                                    <option class="form-control" value="@data.Id">@data.year</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forfromDate">
+                        <label for="fromDate" class="col-sm-3  col-form-label">From Date<span style="color:red">*</span></label>
+                        <div class="col-sm-9 input-group">
+                            <input name="fromDate" id="fromDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="fromDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="fortoDate">
+                        <label for="toDate" class="col-sm-3  col-form-label">To Date<span style="color:red">*</span></label>
+                        <div class="col-sm-9 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="toDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forButton">
+                        <label class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input type="button" value="Export To PDF" id="btnPrint" class="btn btn-success btn-sm" style="width:120px;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            $('#forYear').hide();
+            $('#forEmployee').hide();
+            $('#forfromDate').hide();
+            $('#fortoDate').hide(); 
+
+            Common.Ajax('GET', '/global/api/getEmployeeInfoByOrg/', [], 'json', ajaxEmployeeList, false);
+            $('#ReportType').change(function () {
+                if ($('#ReportType').val() == "LEAVESUMMARY") {
+                    $('#forYear').show();
+                    $('#forEmployee').hide();
+                    $('#forfromDate').hide();
+                    $('#fortoDate').hide();                    
+                }
+                else {
+                    $('#forEmployee').show();
+                    $('#forfromDate').show();
+                    $('#fortoDate').show();
+                    $('#forYear').hide();
+                }
+            });
+
+            $("#btnPrint").click(function (e) {
+                let rptType = $('#ReportType').val();   
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                let yearId = $("#yearId option:selected").text();
+                let empId = $('#employeeInfoId').val();
+
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                } 
+
+                if (rptType == "LEAVEINDIVL") {  
+                    if (empId == "") {
+                        swal('Warning', 'Select Employee Info', 'warning');
+                        return false;
+                    }
+                    else if (fromDate == "") {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    else if (toDate == "") {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    else {
+                        window.open('/HRPMSLeave/LeaveRegister/LeaveReportpdf?rptType=' + rptType + '&&empId=' + empId + '&&fdate=' + fromDate + '&&tdate=' + toDate, '_blank');
+                    }
+                }
+
+                else if (rptType == "LEAVESUMMARY"){                   
+                    if (yearId == "") {
+                        swal('Warning', 'Select Year', 'warning');
+                        return false;
+                    }
+                    else {
+                        window.open('/HRPMSLeave/LeaveRegister/LeaveReportSummaryPdf?rptType=' + rptType + '&&year=' + yearId, '_blank');
+                    }
+                }
+            });
+        });
+
+        function ajaxEmployeeList(response) {
+            console.log(response);
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode + ' - ' + option.nameEnglish;
+                obj.name = option.nameEnglish;
+                obj.designation = option.designation;
+                obj.orgType = option.orgType;
+                obj.nationalID = option.nationalID;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#employeeCode').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+    </script>
+}

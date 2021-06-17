@@ -1,0 +1,201 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "ProgramReportView";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+    int i = 0;
+    int headline = 1;
+
+    int j = 0;
+    int subject = 1;
+
+    int k = 0;
+    int address = 1;
+
+}
+
+<style>
+    .header-cls {
+        text-align: center;
+        color: black;
+    }
+
+    .text-align-center-cls {
+        text-align: center;
+    }
+
+    .table-cls {
+        margin-top: 100px;
+    }
+
+    .signature-div-cls p {
+        text-align: right;
+        color:black;
+    }
+</style>
+
+<br />
+<section>
+    <div class="container-fluid">
+        <div class="header-cls">
+            <h4><b>গণ যোগাযোগ অধিদপ্তর <br /> জেলা তথ্য অফিসারের কাযার্লয় <u>@Model.programReportModels?.programMaster?.district?.districtName</u><br /><br /> <u>@Model.programReportModels?.programMaster?.programCategory?.name সংক্রান্ত প্রত্যয়নপত্র|</u></b></h4>
+        </div>
+        <table class="table-cls">
+            @foreach (var data in Model.programReportModels.programHeadlines)
+            {
+                if (i == 0)
+                {
+                    <tr>
+                        <td width="250px">ক. &nbsp; &nbsp; প্রদর্শিত চলচ্চিত্রের শিরোনাম : </td>
+                        <td>&nbsp; &nbsp; (@headline) &nbsp; @data.headline</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td width="250px"></td>
+                        <td>&nbsp; &nbsp; (@headline) &nbsp; @data.headline</td>
+                    </tr>
+                }
+                i++;
+                headline++;
+            }
+
+        </table>
+        <br />
+        <table>
+
+            @foreach (var data in Model.programReportModels.programSubjects)
+            {
+                if (j == 0)
+                {
+                    <tr>
+                        <td width="250px">খ.&nbsp; &nbsp;  প্রদর্শিত চলচ্চিত্রের বিষয় : </td>
+                        <td>&nbsp; &nbsp; (@subject) &nbsp; @data.subject</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td width="250px"></td>
+                        <td>&nbsp; &nbsp; (@subject) &nbsp; @data.subject</td>
+                    </tr>
+                }
+                j++;
+                subject++;
+
+            }
+
+        </table>
+        <br />
+        <table>
+
+            @foreach (var data in Model.programReportModels.programAddresses)
+            {
+                if (k == 0)
+                {
+                    <tr>
+                        <td width="250px">গ. &nbsp; &nbsp; চলচ্চিত্র প্রদর্শনের স্থান  : </td>
+                        <td>&nbsp; &nbsp; (@address) &nbsp; @data.address</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td width="250px"></td>
+                        <td>&nbsp; &nbsp; (@address) &nbsp; @data.address</td>
+                    </tr>
+                }
+                k++;
+                address++;
+
+            }
+
+        </table>
+        <br />
+        <table>
+            <tbody>
+                <tr>
+                    <td width="100%">ঘ . &nbsp; &nbsp; চলচ্চিত্র প্রদর্শনীর তারিখ ও সময়   : <span>&nbsp; &nbsp; @Model.programReportModels?.programMaster?.date </span></td>
+                </tr>
+                <tr>
+                    <td width="100%">
+                        ঙ  . &nbsp; &nbsp; আনুমানিক দর্শক সংখ্যা  : <span style="padding-left:53px;">&nbsp; &nbsp;</span>
+                        @foreach (var data in Model.programReportModels.programViewers)
+                        {
+                            <span>@data.name&nbsp; - &nbsp; @data.quantity?.ToString("0.00") &nbsp; &nbsp;</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%">
+                        চ  . &nbsp; &nbsp; প্রদর্শনীর আগে ও পরে/আগে অথবা পরে প্রদর্শিত চলচ্চিত্রের বিষয় এবং ইস্যু নিয়ে আলোচনা হয়েছে কিনা ? @if (Model.programReportModels.programMaster.isDiscussion == 1)
+                        {
+                            <span>&nbsp; &nbsp;হ্যাঁ</span>
+                        }
+                        else
+                        {
+                            <span>&nbsp; &nbsp;না</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%">
+                        ছ   . &nbsp; &nbsp; আলোচনায় অংশগ্রহনকারীর সংখ্যা  : <span>&nbsp; &nbsp;</span>
+                        @foreach (var data in Model.programReportModels.programPeopleInDiscussions)
+                        {
+                            <span>@data.name&nbsp; - &nbsp; @data.quantity?.ToString("0.00") &nbsp; &nbsp;</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%">জ  . &nbsp; &nbsp; প্রদর্শনীতে এবং আলোচনায় অংশগ্রহণকারী কয়েকজনের নাম ও বিস্তারিত ঠিকানা :  </td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <table class="table table-bordered">
+            @for (int x = 0; x < Model.programReportModels.programAttendees.Count(); x += 2)
+            {
+                int count = 1;
+                int count1 = 2;
+            <tr>
+                <td height="100px">
+                    @count . &nbsp; @Model.programReportModels.programAttendees[x].name<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.programReportModels.programAttendees[x].contact<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.programReportModels.programAttendees[x].address<br />
+                </td>
+                @if (Model.programReportModels.programAttendees.Count() > x + 1)
+                {
+                    <td height="100px">
+                        @count1 . &nbsp; @Model.programReportModels.programAttendees[x + 1].name<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.programReportModels.programAttendees[x + 1].contact<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Model.programReportModels.programAttendees[x + 1].address<br />
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+                count++;
+                count1++;
+            }
+            @*@foreach (var data in Model.programReportModels.programAttendees)
+            {
+                <tr>
+                    <td height="100px">
+                        @contact . &nbsp; @data.name<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@data.contact<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@data.address<br />
+                    </td>
+                </tr>
+                contact++;
+            }*@
+        </table>
+        <p style="color:black">&nbsp; প্রত্যয়ন করা যাচ্ছে যে, উপরোল্লিখিত @Model.programReportModels?.programMaster?.programCategory?.name সংক্রান্ত যাবতীয় তথ্য সঠিক </p>
+        <br /><br /><br />
+        <div class="signature-div-cls">
+            <p style="text-decoration:overline">জেলা তথ্য অফিসারের স্বাক্ষর ও সিল </p>
+        </div>
+    </div>
+</section>

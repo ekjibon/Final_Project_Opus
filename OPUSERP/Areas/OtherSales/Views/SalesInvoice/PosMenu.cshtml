@@ -1,0 +1,806 @@
+﻿@model SalesInvoiceViewModel
+@{
+    ViewData["Title"] = "Index";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+            /* Top Counter */
+            .leftImgBox {
+                width: 20%;
+                height: 100%;
+                float: left;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 13px;
+            }
+
+                .leftImgBox img {
+                    width: 100%;
+                }
+
+            .title {
+                font-size: 15px;
+            }
+
+            a {
+                color: white !important;
+            }
+
+                a:hover {
+                    color: white;
+                }
+
+            .fa-minus {
+                color: #FB4C5D;
+            }
+
+            .fa-plus {
+                color: #F0BA02;
+            }
+
+            /*#addtocart {
+                padding-bottom: 0px;
+                margin-bottom: 5px;
+                background-color: #00A75A;
+                border: none;
+                padding: 2px;
+                text-align: center;
+                font-size: 20px;
+                color: white;
+                height: 43px;
+                width: 95%;
+                padding-top: 5px;
+            }*/
+
+            .list-item-cart img {
+                width: 20px;
+                height: 20px;
+            }
+
+            .list-item-cart span {
+                color: black;
+                font-size: 15px;
+            }
+
+            .list-item-cart a:first-child {
+                color: #EF5160;
+            }
+
+            .list-item-cart a:last-child {
+                color: #EEB907;
+            }
+
+            .list-item-cart input {
+                width: 25px;
+                text-align: center;
+                font-size: 15px;
+                outline: none;
+            }
+
+            /* Bottom List Group */
+            .list-item-bottom {
+                display: flex;
+                align-items: center;
+            }
+
+            .list-group .list-group-item {
+                border-top: none;
+                padding: 5px !important;
+                border-bottom: none;
+                border-left: 1px solid #949494;
+                border-right: 1px solid #949494;
+            }
+
+                .list-group .list-group-item:first-child {
+                    border-top: 1px solid #949494;
+                }
+
+                .list-group .list-group-item:last-child {
+                    border-bottom: 1px solid #949494;
+                }
+
+            .list-img {
+                width: 40px;
+            }
+
+            .list-text {
+                padding-left: 6px;
+                font-size: 22px;
+            }
+
+            .list-num {
+                font-size: 20px;
+                text-align: right;
+            }
+
+            .box {
+                width: 14.28%;
+                /*transition: width 2s, height 2s, transform 2s;*/
+                transition: background-color 2s, color 2s;
+                border-radius: 15px;
+            }
+
+                .box:hover {
+                    background-color: #E5E5E5 !important;
+                }
+
+                .box a {
+                    transition: color 2s;
+                }
+
+                    .box a:hover {
+                        color: black !important;
+                    }
+
+            .counterBox1 {
+                width: 60%;
+                /* float: left; */
+                font-size: 140%;
+                margin-left: 14px;
+                /* left: 30px; */
+                float: right;
+                text-align: center;
+                margin-top: 22px !important;
+                margin-right: 10px;
+            }
+
+            .leftImgBox i {
+                font-size: 45px;
+                margin-left: 24px;
+            }
+
+            #itemDetails .list-group {
+                width: 92%;
+                margin-left: 8px;
+            }
+
+            #del {
+                cursor: pointer;
+            }
+
+            /*#addtocart {
+                background-color: gray;
+            }*/
+
+            .itemCard {
+                height: 200px;
+            }
+
+            button {
+                box-shadow: none !important;
+            }
+
+            .counter1 {
+                font-size: 29px;
+            }
+
+
+            .itemCard .card-body {
+                font-size: 20px !important;
+            }
+
+            #divLoad {
+                height: 100%;
+                padding: 0 0 0 5%
+            }
+            /*style="text-align: center;background: #FFFFFF; height: 35%; border: 2px solid whitesmoke; margin:1% 0 1%  2%;"*/
+            .itemlist {
+                height: 25%;
+                width: 20%;
+                /*background: #FFFFFF;*/
+                margin: 0 1% 1% 0;
+            }
+
+                .itemlist > .card {
+                    background: #FFFFFF;
+                    border-top-left-radius: 10%;
+                    border-top-right-radius: 10%;
+                    border-bottom-left-radius: 10%;
+                    border-bottom-right-radius: 10%;
+                }
+
+            .imageWrapperWrapper {
+                /*height: 100%;
+                width: 100%;*/
+                margin-top: 2px;
+            }
+
+                .imageWrapperWrapper img {
+                    height: 100%;
+                    width: 100%;
+                }
+
+            .category_text_cls {
+                font-weight: bold;
+                font-size: 85%;
+                color: black;
+            }
+
+            .price_cls {
+                font-size: 70%;
+                color: black;
+            }
+
+            .opcity {
+                background: #c4ebf7 !important;
+                /*opacity: 0.5;*/
+            }
+            /*.addButtonWrapper {
+            display: none;
+        }*/
+        .addButtonWrapper{
+            margin-bottom:3%;
+        }
+
+        .itemlist:hover > .addButtonWrapper {
+            position: absolute;
+            top: 40%;
+            display: block;
+            color: #ee4d36;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            /*transition: .4s ease-in-out;*/
+        }
+    </style>
+
+
+    <link href="~/printJs/print.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="~/css/site.css" rel="stylesheet" />
+}
+<div class="container-fluid">
+    <form method="post" id="frmPOS" data-parsley-validate="parsley">
+        <div class="row">
+            <div class="col-9">
+                <h2 class="text-center" style="color: black">Menu</h2>
+            </div>
+        </div>
+        <div class="row" style="width: 100%;  margin-bottom: 4%;">
+            @foreach (var data in Model.salesMenuCategories)
+            {
+                <div class="col-sm-4 py-1 box" style="background-color: #309FDB; text-align:center; border: 5px solid white; margin-left:1%" onclick="GetItemMenu(@data.Id)">
+                    <a href="#" id="stationary-btn">
+                        <div class="leftImgBox">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="counterBox1">
+                            <span>@data.categoryName</span><input type="hidden" id="catId" name="catId" value="@data.Id" />
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <div class="row" style="width:107%">
+            <div class="row col-md-9" id="divLoad">
+
+            </div>
+
+            <div class="row col-md-3">
+                <div class="card" style="text-align: center;background: #FFFFFF; height: 100%; width:100%; border: 2px solid whitesmoke">
+                    <div class="card" style="background-color:aqua;">
+                        <h2 class="text-center" style="margin-top:8px;"><span id="count"></span>Item</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+
+                                <div class="row" style="height:250px; overflow-y:scroll;">
+                                    <table class="table-bordered" id="tblitemDetails" style="width:100%">
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="form-group row" style="margin-top: 30px;">
+                                <label for="grossTotal" class="col-lg-6 col-sm-6 col-md-6 col-form-label" style="text-align:left;">Gross Total </label>
+                                <div class="col-lg-6 col-sm-6 col-md-6">
+                                    <input type="text" class="form-control" name="grossTotal" id="grossTotal" readonly style="text-align:right;" value="0">
+                                    <input type="hidden" class="form-control" name="netTotal" id="netTotal" value="0">
+                                    <input type="hidden" class="form-control" name="grossVAT" id="grossVAT" value="0">
+                                    <input type="hidden" class="form-control" name="grossDiscount" id="grossDiscount" value="0">
+                                    <input type="hidden" class="form-control" name="given" id="given" value="0">
+                                    <input type="hidden" class="form-control" name="change" id="change" value="0">
+                                    <input type="hidden" class="form-control" name="baleboy" id="baleboy" />
+                                    <input type="hidden" name="isMember" id="isMember" value="0" />
+                                </div>
+                            </div>
+                            @*<div class="form-group row">
+                                    <label for="date" class="col-sm-6 col-form-label" style="text-align:left;">Payment Mode <span class="redStar">*</span></label>
+                                    <div class="col-sm-6">
+                                        <select type="text" class="form-control" id="paymentModeId" name="paymentModeId">
+                                            @foreach (var data in Model.paymentModes)
+                                            {
+                                                <option value="@data.Id">@data.paymentModeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div id="divCashBank">
+                                        <div class="col-sm-12 row" id="cash">
+                                            <label for="cashAmount" class="col-sm-7 col-form-label">Cash Amount<span class="redStar">*</span></label>
+                                            <input data-parsley-required="true" type="number" class="col-sm-5 form-control" id="cashAmount" style="text-align:right;" value="" name="cashAmount">
+                                        </div>
+                                        <div class="col-sm-12 row" id="bank" style="display:none">
+                                            <label class="col-sm-7 col-form-label" style="text-align:left;">Bank Amount</label>
+                                            <input data-parsley-type="number" class="col-sm-5 form-control" style="text-align:right;" id="bankAmount" value="" name="bankAmount">
+                                        </div>
+                                    </div>
+                                    <div class="" id="divCard" style="display:none">
+                                        <div class="col-sm-12 row">
+                                            <label class="col-sm-7 col-form-label" style="text-align:left;">Card Type</label>
+                                            <select id="cardTypeId" name="cardTypeId" class="col-sm-5 form-control">
+                                                @foreach (var data in Model.cardTypes)
+                                                {
+                                                    <option value="@data.Id">@data.CardTypeName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 row">
+                                            <label class="col-sm-7 col-form-label" style="text-align:left;">Card Amount</label>
+                                            <input data-parsley-type="number" class="col-sm-5 form-control" id="cardAmount" value="" name="cardAmount">
+                                        </div>
+
+                                        <div class="col-sm-12 row">
+                                            <label class="col-sm-7 col-form-label" style="text-align:left;">Card Bank</label>
+                                            <select id="bankInfoId" name="bankInfoId" class="col-sm-5 form-control">
+                                                @foreach (var data in Model.bankInfos)
+                                                {
+                                                    <option value="@data.Id">@data.bankName</option>
+                                                }
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div id="divMobileBanking" style="display:none">
+                                        <div class="col-sm-12 row">
+                                            <label class="col-sm-7 col-form-label" style="text-align:left;">Banking Type</label>
+                                            <select id="mobileBankingTypeId" name="mobileBankingTypeId" class="col-sm-5 form-control">
+                                                @foreach (var data in Model.mobileBankingTypes)
+                                                {
+                                                    <option value="@data.Id">@data.walletTypeName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 row">
+                                            <label class="col-sm-7 col-form-label" style="text-align:left;">Mobile Amount</label>
+                                            <input data-parsley-type="number" class="col-sm-5 form-control" id="mobileAmount" value="" name="mobileAmount">
+                                        </div>
+                                        <div class="col-sm-12 row">
+                                            <label class="col-sm-7 col-form-label" style="text-align:left;">Trx Number</label>
+                                            <input type="text" class="col-sm-5 form-control" id="trxNumber" value="" name="trxNumber" style="width:100%;">
+                                        </div>
+                                    </div>
+                                </div>*@
+
+                            <div class="form-group row">
+                                <label for="cashAmount" class="col-lg-6 col-sm-6 col-md-6 col-form-label text-left">Cash Amount<span class="redStar">*</span></label>
+                                <div class="col-lg-6 col-sm-6 col-md-6 input-group">
+                                    <input data-parsley-required="true" type="number" class="form-control input-group-sm text-right" id="cashAmount" value="" name="cashAmount">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="customerMobile" class="col-lg-6 col-sm-6 col-md-6 col-form-label text-left">Customer mobile<span class="redStar">*</span></label>
+                                <div class="col-lg-6 col-sm-6 col-md-6 input-group">
+                                    <input name="customerMobile" id="customerMobile" class="form-control input-group-sm text-right" data-parsley-required="true" data-parsley-trigger="keyup" />
+                                    <input type="hidden" name="customerId" id="customerId" />
+                                    <input type="hidden" name="masterId" id="masterId" value="0" />
+                                    <input type="hidden" name="invoiceDate" id="invoiceDate" />
+                                </div>
+                            </div>
+                            <div class="col-12 row" style="margin-left: 6%;">
+                                <div class="col-sm-6 input-group">
+                                    <button type="button" id="btnRefress" title="Final" class="btn btn-success btn-sm m-2" style="float:right">Refresh</button>
+                                </div>
+                                <div class="col-sm-6 input-group">
+                                    <button type="button" id="btnPOSSubmit" title="Final" class="btn btn-success btn-sm m-2">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts{
+    <script src="~/printJs/print.min.js" type="text/javascript"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#invoiceDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            Common.Ajax('GET', '/global/api/GetCustomerInfoByRoleId', [], 'json', ajaxAllCustomer);
+
+            $('#paymentModeId').on('change', function (e) {
+                var val = $(this).val();
+                var total = $('#grossTotal').val();
+                if (val == 1) {
+                    $('#cash').show();
+                    $('#bank').hide();
+                    $('#divCashBank').show();
+                    $('#divCard').hide();
+                    $('#divMobileBanking').hide();
+                    $('#cashAmount').val(total);
+                }
+                else if (val == 2) {
+                    $('#bank').show();
+                    $('#cash').hide();
+                    $('#divCashBank').show();
+                    $('#divCard').hide();
+                    $('#divMobileBanking').hide();
+                    $('#bankAmount').val(total);
+                }
+                else if(val == 3){
+                    $('#bank').show();
+                    $('#cash').show();
+                    $('#divCashBank').show();
+                    $('#divCard').hide();
+                    $('#divMobileBanking').hide();
+                    $('#bankAmount').val(total / 2);
+                    $('#cashAmount').val(total / 2);
+                }
+                else if (val == 4) {
+                    $('#divCashBank').hide();
+                    $('#divCard').show();
+                    $('#divMobileBanking').hide();
+                    $('#cardAmount').val(total);
+                }
+                else if (val == 5) {
+                    $('#divCashBank').hide();
+                    $('#divCard').hide();
+                    $('#divMobileBanking').show();
+                    $('#mobileAmount').val(total);
+                }
+            });
+
+            $('#btnRefress').click(function () {
+                $("#tblitemDetails").empty();
+                $("#grossTotal").val('');
+                $("#cashAmount").val('');
+                $("#customerMobile").val('');
+                $("#btnPOSSubmit").attr('disabled', false);
+            })
+            $("#btnPOSSubmit").click(function (e) {
+                $("#btnPOSSubmit").attr('disabled', true);
+                var rowCount = $('#tblitemDetails tbody>tr').length;
+                let customerMobile = $('#customerMobile').val();
+                let grossDiscount = $('#grossDiscount').val();
+                if (customerMobile == '') {
+                    alert("Please Entred Mobile No");
+                    //$("#btnPOSSubmit").attr('disabled', false);
+                    return false;
+                }
+                //else
+                if (rowCount == 0) {
+                    alert("Please Add Minimum 1 Item");
+                    $("#btnPOSSubmit").attr('disabled', false);
+                    return false;
+                }
+
+                e.preventDefault();
+
+                var form = $("#frmPOS");
+                console.log(e);
+                $.ajax({
+
+                    url: '@Url.Action("PosIndex", "SalesInvoice")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        console.log(records);
+                        printJS({ printable: "/pdf/" + records, type: 'pdf', showModal: true, onPrintDialogClose: printJobComplete });
+                        //location.reload();
+                        $("#tblitemDetails").empty();
+                        $("#grossTotal").val('');
+                        $("#cashAmount").val('');
+                        $("#customerMobile").val('');
+                        $("#btnPOSSubmit").attr('disabled', false);
+                    }
+                });
+            });
+        });
+
+        function printJobComplete() {
+            location.reload();
+        }
+
+        function ajaxAllCustomer(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.relId;
+                obj.name = option.customerName;
+                obj.value = option.mobile;
+                obj.address = option.address;
+                obj.ismembership = option.ismembership;
+                obj.cardNo = option.cardNo;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#customerMobile').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#customerName").val(ui.item.name);
+                    $("#address").val(ui.item.address);
+                    $("#cardNo").val(ui.item.cardNo);
+                    //if (ui.item.ismembership == 1) {
+                    //    $("#isMember").prop("checked", true);
+                    //    $("#forCardDiv").show();
+                    //    $("#forCard").show();
+                    //    if ($("#cardNo").val() == "") {
+                    //        swal('Warning', 'Enter Membership No!', 'warning');
+                    //        return false;
+                    //    }
+                    //}
+                    //else {
+                    //    $("#isMember").prop("checked", false);
+                    //    $("#forCardDiv").hide();
+                    //    $("#forCard").hide();
+                    //}
+                }
+            });
+        }
+
+        function GetItemMenu(Id) {
+            //alert(Id);
+            Common.Ajax('GET', '/OtherSales/SalesInvoice/GetAllSalesMenuByCategory/?catId=' + Id, [], 'json', ajaxGetAllSalesMenuByCategory);
+        }
+
+        function HoverItem() {
+            $(".itemlist div.card").mouseover(function () {
+                //alert("abc");
+                $(this).addClass("opcity");
+            });
+            $(".itemlist div.card").mouseout(function () {
+                $(this).removeClass("opcity");
+            });
+        }
+
+        function ajaxGetAllSalesMenuByCategory(response) {
+            if (response == null) {
+                return false;
+            }
+            $('#divLoad').empty();
+            for (var i = 0; i < response.length; i++) {
+                var fileName = response[i].fileName;
+                if (fileName == null || fileName == "") {
+                    fileName = "images/item.png";
+                }
+                else {
+                    fileName = "ItemImages/" + fileName
+                }
+                $('#divLoad').append('<div class="itemlist" onclick="AddItemInfo(' + response[i].Id + "," + "'" + response[i].specificationName + "'" + "," + "'" + response[i].price + "'" + "," + "'" + response[i].fileName + "'" + ')">' +
+
+                    '<div class="card text-center">' +
+                    '<div class="imageWrapper">' +
+
+                    '<div class="imageWrapperWrapper">' +
+                    '<img src="/' + fileName + '"/>' +
+                    '</div>' +
+                    '<div class="category_text_cls">' +
+                     response[i].specificationName + '(' + '' + response[i].openingQty + ')' +
+                    '</div>' +
+                    '<div class="price_cls">' +
+                    '<span> ৳ ' + response[i].price + '</span>' +
+                    '</div>' +
+
+                    '</div>' +
+
+                    '<section class="addButtonWrapper border-radius-small">' +
+
+                    '<input type="button" class="btn btn-success btn-sm" value="Add to Cart"/>' +
+                    //'<input type="button" class="btn btn-success btn-sm" value="Add to Cart" onclick="AddItemInfo(' + response[i].Id + "," + "'" + response[i].specificationName + "'" + "," + "'" + response[i].price + "'" + "," + "'" + response[i].fileName + "'" + ')"/>' +
+                    '</section >' +
+
+                    '</div>' +
+                    '</div>');
+            }
+            HoverItem();
+        }
+
+        function AddItemInfo(specId, specName, price,fileName) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            if (fileName == null || fileName == "") {
+                fileName = "/images/item.png";
+            }
+
+            let itemSpecification = specName;
+            let itemSpecificationId = specId;
+            let quantity = 1;
+            let itemprice = price;
+            let fName = "/images/item.png";
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+
+            if (itemSpecificationId == null || itemSpecificationId == '') {
+                swal('Warning', 'You must be select a item!', 'warning');
+                return false;
+            }
+
+            for (i = 0; i < RowCount; i++) {
+                var _itemId = $('#itemPriceFixingId' + i + '').val();
+                if (_itemId == itemSpecificationId && editOption == 0) {
+                    swal('Warning', 'You have already added this item!', 'warning');
+                    return false
+                }
+            }
+            var a = RowCount+1;
+            $("#count").text(a);
+            $("#count").css('background-color', '#e0c8e4');
+            $("#count").css('border-radius', '35%');
+            $("#count").css('padding', '2px 8px');
+            //$("#count").css('margin-top', '2px');
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            //var trHtml = '<tr id=' + index + '>' + '<td width="15%"><img src="' + fName + '" style="height:40px; width:40px;"></td>' +
+            //    '<td width="40%">' + itemSpecification + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + itemSpecificationId + '"/></td>' +
+            //    '<td width="35%">'+
+            //    '<input type="number" id="quantityAll' + index + '" name="tblQuantity[]" class="clsQTY" value="' + quantity + '" style="width:40px;" onkeyup="CalculateGrossTotal()" onclick="CalculateGrossTotal()"></td><input type="hidden" id="priceList' + index + '" name="priceList[]" class="clsPrice" value="' + itemprice + '"></td>' +
+            //    '<td width="10%"><a href="javascript:void(0)"style="background-color:red;border-color:red;margin-top:10px;" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+            //    '</tr>';
+
+            var trHtml = '<tr id=' + index + '>' + '<td width="10%"><img src="' + fName + '" style="height:40px; width:40px;"></td>' +
+                '<td width="40%">' + itemSpecification + '<input type="hidden" id="itemPriceFixingId' + index + '" name="itemPriceFixingId[]" class="clsitemSpecificationId" value="' + itemSpecificationId + '"/></td>' +
+                '<td width="40%">' + '<button type="button" onclick="add('+index+')" value="Add" title="Add" class="btn" style="width:15px;"><i class="fas fa-plus"></i></button>' +
+                '<input type="text" style="width:25px; margin-left:5px;" id="quantityAll' + index + '" class="clsQTY"" name="tblQuantity[]" value="'+ quantity +'"/><button type="button" onclick="subst(' + index + ')" value="subs" title="subs" class="btn" style="width:15px;"><i class="fas fa-minus"></i></button></td>' +
+                '<input type="hidden" id="priceList' + index + '" name="priceList[]" class="clsPrice" value="' + itemprice + '"></td>' +
+                '<td width="10%"><a href="javascript:void(0)"style="background-color:red;border-color:red;margin-top:10px;" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            CalculateGrossTotal();
+        }
+        ////increment
+        function add(specId) {
+            var a = $("#quantityAll" + specId).val();
+            a++;
+            if (a => 1) {
+                $("#subs" + specId).removeAttr("disabled");
+            }
+            $("#quantityAll" + specId).val(a);
+            var total = 0;
+
+            $("#tblitemDetails tbody>tr").each(function () {
+                var GQTY = $(this).find(".clsQTY").val() ? parseFloat($(this).find(".clsQTY").val()) : 0;
+                var PRICE = $(this).find(".clsPrice").val() ? parseFloat($(this).find(".clsPrice").val()) : 0;
+
+                total += GQTY * PRICE;
+                //qty += parseFloat(qty) + parseFloat(GQTY) ? parseFloat(GQTY) : 0;
+                //price += parseFloat(price) + parseFloat(PRICE) ? parseFloat(PRICE) : 0;
+            });
+
+            $("#grossTotal").val(parseFloat(total).toFixed(2));
+            $("#netTotal").val(parseFloat(total).toFixed(2));
+
+            return false;
+        };
+        ////deccrement
+        function subst(specId) {
+            var b = $("#quantityAll" + specId).val();
+            if (b.length > 0 && b >= 1) {
+                b--;
+                $("#quantityAll" + specId).val(b);
+            }
+            else {
+                $("#subs" + specId).attr("disabled", "disabled");
+            }
+            var total = 0;
+
+            $("#tblitemDetails tbody>tr").each(function () {
+                var GQTY = $(this).find(".clsQTY").val() ? parseFloat($(this).find(".clsQTY").val()) : 0;
+                var PRICE = $(this).find(".clsPrice").val() ? parseFloat($(this).find(".clsPrice").val()) : 0;
+
+                total += GQTY * PRICE;
+                //qty += parseFloat(qty) + parseFloat(GQTY) ? parseFloat(GQTY) : 0;
+                //price += parseFloat(price) + parseFloat(PRICE) ? parseFloat(PRICE) : 0;
+            });
+
+            $("#grossTotal").val(parseFloat(total).toFixed(2));
+            $("#netTotal").val(parseFloat(total).toFixed(2));
+
+            return false;
+        };
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblitemDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function CalculateGrossTotal() {
+            //var qty = 0;
+            //var price = 0;
+            var total = 0;
+
+            $("#tblitemDetails tbody>tr").each(function () {
+                var GQTY = $(this).find(".clsQTY").val() ? parseFloat($(this).find(".clsQTY").val()) : 0;
+                var PRICE = $(this).find(".clsPrice").val() ? parseFloat($(this).find(".clsPrice").val()) : 0;
+
+                total += GQTY * PRICE;
+                //qty += parseFloat(qty) + parseFloat(GQTY) ? parseFloat(GQTY) : 0;
+                //price += parseFloat(price) + parseFloat(PRICE) ? parseFloat(PRICE) : 0;
+            });
+
+            $("#grossTotal").val(parseFloat(total).toFixed(2));
+            $("#netTotal").val(parseFloat(total).toFixed(2));
+
+            return false;
+        }
+
+        function AddQuantity() {
+
+            var qty = 0;
+            //var price = 0;
+            var total = 0;
+
+            $("#tblitemDetails tbody>tr").each(function () {
+                var GQTY = $(this).find(".clsQTY").val() ? parseFloat($(this).find(".clsQTY").val()) : 0;
+                var PRICE = $(this).find(".clsPrice").val() ? parseFloat($(this).find(".clsPrice").val()) : 0;
+
+                total += GQTY * PRICE;
+                qty += parseFloat(qty) + parseFloat(GQTY) ? parseFloat(GQTY) : 0;
+                //price += parseFloat(price) + parseFloat(PRICE) ? parseFloat(PRICE) : 0;
+            });
+
+            $("#grossTotal").val(parseFloat(total).toFixed(2));
+            $("#netTotal").val(parseFloat(total).toFixed(2));
+
+            return false;
+        }
+
+        //function AddQuantity() {
+        //    var qty = 0;
+
+        //    $("#tblitemDetails tbody>tr").each(function () {
+        //        var GQTY = $(this).find(".clsQTY").val() ? parseInt($(this).find(".clsQTY").val()) : 0;
+        //        qty = GQTY + 1;
+        //        $(this).find(".clsQTY").val(parseInt(qty));
+        //    });
+        //    return false;
+        //}
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+    </script>
+}
+

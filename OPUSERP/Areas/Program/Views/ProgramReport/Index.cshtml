@@ -1,0 +1,78 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "ProgramReportView";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    .header-cls {
+        text-align: left;
+        color: black;
+    }
+
+    .text-align-center-cls {
+        text-align: center;
+    }
+
+    .table-cls {
+        margin-top: 100px;
+    }
+
+    .signature-div-cls p {
+        text-align: right;
+        color:black;
+        margin-right:50px;
+    }
+</style>
+
+<br />
+<section>
+    <div class="container-fluid">
+        <div class="header-cls">
+            <h5>কার্যক্রমের নাম : &nbsp; &nbsp; @Model.programReportListModel.MainCategory</h5>
+            <h5>প্রতিবেদনের নাম : &nbsp; &nbsp; @Model.programReportListModel.SubCategory</h5>
+            <h5>তারিখ : &nbsp; &nbsp; @Model.programReportListModel.FromDate থেকে  @Model.programReportListModel.ToDate</h5>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>তারিখ</th>
+                    <th>বাস্তবায়নের স্থান </th>
+                    <th>ইউনিয়ন/পৌরসভা </th>
+                    <th>উপজেলা</th>
+                    <th>বাস্তবায়নের সংখ্যা</th>
+                    <th>উপস্থিতি</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.programReportListModel.programReportListSubModels)
+                {
+                    <tr>
+                        <td>@data.date?.ToString("dd/MM/yy")</td>
+                        <td>@data.place</td>
+                        <td>@data.union </td>
+                        <td>@data.thana</td>
+                        <td>@data.number</td>
+                        <td>@data.present</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br /><br />
+        <br /><br />
+                    <div class="signature-div-cls">
+                        <p>
+                            নাম : নাসিমা খাতুন
+                        </p>
+                        <p>
+                            তথ্য অফিসার
+                        </p>
+                        <p>
+                            জেলা তথ্য অফিসার
+                        </p>
+                        <p>
+                            @Model.programReportListModel?.programReportListSubModels?.FirstOrDefault()?.district
+                        </p>
+                    </div>
+    </div>
+</section>

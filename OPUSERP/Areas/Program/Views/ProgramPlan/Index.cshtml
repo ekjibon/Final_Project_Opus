@@ -1,0 +1,329 @@
+﻿
+@model ProgramPlanViewModel
+
+@{
+    ViewData["Title"] = "Program Plan";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+
+<br />
+<section>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                <h5 class="card-title" style="color: black!important;font-weight:bold">Program Plan</h5>
+            </div>
+            <div class="card-body">
+                <form id="myForm" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Number <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="number" id="number" class="form-control" required readonly value="@Model.number" />
+                            <input type="hidden" name="Id" id="Id" value="0" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Form Date <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="startDate" id="startDate" class="form-control" required autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">To Date <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="endDate" id="endDate" class="form-control" required autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Program Year</label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="programYearId" id="programYearId" class="form-control">
+                                <option value="">----Select Year----</option>
+                                @foreach (var item in Model.programYears)
+                                {
+                                    <option value="@item.Id">@item.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Main Category Type <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="programMainCategoryId" id="programMainCategoryId" class="form-control">
+                                <option value="">----Select Main Category Type----</option>
+                                @foreach (var item in Model.programMainCategories)
+                                {
+                                    <option value="@item.Id">@item.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Category Type <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="programCategoryId" id="programCategoryId" class="form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Division<span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select type="text" class="form-control" id="txtorgDivision" name="divisionId" required>
+                                <option value="">----Select Division-----</option>
+                                @foreach (var item in Model.divisions)
+                                {
+                                    <option value="@item.Id">@item.divisionName</option>
+                                }
+                            </select>
+                            <input type="hidden" id="txtorgAddressID" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">District <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="districtId" id="txtorgDistrict" class="form-control" required></select>
+                        </div>
+                    </div>
+
+                    <input type="button" id="saveForm" value="Submit" class="btn btn-success ml-1" style="float:right; margin-top:5px;" />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<br />
+<br />
+<div class="row">
+    <div class="container-fluid">
+        <div class="card">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="card-title" style="color: black!important;font-weight:bold">List of Program Plan</h5>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="addressTypeTable">
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Year</th>
+                            <th>From Date</th>
+                            <th>To Date</th>
+                            <th>Category</th>
+                            <th>Division</th>
+                            <th>District</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.programPlans)
+                        {
+                            <tr>
+                                <td>@data.number</td>
+                                <td>@data.programYear?.name</td>
+                                <td>@data.startDate?.ToString("dd/MM/yyyy")</td>
+                                <td>@data.endDate?.ToString("dd/MM/yyyy")</td>
+                                <td>@data.programCategory?.name</td>
+                                <td>@data.division?.divisionName</td>
+                                <td>@data.district?.districtName</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.number','@data.startDate?.ToString("MM/dd/yyyy")','@data.endDate?.ToString("MM/dd/yyyy")','@data.programYearId','@data.programCategoryId','@data.programCategory?.programMainCategoryId','@data.districtId','@data.divisionId')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#" onclick="Remove(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+        let orgDivision = $('#txtorgDivision').val();
+        let txtorgDivision = $('#txtorgDivision option:selected').text();
+
+        $(document).ready(function () {
+
+
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+
+            $('#programCategoryTable').DataTable();
+
+            $('#startDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#endDate').datepicker({ uiLibrary: 'bootstrap4' });
+
+            $("#txtorgDivision").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', orgDistrict);
+            });
+
+            //$("#txtorgDistrict").change(function () {
+            //    var id = $(this).val();
+            //    Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', orgThana);
+            //});
+
+            $("#programMainCategoryId").change(function () {
+                let rptType = $('#programMainCategoryId').val();
+                Common.Ajax('GET', '/global/api/getsubcategory/' + rptType, [], 'json', orgSub);
+
+            });
+
+
+            $("#saveForm").click(function () {
+                var data = $("#myForm").serialize();
+                let number = $('#number').val();
+                let startDate = $('#startDate').val();
+                let endDate = $('#endDate').val();
+
+                let programMainCategoryId = $('#programMainCategoryId').val();
+                let programCategoryId = $('#programCategoryId').val();
+                let txtorgDivision = $('#txtorgDivision').val();
+                let txtorgDistrict = $('#txtorgDistrict').val();
+
+                if (number == "") {
+                    swal('Warning', 'Number can not be null', 'warning');
+                    return false;
+                }
+
+                if (startDate == "") {
+                    swal('Warning', 'Please select a start date', 'warning');
+                    return false;
+                }
+
+                if (endDate == "") {
+                    swal('Warning', 'Please select a end date', 'warning');
+                    return false;
+                }
+
+                if (programMainCategoryId == "") {
+                    swal('Warning', 'Please select a main category', 'warning');
+                    return false;
+                }
+
+                if (programCategoryId == "") {
+                    swal('Warning', 'Please select a category', 'warning');
+                    return false;
+                }
+
+                if (txtorgDivision == "") {
+                    swal('Warning', 'Please select a division', 'warning');
+                    return false;
+                }
+
+                if (txtorgDistrict == "") {
+                    swal('Warning', 'Please select a district', 'warning');
+                    return false;
+                }
+
+
+
+
+
+
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Program/ProgramPlan/Index",
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            location.reload(true);
+                        }
+                    });
+                });
+
+                return false;
+            });
+
+        });
+
+
+        function orgDistrict(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#txtorgDistrict').empty();
+            $('#txtorgDistrict').append(options);
+
+            if ($('#IsEditadd').val() == 1) {
+                $('#txtorgDistrict').val($('#distId').val());
+            }
+        }
+
+        //function orgThana(response) {
+
+        //    var options = '<option value="">Select</option>';
+        //    $.each(response, function (i, item) {
+        //        options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+        //    });
+        //    $('#txtorgUpazila').empty();
+        //    $('#txtorgUpazila').append(options);
+        //    if ($('#IsEditadd').val() == 1) {
+        //        $('#txtorgUpazila').val($('#thanaId').val());
+        //    }
+        //}
+
+        function orgSub(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.name + '</option>';
+            });
+            $('#programCategoryId').empty();
+            $('#programCategoryId').append(options);
+
+        }
+
+        function Edit(Id, number, startDate, endDate, programYearId, programCategoryId, programMainCategoryId, districtId, divisionId) {
+            $("#Id").val(Id);
+            $("#number").val(number);
+            $("#startDate").val(startDate);
+            $("#endDate").val(endDate);
+            $("#programYearId").val(programYearId);
+            $("#programMainCategoryId").val(programMainCategoryId);
+            Common.Ajax('GET', '/global/api/getsubcategory/' + programMainCategoryId, [], 'json', orgSub, false);
+            $("#programCategoryId").val(programCategoryId);
+            $("#txtorgDivision").val(divisionId);
+            Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', orgDistrict, false);
+            $("#txtorgDistrict").val(districtId);
+        }
+
+        function Remove(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/Program/ProgramPlan/Delete?Id=" + index;
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+    </script>
+}
+
+
+
+
+

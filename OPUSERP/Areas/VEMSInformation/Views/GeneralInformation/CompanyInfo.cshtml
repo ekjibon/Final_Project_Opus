@@ -1,0 +1,116 @@
+﻿@model CompanyInformationViewModel
+@{
+    ViewData["Title"] = "General Information";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header row">
+        <div class="col-md-10">
+            <h6 class="m-0 font-weight-bold text-primary">Company Information</h6>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-sm btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/Index/@Model?.companyInformation?.registrationFormId">Back To List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSInformation" asp-controller="GeneralInformation" asp-action="CompanyInfo" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Type Of Vendor <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="typeOfVendor" name="typeOfVendor" value="@Model?.companyInformation?.typeOfVendor" data-parsley-required="true" />
+                            <input type="hidden" id="companyId" name="companyId" value="@Model?.companyId" />
+                            <input type="hidden" id="companyInfoId" name="companyInfoId" value="@Model?.companyInformation?.Id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Permanent Employee <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input data-parsley-type="number" class="form-control" id="permanentEmployee" name="permanentEmployee" value="@Model?.companyInformation?.permanentEmployee" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Investment BDT </span></div>
+                        <div class="col-8">
+                            <input data-parsley-type="number" class="form-control" id="investment" name="investment" value="@Model?.companyInformation?.investment" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Turnover </span></div>
+                        <div class="col-8">
+                            <input data-parsley-type="number" class="form-control" id="turnover" name="turnover" value="@Model?.companyInformation?.turnover" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Liquidity Ratio </span></div>
+                        <div class="col-8">
+                            <input data-parsley-type="number" class="form-control" id="liquidityRatio" name="liquidityRatio" value="@Model?.companyInformation?.liquidityRatio" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Date of Establishment </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="dateofEstablishment" name="dateofEstablishment" value="@Model?.companyInformation?.dateOfEstablishment?.ToString("dd-MMM-yyyy")" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Business Nature </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="businessNature" name="businessNature" value="@Model?.companyInformation?.businessNature" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Office Telephone </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="officeTelephone" name="officeTelephone" value="@Model?.companyInformation?.officeTelephone" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                    @*<a class="btn btn-danger btn-sm" href="/VEMSHome/VendorHome/Index" style="float:right;" onclick=""><i class="fa fa-times"></i> Cancel</a>*@
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dateofEstablishment').flatpickr({ dateFormat: "d-M-Y" });
+        });
+    </script>
+}

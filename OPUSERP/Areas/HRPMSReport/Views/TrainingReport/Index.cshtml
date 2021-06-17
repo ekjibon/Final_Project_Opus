@@ -1,0 +1,149 @@
+﻿@model ReportingViewModel
+@{
+    ViewData["Title"] = "Training Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.titleTrainingReport</h6>
+            </div>
+
+            <div class="card-body" style="display:block;">
+                <div class="container">
+                    <form>
+                        <div class="form-group row">
+                            <label for="employeeCode" class="col-sm-2 col-form-label">@Model.fLang.employeeID</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" placeholder="Search" id="employeeCode" name="employeeCode">
+                                <input type="hidden" id="employeeId" name="employeeId" value="0" />
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" onclick="LoadByFilter()" class="btn btn-success btn-sm" style="width:100%"><i class="fas fa-search"></i> Load</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" style="width:100%;" id="allEmployeeTrainingTable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                            <th>start date</th>
+                            <th>End date</th>
+                            <th>Budget</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        var table;
+        $(document).ready(function () {
+            Common.Ajax('GET', '/global/api/getEmployeeInfoByOrg/', [], 'json', ajaxEmployeeList, false);
+        });
+
+        function ajaxEmployeeList(response) {
+            console.log(response);
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.id;
+                obj.value = option.employeeCode + ' - ' + option.nameEnglish;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#employeeCode').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#employeeId").val(ui.item.key);
+                }
+            });
+        }
+        
+        function LoadByFilter() {
+            var employeeId = $("#employeeId").val();            
+            if (employeeId == "" || employeeId == "0") {
+                alert("Nothing To Query Please Select Employee.");
+            } else {
+                $('#allEmployeeTrainingTable').DataTable().destroy();
+
+                table = $('#allEmployeeTrainingTable').DataTable({
+                    ajax: {
+                        url: "/global/api/getTrainingListByEmployeeId/" + employeeId,
+                        dataSrc: ""
+                    },
+                    scrollX: true,
+                    columns: [
+                        { data: "course" },
+                        { data: "year" },
+                        { data: "startDateActual" },
+                        { data: "endDateActual" },
+                        { data: "budget" },
+                        { data: "status" },
+                        { data: "action" }
+                    ],
+                    stateSave: false,
+                    dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                        "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fa fa-file-excel"></i> Excel',
+                            titleAttr: 'Excel',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5]
+                            },
+                            title: orgFullTitle,
+                            messageTop: 'List Of Employee Training',
+                            class: 'btn btn-info'
+                        },
+                        {
+                            extend: 'csvHtml5',
+                            text: '<i class="fa fa-file-excel"></i> CSV',
+                            titleAttr: 'CSV',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5]
+                            },
+                            title: orgFullTitle,
+                            messageTop: 'List Of Employee Training'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            titleAttr: 'Print',
+                            title: orgFullTitle,
+                            messageTop: 'List Of Employee Training',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5]
+                            },
+                            customize: function (doc) {
+                                $(doc.document.body).find('h1').css('font-size', '20pt');
+                                $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                                $(doc.document.body).find('h1').css('text-align', 'center');
+                            }
+                        }
+                    ]
+                });
+            }
+        }
+
+    </script>
+}

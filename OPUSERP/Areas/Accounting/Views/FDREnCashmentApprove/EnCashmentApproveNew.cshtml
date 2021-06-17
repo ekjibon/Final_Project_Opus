@@ -1,0 +1,298 @@
+﻿@model FDREnCashmentViewModel
+@{
+    ViewData["Title"] = "EnCashment Approve";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Investment & Govt.Securities Approve</h6>
+                <a href="/Accounting/FDREnCashmentApprove/Index" class="btn btn-facebook btn-sm pull-right">Back To List</a>
+            </div>
+            <div class="card-body">
+                <div class="container">
+                    <form id="frmInvestment" aria- data-parsley-validate="parsley" autocomplete="off" enctype="multipart/form-data">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group row">
+
+                                    <label for="AccountName" class="col-sm-4 col-form-label">Account Name</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="AccountName" name="AccountName" readonly="readonly">
+                                        <input type="hidden" id="ID" name="ID" />
+                                        <input type="hidden" id="Amount" name="Amount" />
+                                        <input type="hidden" id="FDRID" name="FDRID" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="EncashDate" class="col-sm-4 col-form-label">Encash Date</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="EncashDate" name="EncashDate" readonly="readonly">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="MaturityStatus" class="col-sm-4 col-form-label">Maturity Status</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="MaturityStatus" name="MaturityStatus" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row" hidden>
+                                    <label for="RenewalStatus" class="col-sm-4 col-form-label">Renewal?</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="RenewalStatus" name="RenewalStatus" readonly="readonly">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="PrincipalLedger" class="col-sm-4 col-form-label">Principal Bank A/C</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="PrincipalLedger" name="PrincipalLedger" readonly="readonly">
+                                        <input type="hidden" id="PrincipalLedID" name="PrincipalLedID" />
+                                    </div>
+                                </div>
+                                <div class="form-group row" hidden>
+                                    <label for="InterestLedger" class="col-sm-4 col-form-label">Interest Bank A/C</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="InterestLedger" name="InterestLedger" readonly="readonly">
+                                        <input type="hidden" id="InterestLedID" name="InterestLedID" />
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="divSupportFile" hidden>
+                                    <label for="InterestLedger" class="col-sm-4 col-form-label">Upload the supporting<span style="color:red">*</span></label>
+                                    <div class="col-sm-8">
+                                        @*<input type="file" title="Supporting file" id="imagePath" name="imagePath" class="img-thumbnail float-left" />*@
+                                        <input type="text" title="Supporting file" id="SupportFileName" name="SupportFileName" class="form-control" />
+                                        <input type="hidden" id="UploadSupport" name="UploadSupport" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="Remarks" class="col-sm-4 col-form-label">Remarks</label>
+                                    <div class="col-sm-8">
+                                        @*<input type="text" class="form-control" id="Remarks" name="Remarks">*@
+                                        <textarea class="form-control" id="Remarks" name="Remarks" rows="7"></textarea>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group row">
+                                    <label for="PrincipalAmount" class="col-sm-6 col-form-label">Principal Amount</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="PrincipalAmount" name="PrincipalAmount" readonly="readonly">
+
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ProvisionAmount" class="col-sm-6 col-form-label">Provision Amount</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="ProvisionAmount" name="ProvisionAmount" readonly="readonly">
+
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ReceiveAmount" class="col-sm-6 col-form-label">Receive Amount<span style="color:red">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control money amtcal" id="ReceiveAmount" name="ReceiveAmount" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="PMP" hidden>
+                                    <label for="PrematurePercent" class="col-sm-6 col-form-label">Pre-Matured Percentage(%)<span style="color:red">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="PrematurePercent" name="PrematurePercent" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="DiffAmount" class="col-sm-6 col-form-label">Difference Amount</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="DiffAmount" name="DiffAmount" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="PercentDiff" class="col-sm-6 col-form-label">Difference Percentage(%)</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="PercentDiff" name="PercentDiff" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ExciseDuty" class="col-sm-6 col-form-label">Bank Charge/Excise Duty (if any)</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="ExciseDuty" name="ExciseDuty" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="AdvanceTax" class="col-sm-6 col-form-label">Advance Income Tax</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="AdvanceTax" name="AdvanceTax" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="PercentDiff" class="col-sm-6 col-form-label">Total</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="TotalAmount" name="TotalAmount" readonly="readonly">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group row">
+                                    <span class="col-sm-6"></span>
+                                    <div class="col-sm-6">
+                                        @*<button id="btnProcess" class="btn-success">Process</button>&nbsp;&nbsp;
+                                            <button id="btnRefresh" onclick="Refresh()" class="btn-default">Refresh</button>*@
+                                        <button id="btnApprove" class="btn-success">Approve</button>&nbsp;&nbsp;
+                                        <button id="btnReturn" class="btn-default">Return</button>&nbsp;&nbsp;
+                                        <button id="btnReject" class="btn-danger">Reject</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var formdata = new FormData();
+
+        $(document).ready(function () {
+
+            $(".dpdatepicker").datepicker({ dateFormat: "dd M yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1950:2050" }).datepicker("setDate", new Date());
+            @*console.log(@Model.getListOfFDREncashmentWithFDRViewModels);*@
+            $('#AccountName').val('@Model.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().docName')
+            $('#MaturityStatus').val('@Model.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().maturityStatus')
+            $('#RenewalStatus').val('@Model.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().maturityStatus')
+            $('#ID').val(@Model.getListOfFDREncashmentWithFDRViewModels.FirstOrDefault().Id);
+            $('#EncashDate').val('@Model.getListOfFDREncashmentWithFDRViewModels.FirstOrDefault().encashDate');
+            $('#PrincipalAmount').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().amount);
+            $('#ProvisionAmount').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().provisionAmount);
+            $('#ReceiveAmount').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().receiveAmount);
+            $('#DiffAmount').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().diffAmount);
+            $('#PercentDiff').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().percentDiff);
+            $('#ExciseDuty').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().exciseDuty);
+            $('#AdvanceTax').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().advanceTax);
+            $('#PrincipalLedID').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().principalLedID);
+            $('#InterestLedID').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().interestLedID);
+            $('#PrincipalLedger').val('@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().principalLedger');
+            $('#InterestLedger').val('@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().InterestLedger');
+            $('#TotalAmount').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().totalAmount);
+            $('#FDRID').val(@Model?.getListOfFDREncashmentWithFDRViewModels?.FirstOrDefault().fDRID);
+
+            $("#btnApprove").click(function (e) {
+                e.preventDefault();
+                var form = $("#frmInvestment");
+                 swal({
+                     title: 'Are you sure?', text: 'Approve this!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Approve it!'
+                    }).then(function () {
+                $.ajax({
+                    url: '/Accounting/FDREnCashmentApprove/ApproveFDREncashment',
+                        data: form.serialize(),
+                        type: 'POST',
+                    success: function (data) {
+                    swal({
+                        title: '', text: 'Approve Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                    }).then(function () {
+                        window.location.href = "/Accounting/FDREnCashmentApprove/Index";
+                    });
+                    },
+                    error: function () {
+                        alert("Fail to save");
+                        }
+                    });
+                });
+            });
+
+            $("#btnReturn").click(function (e) {
+                e.preventDefault();
+                var form = $("#frmInvestment");
+                swal({
+                    title: 'Are you sure?', text: 'Return this!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Return it!'
+                }).then(function () {
+                    $.ajax({
+                        url: '/Accounting/FDREnCashmentApprove/ReturnFDREncashment',
+                        data: form.serialize(),
+                        type: 'POST',
+                        success: function (data) {
+                            swal({
+                                title: '', text: 'Return Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                            }).then(function () {
+                                window.location.href = "/Accounting/FDREnCashmentApprove/Index";
+                            });
+                        },
+                        error: function () {
+                            alert("Fail to save");
+                        }
+                    });
+                });
+            });
+
+            $("#btnReject").click(function (e) {
+                e.preventDefault();
+                var form = $("#frmInvestment");
+                swal({
+                    title: 'Are you sure?', text: 'Reject this!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Reject it!'
+                }).then(function () {
+                    $.ajax({
+                        url: '/Accounting/FDREnCashmentApprove/RejectFDREncashment',
+                        data: form.serialize(),
+                        type: 'POST',
+                        success: function (data) {
+                            swal({
+                                title: '', text: 'Reject Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                            }).then(function () {
+                                window.location.href = "/Accounting/FDREnCashmentApprove/Index";
+                            });
+                        },
+                        error: function () {
+                            alert("Fail to save");
+                        }
+                    });
+                });
+            });
+
+            $(".money").keydown(function (e) {
+                // Allow: backspace, delete, tab, escape, enter and .
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    // Allow: Ctrl/cmd+A
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: Ctrl/cmd+C
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: Ctrl/cmd+X
+                    (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        function formatDate(date) {
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+            return day + ' ' + monthNames[monthIndex] + ' ' + year;
+        }
+
+    </script>
+}

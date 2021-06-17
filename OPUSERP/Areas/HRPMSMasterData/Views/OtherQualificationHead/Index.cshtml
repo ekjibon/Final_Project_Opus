@@ -1,0 +1,134 @@
+﻿@model OtherQualificationHeadViewModel
+@{
+    ViewData["TitleMD"] = "Other Qualification Head";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Other Qualification Head</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="OtherQualificationHead" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="OtherQualificationHeadId" id="OtherQualificationHeadId" value="0" />
+
+                    <label for="OtherQualificationHeadName" class="col-sm-3 col-form-label">Other Qualification Head Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="OtherQualificationHeadName" id="OtherQualificationHeadName">
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Other Qualification Head List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="OtherQualificationHeadTable">
+                    <thead>
+                        <tr>
+                            <th>Other Qualification Head Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.otherQualificationHeads)
+                        {
+                            <tr>
+                                <td>@data.name</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.name')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#OtherQualificationHead").addClass("active");
+            $('#OtherQualificationHeadTable').DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Employee Training'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        exportOptions: {
+                            columns: [0]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+
+        });
+
+        function Edit(Id, name) {
+            $("#OtherQualificationHeadId").val(Id);
+            $("#OtherQualificationHeadName").val(name);
+        }
+    </script>
+}
+
+
+

@@ -1,0 +1,260 @@
+﻿
+@{
+    ViewData["Title"] = "Sales Purchase ";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 10px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+
+}
+@*@if (@Model?.printHistories?.Count() > 0)
+{
+    <div class="row">
+        <div class="col-11"></div>
+        <p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">@Model?.printHistories?.FirstOrDefault()?.printStatus</span></p>
+    </div>
+}*@
+
+<div class="row">
+    <div class="col-11"></div>
+    <p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">aaaaa</span></p>
+    @*<p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">@Model?.printHistories?.FirstOrDefault()?.printStatus</span></p>*@
+</div>
+<div class="row">
+    <p class="text-center col-12" style="color:black;font-size:15px; font-weight:bolder">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
+</div>
+<div class="row">
+    <p class="text-center col-12" style="color:black;font-size:13px; font-weight:bolder">জাতীয় রাজস্ব বোর্ড</p>
+</div>
+<div class="row">
+    <p class="text-center col-12" style="color:black;font-size:12px;">ক্রয়-বিক্রয় হিসাব</p>
+</div>
+<div class="row">
+    <p class="text-center col-12" style="color:black;font-size:12px;">(পণ্য বা সেবা প্রক্রিয়াকরণে সম্পৃক্ত নয় (ব্যবসায়ী) এমন নিবন্ধিত বা তালিকাভুক্ত ব্যক্তির জন্য প্রযোজ্য)</p>
+</div>
+<div class="row">
+    <p class="text-center col-12" style="color:black;font-size:11px;">[বিধি ৪০ এর উপবিধি (১) এর দফা (খখ) এবং ৪১(ক) দ্রষ্টব্য]</p>
+</div>
+<br />
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body">
+            <div class="container" style="background:white">
+                @*<div style="margin-bottom:30px;color:black">
+                        <span style="color:black;float:left"><span style="color:black">প্রতিষ্ঠানের নাম :</span>&nbsp; &nbsp; Invoice No</span><br />
+                        <span style="color:black;float:left"><span style="color:black">ঠিকানা :</span>&nbsp; &nbsp; Invoice No</span><br />
+                        <span style="color:black;float:left"><span style="color:black">বিআইএন :</span>&nbsp; &nbsp; Invoice No</span><br />
+                        <span style="color:black;float:left"><span style="color:black">লাইসেন্সের তারিখ :</span>&nbsp; &nbsp; Invoice No</span><br />
+                        <span style="color:black;float:left"><span style="color:black">ঘোষিত সহগ অনুযায়ী পণ্য/সেবার প্রথম সরবরাহের তারিখ :</span>&nbsp; &nbsp; Invoice No</span>
+                    </div>*@
+
+                <div class="row">
+                    @*<span style="color:black;margin-left:435px;font-weight:800;">সরবরাহের বিবরণ</span>*@
+                    <table class="table table-striped table-bordered" id="voucherList" style="margin-left: -11px;">
+                        <thead>
+                            <tr>
+                                <th style="font-weight:400;font-size:7px;text-align:center;" colspan="19">পণ্য/সেবা বিক্রয়</th>
+                            </tr>
+                            <tr>
+                                <th style="font-weight:400;font-size:7px;" rowspan="3">ক্র: সংখ্যা</th>
+                                <th style="font-weight:400;font-size:7px;" rowspan="3">তারিখ</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="2">বিক্রয়যোগ্য পণ্যের প্রারম্ভিক জের(সকল প্রকার কর ব্যতীত)</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="2">ক্রয়(সকল প্রকার কর ব্যতীত)</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="2">মোট পণ্য(সকল প্রকার কর ব্যতীত)</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="3">বিক্রেতার তথ্য</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="2">ক্রয় চালানপত্রের/বিল অব এন্ট্রির বিবরণ</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="5">বিক্রিত/সরবরাহকৃত পণের বিবরণ</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="3">ক্রেতার তথ্য</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="2">বিক্রয় চালানপত্রের বিবরণ</th>
+                                <th style="font-weight:400;font-size:7px;" colspan="2">পণ্যের প্রারম্ভিক জের</th>
+                                <th style="font-weight:400;font-size:7px;" rowspan="3">মন্তব্য</th>
+                            </tr>
+                            <tr>
+                                <th style="font-weight:400;font-size:7px;text-align:right;" rowspan="2">পরিমাণ</th>
+                                <th style="font-weight:400;font-size:7px;text-align:right;" rowspan="2">মূল্য</th>
+                                <th style="font-weight:400;font-size:7px;text-align:right;" rowspan="2">পরিমাণ</th>
+                                <th style="font-weight:400;font-size:7px;text-align:right;" rowspan="2">মূল্য</th>
+                                <th style="font-weight:400;font-size:7px; text-align:right;" rowspan="2">পরিমাণ</th>
+                                <th style="font-weight:400;font-size:7px; text-align:right;" rowspan="2">মূল্য</th>
+
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+
+                                <th style="font-weight:400;font-size:7px;">নম্বর</th>
+                                <th style="font-weight:400;font-size:7px;">তারিখ</th>
+
+                                <th style="font-weight:400;font-size:7px;">বিবরণ</th>
+                                <th style="font-weight:400;font-size:7px;">পরিমাণ</th>
+                                <th style="font-weight:400;font-size:7px;">করযোগ্য মূল্য(সকল প্রকার কর ব্যতীত)</th>
+                                <th style="font-weight:400;font-size:7px; text-align:right;">সম্পূরক শুল্ক(যদি থাকে)</th>
+                                <th style="font-weight:400;font-size:7px; text-align:right;">মূসক</th>
+
+                                <th style="font-weight:400;font-size:7px;" colspan="3"></th>
+                                <th style="font-weight:400;font-size:7px;" colspan="2"></th>
+
+                                <th style="font-weight:400;font-size:7px;">পরিমাণ</th>
+                                <th style="font-weight:400;font-size:7px;">মূল্য(সকল প্রকার কর ব্যতীত)</th>
+                            </tr>
+                            <tr>
+                                <th style="font-weight:400;font-size:7px;">নাম</th>
+                                <th style="font-weight:400;font-size:7px;">ঠিকানা</th>
+                                <th style="font-weight:400;font-size:7px;">এনআইডি নং</th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;">নাম</th>
+                                <th style="font-weight:400;font-size:7px;">ঠিকানা</th>
+                                <th style="font-weight:400;font-size:7px;">এনআইডি নং</th>
+
+                                <th style="font-weight:400;font-size:7px;">নম্বর</th>
+                                <th style="font-weight:400;font-size:7px;">তারিখ</th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+                                <th style="font-weight:400;font-size:7px;"></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                                    <tr>
+                                        <td>1</td>
+                                        <td>@DateTime.Now.ToString("dd-MMM-yyyy") </td>
+                                        <td style="text-align:right;">345315</td>
+                                        <td style="text-align:right;">534534</td>
+                                        <td style="text-align:right;">53245</td>
+                                        <td style="text-align:right;">qwerqw</td>
+                                        <td style="text-align:right;">513245</td>
+                                        <td style="text-align:right;">1351345</td>
+                                        <td>asdfas</td>
+                                        <td>adfaf</td>
+                                        <td>2345</td>
+                                        <td>2345</td>
+                                        <td>@DateTime.Now.ToString("dd-MMM-yyyy")</td>
+                                        <td>dddd</td>
+                                        <td style="text-align:right;">1111</td>
+                                        <td style="text-align:right;">3333</td>
+                                        <td></td>
+                                        <td style="text-align:right;">1345</td>
+                                        <td>asdf</td>
+                                        <td>asdf</td>
+                                        <td>21345</td>
+                                        <td>2345</td>
+                                        <td>@DateTime.Now.ToString("dd-MMM-yyyy")</td>
+
+                                        <td>345</td>
+                                        <td style="text-align:right;">234234</td>
+                                        <td>comments</td>
+                                    </tr>
+                                    
+                        </tbody>
+                        @*<tbody>
+                            @{
+                                int i = 1;
+
+                                @foreach (var item in Model.vATReportsixpointtwopointoneViewModels)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.Date?.ToString("dd-MMM-yyyy") </td>
+                                        <td style="text-align:right;">@item.preQuantity</td>
+                                        <td style="text-align:right;">@item.prePrice?.ToString("0,0.00")</td>
+                                        <td style="text-align:right;">@item.purQuantity</td>
+                                        <td style="text-align:right;">@item.purQuantity?.ToString("0,0.00")</td>
+                                        <td style="text-align:right;">@item.totalQuantity</td>
+                                        <td style="text-align:right;">@item.totalPrice?.ToString("0,0.00")</td>
+                                        <td>@item.saler</td>
+                                        <td>@item.salerAddress</td>
+                                        <td>@item.salerId</td>
+                                        <td>@item.billNo</td>
+                                        <td>@item.BillDate?.ToString("dd-MMM-yyyy")</td>
+                                        <td>@item.itemName</td>
+                                        <td style="text-align:right;">@item.amount</td>
+                                        <td style="text-align:right;">@item.priceWithoutVAT?.ToString("0,0.00")</td>
+                                        <td></td>
+                                        <td style="text-align:right;">@item.musok?.ToString("0,0.00")</td>
+                                        <td>@item.customerName</td>
+                                        <td>@item.customerAddress</td>
+                                        <td>@item.customerId</td>
+                                        <td>@item.invoiceNo</td>
+                                        <td>@item.invoicedate?.ToString("dd-MMM-yyyy")</td>
+
+                                        <td>@item.saleAmount</td>
+                                        <td style="text-align:right;">@item.saleprice?.ToString("0,0.00")</td>
+                                        <td>@item.comments</td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>*@
+
+
+                    </table>
+
+                </div>
+
+                <div class="row">
+                    <div style="text-align:left;">
+
+                        <span style="color:black;font-weight:100;font-size:10px;">* বিশেষ দ্রষ্টব্য :</span><br />
+                        <span style="color:black; font-weight:100;font-size:10px;">১। যে ক্ষেত্রে অনিবন্ধিত ব্যক্তির নিকট পণ্য ক্রয় করা হইবে বা অনিবন্ধিত ব্যক্তির নিকট পণ্য বিক্রয় করা হইবে সেই ক্ষেত্রে উক্ত ব্যক্তির পূর্ণাঙ্গ নাম, ঠিকানা ও জাতীয় পরিচয়পত্র নম্বর যথাযথভাবে সংশ্লিষ্ট কলাম [(৯),(১০) ও (১১),(১৯),(২০) ও (২১)] এ আবশিকভাবে উল্লেখ করিতে হইবে।</span><br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

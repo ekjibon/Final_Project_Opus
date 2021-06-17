@@ -1,0 +1,821 @@
+﻿@model VoucherMasterViewModel
+@{
+    ViewData["Title"] = "Contra Voucher";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+
+<div class="card p-0 m-0">
+    <div class="row">
+        <div class="col-sm-10">
+            <span style="font-size:1.5em;font-weight:700;color:gray;">Contra Voucher</span>
+        </div>
+        <div class="col-sm-2 text-right">
+            @*<a class="btn btn-sm btn-dark" href="/Voucher/ContraVoucher/ContraVoucherList">Back To List</a>*@
+            <a class="btn btn-sm btn-dark" href="/Accounting/PaymentVoucher/AllVoucherList">Back To List</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="frmContraVoucher" aria- data-parsley-validate="parsley" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Transaction Basic</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row" id="SBUSelect">
+                                <label for="sbuId" class="col-sm-4 col-form-label">SBU</label>
+                                <div class="col-sm-8">
+                                    <select type="text" class="form-control" id="sbuId"></select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="projectId" class="col-sm-4 col-form-label">Project <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select type="text" class="form-control" id="projectId" name="projectId" required></select>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="voucherNo" class="col-sm-4 col-form-label text-left">Voucher Number<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="voucherNo" id="voucherNo" value="@Model.VoucherMaster.voucherNo" readonly />
+                                    <input type="hidden" id="voucherId" name="voucherId" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="txtPaymentAccount" class="col-sm-4 col-form-label text-left">Contra Account<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="txtPaymentAccount" id="txtPaymentAccount" />
+                                    <input type="hidden" id="txtPaymentAccountId" />
+                                    <input type="hidden" id="hdnPaymentAccId" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="voucherDate" class="col-sm-4 col-form-label text-left">Voucher Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="voucherDate" id="voucherDate" class="form-control input-group-sm" readonly />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+                                <label for="currentBalance" class="col-sm-4 col-form-label text-left">Current Balance</label>
+                                <div class="col-sm-8">
+                                    <input name="currentBalance" id="currentBalance" class="form-control input-group-sm read" readonly />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Transaction Details</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="particular" class="col-sm-4 col-form-label text-left">Particular<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="particular" id="particular" />
+                                    <input type="hidden" name="particularId" id="particularId" />
+                                    <input type="hidden" name="txtHaveSubLedger" id="txtHaveSubLedger" />
+                                </div>
+                            </div>
+                            <input type="hidden" id="txtLedgerRelationId" name="txtLedgerRelationId" />
+                            <div class="form-group row haveSubledger" hidden>
+                                <label for="txtSubLedger" class="col-sm-4 col-form-label text-left">Subledger<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="txtSubLedger" id="txtSubLedger" />
+                                    <input type="hidden" name="txtSubLedgerId" id="txtSubLedgerId" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="txtAmount" class="col-sm-4 col-form-label text-left">Amount<span style="color:red;">*</span></label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" class="form-control input-group-sm numeric text-right" name="txtAmount" id="txtAmount" />
+                                    <div class="input-group-prepend">
+                                        <select name="txtTrMode" id="txtTrMode" class="form-control input-group-sm input-group-text bg-white">
+                                            <option value="1">DR</option>
+                                            <option value="2">CR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="txtParticularBL" class="col-sm-4 col-form-label text-left">Current Balance</label>
+                                <div class="col-sm-8">
+                                    <input name="txtParticularBL" id="txtParticularBL" class="form-control input-group-sm text-right" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group row haveSubledger">
+                                <label for="txtSubLedgerBL" class="col-sm-4 col-form-label text-left">Current Balance</label>
+                                <div class="col-sm-8">
+                                    <input name="txtSubLedgerBL" id="txtSubLedgerBL" class="form-control input-group-sm text-right" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                &nbsp;&nbsp;
+                                <button type="button" onclick="AddParticular()" value="Add" title="Add Particular Details" class="btn btn-success btn-lg ml-1" style="float:right;height:45px;margin-top:-5px"><i class="fas fa-plus fa-w-1"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Transaction Details List</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <table class="table table-striped table-bordered" id="tblParticular">
+                            <thead>
+                                <tr>
+                                    <th width="48%">Particular</th>
+                                    <th width="20%">DR Amount</th>
+                                    <th width="20%">CR Amount</th>
+                                    <th width="12%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+
+                            </tfoot>
+                        </table>
+                        <table class="table table-striped table-bordered">
+                            <tr>
+                                <td style="text-align:right" width="48%">Total :</td>
+                                <td width="20%" style="text-align:center"><span id="DRTotal"></span></td>
+                                <td width="20%" style="text-align:center"><span id="CRTotal"></span></td>
+                                <td width="12%"></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="voucherAmount" name="voucherAmount" />
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:20px;"></div>
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-2 col-form-label text-right">Narration</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control col-md-12" rows="3" name="remarks" id="remarks"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3" style="text-align:right">
+                    <input type="button" onclick="RefreshAll()" id="btnRefesh" value="Refresh" class="btn btn-outline-secondary btn-sm" style="width:90px;" />&nbsp;&nbsp;
+                    <input type="submit" id="btnSaveVoucher" value="Save" class="btn btn-info btn-sm" style="width:90px;" />
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+
+</div>
+
+
+@section ScriptsV{
+
+
+<script type="text/javascript">
+    function GetPaymentLedgerBalance(response) {
+        $('#currentBalance').val('');
+
+
+        if (response >= 0) {
+            $('#currentBalance').val(addCommas(response));
+        }
+        else {
+
+            $('#currentBalance').val(addCommas('(' + response * -1 + ')'));
+        }
+
+    }
+
+    function GetLedgerBalance(response) {
+        $('#txtParticularBL').val('');
+
+        if (response >= 0) {
+            $('#txtParticularBL').val(addCommas(response));
+        }
+        else {
+
+            $('#txtParticularBL').val(addCommas('(' + response * -1 + ')'));
+        }
+
+    }
+    function GetSubLedgerBalance(response) {
+        $('#txtSubLedgerBL').val('');
+
+        if (response >= 0) {
+            $('#txtSubLedgerBL').val(addCommas(response));
+        }
+        else {
+
+            $('#txtSubLedgerBL').val(addCommas('(' + response * -1 + ')'));
+        }
+
+    }
+        var isEdit = 0;
+        function AddParticular() {
+
+            let projectId = $('#projectId').val();
+            if (projectId == '' || projectId == '0') {
+                swal("Please Select Project");
+                return false;
+            }
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblParticular tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblParticular tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .particularId").val();
+            }
+
+            let LPRID = $('#hdnPaymentAccId').val();
+            let PACCName = $('#txtPaymentAccount').val();
+
+            let ledgerRelationId = $('#txtLedgerRelationId').val();
+            let particularId = $('#particularId').val();
+            let particular = $('#particular').val();
+            let subLedgerId = parseInt($('#txtSubLedgerId').val()) ? parseInt($('#txtSubLedgerId').val()):0;
+            let subLedger = $('#txtSubLedger').val();
+            let amount = $('#txtAmount').val();
+            let trMode = $('#txtTrMode').val();
+            let haveSubldgr = $('#txtHaveSubLedger').val();
+            let drAmt = 0.00;
+            let crAmt = 0.00;
+            if (trMode == 1) {
+                drAmt = amount;
+            } else {
+                crAmt = amount;
+            }
+
+            let particularBL = $('#txtParticularBL').val();
+
+            if (particularId == '' || particular=='') {
+                swal("Please Select Valid Pariticular");
+                return false;
+            } else if ((subLedgerId == '' || subLedger == '') && haveSubldgr==1) {
+                swal("Please Select SubLedger");
+                return false;
+            } else if (amount == '') {
+                swal("Please Enter Amount");
+                return false;
+            } else if (LPRID == '' || PACCName=='') {
+                swal("Please Enter Payment Account");
+                return false;
+            }
+            else if (ledgerRelationId == LPRID) {
+                swal("Please DR & CR Account can not be same.");
+                return false;
+             }
+
+            let totalRow = $("#tblParticular tbody>tr").length;
+            for (var i = 0; i < totalRow; i++) {
+                let _ledgerRelationId = $('#ledgerRelationId' + i + '').val();
+
+                if (_ledgerRelationId == ledgerRelationId && isEdit == 0) {
+                    swal('Warning', 'This Particular Already Exist', 'warning');
+                    return false;
+                }
+            }
+            var accountName = "";
+            if (subLedger == '') {
+                accountName = particular;
+            }
+            else
+            {
+                accountName = particular + ' - ' + subLedger;
+            }
+
+            var dtTable = $("#tblParticular");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + accountName + '<input type="hidden" id="txtSubledgerId' + index + '" name="costHeadId" class="clsSubledgerId" value="' + subLedgerId + '"><input type="hidden" id="subLedgerName' + index + '" name="subLedgerName" class="clsSubLedgerName" value="' + particular + ' - ' + subLedger +  '"></td>' +
+                '<td style="text-align:center">' + addCommas(drAmt) + '<input type="hidden" name="drAmount" class="clsDRAmount" value="' + drAmt + '"/><input type="hidden" id="ledgerRelationId' + index + '" name="ledgerRelationId" class="clsLedgerRelationId" value="' + ledgerRelationId + '"><input type="hidden" name="isPrincAcc" id="txtIsPrincAcc' + index + '" value="0"></td>' +
+                '<td style="text-align:center">' + addCommas(crAmt) + '<input type="hidden" name="crAmount" class="clsCRAmount" value="' + crAmt + '"/><input type="hidden" id="transectionModeId' + index + '" name="transectionModeId" class="clsTransectionModeId" value="' + trMode + '"><input type="hidden" id="txtParticularBL' + index + '" value="' + particularBL + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-warning btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTbl(' + index + ',' + particularId + ', ' + "'" + particular + "'" + ' ,' + subLedgerId + ', ' + "'" + subLedger + "'" + ',' + trMode + ',' + haveSubldgr + ',' + ledgerRelationId + ',' + drAmt + ',' + crAmt + ',' + particularBL+')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblParticular tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+
+            let rowCount = $("#tblParticular tbody>tr").length;
+            var tableFoot = dtTable.find('tfoot');
+            if (rowCount == 1 && isEdit==0) {
+                tableFoot.append(
+                    '<tr id=' + 100 + '>' +
+                    '<td>' + PACCName + '<input type="hidden" id="ledgerRelationId' + index + '" name="ledgerRelationId" class="clsLedgerRelationId" value="' + LPRID + '"><input type="hidden" name="isPrincAcc" id="txtIsPrincAcc' + index + '" value="1"></td>' +
+                    '<td style="text-align:center">' + 0.00 + '<input type="hidden" name="drAmount" value="' + 0.00 + '"/><input type="hidden" id="subLedgerName' + index + '" name="subLedgerName" class="clsSubLedgerName" value="' + PACCName +  '"></td>' +
+                    '<td style="text-align:center"><span id="bankAMT" style="width:100%"></span><input type="hidden" id="bankCRAmount" name="crAmount" value="0" class="clsBankCRAmount"/><input type="hidden" id="transectionModeId' + index + '" name="transectionModeId" class="clsTransectionModeId" value="' + 2 + '"></td>' +
+                    '<td></td >' +
+                    '</tr>'
+                );
+            };
+            fnAmountCalculator();
+            Refresh();
+            isEdit = 0;
+        }
+    function getVoucherDate(vdate) {
+        var formattedDate = new Date(vdate);
+        var d = formattedDate.getDate();
+        var m = formattedDate.getMonth();
+      //  m += 1;  // JavaScript months are 0-11
+        var y = formattedDate.getFullYear();
+
+        var monthNames = [
+            "Jan", "Feb", "Mar",
+            "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct",
+            "Nov", "Dec"
+        ];
+
+        var fullDate = d + "-" + monthNames[m] + "-" + y;
+        return fullDate;
+    }
+        function GetParticularDetailList() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblParticular tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblParticular tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .particularId").val();
+            }
+            $("#tblParticular tbody >tr").remove();
+            var dtTable = $("#tblParticular");
+            $.ajax({
+                type: 'GET',
+                url: '/api/global/GetContraVoucherInformation/'+'@ViewBag.masterId',
+                dataType: 'json',
+                success: function (records) {
+                  // console.log(records);
+                    $('#projectId').val(records.master.projectId);
+                    $('#voucherNo').val(records.master.voucherNo);
+                    $('#voucherId').val(records.master.Id);
+                    $('#voucherDate').val(getVoucherDate(records.master.voucherDate.toString("dd-MMM-yyyy")));
+                    $('#remarks').val(records.master.remarks);
+                    $('#txtPaymentAccount').val(records.prinAccount.ledgerRelation.ledger.accountName + '(' + records.prinAccount.ledgerRelation.ledger.accountCode + ')');
+
+                    $('#txtPaymentAccountId').val(records.prinAccount.ledgerRelation.ledger.Id);
+                    //alert($('#txtPaymentAccountId').val())
+                    $('#hdnPaymentAccId').val(records.prinAccount.ledgerRelationId);
+                    var PrinAmount = records.prinAccount.amount;
+                    for (var i = 0; i < records.details.length; i++) {
+
+                       //console.log(records.details);
+                        //alert(records.details.ledgerRelation.Id);
+                        index = $("#tblParticular tbody>tr").length;
+                        let LPRID = $('#hdnPaymentAccId').val();
+                        let PACCName = $('#txtPaymentAccount').val();
+
+                        let ledgerRelationId = records.details[i].ledgerRelationId;// $('#txtLedgerRelationId').val();
+                        let particularId = records.details[i].ledgerRelation.ledger.Id;// $('#particularId').val();
+                        let particular = records.details[i].ledgerRelation.ledger.accountName + '(' + records.details[i].ledgerRelation.ledger.accountCode + ')';// $('#particular').val();
+                        let subLedgerId = records.details[i].ledgerRelation.subLedgerId;// parseInt($('#txtSubLedgerId').val()) ? parseInt($('#txtSubLedgerId').val()) : 0;
+                      //  let subLedger = details.ledgerRelation.ledger.Id;// $('#particularId').val();
+                        let subLedger = records.details[i].ledgerRelation.subLedger!=null?records.details[i].ledgerRelation.subLedger.accountName + '(' + records.details[i].ledgerRelation.subLedger.accountCode + ')':"";// $('#txtSubLedger').val();
+                        let amount = records.details[i].amount //$('#txtAmount').val();
+                        let trMode = records.details[i].transectionModeId;
+                        let haveSubldgr = 0;// $('#txtHaveSubLedger').val();
+                        let drAmt = 0.00;
+                        let crAmt = 0.00;
+                        if (trMode == 1) {
+                            drAmt = amount;
+                        } else {
+                            crAmt = amount;
+                        }
+                        var accountName = "";
+                        if (subLedger == '') {
+                            accountName = particular;
+                        }
+                        else {
+                            accountName = particular + ' - ' + subLedger;
+                        }
+                        let particularBL = $('#txtParticularBL').val();
+
+                        var dtTable = $("#tblParticular");
+                        var tableBody = dtTable.find('tbody');
+                        var trHtml = '<tr id=' + index + '>' +
+                            '<td>' + accountName + '<input type="hidden" id="txtSubledgerId' + index + '" name="costHeadId" class="clsSubledgerId" value="' + subLedgerId + '"><input type="hidden" id="subLedgerName' + index + '" name="subLedgerName" class="clsSubLedgerName" value="' + particular + ' - ' + subLedger + '"></td>' +
+                            '<td style="text-align:center">' + addCommas(drAmt) + '<input type="hidden" name="drAmount" class="clsDRAmount" value="' + drAmt + '"/><input type="hidden" id="ledgerRelationId' + index + '" name="ledgerRelationId" class="clsLedgerRelationId" value="' + ledgerRelationId + '"><input type="hidden" name="isPrincAcc" id="txtIsPrincAcc' + index + '" value="0"></td>' +
+                            '<td style="text-align:center">' + addCommas(crAmt) + '<input type="hidden" name="crAmount" class="clsCRAmount" value="' + crAmt + '"/><input type="hidden" id="transectionModeId' + index + '" name="transectionModeId" class="clsTransectionModeId" value="' + trMode + '"><input type="hidden" id="txtParticularBL' + index + '" value="' + particularBL + '"></td>' +
+                            '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-warning btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                            '<a onclick="EditTbl(' + index + ',' + particularId + ', ' + "'" + particular + "'" + ' ,' + subLedgerId + ', ' + "'" + subLedger + "'" + ',' + trMode + ',' + haveSubldgr + ',' + ledgerRelationId + ',' + drAmt + ',' + crAmt + ',' + "'" + particularBL + "'" + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" ><i class="fa fa-edit"></i></a >' +
+
+                            '</tr>';
+
+                        if (ifExistIndex == null || ifExistIndex == "null") {
+                            tableBody.append(trHtml);
+                        }
+                        else {
+                            var rowUpdate = $("#tblParticular tbody >tr:eq(" + ifExistIndex + ")");
+                            rowUpdate.replaceWith(trHtml);
+                            window.localStorage.setItem("holdIndex", null);
+                            ifExistIndex = null;
+                        }
+
+                        let rowCount = $("#tblParticular tbody>tr").length;
+                        var tableFoot = dtTable.find('tfoot');
+                        if (rowCount == 1 && isEdit == 0) {
+                            tableFoot.append(
+                                '<tr id=' + 100 + '>' +
+                                '<td>' + PACCName + '<input type="hidden" id="ledgerRelationId' + index + '" name="ledgerRelationId" class="clsLedgerRelationId" value="' + LPRID + '"><input type="hidden" name="isPrincAcc" id="txtIsPrincAcc' + 100 + '" value="1"></td>' +
+                                '<td style="text-align:center">' + 0.00 + '<input type="hidden" name="drAmount" value="' + 0.00 + '"/><input type="hidden" id="subLedgerName' + index + '" name="subLedgerName" class="clsSubLedgerName" value="' + PACCName + '"></td>' +
+                                '<td style="text-align:center"><span id="bankAMT" style="width:100%"></span><input type="hidden" id="bankCRAmount" name="crAmount" value="" class="clsBankCRAmount"/><input type="hidden" id="transectionModeId' + index + '" name="transectionModeId" class="clsTransectionModeId" value="' + 2 + '"></td>' +
+                                '<td></td >' +
+                                '</tr>'
+                            );
+                        };
+                        fnAmountCalculator();
+                        Common.Ajax('GET', '/api/global/getOpenBalanceById/' + LPRID, [], 'json', GetPaymentLedgerBalance);
+                    };
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve Data.' + ex);
+                }
+            });
+
+        }
+
+        function fnAmountCalculator() {
+
+            let totalDR = 0;
+            $(".clsDRAmount").each(function () {
+                totalDR += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            });
+            $("#DRTotal").html(totalDR).number(true, 0).number(true, 0);
+
+            let totalCR = 0;
+            $(".clsCRAmount").each(function () {
+                totalCR += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            });
+
+            let balance = totalDR - totalCR;
+            $('#bankAMT').html(Math.abs(balance)).number(true, 0);
+            $('#bankCRAmount').val(Math.abs(balance)).number(true, 0);
+            $("#CRTotal").html(totalCR + balance).number(true, 0);
+            $("#voucherAmount").val(totalCR + balance);
+
+        }
+
+        function EditTbl(index, particularId, particular, subledgerId, subLedger,trmode,haveSubledger,ledgerRelId,dramt,cramt,particularBL) {
+            var rightIndex = index;
+            $('#particular').val(particular);
+            $('#particularId').val(particularId);
+            $('#txtHaveSubLedger').val(haveSubledger);
+            $('#txtSubLedger').val(subLedger);
+            $('#txtSubLedgerId').val(subledgerId);
+            if (trmode == 1) {
+                $('#txtAmount').val(dramt);
+            } else {
+                $('#txtAmount').val(cramt);
+            }
+
+            $('#txtTrMode').val(trmode);
+            $('#txtParticularBL').val(particularBL);
+            $('#txtSubLedgerBL').val();
+            $('#txtLedgerRelationId').val(ledgerRelId);
+            isEdit = 1;
+            if (haveSubledger == 1) {
+                $('.haveSubledger').show();
+            } else {
+                $('.haveSubledger').hide();
+            }
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+        function Delete(index) {
+            let rowCount = $("#tblParticular tbody>tr").length;
+            $("#tblParticular #" + index).remove();
+
+            if (rowCount == 1) {
+                $("#tblParticular #100").remove();
+            }
+            fnAmountCalculator();
+            return false;
+        }
+
+        function Refresh() {
+            $('#particular').val('');
+            $('#particularId').val('');
+            $('#txtHaveSubLedger').val('');
+            $('#txtSubLedger').val('');
+            $('#txtSubLedgerId').val('');
+            $('#txtAmount').val('');
+            $('#txtTrMode').val(1);
+            $('#txtParticularBL').val('');
+            $('#txtSubLedgerBL').val('');
+            $('#txtLedgerRelationId').val('');
+        }
+
+        function RefreshAll() {
+            //Refresh();
+            //$("#tblParticular tbody>tr").empty();
+            //$('#voucherNo').val('');
+            //$('#voucherId').val('');
+            //$('#txtPaymentAccount').val('');
+            //$('#txtPaymentAccountId').val('');
+            //$('#hdnPaymentAccId').val('');
+            //$('#currentBalance').val('');
+            //getCurrentDate();
+            location.reload();
+        }
+
+        function GetVoucherNo() {
+            let accountId = $('#txtPaymentAccountId').val();
+            let voucherDate = $('#voucherDate').val();
+            Common.Ajax('GET', '/api/global/getVoucherNo/' + 0 + '/' + 1 + '/' + voucherDate, [], 'json', setAutoNumber);
+        }
+
+        function setAutoNumber(response) {
+           // $('#voucherNo').val(response);
+             if (@ViewBag.masterId != "0")
+            {
+                $('#voucherNo').val('@Model.VoucherMaster?.voucherNo');
+            }
+            else
+            {
+                $('#voucherNo').val(response);
+            }
+        }
+
+        function GetLedgerList(response) {
+            $('#txtPaymentAccount').empty();
+            $("#txtPaymentAccountId").val('');
+            $("#hdnPaymentAccId").val('');
+            var lstLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.ledgerId = option.ledgerId;
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                lstLedger[lstLedger.length] = obj;
+            });
+            $('#txtPaymentAccount').autocomplete({
+                source: lstLedger,
+                select: function (event, ui) {
+                    $('#txtPaymentAccount').val(ui.item.value);
+                    $("#txtPaymentAccountId").val(ui.item.ledgerId);
+                    $("#hdnPaymentAccId").val(ui.item.key);
+                    GetVoucherNo();
+                    Common.Ajax('GET', '/api/global/getOpenBalanceById/' + ui.item.key, [], 'json', GetPaymentLedgerBalance);
+                }
+            });
+        }
+
+        function GetLedgerForParticular(response) {
+            $('#particular').empty();
+            $("#particularId").val('');
+            $('#txtHaveSubLedger').val('');
+            $('#txtLedgerRelationId').val('');
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.ledgerId = option.ledgerId;
+                obj.haveSubLedger = option.haveSubLedger;
+                obj.value = option.accountName + ' (' + option.accountCode+')';
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#particular').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#particular').val(ui.item.value);
+                    $("#particularId").val(ui.item.ledgerId);
+                    $('#txtHaveSubLedger').val(ui.item.haveSubLedger);
+                    let ledgerId = ui.item.ledgerId;
+                    Common.Ajax('GET', '/api/global/getOpenBalanceById/' + ui.item.key, [], 'json', GetLedgerBalance);
+                    if (ui.item.haveSubLedger == 1) {
+                        $('.haveSubledger').show();
+                        Common.Ajax('GET', '/api/global/getSubLedersByLedgerId/' + ledgerId, [], 'json', GetSubLedgerByLedgerId);
+                    } else {
+                        $('#txtLedgerRelationId').val(ui.item.key);
+                        $('.haveSubledger').hide();
+                    }
+
+                }
+            });
+        }
+
+        function GetSubLedgerByLedgerId(response) {
+            $('#txtSubLedger').empty();
+            $("#txtSubLedgerId").val('');
+            $('#txtLedgerRelationId').val('');
+            var lstSubLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.ledgerId = option.ledgerId;
+                obj.value = option.accountName + '(' + option.accountCode + ')';
+                lstSubLedger[lstSubLedger.length] = obj;
+            });
+            $('#txtSubLedger').autocomplete({
+                source: lstSubLedger,
+                select: function (event, ui) {
+                    $('#txtSubLedger').val(ui.item.value);
+                    $("#txtSubLedgerId").val(ui.item.ledgerId);
+                    $('#txtLedgerRelationId').val(ui.item.key);
+                    Common.Ajax('GET', '/api/global/getOpenSubBalanceById/' + ui.item.key, [], 'json', GetSubLedgerBalance);
+                }
+            });
+        }
+
+        function getCurrentDate() {
+            $("#voucherDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+        }
+
+        $(document).ready(function () {
+
+            $('.haveSubledger').hide();
+
+            //$('#voucherDate').datepicker({
+            //    uiLibrary: 'bootstrap4'
+            //});
+            $("#txtPaymentAccount").focus();
+            $("#voucherDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            @*Common.Ajax('GET', '/api/global/getLedersForPayment/'+ @ViewBag.branchid, [], 'json', GetLedgerList);
+
+            Common.Ajax('GET', '/api/global/getLedersForPayment/'+ @ViewBag.branchid, [], 'json', GetLedgerForParticular);*@
+
+
+
+            $("#voucherDate").change(function () {
+
+                GetVoucherNo();
+
+            });
+            GetVoucherNo();
+            $("#btnSaveVoucher").click(function (e) {
+                let rowCount = $("#tblParticular tbody>tr").length;
+                let drTotal = $('#DRTotal').html().replace(/,/g, '');
+                let crTotal = $('#CRTotal').html().replace(/,/g, '');
+                if (drTotal != crTotal) {
+                    alert("DR Amount and CR Amount must be equal");
+                    return false;
+                }
+                else if (drTotal == 0 || crTotal == 0) {
+                    alert("DR Amount and CR Amount can not be zero");
+                    return false;
+                }
+                else if (rowCount < 1) {
+                    alert("No transaction is entired.");
+                    return false;
+                }
+                e.preventDefault();
+
+                var form = $("#frmContraVoucher");
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                $.ajax({
+
+                    url:'/Accounting/ContraVoucher/Index',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal('Success','Save Successfull!!!','success');
+                        window.location.href = "/Accounting/ContraVoucher/ContraDetails?id=" + records;
+                        //window.location.href = "/Accounting/ContraVoucher/Index";
+                    }
+                });
+
+                    });
+                return false;
+            });
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+            if (@ViewBag.masterId> 0) {
+
+                GetParticularDetailList();
+
+
+            }
+            else
+            {
+
+             }
+
+            @*Common.Ajax('GET', '/global/api/GetProject/' + '@ViewBag.branchid', [], 'json', GetProject, false);*@
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+
+            $("#sbuId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', GetProject, false);
+                Common.Ajax('GET', '/api/global/getLedersForPayment/'+ id, [], 'json', GetLedgerList);
+
+            Common.Ajax('GET', '/api/global/getLedersForPayment/'+ id, [], 'json', GetLedgerForParticular);
+
+            });
+        });
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+    function GetSBU(response) {
+        var isdefault = 0;
+        $('#sbuId').empty();
+        var options = '<option value="0">Select</option>';
+        $.each(response, function (i, item) {
+            if (item.isdefault == 1) {
+                isdefault = item.Id;
+            }
+            options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+        });
+
+        $('#sbuId').append(options);
+        if (isdefault != 0) {
+            $('#sbuId').val(isdefault);
+            var id = isdefault;
+            Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', GetProject, false);
+            Common.Ajax('GET', '/api/global/getLedersForPayment/' + id, [], 'json', GetLedgerList);
+
+            Common.Ajax('GET', '/api/global/getLedersForPayment/' + id, [], 'json', GetLedgerForParticular);
+        }
+    }
+
+    function GetProject(response) {
+        var isdefault = 0;
+        $('#projectId').empty();
+        var options = '<option value="0">Select Project</option>';
+        $.each(response, function (i, item) {
+            if (item.isdefault == 1) {
+                isdefault = item.Id;
+            }
+            options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+        });
+
+        $('#projectId').append(options);
+        if (isdefault != 0) {
+            $('#projectId').val(isdefault);
+        }
+    }
+
+</script>
+}
+
+@section StyleV{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+

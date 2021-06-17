@@ -1,0 +1,221 @@
+﻿
+@model AgreementViewModel
+@{
+    ViewData["Title"] = "Agreement Verification";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Agreement Verification List</h4>
+               
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-responsive" id="agreementTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Lead Name</th>
+                            <th>Lead Owner</th>
+                            <th>Agreement No</th>
+                            <th>Agreement Type</th>
+                            <th>Agreement Date</th>
+                            <th>Expired Date</th>
+                            <th>Bank Name</th>
+                            <th>Branch Name</th>
+                            <th>Priority</th>
+                            <th>Action</th>
+</thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.getLeadInfoVerificationListViewModels)
+                            {
+                        <tr>
+                            <td width="5%">@i</td>
+                            <td><span style="display:none">-@data.Id-</span>@data.leadName</td>
+                            <td>@data.leadOwner</td>
+                            <td>@data.leadNumber</td>
+                            <td>@data.agreementCategoryName</td>
+                            <td>@data.AgreementDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.expiredDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.bankName</td>
+                            <td>@data.BranchName</td>
+                            <td>@data.priority</td>
+                           
+
+                            <td>
+                                <a class="btn btn-success" href="/CRMLead/Agreement/AgreementView?id=@data.Id" title="View"><i class="fa fa-air-freshener"></i></a>
+                                @*<a class="btn btn-info" href="javascript:void(0)" onclick="Verify(@data.Id)" title="Verify"><i class="fa fa-paper-plane"></i></a>
+                                <a class="btn btn-info" href="javascript:void(0)" onclick="Review(@data.Id)" title="Review"><i class="fa fa-reply-all"></i></a>*@
+                                <a class="btn btn-info" href="javascript:void(0)" onclick="LeadDetail(@data.Id,'@data.leadName')" title="Print"><i class="fa fa-print"></i></a>
+                            </td>
+                        </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Lead Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmComments" asp-area="" asp-controller="" asp-action="SaveComment" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div class="form-group row">
+                        <label for="recipient-name" class="col-sm-2 col-form-label">Account Name:</label>
+
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="accountName" name="accountName" readonly>
+                            <input type="hidden" id="leadId" name="leadId" value="" />
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group row">
+
+
+                        <label for="levelofeducationId" class="col-sm-2 col-form-label">Print Type<span style="float:right;" class="redStar">*</span></label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="printTypeId" id="printTypeId">
+                                <option value="1">Cartridge</option>
+                                <option value="2">Normal</option>
+                                <option value="3">Stamp</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+
+
+                        <label for="levelofeducationId" class="col-sm-2 col-form-label">Print Format<span style="float:right;" class="redStar">*</span></label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="printformatid" id="printformatid">
+                                <option value="1">PDF</option>
+                                <option value="2">WORD</option>
+                                
+
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+
+                        <button type="button" onclick="Print()" style="background-color:#024972;" class="btn-primary btn-sm">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#agreementTable').DataTable();
+            
+
+        });
+        function Verify(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Verify this Agreement!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Verify it!'
+            }).then(function () {
+                window.location.href = "/CRMLead/Agreement/UpdateForAgreementVerify?Id=" + Id + '&statusId=' + 3;
+                swal('', 'Verified Successfully!', 'success');
+
+            });
+        }
+        function LeadDetail(Id,leadName){
+            $("#accountName").val(leadName);
+            $("#leadId").val(Id);
+            $('#commentsModal').modal("show");
+           
+        }
+        function Review(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Review this Agreement!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Review it!'
+            }).then(function () {
+                window.location.href = "/CRMLead/Agreement/UpdateForAgreementReview?Id=" + Id + '&statusId=' + 4;
+                swal('', 'Review Successfully!', 'success');
+               
+
+            });
+        }
+        function normalword(response)
+        {
+            console.log(response);
+            //window.location.href = response;
+            //swal('', 'Review Successfully!', 'success');
+           // e.preventDefault();  //stop the browser from following
+           // window.location.href = response;
+            window.open('/pdf/' + response);
+            //window.location.reload();
+        }
+        function Print() {
+            var Id = $("#leadId").val();
+            var typeid = $("#printTypeId").val();
+            var formatid = $("#printformatid").val();
+           
+            if (typeid == 2) {
+                if (formatid == 1) {
+                    window.open('/CRMLead/Agreement/AgreementPdfAction?AgreementId=' + Id, '_blank');
+                }
+                else {
+                    Common.Ajax('GET', '/CRMLead/Agreement/AgreementWordPdfAction?AgreementId=' + Id, [], 'json', normalword);
+                    // window.open('/CRMLead/Agreement/AgreementWordPdfAction?AgreementId=' + Id, '_blank');
+                }
+
+            }
+            else if (typeid == 1) {
+                if (formatid == 1) {
+                    window.open('/CRMLead/Agreement/AgreementCPdfAction?AgreementId=' + Id, '_blank');
+                }
+                else {
+                    Common.Ajax('GET', '/CRMLead/Agreement/AgreementCWORDPdfAction?AgreementId=' + Id, [], 'json', normalword);
+                }
+            }
+            else {
+                if (formatid == 1) {
+                    window.open('/CRMLead/Agreement/AgreementSPdfAction?AgreementId=' + Id, '_blank');
+                }
+                else {
+                    Common.Ajax('GET', '/CRMLead/Agreement/AgreementSWORDPdfAction?AgreementId=' + Id, [], 'json', normalword);
+                }
+            }
+            $('#commentsModal').modal("hide");
+        }
+    </script>
+}
+
+
+@section Style{
+    <style>
+        /*#BOMList tbody tr {
+            cursor: pointer;
+        }*/
+    </style>
+}
+
+
+
+
+

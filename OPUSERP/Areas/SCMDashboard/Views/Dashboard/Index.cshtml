@@ -1,0 +1,348 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/shared/_Layout.cshtml";
+}
+
+@*Salse Area*@
+<div class="row card">
+    <div class="col-sm-5">
+        <span style="font-size:1.5em;font-weight:800;color:dodgerblue;">Supply Chain Management</span>
+    </div>
+</div>
+<div style="height:15px;"></div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div style="height:15px;"></div>
+
+        <div class="card">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 text-center" style="padding-right: 0;font-weight:bold;font-family:'Times New Roman', Times, serif">
+
+                    <a href="javascript:void(0)" data-toggle="modal" data-target="#RequisitionModal" class="btn btn-info btn-lg clsSales" role="button" style="width:22%;height:130px;background-color:#00cd79">
+                        <br /><span class="pull-left">Number Of Requisition </span><br />
+                        <span class="pull-left"><span id="NOS">@Model.dashboardModels.requisitionMasters.Count()</span></span><br />
+                    </a>&nbsp;&nbsp;
+
+                    <a href="javascript:void(0)" onclick="" data-toggle="modal" data-target="#ApprovalStageModal" class="btn btn-info btn-lg clsSales" role="button" style="width:22%;height:130px;background-color:#00cd79">
+                        <br /><span class="pull-left">Approval Stage </span><br />
+                        <span class="pull-left"><span id="txtRevenue">@Model.dashboardModels.approvalStage.Count()</span></span><br />
+                    </a>&nbsp;&nbsp;
+
+                    <a href="javascript:void(0)" data-toggle="modal" data-target="#PurchaseOrderModal" class="btn btn-info btn-lg clsSales" role="button" style="width:22%;height:130px;background-color:#00cd79">
+                        <br /><span class="pull-left">Purchase Order</span><br />
+                        <span class="pull-left"> <span id="txtProfit">@Model.dashboardModels.purchaseOrderMasters.Count()</span></span><br />
+                    </a>&nbsp;&nbsp;
+                    <a href="javascript:void(0)" data-toggle="modal" data-target="#PurchaseStageModal" class="btn btn-info btn-lg clsSales" role="button" style="width:22%;height:130px;background-color:#00cd79;">
+                        <br /><span class="pull-left">PO Stage</span><br />
+                        <span class="pull-left"><span id="txtCost">@Model.dashboardModels.purchaseOrderStages.Count()</span></span><br />
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div style="height:15px;"></div>
+
+        <div class="row">
+            <div class="col-7" style="padding-right:5px;">
+                <div class="card p-0 m-0">
+                    <div class="p-0 m-0" id="MonthlyPR" style="height:300px;width:82%"></div>
+                </div>
+            </div>
+
+            <div class="col-5" style="padding-left:5px;text-align:center;">
+                <div class="card" style="height:302px;">
+                    <span style="font-size:1.3em;font-weight:700;color:black;height:37px;">Top 5 Items</span>
+                    <table class="table table-striped" style="line-height:.9" id="tblSalesItem">
+                        <thead style="color:black;">
+                            <tr><th>Name</th><th>Count</th><th>Value</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var data in Model.dashboardVMs)
+                            {
+                                <tr>
+                                    <td>@data.itemName</td>
+                                    <td>@data.totalCount</td>
+                                    <td>@data.totalValue</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="RequisitionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/JasonLogo.png" style="height:50px; width:50px;" />
+                    </div>
+                    <div class="col-8">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Requisition Information</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" style="line-height:.9" id="tblRequisition">
+                    <thead>
+                        <tr>
+                            <th>Requisition Number</th>
+                            <th>Requisition Date</th>
+                            <th>Requisition Subject</th>
+                            <th>Requisition Department</th>
+                            <th>Requisition Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var data in Model.dashboardModels.requisitionMasters)
+                        {
+                            <tr>
+                                <td>@data.reqNo</td>
+                                <td>@data.reqDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.subject</td>
+                                <td>@data.reqDept</td>
+                                <td>@data.statusInfo.StatusName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ApprovalStageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/JasonLogo.png" style="height:50px; width:50px;" />
+                    </div>
+                    <div class="col-8">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Approval Stage Information</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" style="line-height:.9" id="tblApprovalStage">
+                    <thead>
+                        <tr>
+                            <th>Requisition Number</th>
+                            <th>Requisition Date</th>
+                            <th>Requisition Subject</th>
+                            <th>Requisition Department</th>
+                            <th>Requisition Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.dashboardModels.approvalStage)
+                        {
+                            <tr>
+                                <td>@data.reqNo</td>
+                                <td>@data.reqDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.subject</td>
+                                <td>@data.reqDept</td>
+                                <td>@data.statusInfo.StatusName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="PurchaseStageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/JasonLogo.png" style="height:50px; width:50px;" />
+                    </div>
+                    <div class="col-8">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Purchase Stage Information</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" style="line-height:.9" id="tblPurchaseStage">
+                    <thead>
+                        <tr>
+                            <th>Requisition Number</th>
+                            <th>CS Number</th>
+                            <th>Requisition Date</th>
+                            <th>CS Date</th>
+                            <th>Requisition Department</th>
+                            <th>RFQ. Referance Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.dashboardModels.purchaseOrderStages)
+                        {
+                            <tr>
+                                <td>@data.requisition.reqNo</td>
+                                <td>@data.csNo</td>
+                                <td>@data.requisition.reqDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.csDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.requisition.reqDept</td>
+                                <td>@data.rfqRefNo</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="PurchaseOrderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/JasonLogo.png" style="height:50px; width:50px;" />
+                    </div>
+                    <div class="col-8">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">Purchase Stage Information</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" style="line-height:.9" id="tblPurchaseOrder">
+                    <thead>
+                        <tr>
+                            <th>Requisition Number</th>
+                            <th>CS Number</th>
+                            <th>PO Number</th>
+                            <th>Requisition Date</th>
+                            <th>CS Date</th>
+                            <th>PO Date</th>
+                            <th>Saving Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.dashboardModels.purchaseOrderMasters)
+                        {
+                            <tr>
+                                <td>@data.cSMaster.requisition.reqNo</td>
+                                <td>@data.cSMaster.csNo</td>
+                                <td>@data.poNo</td>
+                                <td>@data.cSMaster.requisition.reqDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.cSMaster.csDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.poDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.savingAmount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        function GetPRData(response) {
+            var datapoint = new Array();
+            $.each(response, function (key, value) {
+                var obj = new Object();
+                obj.x = new Date(value.requisitionMaster.reqDate);
+                obj.y = value.totalValue;
+                obj.title = value.requisitionMaster.reqNo
+                datapoint[datapoint.length] = obj;
+            });
+
+            var sales = new CanvasJS.Chart("MonthlyPR", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "PR",
+                    fontColor: "black",
+                    fontSize: 20,
+                },
+                axisY: {
+                    title: "PR",
+                },
+                legend: {
+                    cursor: "pointer"
+                },
+                data: [{
+                    type: "line",
+                    name: "PR",
+                    showInLegend: true,
+                    toolTipContent: "{title}<br>PR Value: {y}",
+                    click: onClickSales,
+                    dataPoints: datapoint,
+                }]
+            });
+
+            sales.render();
+            console.log(datapoint);
+        }
+
+        function onClickSales() {
+            console.log('Sales');
+        }
+
+        $(document).ready(function () {
+            $('#tblRequisition').DataTable();
+            $('#tblApprovalStage').DataTable();
+            $('#tblPurchaseStage').DataTable();
+            $('#tblPurchaseOrder').DataTable();
+
+            Common.Ajax('GET', '/api/dashoard/GetCurrentMonthPRStatus/', [], 'json', GetPRData);
+        });
+    </script>
+}
+

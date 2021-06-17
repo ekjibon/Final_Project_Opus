@@ -1,0 +1,73 @@
+﻿@model UnitOfTakaViewModel
+@{
+    ViewData["TitleMD"] = "Unit Setting";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 style="color: black; font-weight:bold">@Model.fLang.title</h5>
+                <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+            </div>
+            <div class="card-body">
+                <form asp-area="Budget" asp-controller="UnitOfTaka" asp-action="Settings" method="post" data-parsley-validate="parsley">
+                    <table class="table table-striped table-bordered" id="unitofTakaTable">
+                        <thead>
+                            <tr>
+                                <th>@Model.fLang.unitName</th>
+                                <th>@Model.fLang.value</th>
+                                <th>@Model.fLang.action</th>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.unitOfTakas)
+                            {
+                            <tr>
+                                <td>@data.UnitName</td>
+                                <td>@data.value</td>
+                                @if (@data.status == 1)
+                                {
+                                    <td>
+                                        <input type="radio" class="form-control" name="status" value="@data.Id" checked />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <input type="radio" class="form-control" name="status" value="@data.Id" />
+                                    </td>
+                                }
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <hr />
+                    <button type="submit" value="Submit" class="btn btn-success" style="float:right; margin-top:5px;">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#unitofTakaTable').DataTable();
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+        });
+    </script>
+}

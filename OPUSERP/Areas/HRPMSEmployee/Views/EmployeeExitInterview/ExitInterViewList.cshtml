@@ -1,0 +1,90 @@
+﻿
+@model EmployeeExitInterviewViewModel
+
+@{
+    ViewData["Title"] = "ExitInterViewList";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Style{
+}
+
+<style>
+    .card-header{
+        text-align: center;
+    }
+</style>
+
+<br />
+
+<section>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold">Exit Interview List</h6>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered" id="exitIterviewTable">
+                            <thead>
+                                <tr>
+                                    <th>Employee Code</th>
+                                    <th>Employee Name</th>
+                                    <th>Last Withdraw Salary</th>
+                                    <th>Start Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var data in Model.exitInterviewMasters)
+                                {
+                                    <tr>
+                                        <td>@data.employee?.employeeCode</td>
+                                        <td>@data.employee?.nameEnglish</td>
+                                        <td>@data.lastWithdrawnSalary</td>
+                                        <td>@data.startDate</td>
+                                        <td>
+                                            <a class="btn btn-success" href="#" onclick="Edit()"><i class="fa fa-edit"></i></a>
+                                            <a class="btn btn-info" target="_blank" href="~/HRPMSEmployee/EmployeeExitInterview/ExitInterViewReportPdf/?id=@data.Id&code=@data.employeeId"><i class="fa fa-print"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#exitIterviewTable').DataTable();
+        });
+
+        function Edit(Id, travelPurposeId, purpose, location, countryId, sponsoringAgency, startDate, endDate, goNumber, goDate, file, titleOfFile, remarks) {
+            $('#travelId').val(Id);
+            $('#type').val(travelPurposeId);
+            $('#purpose').val(purpose);
+            $('#location').val(location);
+            $('#country').val(countryId);
+            $('#sponsoringAgency').val(sponsoringAgency);
+            $('#startDate').val(startDate);
+            $('#endDate').val(endDate);
+            $('#goNumber').val(goNumber);
+            $('#goDate').val(goDate);
+            $('#file').val(file);
+            $('#titleOfFile').val(titleOfFile);
+            $('#remarks').val(remarks);
+        }
+
+    </script>
+}
+

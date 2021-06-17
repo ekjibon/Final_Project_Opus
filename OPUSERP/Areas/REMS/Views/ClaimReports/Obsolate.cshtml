@@ -1,0 +1,99 @@
+﻿@model ClaimReportsViewModel
+@{
+    ViewData["Title"] = "Obsolate";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    body {
+        color: black;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    .pb_before {
+        page-break-before: always !important;
+    }
+
+    /***Always insert a page break after the element***/
+    .pb_after {
+        page-break-after: always !important;
+    }
+
+    /***Avoid page break before the element (if possible)***/
+    .pb_before_avoid {
+        page-break-before: avoid !important;
+    }
+
+    /***Avoid page break after the element (if possible)***/
+    .pb_after_avoid {
+        page-break-after: avoid !important;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-3" style="height:110px;">
+                    <img src="~/images/BnB.png" style="height:95px;width: inherit;" />
+                </div>
+                <div class="col-6" style="padding-left:10px;">
+                    <h1 style="font-size: 35px; font-weight: 900; font-family: sans-serif; margin-top:10px; margin-bottom:0px;">BRICKS <span style="color:red;">&</span> BRIDGES Ltd. </h1>
+                    <h3 style="font-weight:900;font-family: sans-serif;font-size: 20px;">Obsolate Claim</h3>
+                </div>
+                <div class="col-3" style="padding-left:10px;">
+                    <h1 style="font-size: 15px; font-family: sans-serif; margin-top: 10px;">From Date : </h1>
+                    <h1 style="font-size: 15px; font-family: sans-serif; margin-top: 10px;">To Date : </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="font-size: 15px;padding-top:10px;">
+        <div class="col-12">
+            <table class="table-bordered-grey" style="width:100%;">
+                <thead>
+                    <tr style="background-color:lightgray;">
+                        <th style="text-align:center;width:10%;">Asset Id</th>
+                        <th style="text-align:center;width:20%;">Asset Name</th>
+                        <th style="text-align:center;width:10%;">Purchase Date</th>
+                        <th style="text-align:center;width:10%;">Claim No</th>
+                        <th style="text-align:center;width:10%;">Claim Date</th>
+                        <th style="text-align:center;width:15%;">Claim By</th>
+                        <th style="text-align:center;width:25%;">Claim Description</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    @*<div class="row" style="padding-top: 180px;">
+            <div class="col-3" style="font-size: 18px;font-weight:bold;">
+                <span style="border-top:2px solid black;padding: 0px 30px 0px 30px;">Received by</span>
+            </div>
+            <div class="col-6"></div>
+            <div class="col-3" style="font-size: 18px;font-weight:bold;">
+                <span style="border-top:2px solid black;padding: 0px 30px 0px 30px;">Checked by</span>
+            </div>
+        </div>*@
+
+</div>
+
+<div class="pb_after"></div>

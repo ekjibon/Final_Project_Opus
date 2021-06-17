@@ -1,0 +1,210 @@
+﻿@model TrainingViewModel
+@{
+    ViewData["Title"] = "Training Info";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">Training Information</h5>
+            </div>
+            @*<div class="col-4">
+                    <h6 class="identity-box">@Model.employeeNameCode</h6>
+                </div>*@
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="Recruitment" asp-controller="Training" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="trainingTitle" class="col-sm-3 col-form-label">Training Title</label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="trainingTitle" value="" name="trainingTitle" data-parsley-required="true" data-parsley-trigger="keyup">
+                                <input type="hidden" id="candidateId" name="candidateId" value="@Model.candidateId">
+                                <input type="hidden" id="trainingLogID" name="trainingLogID" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="category" class="col-sm-3 col-form-label">Training Type</label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="category" id="category" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.trainingCategories)
+                                    {
+                                        <option value="@data.Id">@data.trainingCategoryName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="fromDate" class="col-sm-3 col-form-label">From</label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="fromDate" value="" name="fromDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="toDate" class="col-sm-3 col-form-label">To</label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="toDate" value="" name="toDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="display:none;">
+                    <div>
+                        <div class="form-group row">
+                            @*<label for="sponsoringAgency" class="col-sm-4 col-form-label">@Model.fLang.sponsoringAgency</label>*@
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="sponsoringAgency" value="" name="sponsoringAgency">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="institute" class="col-sm-3 col-form-label">Institute</label>
+                            <span class="redStar col-sm-1">*</span>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="institute" id="institute" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.trainingInstitutes)
+                                    {
+                                        <option value="@data.Id">@data.trainingInstituteName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="remarks" value="" name="remarks" autocomplete="off" data-parsley-required="false">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Training Info</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="trainingTable">
+                    <thead>
+                        <tr>
+                            <th>Training Type</th>
+                            <th>Training Title</th>
+                            <th>Institute</th>
+                            @*<th>@Model.fLang.country</th>*@
+                            <th>From Date</th>
+                            <th>To Date</th>
+                            <th>Remarks</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.rCRTTrainingLogs)
+                        {
+                            <tr>
+                                <td>@data.trainingCategory.trainingCategoryName</td>
+                                <td>@data.trainingTitle</td>
+                                <td>@data.trainingInstitute.trainingInstituteName</td>
+                                @*<td>@data.country.countryName</td>*@
+                                <td>@data.fromDate?.ToString("MM/dd/yyyy")</td>
+                                <td>@data.toDate?.ToString("MM/dd/yyyy")</td>
+                                <td>@data.remarks</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,@data.trainingCategoryId,@data.trainingInstituteId,'@data.trainingTitle','@data.countryId','@data.fromDate?.ToString(" MM/dd/yyyy")','@data.toDate?.ToString("MM/dd/yyyy")','@data.sponsoringAgency','@data.remarks')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id,@data.candidateId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+            $("#trainingHistory").addClass("active");
+            $('#trainingTable').DataTable();
+            $('#fromDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#toDate').datepicker({ uiLibrary: 'bootstrap4' });
+        });
+
+        function Edit(Id, trainingCategoryId, trainingInstituteId, trainingTitle, countryId, fromDate, toDate, sponsoringAgency, remarks) {
+            $('#trainingLogID').val(Id);
+            $('#trainingTitle').val(trainingTitle);
+            $('#category').val(trainingCategoryId);
+            $('#country').val(countryId);
+            $('#institute').val(trainingInstituteId);
+            $('#sponsoringAgency').val(sponsoringAgency);
+            $('#fromDate').val(fromDate);
+            $('#toDate').val(toDate);
+            $('#remarks').val(remarks);
+        }
+
+            //function Remove(Id, employeeId) {
+            //    chk = confirm('Do you want to delete this?');
+            //    if (chk) {
+            //        //return true;
+            //        location.replace("/HRPMSEmployee/Training/Delete/" + Id + "?empId=" + employeeId);
+            //    } else {
+            //        return false;
+            //    }
+            //}
+
+    </script>
+}

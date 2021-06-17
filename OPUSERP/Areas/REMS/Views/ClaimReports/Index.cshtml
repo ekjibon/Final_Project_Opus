@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewData["Title"] = "Assaign To Technician";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<br />
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Claim Reports </label>
+        </div>
+        <form asp-area="" asp-controller="" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3"></div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="reportType" class="col-sm-4 col-form-label">Report Type</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="reportType" name="reportType">
+                                        <option value="">Select Report Type</option>
+                                        <option value="ClaimRaised">Claim Raised</option>
+                                        <option value="WarrentyClaim">Warrenty Claim</option>
+                                        <option value="NonWarrentyClaim">Non-Warrenty Claim</option>
+                                        <option value="ClaimSuccess">Claim Success</option>
+                                        <option value="Obsolate">Obsolate</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="fromDate" class="col-sm-4 col-form-label">From Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="fromDate" name="fromDate" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="toDate" class="col-sm-4 col-form-label">To Date</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="toDate" name="toDate" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="" class="col-sm-4 col-form-label"></label>
+                                <div class="col-sm-8">
+                                    <input type="button" onclick="ProcessReport()" style="width:100%" class="btn btn-success btn-sm" value="Process">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$('#assaignListTable').DataTable();
+            $('#fromDate').flatpickr({ dateFormat: "d-M-Y" });
+            $('#toDate').flatpickr({ dateFormat: "d-M-Y" });
+        });
+
+        function ProcessReport() {
+            if ($('#reportType').val() == "") {
+                swal('Attention!!!', 'Please select report type.', 'warning');
+                return false;
+            }
+            if ($('#fromDate').val() == '' || $('#toDate').val() == '') {
+                swal('Attention!!!', 'Please select valid date.', 'warning');
+                return false;
+            }
+            var fromDate = $('#fromDate').val();
+            var toDate = $('#toDate').val();
+                        
+            if ($('#reportType').val() == "ClaimRaised") {
+                window.open("/REMS/ClaimReports/ClaimRaisedPdf?fromDate=" + fromDate + "&toDate=" + toDate, "_blank");
+            }
+            else if ($('#reportType').val() == "WarrentyClaim") {
+                window.open("/REMS/ClaimReports/WarrentyClaimPdf?fromDate=" + fromDate + "&toDate=" + toDate, "_blank");
+            }
+            else if ($('#reportType').val() == "NonWarrentyClaim") {
+                window.open("/REMS/ClaimReports/NonWarrentyClaimPdf?fromDate=" + fromDate + "&toDate=" + toDate, "_blank");
+            }
+            else if ($('#reportType').val() == "ClaimSuccess") {
+                window.open("/REMS/ClaimReports/ClaimSuccessPdf?fromDate=" + fromDate + "&toDate=" + toDate, "_blank");
+            }
+            else if ($('#reportType').val() == "Obsolate") {
+                window.open("/REMS/ClaimReports/ObsolatePdf?fromDate=" + fromDate + "&toDate=" + toDate, "_blank");
+            }
+            else {
+                swal('Attention!!!', 'Report on process.', 'warning');
+                return false;
+            }
+        }
+    </script>
+}
+

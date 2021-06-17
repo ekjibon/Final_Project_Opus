@@ -1,0 +1,320 @@
+﻿@model PFLoanPaymentViewModel
+@{
+    ViewData["Title"] = "AdvanceAdjustment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">PF Loan Payment</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="FDRInvestment" asp-action="PFLoanPayment" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="PfloanpaymentId" name="PfloanpaymentId" value=0>
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                   @*<input type="hidden" id="pFLoanId" name="pFLoanId">*@
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-sm-4 col-form-label">Employee's Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Designation </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="salaryPeriodId" class="col-sm-4 col-form-label">Loan No <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select name="pFLoanId" id="pFLoanId" value="0" class="form-control" data-parsley-required="true">
+                                    @*<option value="">Select Salary Period</option>
+                                    @foreach (var data in Model.salaryPeriods)
+                                    {
+                                        <option value="@data.Id">@data.periodName</option>
+                                    }*@
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Loan Amount </label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="number" class="form-control" id="loanAmount" name="loanAmount" readonly="readonly">
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Rest Amount </label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="number" class="form-control" id="restAmount" name="restAmount" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Rest Amount </label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="number" class="form-control" id="restAmount" name="restAmount" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Rest Installment </label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="number" class="form-control" id="restInstallMent" name="restInstallment" readonly="readonly">
+                            </div>
+                        </div>*@
+                      
+                    </div>
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="advanceAmount" class="col-sm-4 col-form-label">Total Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="number" class="form-control" id="paymentAmount" name="paymentAmount" data-parsley-required="true" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="installmentAmount" class="col-sm-4 col-form-label">Monthly installment <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input data-parsley-type="number" class="form-control" id="installmentAmount" name="installmentAmount" data-parsley-required="true" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="noOfInstallment" class="col-sm-4 col-form-label">No of Installment <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="installmentno" name="installmentno" data-parsley-required="true" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="purpose" class="col-sm-4 col-form-label">Payment Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="paymentDate" name="paymentDate">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Save" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of PF Loan Payment</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="leaveTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>Employee Name</th>
+                            <th>Designation</th>
+                            <th>Payment Mode</th>
+                            <th>Payment Date</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.pFLoanPayments)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td>@data.employeeInfo.employeeCode</td>
+                                    <td>@data.employeeInfo.nameEnglish</td>
+                                    <td>@data.employeeInfo.designation</td>
+                                    <td>@data.paymentAmount</td>
+                                    <td>@data.paymentDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edit(@data.Id,@data.employeeInfoId,'@data.employeeInfo.nameEnglish','@data.employeeInfo.employeeCode','@data.employeeInfo.designation',@data.paymentAmount,'@data.paymentDate?.ToString("dd-MMM-yyyy")',@data.pFLoanId)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                      
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        var isEdit = 0
+        function GetSchedule(id) {
+            Common.Ajax('GET', '/global/api/GetAllScheduleByPFloanId/' + id, [], 'json', AjaxGetStatus);
+        }
+
+        function AjaxGetStatus(response) {
+            $("#statusTable").DataTable().destroy();
+            console.log(response);
+            var dtTable = $("#statusTable");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            $.each(response, function (key, value) {
+              
+                var trHtml = '<tr>' +
+                    '<td>' + value.noOfInstallment + '</td>' +
+                    '<td>' + value.periodName + '</td>' +
+                    '<td>' + value.advanceAmount + '</td>' +
+                    '<td>' + value.restAmount + '</td>' +
+                    '<td>' + value.installmentAmount + '</td>' +
+                    '<td>' + value.status + '</td>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+            $("#statusTable").DataTable();
+        }
+
+        $(document).ready(function () {
+            
+            $("#paymentDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $('#leaveTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+            $("#pFLoanId").change(function () {
+                Common.Ajax('GET', '/global/api/GetPFLoanInfoByPFId/' + $("#pFLoanId").val(), [], 'json', ajaxGetPFLoansInfo);
+
+            });
+            $("#paymentAmount").keyup(function () {
+
+                GetInstallment();
+            });
+
+            $("#noOfInstallment").keyup(function () {
+                GetMonthly();
+            });
+
+        });
+        function ajaxGetPFLoansInfo(response) {
+            //console.log(response);
+           
+            $("#loanAmount").val(response.advanceAmount);
+            $("#installmentAmount").val(response.installmentAmount);
+            var totalAmount = $("#paymentAmount").val();
+            var monthlyAmount = $("#installmentAmount").val();
+            //alert(totalAmount);
+           // alert(isEdit);
+            $("#installmentno").val(parseFloat(totalAmount / monthlyAmount).toFixed(0));
+            if (isEdit > 0) {
+
+                $('#PfloanId').val(isEdit);
+            }
+           
+
+
+        };
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+                    Common.Ajax('GET', '/global/api/GetAllPFLoanByPFEmployeeId/' + ui.item.key, [], 'json', ajaxGetPFLoans);
+                }
+            });
+        }
+        function ajaxGetPFLoans(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.PFLoanNo + '</option>';
+            });
+            $('#pFLoanId').empty();
+            $('#pFLoanId').append(options);
+            //if (isEdit > 0) {
+                
+            //    $('#PfloanId option:selected').val(isEdit);
+            //}
+            //else
+            //{
+            //    $('#pFLoanId').empty();
+            //}
+        }
+
+       
+        function Edit(Id, employeeInfoId, nameEnglish, employeeCode, designation, paymentAmount, paymentDate, PfLoanId) {
+            $('#PfloanpaymentId').val(Id);
+            isEdit = PfLoanId;
+            Common.Ajax('GET', '/global/api/GetAllPFLoanByPFEmployeeId/' + employeeInfoId, [], 'json', ajaxGetPFLoans);
+            $('#employeeInfoId').val(employeeInfoId);
+            $('#employeeName').val(nameEnglish + '(' + (employeeCode) + ')');
+            $('#Designation').val(designation);
+            $('#paymentDate').val(paymentDate);
+            $('#paymentAmount').val(paymentAmount);
+           
+           
+
+          
+           // $('#PfloanId option:Selected').val(PfLoanId);
+           
+            geteditdata(PfLoanId);
+
+        }
+        function geteditdata(PfLoanId) {
+            $('#PfloanId option:selected').val(PfLoanId);
+            Common.Ajax('GET', '/global/api/GetPFLoanInfoByPFId/' + PfLoanId, [], 'json', ajaxGetPFLoansInfo);
+          //  GetInstallment();
+            //var totalAmount = $("#paymentAmount").val();
+            //var monthlyAmount = $("#installmentAmount").val();
+            //if ($("#paymentAmount").val() == '' || $("#installmentAmount").val() == '') {
+            //    totalAmount = 0;
+            //    monthlyAmount = 0;
+            //}
+            //$("#installmentno").val(parseFloat(totalAmount / monthlyAmount).toFixed(0));
+        }
+
+        function GetInstallment() {
+           
+            var totalAmount = $("#paymentAmount").val();
+            var monthlyAmount = $("#installmentAmount").val();
+            if ($("#paymentAmount").val() == '' || $("#installmentAmount").val() == '') {
+                totalAmount = 0;
+                monthlyAmount = 0;
+            }
+            $("#installmentno").val(parseFloat(totalAmount / monthlyAmount).toFixed(0));
+        }
+
+        function GetMonthly() {
+            var totalAmount = $("#advanceAmount").val();
+            var noOfInstal = $("#noOfInstallment").val();
+            if ($("#advanceAmount").val() == '' || $("#noOfInstallment").val() == '') {
+                totalAmount = 0;
+                noOfInstal = 0;
+            }
+            $("#installmentAmount").val(parseFloat(totalAmount / noOfInstal).toFixed(2));
+        }
+
+    </script>
+}

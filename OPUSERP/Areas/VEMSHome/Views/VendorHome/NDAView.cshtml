@@ -1,0 +1,34 @@
+﻿@model RegistrationViewModel
+@{
+    ViewData["Title"] = "NDAView";
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header">
+        <h1>MUTUAL NON DISCLOSURE AND CONFIDENTIALITY AGREEMENT </h1>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <p class="col-12" style="font-weight:bold;">Please read our NDA .</p>
+        </div>
+        <div class="row">
+            <embed style="width:100%;height:750px;padding: 0px 25px 0px 25px;" src="@Model.nDAFile.filePath"></embed>
+        </div>
+        @*<div class="row" style="margin-top:15px;margin-left:10px;">
+            <label for="agree" class="col-form-label col-12"><input type="radio" name="agreeType" id="agree" value="1" checked /> Agree</label><br />
+            <label for="agreePartial" class="col-form-label col-12"><input type="radio" name="agreeType" id="agreePartial" value="2" /> Partial Agree</label>
+        </div>*@
+        <div class="row" style="margin-top:15px;">
+            <div class="col-1" style="padding: 0px 0px 0px 24px;">
+                <a class="btn btn-danger btn-sm" href="/VEMSHome/VendorHome/Index" onclick=""><i class="fa fa-times"></i> Cancel</a>
+            </div>
+            <div class="col-1" style="padding: 0px 0px 0px 24px;">
+                <a class="btn btn-info btn-sm" href="/VEMSHome/VendorHome/Registration?type=1" onclick=""><i class="fa fa-check"></i> Agree</a>
+            </div>
+            <div class="col-2" style="padding: 0px 0px 0px 24px;">
+                <a class="btn btn-info btn-sm" href="/VEMSHome/VendorHome/Registration?type=2" onclick=""><i class="fa fa-check"></i> Partially Agree</a>
+            </div>
+        </div>
+    </div>
+</div>
+

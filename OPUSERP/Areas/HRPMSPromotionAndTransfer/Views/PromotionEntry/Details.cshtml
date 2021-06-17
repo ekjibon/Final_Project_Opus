@@ -1,0 +1,110 @@
+﻿@*@using OPUSERP.HRPMS.Services.Auth.Interfaces
+@using System
+@inject ILoggedinUser loggedinUser
+@{
+    string orgType = await loggedinUser.usersOrganization(User.Identity.Name);
+}*@
+
+@model PromotionEntryViewModel
+@{
+    ViewData["Title"] = "Promotion Details";
+}
+
+<style>
+    p {
+        color: black;
+        font-size: 14px;
+    }
+</style>
+
+<div class="card" style="width: 100%; margin-top: 10px;">
+    <div class="card-body">
+
+        <hr>
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-3"> <img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:85px" /></div>
+                <h5 style="color:black" class="text text-center text-uppercase">OPUS ERP HRPMS</h5>
+            </div>
+
+            <div class="row">
+                <div class="col-11 text-center"><h5 class="card-title" style="color: black">@Model.fLang.titleDel </h5></div>
+                <div class="col-1">
+                    @*<button data-toggle="tooltip" title="Print" id="printInfo" class="btn btn-info" style="float:right;margin-top: 25px;"><i class="fa fa-print"></i></button>*@
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group row">
+                        <label for="circularRefernce" class="col-sm-4 col-form-label">@Model.fLang.employeeId : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.employee.employeeCode</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="recruitmentType" class="col-sm-4 col-form-label">@Model.fLang.employeeName : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.employee.nameEnglish</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="positionName" class="col-sm-4 col-form-label">@Model.fLang.designation : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.employee.designation</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="project" class="col-sm-4 col-form-label">@Model.fLang.dateOfPromotion : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.date</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="numberOfPosition" class="col-sm-5 col-form-label">@Model.fLang.promotedPayScale : </label>
+                        <div class="col-sm-7">
+                            <p>@Model.promotionEntry.payScale</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group row">
+                        <label for="jobType" class="col-sm-4 col-form-label">@Model.fLang.natureOfPromotion : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.nature</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="locationofJob" class="col-sm-4 col-form-label">@Model.fLang.basic : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.basic</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="comments" class="col-sm-4 col-form-label">@Model.fLang.goNo  : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.goNumber</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="ageCalculatorDate" class="col-sm-4 col-form-label">@Model.fLang.goDate : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.goDate</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="applicationDeadline" class="col-sm-4 col-form-label">@Model.fLang.remarks : </label>
+                        <div class="col-sm-8">
+                            <p>@Model.promotionEntry.remark</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

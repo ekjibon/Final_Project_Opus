@@ -1,0 +1,116 @@
+﻿@model AttachmentCategoryViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Attachment Category</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="AttachmentCategory" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">                   
+
+                    <label for="atttachmentGroupId" class="col-sm-3 col-form-label">Attachment Group Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="atttachmentGroupId" id="atttachmentGroupId" data-parsley-required="true">
+                            <option value="">Select Group</option>
+                            @foreach (var data in Model.atttachmentGroups)
+                            {
+                                <option value="@data.Id">@data.groupName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <input type="hidden" name="categoryId" id="categoryId" value="0" />
+
+                    <label for="attachmentCategoryName" class="col-sm-3 col-form-label">Attachment Category Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="categoryName" id="categoryName">
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Attachment Category List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="attachmentCategoryTable">
+                    <thead>
+                        <tr>
+                            <th>Attachment Group Name</th>
+                            <th>Attachment Category Name</th>
+                            <th>Action</th>
+</thead>
+                    <tbody>
+                        @foreach (var data in Model.atttachmentCategories)
+                        {
+                        <tr>
+                            <td>@data?.atttachmentGroup?.groupName</td>
+                            <td>@data.categoryName</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id,'@data.atttachmentGroupId', '@data.categoryName')" href="#"><i class="fa fa-edit"></i></a>
+                                <a class="btn btn-danger" href="#" onclick="Remove(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            //$("#OtherQualificationHead").addClass("active");
+            $('#attachmentCategoryTable').DataTable();
+        });
+
+        function Edit(Id, atttachmentGroupId,categoryName ) {
+            $("#categoryId").val(Id);
+            $("#atttachmentGroupId").val(atttachmentGroupId);
+            $("#categoryName").val(categoryName);
+        }
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                //return true;
+                location.replace("/HRPMSMasterData/AttachmentCategory/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+    </script>
+}
+
+
+

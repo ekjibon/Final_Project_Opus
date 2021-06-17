@@ -1,0 +1,285 @@
+﻿
+@model LeadBankViewModel
+@{
+    ViewData["Title"] = "Lead Bank Info";
+    Layout = "~/Areas/CRMLead/Views/Shared/_LeadForm.cshtml";
+}
+
+@section StyleLead{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <hr>
+        <div class="container">
+            <form asp-area="CRMLead" asp-controller="LeadManagement" asp-action="LeadBankInfo" method="post" id="infoCreateForm" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <input type="hidden" id="Id" name="Id" value="0">
+                                <div class="form-group row">
+                                    <div class="col-sm-9">
+                                        <input type="hidden" id="leadsId" name="leadsId" value="@ViewBag.leadId">
+                                        <input type="hidden" id="leadName" name="leadName" value="@ViewBag.leadName">
+
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="fiTypeId" class="col-sm-3 col-form-label">Financial Institute Type</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="fiTypeId" name="fiTypeId" data-parsley-required="true">
+                                            <option value="">Select</option>
+                                            @foreach (var data in Model.fITypes)
+                                            {
+                                                <option value="@data.Id">@data.fiTypeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+
+                                    <label for="bankId" class="col-sm-3 col-form-label">Bank<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        @*<select class="form-control" id="bankId" name="bankId" data-parsley-required="true">
+                                                <option value="">-Select-</option>
+                                                {
+                                                    foreach (var data in Model.banks)
+                                                    {
+                                                        <option value="@data.Id">@data.bankName</option>
+                                                    }
+                                                }
+                                            </select>*@
+                                        <input type="text" class="form-control" name="bank" id="bank" />
+                                        <input type="hidden" id="bankId" name="bankId" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="bankBranchDetailsId" class="col-sm-3 col-form-label">Bank Branch<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        @*<select class="form-control" name="bankBranchDetailsId" id="bankBranchDetailsId" data-parsley-required="true"></select>*@
+                                        <input type="text" class="form-control" data-parsley-required="true" name="bankBranch" id="bankBranch" />
+                                        <input type="hidden" id="bankBranchDetailsId" name="bankBranchDetailsId" data-parsley-required="true" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="bankType" class="col-sm-3 col-form-label">Bank Type<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="bankType" name="bankType" data-parsley-required="true">
+                                            <option value="">-Select-</option>
+                                            <option value="Primary">Primary</option>
+                                            <option value="Secondary">Secondary</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="contactName" class="col-sm-3 col-form-label">Contact Name<span class="redStar">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" id="contactName" value="" name="contactName">
+                                        <input type="hidden" id="contactId" name="contactId" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="department" class="col-sm-3 col-form-label">Department</label>
+                                    <div class="col-sm-9">
+                                        <select data-parsley-trigger="keyup" class="form-control" id="department" name="department">
+                                            <option value="">-Select-</option>
+                                            @{
+                                                foreach (var data in Model.departments)
+                                                {
+                                                    <option value="@data.Id">@data.deptName</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="designation" class="col-sm-3 col-form-label">Designation</label>
+                                    <div class="col-sm-9">
+                                        <select data-parsley-trigger="keyup" class="form-control" id="designation" name="designation">
+                                            <option value="">-Select-</option>
+                                            @{
+                                                foreach (var data in Model.designations)
+                                                {
+                                                    <option value="@data.Id">@data.designationName</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="mobile" class="col-sm-3 col-form-label">Mobile</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="mobile" value="" name="mobile">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="email" class="col-sm-3 col-form-label">Email</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="email" value="" name="email">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsLead{
+    <script>
+
+        $(document).ready(function () {
+            $("#BankList").addClass("active");
+
+             $("#bankType").change(function () {
+                if ($(this).val() == "Primary") {
+
+                    if ('@Model.leadsBankInfos'!=null)
+                    {
+                         var count =@Model.leadsBankInfos.Where(x => x.bankType == "Primary").Count();
+                    if (count > 0)
+                    {
+                        alert("Primary bank is already added.");
+                        $(this).val('');
+                        return;
+                    }
+                    }
+
+                }
+            });
+            //$("#bankId").change(function () {
+            //    var bankId = $("#bankId").val();
+            //    Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + bankId, [], 'json', ajaxGetBranchByBankId);
+            //});
+
+            $("#fiTypeId").change(function () {
+                var bankId = $("#fiTypeId").val();
+                Common.Ajax('GET', '/CRMLead/LeadManagement/GetBankByFIId/?Id=' + bankId, [], 'json', ajaxGetFIById);
+            });
+             if (@ViewBag.masterId>0) {
+                 Common.Ajax('GET', '/CRMLead/LeadManagement/GeLeadsBankInfoById/?Id=' + @ViewBag.masterId, [], 'json', ajaxGeLeadsBankInfoById);
+            }
+        });
+        function ajaxGetFIById(response) {
+            //var options = '<option value="">Select</option>';
+            //$.each(response, function (i, item) {
+            //    options += '<option value="' + item.Id + '">' + item.bankName + '</option>';
+            //});
+            //$('#bankId').empty();
+            //$('#bankId').append(options);
+            //$('#bankId').append(bankId);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankName;
+                //obj.designation = option.designation;
+                //obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#bank').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#bank").val(ui.item.value);
+                    $("#bankId").val(ui.item.key);
+                    Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + ui.item.key, [], 'json', ajaxGetBranchByBankId);
+                }
+            });
+        }
+        function ajaxGetFIByIdEdit(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.bankName + '</option>';
+            });
+            $('#bankId').empty();
+            $('#bankId').append(options);
+
+            $('#bankId').val(bankId);
+        }
+        function ajaxGetBranchByBankId(response) {
+            //var options = '<option value="">Select</option>';
+            //$.each(response, function (i, item) {
+            //    options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            //});
+            //$('#bankBranchDetailsId').empty();
+            //$('#bankBranchDetailsId').append(options);
+            console.log(response);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankBranch.branchName;
+                //obj.designation = option.designation;
+                //obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#bankBranch').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#bankBranch").val(ui.item.value);
+                    $("#bankBranchDetailsId").val(ui.item.key);
+
+                }
+            });
+        }
+        var bankBranchDetailsId = 0;
+        var bankId = 0;
+        function ajaxGeLeadsBankInfoById(response) {
+            console.log(response);
+            $("#Id").val(response.Id);
+            $("#leadsId").val(response.leadsId);
+            $("#fiTypeId").val(response.bankBranchDetails.bank.fiTypeId);
+
+            $("#bankType").val(response.bankType);
+            $("#contactName").val(response.contactName);
+            $("#department").val(response.crmdepartmentsId);
+            $("#designation").val(response.crmdesignationsId);
+            $("#mobile").val(response.mobile);
+            $("#email").val(response.email);
+            // $("#bankId").val(response.bankBranchDetails.bankId);
+            $("#bankBranch").val(response.bankBranchDetails.bankBranch.branchName);
+            $("#bankBranchDetailsId").val(response.bankBranchDetailsId);
+            $("#bank").val(response.bankBranchDetails.bank.bankName);
+            $("#bankId").val(response.bankBranchDetails.bankId);
+            bankId = response.bankBranchDetails.bankId;
+
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBankByFIId/?Id=' + response.bankBranchDetails.bank.fiTypeId, [], 'json', ajaxGetFIById);
+            bankBranchDetailsId = response.bankBranchDetailsId;
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + response.bankBranchDetails.bankId, [], 'json', ajaxGetBranchByBankId);
+
+        }
+        function ajaxGetBranchByBankIdEdit(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            });
+            $('#bankBranchDetailsId').empty();
+            $('#bankBranchDetailsId').append(options);
+            $("#bankBranchDetailsId").val(bankBranchDetailsId);
+        }
+
+
+
+    </script>
+}
+

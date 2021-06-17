@@ -1,0 +1,356 @@
+﻿@model SalesCollectionViewModel
+@{
+    ViewData["Title"] = " Customer Collection Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Customer Collection Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label for="customerId" class="col-sm-3 col-form-label">Select Mobile Number</label>
+                        <div class="col-sm-9">
+                            <input type="text" data-parsley-trigger="keyup" class="form-control" name="mobile" id="mobile" value="">
+                            <input type="hidden"  class="form-control" name="moduleid" id="moduleid">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="customerId" class="col-sm-3 col-form-label">Select Customer</label>
+                        <div class="col-sm-9">
+                            <input type="text" data-parsley-trigger="keyup" class="form-control" name="customerName" id="customerName" value="">
+                            <input type="hidden" name="customerId" id="customerId" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-9"></label>
+                        <div class="col-sm-3">
+                            <br />
+                            <button type="button" onclick="AddInfo()" title="Load" class="btn btn-facebook btn-lg"><i class="fas fa-list-ol"></i></button>&nbsp;
+                            <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-lg"><i class="fas fa-sync"></i></button>&nbsp;
+                            <button id="SubmitButton" class="btn btn-success btn-lg" title="Preview"><i class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="container-fluid" style="color:black;">
+                        <div class="row" style="padding: 0px 15px 0px 15px;">
+                            <div class="col-6">
+                                <span style="font-weight:bold;font-size: 15px; margin-bottom:10px;">
+                                    Invoice List :
+                                </span>
+                                <table id="tblinvoice" class="table table-striped table-bordered vartical-table">
+                                    <thead style="background-color:lightgray;">
+                                        <tr>
+                                            <th style="width:40%;">Invoice Number</th>
+                                            <th style="width:40%;">Invoice Date</th>
+                                            <th style="width:20%;text-align:center;">Amount</th>
+                                            <th style="width:20%;text-align:center;">Action</th>
+                                            Action
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                    <thead style="background-color:lightgray;">
+                                        <tr>
+                                            <th colspan="3">Total</th>
+                                            <th style="text-align:right;padding-right:10px;"><span id="totalinvoice"></span></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <span style="font-weight:bold;font-size: 15px; margin-bottom:10px;">
+                                    Collection List :
+                                </span>
+                                <table id="tblcollcetion" class="table table-striped table-bordered vartical-table">
+                                    <thead style="background-color:lightgray;">
+                                        <tr>
+                                            <th style="width:40%;">Collection Number</th>
+                                            <th style="width:40%;">Collection Date</th>
+                                            <th style="width:20%;text-align:center;">Amount</th>
+                                            <th style="width:20%;text-align:center;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <thead style="background-color:lightgray;">
+                                        <tr>
+                                            <th colspan="3">Total</th>
+                                            <th style="text-align:right;padding-right:10px;"><span id="totalcollection"></span></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <br /><br /><br />
+                        <div class="row" style="padding: 5px 0px 5px 0px;">
+                            <div class="col-12">
+                                <span style="font-weight:bold;font-size: 15px;margin-left:10px">Total Amount have to pay:</span>
+                                <span style="font-size: 15px;" id="due"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            
+            $('#toDate').flatpickr({ dateFormat: "m/d/Y" });
+            $('#fromDate').flatpickr({ dateFormat: "m/d/Y" });
+            var localstorage = window.localStorage.getItem('modelId');
+            $('#moduleid').val(localstorage);
+            $("#SubmitButton").click(function (e) {
+                let id = $('#customerId').val();
+                let name = $('#customerId option:selected').text();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                if (id == 0) {
+                    swal('Warning', 'Select Customer', 'warning');
+                    return false;
+                }
+                window.open('/OtherSales/SalesCollection/CustomerCollectionSummaryReportpdf?id=' + id, '_blank');  
+            });
+            Common.Ajax('GET', '/global/api/CustomerType/' + localstorage, [], 'json', ajaxAllCustomerTupe, false);
+            Common.Ajax('GET', '/global/api/getAllRentRelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomer, false);
+            Common.Ajax('GET', '/global/api/getAllRentRelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomerM);      
+
+        });
+
+        function AddParticularWithCostCentre(id) {
+            window.open('/OtherSales/SalesInvoice/RentInvoicePDFAction?id=' + id, '_blank');
+        }
+
+        function AddParticularWithCostCentrec(id) {
+            window.open('/OtherSales/SalesCollection/pdspdf/' + id, '_blank');
+        }
+
+        function ajaxAllCustomerM(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response.relSupplierCustomerResourses, function (id, option) {
+                var jj = "";
+                $.each(response.Contacts, function (j, ff) {
+                    if (ff.leadsId == option.LeadsId) {
+                        jj = ff ?.resource ?.mobile;
+                    }
+                });
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = jj;
+                obj.customer = option ?.Leads ?.leadName + '(' + option ?.Leads ?.leadNumber + ')';
+                obj.bin = jj;
+                obj.orgId = option.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#mobile').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#customerName").val(ui.item.customer);
+                }
+            });
+
+           // var GetInStockItemSpacificationList = [];
+           // console.log(response);
+           //var custype= $('#moduleid').val();
+           // $.each(response, function (id, option) {
+           //     var obj = new Object();
+           //     obj.key = option.Id;
+           //     obj.value = option ?.resource ?.mobile;
+           //     obj.bin = option?.Leads?.leadName + '(' + option?.Leads?.leadNumber + ')';
+           //     obj.orgId = option.Id;
+           //     if (option.distributorTypeId == custype)
+           //     {
+           //         GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+           //     }               
+           // });
+
+           // $('#mobile').autocomplete({
+           //     source: GetInStockItemSpacificationList,
+           //     select: function (event, ui) {
+           //         $("#customerId").val(ui.item.key);
+           //         $("#customerName").val(ui.item.bin);
+           //     }
+           // });           
+        }
+
+        function ajaxAllCustomerTupe(response) {       
+            $('#moduleid').val(response);           
+        }
+
+        function ajaxAllCustomer(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response.relSupplierCustomerResourses, function (id, option) {
+                var jj = "";
+                $.each(response.Contacts, function (j, ff) {
+                    if (ff.leadsId == option.LeadsId) {
+                        jj = ff ?.resource ?.mobile;
+                    }
+                });
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option ?.Leads ?.leadName + '(' + option ?.Leads ?.leadNumber + ')';
+                obj.bin = option.resource ?.mobile;
+                obj.orgId = option.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#customerName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#binNo").val(ui.item.bin);
+                }
+            });
+
+            //var GetInStockItemSpacificationList = [];
+            //var custype = $('#moduleid').val();           
+            //$.each(response, function (id, option) {
+            //    var obj = new Object();
+            //    obj.key = option?.Id;
+            //    obj.value = option?.Leads?.leadName + '(' + option?.Leads?.leadNumber + ')';
+            //    obj.bin = option ?.resource ?.mobile;
+            //    if (option?.distributorTypeId == custype) {                
+            //        GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            //    }
+            //   //GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            //});
+            //$('#customerName').autocomplete({
+            //    source: GetInStockItemSpacificationList,
+            //    select: function (event, ui) {
+            //        $("#customerId").val(ui.item.key);
+            //        //$("#mobile").val(ui.item.bin);
+            //    }
+            //});          
+        }
+
+        function AddInfo() {
+            let id = $('#customerId').val();
+            let moduleid = $('#moduleid').val();  
+            if (id == '') {
+                swal('Warning', 'SelectCustomer or Mobile', 'warning');
+                return false;
+            } 
+            $("#tblinvoice").DataTable().destroy();
+            var dtTable = $("#tblinvoice");
+            var tableBody = dtTable.find('tbody');
+            $("#tblinvoice tbody").empty();
+            $("#tblcollcetion").DataTable().destroy();
+            var dtTablec = $("#tblcollcetion");
+            var tableBodyc = dtTablec.find('tbody');
+            $("#tblcollcetion tbody").empty();
+            var trHtml = "";
+            var trHtmlc = "";
+            var trId = 0;
+            var total = 0;
+            var totalc = 0;
+            var isValid = true;
+            $.ajax({
+                url: "/OtherSales/SalesCollection/CustomerCollectionSummaryReportG",
+                type: "Get",
+                data: { id: id, moduleid: moduleid },
+                success: function (response) {
+                    console.log(response);
+                    $.each(response.collectionSummaryReport.salesInvoiceMaster, function (i, e) {
+                        var index = $("#tblinvoice tbody>tr").length;
+                        var customername = '';
+                        var customermobile = '';
+                        var t = 0;
+                        if (e.relSupplierCustomerResourse.distributorTypeId == moduleid)
+                        {
+                            total = total + e.totalAmount;
+                            trHtml = '<tr class=' + index + ' id=' + index + "_" + index +
+                                '>' +
+                                '<td>' + e.invoiceNumber + '</td>' +
+                                '<td>' + getPurchaseDate(e.invoiceDate) + '</td>' +
+                                '<td>' + addCommas(e.totalAmount) + '</td>' +
+                                '<td><a class="btn btn-info" title="Print PR" target="_blank" onclick="AddParticularWithCostCentre(' + e.Id + ')" ><i class="fa fa-print"></i></a></td>' +
+                                '</tr>';
+                            tableBody.append(trHtml);
+                        }                      
+
+                    });
+                    $.each(response.collectionSummaryReport.salesCollection, function (i, e) {
+                        var index = $("#tblcollcetion tbody>tr").length;
+                        var customername = '';
+                        var customermobile = '';
+                        var t = 0;
+                        if (e.relSupplierCustomerResourse.distributorTypeId == moduleid) {
+                            totalc = totalc + e.collectionAmount;
+                            trHtmlc = '<tr class=' + index + ' id=' + index + "_" + index +
+                                '>' +
+                                '<td>' + e.collectionNumber + '</td>' +
+                                '<td>' + getPurchaseDate(e.collectionDate) + '</td>' +
+                                '<td>' + addCommas(e.collectionAmount) + '</td>' +
+                                '<td><a class="btn btn-info" title="Print PR" target="_blank" onclick="AddParticularWithCostCentrec(' + e.Id + ')" ><i class="fa fa-print"></i></a></td>' +
+                                '</tr>';
+                            tableBodyc.append(trHtmlc);
+                        }
+                    });
+                    $("#tblinvoice").DataTable();
+                    $("#totalinvoice").html(addCommas(total.toFixed(2)));
+                    $("#tblcollcetion").DataTable();
+                    $("#totalcollection").html(addCommas(totalc.toFixed(2)));
+                    $("#due").html(addCommas((total - totalc).toFixed(2)));
+                }
+            });
+            console.log(AddInfo());
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function addCommas(x) {
+            if (x == null)
+            {
+                x = 0;
+            }
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function CustomerCollectionReportView() {
+            let id = $('#customerId').val();
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+            //window.location.href='/Sales/SalesCollection/CustomerCollectionpdf/id=' + id + '&fromDate=' + fromDate + '&toDate=' + toDate , '_blank';
+            window.open('/OtherSales/SalesCollection/CustomerCollectionpdf?id=' + id + '&fromDate=' + fromDate + '&toDate=' + toDate, '_blank');
+        }     
+    </script>
+}

@@ -1,0 +1,195 @@
+﻿@model LoanScheduleViewModel
+
+@{
+    ViewData["Title"] = "HR Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 14px;
+        }
+
+        table {
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div class="fa-pull-right">
+                <p style="font-size:smaller;">Print at: @DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss")</p>
+            </div>
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2">
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                </div>
+                <div class="col-8">
+                    <div style="color:black;text-align:center;">
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                        <h5>Loan Schedule Report</h5>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+
+        <div class="container-fluid" style="color:black;">
+
+            <div class="row">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>Employee's Name</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.employeeInfo.nameEnglish</td>
+                            <td>Designation</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.employeeInfo.designation</td>
+                        </tr>
+
+                        <tr>
+                            <td>Department</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.employeeInfo?.department?.deptName</td>
+                            <td>Purpose</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.purpose</td>
+                        </tr>
+
+                        <tr>
+                            <td>Starting Date</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.loanDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>Salary Head </td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.loanPolicy.salaryHead.salaryHeadName</td>
+                        </tr>
+
+                        <tr>
+                            <td>Total Amount</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.totalLoanAmount</td>
+
+                            <td>Monthly installment</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.installmentAmount</td>
+                        </tr>
+
+                        <tr>
+                            <td>No of Installment </td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.noOfInstallment</td>
+
+                            <td>Interest Rate(%) </td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.interestRate</td>
+                        </tr>
+
+                        <tr>
+                            <td>Interest Amount </td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.interestAmount</td>
+
+                            <td>Total Loan Amount</td>
+                            <td>@Model.loanScheduleDetails.FirstOrDefault().loanScheduleMaster.TotalLoanWithInterestAmount</td>
+                        </tr>
+
+                    </thead>
+                </table>
+            </div>
+            <br /><br />
+            <div class="row" style="padding: 0px 15px 0px 15px;">
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr style="background-color:lightgray;">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th colspan="2" style="text-align:center;">Collection</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        <tr style="background-color:lightgray;">
+                            <th style="text-align:center;width:10%;">Sl#</th>
+                            <th style="text-align:center;width:15%;">Schedule Date</th>
+                            <th style="text-align:center;width:15%;">Paid Date</th>
+                            <th style="text-align:center;width:10%;">Opening Balance</th>
+                            <th style="text-align:center;width:10%;">Installment Amount</th>
+                            <th style="text-align:center;width:10%;">Interest Amount</th>
+                            <th style="text-align:center;width:10%;">Principal Amount</th>
+                            <th style="text-align:center;width:10%;">Closing Balance</th>
+                            <th style="text-align:center;width:10%;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in @Model.loanScheduleReportViewModels)
+                            {
+                                <tr>
+                                    <td style="text-align:center;">@i</td>
+                                    <td align="center">@data.scheduleDate</td>
+                                    <td align="center">@data.paidDate</td>
+                                    <td align="right">@data.openingBalance</td>
+                                    <td align="right">@data.scheduleAmount</td>
+                                    <td align="right">@data.monthlyInterest</td>
+                                    <td align="right">@data.monthlyInstallment</td>
+                                    <td align="right">@data.closingBalance</td>
+                                    <td>@data.paidStatus</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                    <thead>
+                        <tr>
+                            <td colspan="4" style="text-align:right;font-weight:bold;font-size:medium;">Total Amount = </td>
+                            <td style="text-align:right;font-weight:bold;font-size:medium;">@Model.loanScheduleReportViewModels.Sum(x => x.scheduleAmount)?.ToString("0,0.00")</td>
+                            <td style="text-align:right;font-weight:bold;font-size:medium;">@Model.loanScheduleReportViewModels.Sum(x => x.monthlyInterest)?.ToString("0,0.00")</td>
+                            <td style="text-align:right;font-weight:bold;font-size:medium;">@Model.loanScheduleReportViewModels.Sum(x => x.monthlyInstallment)?.ToString("0,0.00")</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+}

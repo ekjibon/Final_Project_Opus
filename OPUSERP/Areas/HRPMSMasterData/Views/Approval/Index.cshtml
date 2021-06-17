@@ -1,0 +1,384 @@
+﻿@model ApprovalViewModel
+@{
+    ViewData["TitleMD"] = "Approval Management";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Approval Information</h5>
+        <hr>
+        <div class="container">
+            <form id="frmApproval" aria- data-parsley-validate="parsley" autocomplete="off">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <input type="hidden" name="approvalMasterId" id="approvalMasterId" value="0" />
+
+                                <label for="approvalTypeId" class="col-sm-4 col-form-label">Approval Type <span style="float:right;" class="redStar">*</span></label>
+                                <div class="col-sm-8">
+                                    <select data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="approvalTypeId" id="approvalTypeId">
+                                        <option value="0">Select</option>
+                                        @foreach (var item in Model.approvalTypes)
+                                        {
+                                            <option value="@item.Id">@item.approvalTypeName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="employeeName" class="col-sm-4 col-form-label">Employee Name<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="employeeName" id="employeeName">
+                                    <input type="hidden" name="employeeInfoId" id="employeeInfoId" value="0" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="statuses" class="col-sm-4 col-form-label">Status</label>
+                                <div class="col-sm-8">
+                                    <select name="statuses" id="statuses" class="form-control input-group-sm input-group-text bg-white">
+                                        <option value="Active">Active</option>
+                                        <option value="InActive">InActive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="sortOrders" class="col-sm-4 col-form-label">Sort Order<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="sortOrders" id="sortOrders" min="0">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="approverName" class="col-sm-4 col-form-label">Approver Name<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="approverName" id="approverName">
+                                    <input type="hidden" name="approverIds" id="approverIds" value="0" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <button type="button" onclick="AdditemDetails()" value="Add" title="Add" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <input type="hidden" id="detailsId" name="detailsId" value="0" />
+                        <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                        <div class="col-12">
+                            <table class="table table-bordered table-striped" id="tblitemDetails" data-parsley-required="true">
+                                <thead style="width:100%;background-color:lightgray;">
+                                    <tr>
+                                        <th style="width:60%">Approver Name</th>
+                                        <th style="width:20%">Status</th>
+                                        <th style="width:10%;text-align:right;">Sort Order</th>
+                                        <th style="width:10%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-9">
+                    </div>
+                    <div class="col-md-3" style="text-align:right">
+                        <input type="button" onclick="RefreshAll()" id="btnRefesh" value="Refresh" class="btn btn-outline-secondary btn-sm" style="width:90px;" />&nbsp;&nbsp;
+                        <input type="submit" id="btnSave" value="Save" class="btn btn-info btn-sm" style="width:90px;" />
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Approval List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="ApprovalTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>Employee Name</th>
+                            <th>Approval Type Name</th>
+                            <th>Action</th>
+</thead>
+                    <tbody>
+                        @foreach (var data in Model.approvalMasters)
+                        {
+                            <tr>
+                                <td>@data.employeeInfo?.employeeCode</td>
+                                <td>@data.employeeInfo?.nameEnglish</td>
+                                <td>@data.approvalType?.approvalTypeName</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="EditApprovalTable(@data.Id, @data.approvalTypeId,@data.employeeInfoId, '@data.employeeInfo?.nameEnglish')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                   
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#ApprovalTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetAllEmployeeInfo', [], 'json', ajaxGetAllEmployee);
+            $("#btnSave").click(function (e) {
+                let rowCount = $("#tblitemDetails tbody>tr").length;
+                if ($("#employeeInfoId").val() == "0") {
+                    alert("Please Enter Employee Name.!!!");
+                    return false;
+                }
+                if ($("#approvalTypeId").val() == "0") {
+                    alert("Please Select Approval Type.!!!");
+                    return false;
+                }
+
+                if (rowCount < 1) {
+                    alert("Please Add Approver from Approver Details!!!");
+                    return false;
+                }
+                e.preventDefault();
+
+                var form = $("#frmApproval");
+                $.ajax({
+                    url: '/HRPMSMasterData/Approval/Index',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Save Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+                            window.location.href = "/HRPMSMasterData/Approval/Index";
+                        });
+                    }
+                });
+            });
+        });
+
+        function EditApprovalTable(Id, approvalTypeId, employeeInfoId, nameEnglish) {
+            $("#approvalMasterId").val(Id);
+            $("#approvalTypeId").val(approvalTypeId);
+            $("#employeeInfoId").val(employeeInfoId);
+            $("#employeeName").val(nameEnglish);
+            
+            Common.Ajax('GET', '/HRPMSMasterData/Approval/GetApprovalDetailByApprovalMasterId/?ApprovalMasterId=' + Id, [], 'json', ajaxGetApprovalDetailByApprovalMasterId);
+
+        }
+        function ajaxGetAllEmployee(response) {
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#employeeInfoId").val(ui.item.key);
+                   
+                }
+            });
+            $('#approverName').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#approverIds").val(ui.item.key);
+
+                }
+            });
+        }
+        function RefreshAll() {
+            window.location.href = "/HRPMSMasterData/Approval/Index";
+
+        }
+        function AdditemDetails() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+
+            if ($("#approverName").val() == "") {
+                alert("Plaese Enter Approver Name.");
+                return false
+            }
+           
+            if ($("#approverIds").val() == "" || $("#approverIds").val() == "0") {
+                alert("Plaese Enter Approver Name.");
+                return false
+            }
+            if ($("#sortOrders").val() == "" || $("#sortOrders").val() == "0") {
+                alert("Plaese Enter Sort Order.");
+                return false
+            }
+            
+            let id = parseInt($("#detailsId").val()) ? parseInt($("#detailsId").val()) : 0;
+            var approverName = $("#approverName").val();
+            var approverId = $("#approverIds").val();
+            var sortOrder = $("#sortOrders").val();
+            var status = $("#statuses").val();
+           
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+
+            for (i = 0; i < RowCount; i++) {
+                var _approverId = $("#approverId" + i).val();
+
+                if (_approverId == approverId && editOption == 0) {
+                    alert('You have already added this Approver!');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + approverName + '<input type="hidden" name="id"class="clsId" value="' + id + '"><input type="hidden" id="approverId' + index + '" name="approverId" class="clsapproverId" value="' + approverId + '"/></td>' +
+                '<td>' + status + '<input type="hidden" id="status' + index + '" name="status" class="clsstatus" value="' + status + '"/></td>' +
+                '<td style="text-align:right;">' + sortOrder + '<input type="hidden" id="sortOrder' + index + '" name="sortOrder" class="clssortOrder" value="' + sortOrder + '"/></td>' +
+                
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTbl(' + index + "," + approverId + ", " + sortOrder + ", `" + approverName + "`,  `" + status + "`,  " + id  + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+           
+            Refresh();
+        }
+        function EditTbl(index, approverId, sortOrder, approverName, status, Id) {
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+            $('#detailsId').val(Id);
+            $('#approverIds').val(approverId);
+            $('#sortOrders').val(sortOrder);
+            $('#approverName').val(approverName);
+            $('#statuses').val(status);
+
+            window.localStorage.setItem('holdIndex1', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex1', rightIndex);
+            }
+        }
+
+        function Refresh() {
+            $('#detailsId').val('');
+            $("#IsEdit").val(0);
+
+            $('#approverIds').val(0);
+            $('#sortOrders').val('');
+            $('#approverName').val('');
+            $('#statuses').val("Active");
+
+            window.localStorage.setItem("holdIndex1", null);
+            ifExistIndex = null;
+        }
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblitemDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success');
+            });
+
+        }
+        
+        function ajaxGetApprovalDetailByApprovalMasterId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblitemDetails tbody>tr").empty();
+            $.each(response, function (key, value) {
+               
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.approver.nameEnglish + '<input type="hidden" name="id"class="clsId" value="' + value.Id + '"><input type="hidden" id="approverId' + index + '" name="approverId" class="clsapproverId" value="' + value.approverId + '"/></td>' +
+                    '<td>' + value.status + '<input type="hidden" id="status' + index + '" name="status" class="clsstatus" value="' + value.status + '"/></td>' +
+                    '<td style="text-align:right;">' + value.sortOrder + '<input type="hidden" id="sortOrder' + index + '" name="sortOrder" class="clssortOrder" value="' + value.sortOrder + '"/></td>' +
+                    
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTbl(' + index + "," + value.approverId + ", " + value.sortOrder + ", `" + value.approver.nameEnglish + "`,  `" + value.status + "`, " + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+            
+        }
+    </script>
+}
+
+
+
+
+

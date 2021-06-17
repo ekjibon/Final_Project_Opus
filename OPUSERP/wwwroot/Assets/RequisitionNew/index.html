@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <style>
+        /* Top Counter */
+        .leftImgBox {
+            width: 20%;
+            height: 100%;
+            float: left;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .leftImgBox img {
+            width: 100%;
+        }
+
+        .counterBox {
+            float: right;
+            text-align: center;
+        }
+
+        .counter {
+            font-size: 33px;
+            margin-bottom: 0;
+        }
+
+        .title {
+            font-size: 17px;
+        }
+
+        a {
+            color: white !important;
+        }
+
+        a:hover {
+            color: white;
+        }
+
+        /* Searching */
+        input[type="text"] {
+            box-shadow: none !important;
+            border: 1px solid #6C757D;
+        }
+
+        /* Filtered Items */
+        .card {
+            display: flex;
+            align-items: center;
+            border: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card img {
+            padding: 10px;
+            width: 46%;
+        }
+
+        #filtered-items {
+            overflow-y: scroll;
+            height: 264px;
+        }
+
+        .card:hover {
+            /* box-shadow: 0 0 11px rgba(33, 33, 33, .2); */
+            transform: scale(0.9, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover::after {
+            opacity: 1;
+        }
+
+        /* Add to Cart */
+        .addtocart {
+            padding: 5px;
+        }
+
+        .fa-minus {
+            color: #FB4C5D;
+        }
+
+        .fa-plus {
+            color: #F0BA02;
+        }
+
+        #addtocart {
+            padding-bottom: 0;
+            margin-bottom: 0;
+            background-color: #00A75A;
+            border: none;
+            padding: 2px;
+            text-align: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .list-item-cart img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .list-item-cart span {
+            color: black;
+            font-size: 15px;
+        }
+
+        .list-item-cart a:first-child {
+            color: #EF5160;
+        }
+
+        .list-item-cart a:last-child {
+            color: #EEB907;
+        }
+
+        .list-item-cart input {
+            width: 25px;
+            text-align: center;
+            font-size: 15px;
+            outline: none;
+        }
+
+        /* Bottom List Group */
+        .list-item-bottom {
+            display: flex;
+            align-items: center;
+        }
+
+        .list-group .list-group-item {
+            border-top: none;
+            border-bottom: none;
+            border-left: 1px solid #949494;
+            border-right: 1px solid #949494;
+        }
+
+        .list-group .list-group-item:first-child {
+            border-top: 1px solid #949494;
+        }
+
+        .list-group .list-group-item:last-child {
+            border-bottom: 1px solid #949494;
+        }
+
+        .list-img {
+            width: 40px;
+        }
+
+        .list-text {
+            padding-left: 6px;
+            font-size: 22px;
+        }
+
+        .list-num {
+            font-size: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Top Counter -->
+        <div class="row">
+            <div class="col-3 py-1" class="box"
+                style="background-color: #012350; color: white; border: 5px solid white;">
+                <a href="#" id="department-btn">
+                    <div class="leftImgBox">
+                        <img src="shopping-bag.png" alt="">
+                    </div>
+                    <div class="counterBox">
+                        <p class="counter">120</p>
+                        <p class="title">Departmental Store</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-3 py-1" class="box"
+                style="background-color: #68B902; color: white; border: 5px solid white;">
+                <a href="#" id="computer-btn">
+                    <div class="leftImgBox">
+                        <img src="desktop.png" alt="">
+                    </div>
+                    <div class="counterBox">
+                        <p class="counter">89</p>
+                        <p class="title">Computer Store</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-3 py-1" class="box"
+                style="background-color: #F84D5D; color: white; border: 5px solid white;">
+                <a href="#" id="clothing-btn">
+                    <div class="leftImgBox">
+                        <img src="clothing.png" alt="">
+                    </div>
+                    <div class="counterBox">
+                        <p class="counter">30</p>
+                        <p class="title">Clothing Store</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-3 py-1" class="box"
+                style="background-color: #F0B801; color: white; border: 5px solid white;">
+                <a href="#" id="stationary-btn">
+                    <div class="leftImgBox">
+                        <img src="stationary.png" alt="">
+                    </div>
+                    <div class="counterBox">
+                        <p class="counter">170</p>
+                        <p class="title">Stationary Store</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-9">
+                <!-- Search -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group mb-3" style="width: 100%;">
+                            <input type="text" class="form-control"
+                                style="border-top-left-radius: 50px; border-bottom-left-radius: 50px;">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" style="color: #FBAD63;" type="button"><i
+                                        class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Filtered Items -->
+                <div id="filtered-items">
+                    <!-- Filtered Items (Departmental) -->
+                    <div id="department">
+                        <!-- First Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Second Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="book.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Note Book
+                                        Small
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="cleaning.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Flower Brush
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="table.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Table Cloth
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="air-freshener.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Car Scent
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Third Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtered Items (Computer) -->
+                    <div id="computer">
+                        <!-- First Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="book.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Note Book
+                                        Small
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="cleaning.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Flower Brush
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="table.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Table Cloth
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="air-freshener.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Car Scent
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Second Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Third Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtered Items (Clothing) -->
+                    <div id="clothing">
+                        <!-- First Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="table.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Table Cloth
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="air-freshener.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Car Scent
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="book.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Note Book
+                                        Small
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="cleaning.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Flower Brush
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Second Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Third Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Filtered Items (Stationary) -->
+                    <div id="stationary">
+                        <!-- First Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="cleaning.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Flower Brush
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="table.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Table Cloth
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="air-freshener.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Car Scent
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="book.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Note Book
+                                        Small
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Second Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Third Row -->
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-500
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="drink-water.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Mineral
+                                        Water-300
+                                        ml
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="shopping-basket.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Baske
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="card">
+                                    <img class="card-img-top" src="mug.png" alt="Card image">
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">Plasttic Mug
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-1"></div> -->
+            <div class="col-3">
+                <div class="row">
+                    <!-- Add to Cart -->
+                    <div class="col-12 px-1">
+                        <p id="addtocart">Add to Cart</p>
+                        <div class="row">
+                            <div class="col-12">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-item-cart">
+                                        <div style="float: left;">
+                                            <img src="drink-water.png" alt="">
+                                            <span>Plasttic Baske</span>
+                                        </div>
+                                        <div style="float: right;">
+                                            <i class="fa fa-minus pr-2" aria-hidden="true"></i>
+                                            <input type="text" class="input" name="input" value="2">
+                                            <i class="fa fa-plus pl-2" aria-hidden="true"></i>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-item-cart">
+                                        <div style="float: left;">
+                                            <img src="table.png" alt="">
+                                            <span>Table Cloth</span>
+                                        </div>
+                                        <div style="float: right;">
+                                            <i class="fa fa-minus pr-2" aria-hidden="true"></i>
+                                            <input type="text" name="input" value="1">
+                                            <i class="fa fa-plus pl-2" aria-hidden="true"></i>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-item-cart">
+                                        <div style="float: left;">
+                                            <img src="cleaning.png" alt="">
+                                            <span>Flower Brush</span>
+                                        </div>
+                                        <div style="float: right;">
+                                            <i class="fa fa-minus pr-2" aria-hidden="true"></i>
+                                            <input type="text" name="input" value="3">
+                                            <i class="fa fa-plus pl-2" aria-hidden="true"></i>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom List Items -->
+        <div class="row">
+            <!-- Most Recent Items -->
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12 text-left"
+                        style="background-color: #DD4C39; color: white; border: 5px solid white;">
+                        <p style="margin-bottom: 0; font-size: 20px;" class="py-1">Most recent items</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12" style="padding: 5px;">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="tissue-box.png" alt="" class="list-img">
+                                        <span class="list-text">Tissue Box</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="usb-drive.png" alt="" class="list-img">
+                                        <span class="list-text">Pen Drive</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="tissues.png" alt="" class="list-img">
+                                        <span class="list-text">Tissue Box</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="toner.png" alt="" class="list-img">
+                                        <span class="list-text">Laser Toner</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Top 10 Items -->
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12 text-left"
+                        style="background-color: #00A65A; color: white; border: 5px solid white;">
+                        <p style="margin-bottom: 0; font-size: 20px;" class="py-1">Top 10 items</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12" style="padding: 5px;">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="drink-water.png" alt="" class="list-img">
+                                        <span class="list-text">Mineral Water (80)</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="air-freshener.png" alt="" class="list-img">
+                                        <span class="list-text">Air Freshner (45)</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="tissue-box.png" alt="" class="list-img">
+                                        <span class="list-text">Tissue Box (60)</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="glue.png" alt="" class="list-img">
+                                        <span class="list-text">Try Glue Stick (12)</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Featured Items -->
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12 text-left"
+                        style="background-color: #0073B6; color: white; border: 5px solid white;">
+                        <p style="margin-bottom: 0; font-size: 20px;" class="py-1">Featured items</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12" style="padding: 5px;">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="tissue-box.png" alt="" class="list-img">
+                                        <span class="list-text">Tissue Box</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="drink-water.png" alt="" class="list-img">
+                                        <span class="list-text">Mineral Water</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="tissues.png" alt="" class="list-img">
+                                        <span class="list-text">Tissue Box</span>
+                                    </li>
+                                    <li class="list-group-item list-item-bottom">
+                                        <img src="toner.png" alt="" class="list-img">
+                                        <span class="list-text">Laser Toner</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#department').show();
+            $('#computer').hide();
+            $('#clothing').hide();
+            $('#stationary').hide();
+        })
+        $('#department-btn').click(function () {
+            $('#department').show();
+            $('#computer').hide();
+            $('#clothing').hide();
+            $('#stationary').hide();
+        })
+        $('#computer-btn').click(function () {
+            $('#department').hide();
+            $('#computer').show();
+            $('#clothing').hide();
+            $('#stationary').hide();
+        })
+        $('#clothing-btn').click(function () {
+            $('#department').hide();
+            $('#computer').hide();
+            $('#clothing').show();
+            $('#stationary').hide();
+        })
+        $('#stationary-btn').click(function () {
+            $('#department').hide();
+            $('#computer').hide();
+            $('#clothing').hide();
+            $('#stationary').show();
+        })
+
+
+        $('.fa-minus').click(function () {
+            console.log($(this).closest(".input").find("input[name=input]").val());
+        })
+    </script>
+</body>
+
+</html>

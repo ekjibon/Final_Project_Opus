@@ -1,0 +1,173 @@
+﻿@model FDRRenewalViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">FDR & Govt.Securities Renewal</h6>
+                <a href="/Accounting/FDRRenewal/FdrRenewalList" class="btn btn-facebook btn-sm pull-right">FDR Renewal List</a>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="row">
+                    
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label for="bankId" class="col-sm-4 col-form-label">Bank</label>
+                                <div class="col-sm-8">
+                                    <select id="bankId" class="form-control">
+                                        <option value="">Please select</option>
+                                        @foreach (var data in Model.banks)
+                                        {
+                                            <option value="@data.Id">@data.bankName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label for="fromDate" class="col-sm-3 col-form-label">Date From</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control dpdatepicker" id="fromDate" autocomplete="off">
+                                </div>
+                                <label for="toDate" class="col-sm-1 col-form-label">To</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control dpdatepicker" id="toDate" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label"></label>
+                                <div class="col-sm-8">
+                                    <input type="button" class="btn btn-success btn-sm" value="Load" id="btnLoad"/>
+                                </div>
+                            </div>
+                        </div>
+                  
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">FDR Information</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-responsive" id="ApprovalTable" style="width:100%;">
+                   
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $(".dpdatepicker").datepicker({ dateFormat: "dd M yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2040" }).datepicker("setDate");
+
+            GetAllFDRRenewalPendingList(0, null, null);
+
+            $("#btnLoad").on("click", function () {
+
+                GetAllFDRRenewalPendingList($("#bankId").val(), $("#fromDate").val(), $("#toDate").val());
+
+            });
+
+        });
+
+        function GetAllFDRRenewalPendingList(bankId, frmDate, toDate) {
+            $('#ApprovalTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetAllFDRRenewalPendingList", "FDRRenewal")',
+                    dataSrc: "",
+                    data: { bankId: bankId, frmDate: frmDate, toDate: toDate }
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "ftInstructionNo", title: "Ref No", "width": "10%" },
+                    { data: "ftDate", title: "Date", "width": "10%" },
+                    { data: "accountName", title: "FDR No", "width": "10%" },
+                    { data: "bankName", title: "Bank Name", "width": "10%" },
+                    { data: "accountNumber", title: "Account No", "width": "10%" },
+                    { data: "amount", title: "Amount", "width": "15%" },
+                    { data: "rate", title: "Rate", "width": "15%" },
+                    { data: "tenure", title: "Tenure", "width": "10%" },
+                    {
+                        title: "Action", "width": "6%",
+                        "render": function (data, type, e, meta) {
+                            return '<a class="btn btn-info" href="javascript:void(0)" title="Renew" onclick="FDRRenewalProcess(' + e.fdrInvesmentMasterId + ',' + e.fdrDetailsId + ',' + 0 + ')"><i class="fa fa-redo"></i></a>';
+                        }
+                    },
+
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "FDRRenewalPending",
+                        messageTop: 'FDR Renewal Pending List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "FDRRenewalPending",
+                        messageTop: 'FDR Renewal Pending List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "FDRRenewalPending",
+                        messageTop: 'FDR Renewal Pending List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function FDRRenewalProcess(masterId, detailsId, isEdit) {
+            window.location = '@Url.Action("RenewFdr", "FDRRenewal")?masterId=' + masterId + '&detailsId=' + detailsId + '&isEdit=' + isEdit;
+        }
+
+    </script>
+}
+
+
+

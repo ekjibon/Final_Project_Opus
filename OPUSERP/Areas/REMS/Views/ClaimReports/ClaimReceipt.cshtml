@@ -1,0 +1,117 @@
+﻿@model ClaimReportsViewModel
+@{
+    ViewData["Title"] = "Claim Receipt";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    body {
+        color: black;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+
+    .pb_before {
+        page-break-before: always !important;
+    }
+
+    /***Always insert a page break after the element***/
+    .pb_after {
+        page-break-after: always !important;
+    }
+
+    /***Avoid page break before the element (if possible)***/
+    .pb_before_avoid {
+        page-break-before: avoid !important;
+    }
+
+    /***Avoid page break after the element (if possible)***/
+    .pb_after_avoid {
+        page-break-after: avoid !important;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-3" style="height:110px;">
+                    <img src="~/images/BnB.png" style="height:95px;width: inherit;" />
+                </div>
+                <div class="col-6" style="padding-left:10px;">
+                    <h1 style="font-size: 35px; font-weight: 900; font-family: sans-serif; margin-top:10px; margin-bottom:0px;">BRICKS <span style="color:red;">&</span> BRIDGES Ltd. </h1>
+                    <h3 style="font-weight:900;font-family: sans-serif;font-size: 20px; text-align: center;">Claim Receipt</h3>
+                </div>
+                @*<div class="col-3" style="padding-left:10px;">
+                    <h1 style="font-size: 15px; font-family: sans-serif; margin-top: 10px;">From Date : </h1>
+                    <h1 style="font-size: 15px; font-family: sans-serif; margin-top: 10px;">To Date : </h1>
+                </div>*@
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="font-size: 15px;padding-top:10px;">
+        <div class="col-12">
+            <table class="table-bordered-grey" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;width:25%;">Claim Date</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.claimDate?.ToString("dd-MMM-yyyy")</td>
+                        <th style="text-align:left;width:25%;">Claim No</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.claimNumber</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align:left;width:25%;">Asset Id</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.assetRegistration.itemSpecification.Item.itemCode</td>
+                        <th style="text-align:left;width:25%;">Asset Name</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.assetRegistration.itemSpecification.Item.itemName</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align:left;width:25%;">Purchase No</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.assetRegistration.purchaseInfo.purchaseNo</td>
+                        <th style="text-align:left;width:25%;">Purchase Date</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.assetRegistration.purchaseInfo.purchaseDate?.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align:left;width:25%;">Supplier Code</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.assetRegistration.purchaseInfo.supplier.orgCode</td>
+                        <th style="text-align:left;width:25%;">Supplier Name</th>
+                        <td style="text-align:left;width:25%;">@Model.claimRegister.assetRegistration.purchaseInfo.supplier.organizationName</td>
+                    </tr>
+                    <tr>
+                        <th style="text-align:left;width:25%;">Claim Description</th>
+                        <td style="text-align:left;width:75%;" colspan="3">@Model.claimRegister.claimDescription</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <div class="row" style="padding-top: 150px;">
+        <div class="col-5" style="font-size: 18px;font-weight:300;">
+            <div style="border-top:2px solid black;padding: 0px 30px 0px 30px;">
+                <span style="font-weight:600;">Claim By</span><br />
+                <span>@Model.claimByName</span><br />
+                <span>@Model.claimRegister.claimDate?.ToString("dd-MMM-yyyy")</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@*<div class="pb_after"></div>*@

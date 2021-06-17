@@ -1,0 +1,298 @@
+﻿@model EmployeesCashSetupViewModel
+@{
+    ViewData["Title"] = "Cash Setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Employee's Cash Setup</h5>
+        <hr>
+        <div class="container">
+            <form id="frmSalaryProcess" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="cashSetupId" name="cashSetupId" value=0>
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-sm-4 col-form-label">Emp Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Designation </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="department" class="col-sm-4 col-form-label">Department</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="department" value="" name="department" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="netAmount" class="col-sm-4 col-form-label">Net Amount</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="netAmount" value="0" name="netAmount" readonly style="text-align:right;">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-sm-6">
+
+
+                        <div class="form-group row">
+                            <label for="bankAmount" class="col-sm-4 col-form-label">Bank Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="bankAmount" value="0" name="bankAmount" data-parsley-required="true" style="text-align:right;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="walletAmount" class="col-sm-4 col-form-label">Wallet Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="walletAmount" value="0" name="walletAmount" data-parsley-required="true" style="text-align:right;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="cashAmount" class="col-sm-4 col-form-label">Cash Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="cashAmount" value="0" name="cashAmount" data-parsley-required="true" style="text-align:right;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="leftAmount" class="col-sm-4 col-form-label">Amount Left <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money" id="leftAmount" name="leftAmount" value="0" style="text-align:right;" readonly>
+                                <input type="hidden"  id="totalAmount" name="totalAmount" value="0" style="text-align:right;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                
+                <button type="button" id="btnAddAttendence" onclick="SaveYear()" class="btn btn-success btn-sm" style="float:right;">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Employee's Cash Setup List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Employee Code</th>
+                            <th>Employee Name</th>
+                            <th>Bank Amount</th>
+                            <th>Wallet Amount</th>
+                            <th>Cash Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.employeesCashSetups)
+                        {
+                        <tr>
+                            <td>@data?.employeeInfo?.employeeCode</td>
+                            <td>@data?.employeeInfo?.nameEnglish</td>
+                            <td>@data.bankAmount</td>
+                            <td>@data.walletAmount</td>
+                            <td>@data.cashAmount</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id,'@data.employeeInfoId','@data.employeeInfo.nameEnglish','@data.employeeInfo.employeeCode','@data.employeeInfo.designation','@data.bankAmount','@data.walletAmount','@data.cashAmount')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#educationalTable').DataTable();
+
+            $("#bankAmount").keyup(function () {
+                GetRemainingAmount();
+                
+            });
+
+            $("#walletAmount").keyup(function () {
+                GetRemainingAmount();
+            });
+
+            $("#cashAmount").keyup(function () {
+                GetRemainingAmount();
+            });
+
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+
+            $(".money").keydown(function (e) {
+                // Allow: backspace, delete, tab, escape, enter and .
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    // Allow: Ctrl/cmd+A
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: Ctrl/cmd+C
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: Ctrl/cmd+X
+                    (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        function GetRemainingAmount() {
+            var net = parseFloat($('#netAmount').val()) ? parseFloat($('#netAmount').val()) : 0;
+            var bank = parseFloat($('#bankAmount').val()) ? parseFloat($('#bankAmount').val()) : 0;
+            var wallet = parseFloat($('#walletAmount').val()) ? parseFloat($('#walletAmount').val()) : 0;
+            var cash = parseFloat($('#cashAmount').val()) ? parseFloat($('#cashAmount').val()) : 0;
+
+            $('#totalAmount').val(bank + wallet + cash);
+            $('#leftAmount').val(net - (bank + wallet + cash));
+        }
+
+        function Edit(Id, employeeInfoId, nameEnglish, employeeCode, designation, bankAmount, walletAmount, cashAmount) {
+            $('#cashSetupId').val(Id);
+            $('#employeeInfoId').val(employeeInfoId);
+            $('#employeeName').val(nameEnglish + '(' + (employeeCode) + ')');
+            $('#Designation').val(designation);
+            $('#bankAmount').val(bankAmount);
+            $('#walletAmount').val(walletAmount);
+            $('#cashAmount').val(cashAmount);  
+            Common.Ajax('GET', '/Payroll/SalaryStructure/GetEmployeesGrossAmountByEmpId/?employeeInfoId=' + employeeInfoId, [], 'json', ajaxGetEmployeesGrossAmount);            
+           
+        }
+
+        function SaveYear() {
+            let employeeInfoId = $('#employeeInfoId').val();
+            let net = parseFloat($('#netAmount').val()) ? parseFloat($('#netAmount').val()) : 0;           
+            let totalAmount = parseFloat($('#totalAmount').val()) ? parseFloat($('#totalAmount').val()) : 0;
+
+            if (employeeInfoId == 0) {
+                swal("Please Select Employee");
+                return false;
+            }
+            else if (totalAmount == 0) {
+                swal("Please Input amount");
+                return false;
+            }
+            else if (net != totalAmount) {
+                swal("Net amount must be equal to distributed amount");
+                return false;
+            }
+            var form = $("#frmSalaryProcess");
+                $.ajax({
+                    url: '@Url.Action("CashSetup", "SalaryStructure")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (cashId) {
+                        if (cashId === 0) {
+                            swal('This employee has already added!');
+                            return false;
+                        }
+                        else {
+                            swal({
+                                title: '', text: 'Save Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                            }).then(function () {
+                                window.location.href = "/Payroll/SalaryStructure/CashSetup";
+                            });
+                        }
+                    }
+                });
+        }
+
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+
+                    Common.Ajax('GET', '/Payroll/SalaryStructure/GetEmployeesGrossAmountByEmpId/?employeeInfoId=' + ui.item.key, [], 'json', ajaxGetEmployeesGrossAmount);
+                }
+            });
+        }
+
+        function ajaxGetEmployeesGrossAmount(response) {
+            $('#netAmount').val(response);
+            GetRemainingAmount();
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteEmployeesCashSetupById", "SalaryStructure")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Payroll/SalaryStructure/CashSetup";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

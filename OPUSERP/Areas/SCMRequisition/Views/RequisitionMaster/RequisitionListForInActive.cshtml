@@ -1,0 +1,91 @@
+﻿@model RequisitionViewModel
+@{
+    ViewData["Title"] = "RequisitionListForInActive";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">Active PR List</h6>
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="activePRTable">
+                    <thead>
+                        <tr>
+                            <th>PR No</th>
+                            <th>PR Date</th>
+                            <th>PR Value</th>
+                            <th>Subject</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.activePR)
+                        {
+                        <tr>
+                            <td>@data.reqNo</td>
+                            <td>@data.reqDate?.ToString("dd-MMM-yyyy")</td>
+                            <td></td>
+                            <td>@data.subject</td>
+                            <td>
+                                @*<a class="btn btn-info" href="/SCMIOU/IOU/IOUPayment?id=@data.Id"><i class="fa fa-cogs"></i></a>*@
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">In Active PR List </h6>
+                </div>
+                <div class="col-md-2">
+                    @*<button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreatePO", "PurchaseOrder")'">Create IOU</button>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="inActivePRTable">
+                    <thead>
+                        <tr>
+                            <th>PR No</th>
+                            <th>PR Date</th>
+                            <th>PR Value</th>
+                            <th>Subject</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.inActivePR)
+                        {
+                        <tr>
+                            <td>@data.reqNo</td>
+                            <td>@data.reqDate?.ToString("dd-MMM-yyyy")</td>
+                            <td></td>
+                            <td>@data.subject</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#activePRTable').DataTable();
+            $('#inActivePRTable').DataTable();
+        });
+    </script>
+}

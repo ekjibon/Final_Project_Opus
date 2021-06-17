@@ -1,0 +1,753 @@
+﻿@model FDRInvestmentViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Investment & Govt.Securities</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Accounting" asp-controller="FDR" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" name="fDRInvesmentMasterId" id="fDRInvesmentMasterId" value="0" />
+                <h6 style="margin-left:-20px;">FT Information</h6>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="FTInstructionNo" class="col-sm-4 col-form-label">FT No<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="FTInstructionNo" name="FTInstructionNo" data-parsley-required="true" data-parsley-trigger="keyup" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group row" hidden>
+                            <label for="FTSendTo" class="col-sm-4 col-form-label">FT Ins. Send To</label>
+                            <div class="col-sm-8">
+                                <select id="FTSendTo" name="FTSendTo" class="form-control">
+                                    <option value="">Please select</option>
+                                    <option value="Head Office">Head Office</option>
+                                    <option value="Branch">Branch</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="bankId" class="col-sm-4 col-form-label">Debit Bank <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <select id="bankId" name="bankId" class="form-control" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="">Please select</option>
+                                    @foreach (var data in Model.bankBranchDetails)
+                                    {
+                                        <option value="@data.Id">@data?.bankName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="bankBranchName" class="col-sm-4 col-form-label">Debit Branch</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="bankBranchName" name="bankBranchName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="FTDate" class="col-sm-4 col-form-label">FT Date<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control dpdatepicker" id="FTDate" name="FTDate">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="NOI" class="col-sm-4 col-form-label">Nature of Invest</label>
+                            <div class="col-sm-8">
+                                <select id="NOI" name="NOI" class="form-control" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="">Please select</option>
+                                    <option value="FDR">FDR</option>
+                                    <option value="Govt.Securities">Govt.Securities</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="bankAccountNo" class="col-sm-4 col-form-label">Debit Bank A/C No <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="bankAccountNo" name="bankAccountNo" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="SOF" class="col-sm-4 col-form-label">Source Of Fund</label>
+                            <div class="col-sm-8">
+                                <select id="SOF" name="SOF" class="form-control" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="">Please select</option>
+                                    <option value="CBF">CBF</option>
+                                    @*<option value="Capital">Capital</option>
+                                    <option value="Float">Float</option>*@
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <hr>
+                <h6 style="margin-left:-20px;">Details Information of Investment</h6>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="RefNo" class="col-sm-4 col-form-label">Investment No <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="RefNo" id="RefNo" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Amount" class="col-sm-4 col-form-label">Amount<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control interest money" style="text-align:right" id="Amount" name="Amount" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="OpenDate" class="col-sm-4 col-form-label">Open Date<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control interest dpdatepicker" id="OpenDate" name="OpenDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="FormulaType" class="col-sm-4 col-form-label">Calculation Method<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <select id="FormulaType" name="FormulaType" class="form-control interest" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="">Select Method</option>
+                                    @foreach (var data in Model.fDRCalFormulas)
+                                    {
+                                        <option value="@data.TypeText">@data.TypeText</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="DestinationType" class="col-sm-4 col-form-label">Investment To <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <select id="DestinationType" name="DestinationType" class="form-control" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="" selected="selected">Select Destination</option>
+                                    <option value="Same Bank">Same Bank</option>
+                                    <option value="Non-Partner Bank">Non-Partner Bank</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="clsdivdbank">
+                            <div class="form-group row">
+                                <label for="detailsbankId" class="col-sm-4 col-form-label">Investment Bank <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <select id="detailsbankId" name="detailsbankId" class="form-control">
+                                        <option value="" selected="selected">Select Desitination Bank</option>
+                                        @foreach (var data in Model.bankBranchDetails)
+                                        {
+                                            <option value="@data.Id">@data?.bankName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="ChequeNo" class="col-sm-4 col-form-label">Cheque No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="ChequeNo" name="ChequeNo" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="Rate" class="col-sm-4 col-form-label">Interest Rate(%)<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control money interest" id="Rate" name="Rate" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="MaturityDate" class="col-sm-4 col-form-label">Maturity Date<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control interest dpdatepicker" id="MaturityDate" name="MaturityDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Tenure" class="col-sm-4 col-form-label">Tenure<span style="color:red">*</span></label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control interest" id="Tenure" name="Tenure" readonly>
+                            </div>
+                            <div class="col-sm-4">
+                                <select id="TenureType" name="TenureType" class="form-control interest" data-parsley-required="true" data-parsley-trigger="keyup">
+                                    <option value="">Select Tenure Type</option>
+                                    <option value="Days">Days</option>
+                                    <option value="Month">Month</option>
+                                    <option value="Year">Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="TotalInterest" class="col-sm-4 col-form-label">Interest</label>
+                            <div class="col-sm-8">
+                                <input type="text" id="TotalInterest" name="TotalInterest" class="form-control money" style="text-align:right" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="DestinationBranch" class="col-sm-4 col-form-label">Investment Branch <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="DestinationBranch" name="DestinationBranch" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <div class="clsdivdbank">
+                            <div class="form-group row">
+                                <label for="NPBAddress" class="col-sm-4 col-form-label">Address</label>
+                                <div class="col-sm-8">
+                                    <textarea id="NPBAddress" name="NPBAddress" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-6">
+                        <span>&nbsp;</span>
+                        <div class="form-group row">
+                            <span class="col-sm-6"></span>
+                            <div class="col-sm-6">
+                                @*<input type="button" id="btnRefresh" onclick="clearAllEntry()" value="Refresh" style="width:100px" />&nbsp;&nbsp;&nbsp;*@
+                                @*<input type="button" title="Save Info" id="btnSave" value="Save" style="width:100px" />*@
+                                <button type="submit" value="Submit" class="btn btn-success btn-sm" style="width:100px">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">FT Instruction View</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-responsive" id="ApprovalTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Ref No</th>
+                            <th>Date</th>
+                            <th>SOF</th>
+                            <th>Bank Name</th>
+                            <th>Account Number</th>
+                            <th>Amount</th>
+                            <th>Rate</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.fDRInvestmentALLViews)
+                            {
+
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.fDRInvesmentMaster?.FTInstructionNo</td>
+                                    <td>@data.fDRInvesmentMaster?.FTDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.fDRInvesmentMaster?.SOF</td>
+                                    <td>@data.fDRInvesmentMaster?.bank?.bankName</td>
+                                    <td>@data.fDRInvesmentMaster?.bankAccountNo</td>
+                                    <td style="text-align:right;">@data.fDRInvestmentDetails?.Sum(x => x.Amount)</td>
+                                    <td>@data.fDRInvestmentDetails?.FirstOrDefault()?.Rate</td>
+                                    @if (@data.fDRInvesmentMaster?.FDRStatus == 0 || @data.fDRInvesmentMaster?.FDRStatus == -1)
+                                    {
+                                        <td>FT pending</td>
+                                    }
+                                    else if (@data.fDRInvesmentMaster.FDRStatus == 2)
+                                    {
+                                        <td>Renew</td>
+                                    }
+                                    else if (@data.fDRInvesmentMaster.FDRStatus == 1)
+                                    {
+                                        <td>Approved</td>
+                                    }
+
+                                        <td>
+
+                                            @if (data.fDRInvesmentMaster.FDRStatus == 0 || data.fDRInvesmentMaster.FDRStatus == -1)
+                                            {
+                                                <a class="btn btn-info" onclick="EditFundTransfer(@data.fDRInvesmentMaster.Id,'@data.fDRInvesmentMaster?.FTInstructionNo','@data.fDRInvesmentMaster?.FTDate?.ToString("dd-MMM-yyyy")','@data.fDRInvesmentMaster.FTSendTo','@data.fDRInvesmentMaster?.bankId','@data.fDRInvesmentMaster?.bankAccountNo','@data.fDRInvesmentMaster?.SOF','@data.fDRInvesmentMaster?.NOI','@data.fDRInvesmentMaster?.bankBranchName','@data.fDRInvesmentMaster?.FDRStatus','@data.fDRInvestmentDetails?.FirstOrDefault()?.RefNo','@data.fDRInvestmentDetails?.FirstOrDefault()?.Amount','@data.fDRInvestmentDetails?.FirstOrDefault()?.OpenDate?.ToString("dd-MMM-yyyy")','@data.fDRInvestmentDetails?.FirstOrDefault()?.FormulaType','@data.fDRInvestmentDetails?.FirstOrDefault()?.DestinationType','@data.fDRInvestmentDetails?.FirstOrDefault()?.Rate','@data.fDRInvestmentDetails?.FirstOrDefault()?.MaturityDate?.ToString("dd-MMM-yyyy")','@data.fDRInvestmentDetails?.FirstOrDefault()?.Tenure','@data.fDRInvestmentDetails?.FirstOrDefault()?.TenureType','@data.fDRInvestmentDetails?.FirstOrDefault()?.TotalInterest','@data.fDRInvestmentDetails?.FirstOrDefault()?.DestinationBranch','@data.fDRInvestmentDetails?.FirstOrDefault()?.bankId','@data.fDRInvestmentDetails?.FirstOrDefault()?.ChequeNo','@data.fDRInvestmentDetails?.FirstOrDefault()?.NPBAddress')" href="javascript:void(0)"><i class="fa fa-pen-alt"></i></a>
+                                                <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.fDRInvesmentMaster.Id,'@data.fDRInvestmentDetails?.FirstOrDefault()?.RefNo')"><i class="fa fa-trash-alt"></i></a>
+                                            }
+                                            else if (data.fDRInvesmentMaster.FDRStatus == 1)
+                                            {
+                                                @*<a class="btn btn-warning" title="Return" href="javascript:void(0)" onclick="ReturnFdr(@data.fDRInvesmentMaster.Id)"><i class="fa fa-undo-alt"></i></a>*@
+                                            }
+
+                                        </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#ApprovalTable').DataTable(
+                {
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ]
+                }
+            );
+
+            $(".dpdatepicker").datepicker({ dateFormat: "dd M yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1950:2050" }).datepicker("setDate", new Date());
+
+            resetNonPartner();
+            $('.clsdivdbank').hide();
+
+            $(".interest").change(function () {
+                InterestCalculator();
+                GetTenure();
+            });
+            $(".interest").keyup(function () {
+                InterestCalculator();
+            });
+
+            $("#DestinationType").change(function () {
+                var thisVal = $(this).val();
+                if (thisVal == 'Same Bank') {
+                    resetNonPartner();
+                    $('.clsdivdbank').hide();
+                }
+                else {
+                    $('.clsdivdbank').show();
+                }
+            });
+
+            $("#DestinationType").change(function () {
+                if ($('#fDRInvesmentMasterId').val() == '0') {
+                    var bankName = $('#bankId').val();
+                    var ftdate = $('#FTDate').val();
+                    var accNo = $("#bankAccountNo").val();
+                    var desType = $(this).val();
+                    GetFTNO(bankName, ftdate, accNo, desType);
+                }
+            });
+
+            $("#TenureType").change(function () {
+                GetTenure();
+            });
+
+            $("#bankId").change(function () {
+                var bankName = $(this).val() ? $(this).val() : '';
+
+                if ($('#fDRInvesmentMasterId').val() == '0') {
+                    var ftdate = $('#FTDate').val();
+                    var accNo = $("#bankAccountNo").val();
+                    var ftSendTo = $('#FTSendTo').val();
+                    GetFTNO(bankName, ftdate, accNo, ftSendTo);
+                }
+            });
+
+            $("#FTDate").change(function () {
+                $('#OpenDate').val($(this).val());
+                var id = $('#fDRInvesmentMasterId').val() ? $('#fDRInvesmentMasterId').val() : '0';
+                if (id == '0') {
+                    var bankName = $('#bankId').val();
+                    var accNo = $("#bankAccountNo").val();
+                    var ftSendTo = $('#FTSendTo').val();
+                    GetFTNO(bankName, $(this).val(), accNo, ftSendTo);
+                }
+                GetTenure();
+            });
+
+            $("#bankAccountNo").change(function () {
+                var accNo = $(this).val() ? $(this).val() : '';
+
+                if ($('#fDRInvesmentMasterId').val() == '0') {
+                    var ftdate = $('#FTDate').val();
+                    var bankName = $('#bankId').val();
+                    var ftSendTo = $('#FTSendTo').val();
+                    GetFTNO(bankName, ftdate, accNo, ftSendTo);
+                }
+            });
+
+            $("#bankAccountNo").keyup(function () {
+                var accNo = $(this).val() ? $(this).val() : '';
+
+                if ($('#fDRInvesmentMasterId').val() == '0') {
+                    var ftdate = $('#FTDate').val();
+                    var bankName = $('#bankId').val();
+                    var ftSendTo = $('#FTSendTo').val();
+                    GetFTNO(bankName, ftdate, accNo, ftSendTo);
+                }
+            });
+
+            $("#Amount").keyup().number(true, 2);
+            //$("#Amount").keyup().number(true,0);
+
+            $(".money").keydown(function (e) {
+                // Allow: backspace, delete, tab, escape, enter and .
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    // Allow: Ctrl/cmd+A
+                    (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: Ctrl/cmd+C
+                    (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: Ctrl/cmd+X
+                    (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        function EditFundTransfer(...params) {
+            $("#fDRInvesmentMasterId").val(params[0]);
+
+            $('#FTInstructionNo').val(params[1]);
+            $('#FTDate').val(params[2]);
+            $('#FTSendTo').val(params[3]);
+            $('#bankId').val(params[4]);
+            $('#bankAccountNo').val(params[5]);
+            $("#SOF").val(params[6]);
+            $("#NOI").val(params[7]);
+            $('#bankBranchName').val(params[8]);
+
+            $('#RefNo').val(params[10]);
+            $('#Amount').val(params[11]);
+            $('#OpenDate').val(params[12]);
+            $('#FormulaType').val(params[13]);
+            $('#DestinationType').val(params[14]);
+
+            $('#Rate').val(params[15]);
+            $('#MaturityDate').val(params[16]);
+            $('#Tenure').val(params[17]);
+            $('#TenureType').val(params[18]);
+            $('#TotalInterest').val(params[19]);
+            $('#DestinationBranch').val(params[20]);
+
+            $('#detailsbankId').val(params[21]);
+            $('#ChequeNo').val(params[22]);
+            $('#NPBAddress').val(params[23]);
+
+            if (params[14].val() == 'Same Bank') {
+                $('.clsdivdbank').hide();
+            }
+            else {
+                $('.clsdivdbank').show();
+            }
+        }
+
+        function GetFTNO(bankName, ftdate, accNo, desType) {
+            $("#FTInstructionNo").val('');
+            if (bankName == 'All Bank') {
+                bankName = '';
+            } else {
+                bankName = $("#bankId option:selected").text();
+            }
+            $.ajax({
+                url: "/Accounting/FDRRenewal/GetFdrAutoNo?bnkName=" + bankName + "&ftDate=" + ftdate + "&accountNo=" + accNo + "&destinationType=" + desType + "&ftType=" + 'New',
+                type: "GET",
+                dataType: "json",
+                success: function (records) {
+                    $("#FTInstructionNo").val(records);
+                },
+                failure: function () {
+                    $.alert.open("error", "Failed!");
+                }
+            });
+        }
+
+        function clearAllEntry() {
+            $("#fDRInvesmentMasterId").val('');
+            $("#NOI").val('');
+            $("#SOF").val('');
+            $('#FTInstructionNo').val('');
+            $('#BankName').val("All Bank");
+            $('#BranchName').val("");
+            $("#BankAccountNumber").val('');
+            $('#FTSendTo').val("");
+            $('#FTDate').val(formatDate(new Date()));
+            $("#dtFDR tbody>tr").remove();
+            $("#dtFDR tbody").empty();
+            frmdata = new FormData();
+            formdata = new FormData();
+            resetNonPartner();
+            ClearFDR();
+        }
+
+        function resetNonPartner() {
+            $('.clsdivdbank').hide();
+            $('#DesitinatioBank').val('');
+            $('#ChequeNo').val('');
+            $('#DestinationBranch').val('');
+            $('#NPBAddress').val('');
+        }
+
+        function ClearFDR() {
+            $('#DestinationType').val('');
+            $('#DestinationBranch').val('');
+            $('#Amount').val(0);
+            $('#Rate').val('');
+            $('#FormulaType').val('');
+            $('#TotalInterest').val('');
+            $('#Tenure').val('');
+            $('#TenureType').val('');
+            $('#NPBAddress').val('');
+            editVal = 0;
+            $('#OpenDate').val(formatDate(new Date()));
+            $('#MaturityDate').val(formatDate(new Date()));
+            resetNonPartner();
+            //DBranch = [];
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+
+            return day + ' ' + monthNames[monthIndex] + ' ' + year;
+        }
+
+        function DeleteMaster(Id,refNo) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteFDRByMasterId", "FDR")',
+                    data: { Id: Id, refNo: refNo},
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Accounting/FDR/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+        function ReturnFdr(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to return this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("ReturnFdrToApprove", "FDR")',
+                    data: { fdrMasterId: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Returned Successfully!', 'success');
+                        window.location.href = "/Accounting/FDR/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be returned. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+        function ViewFT(ftid, isRenew, destinationType) {
+            var isValidItem = true;
+            if (ftid == '') {
+                isValidItem = false;
+                alert('Please Select Valid FT!!');
+            }
+
+            if (isValidItem) {
+                window.open(BaseUrl + 'FDR_Report/FundTransferView?ftid=' + ftid + '&reportType=' + 1 + '&RFType=' + 'PDF' + '&isRenew=' + isRenew + '&destinationType=' + destinationType, '_blank');
+            }
+        }
+
+        function GetReport(voucherno, refNo, voucherTypeID) {
+            var isValidItem = true;
+            var vouchevalue = voucherno
+            if (isValidItem) {
+                window.open(BaseUrl + 'FDR_Report/VoucherCostCenter?VNO=' + voucherno + '&vType=' + voucherTypeID + '&refNo=' + refNo, '_blank');
+            }
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        function InterestCalculator() {
+            var totalInterest = 0;
+            var amount = parseFloat($('#Amount').val().replace(/,/g, '')) ? parseFloat($('#Amount').val().replace(/,/g, '')) : 0;
+            var rate = parseFloat($('#Rate').val()) ? parseFloat($('#Rate').val()) : 0;
+            var formulaType = $('#FormulaType').val();
+
+            var openDate = $('#OpenDate').val();
+            var maturityDate = $('#MaturityDate').val();
+
+            if (formulaType == 'Amount*Rate*30/360') {
+                totalInterest = Formula1Cal(amount, rate, openDate, maturityDate);
+            } else if (formulaType == '(Amount*Rate*31 or 30 or 28)/360') {
+                totalInterest = Formula2Cal(amount, rate, openDate, maturityDate);
+            } else {
+                totalInterest = 0;
+            }
+            $('#TotalInterest').val(totalInterest).number(true, 2);
+        }
+
+        function Formula1Cal(amount, rate, odate, mdate) {
+            rate = parseFloat(rate) / 100;
+            var openDate = new Date(odate);
+            var maturityDate = new Date(mdate);
+            var interest = 0;
+            var fracopen = 0;
+            var fracmature = 0;
+            var totalDay = 0;
+
+            var totalMonth = totalMonths(openDate, maturityDate);
+
+            if (totalMonth <= 0) {
+                totalDay = totalDays(openDate, maturityDate);
+                interest = ((amount * rate) / 360) * totalDay;
+            }
+            else {
+                fracopen = 30 - new Date(openDate).getDate() + 1;
+                fracmature = new Date(maturityDate).getDate() - 1;
+                totalDay = fracopen + fracmature;
+                interest = ((amount * rate) / 360) * (totalMonth - 1) * 30 + ((amount * rate) / 360) * totalDay;//((amount*rate)/360)*(((totalMonth-1)*30)+totalDay);
+            }
+            return interest;
+        }
+
+        function Formula2Cal(amount, rate, odate, mdate) {
+            rate = parseFloat(rate) / 100;
+            var openDate = new Date(odate);
+            var maturityDate = new Date(mdate);
+            var interest = 0;
+            var fracopen = 0;
+            var fracmature = 0;
+            var totalDay = 0;
+
+            var totalMonth = totalMonths(openDate, maturityDate);
+            totalDay = totalDays(openDate, maturityDate);
+            interest = ((amount * rate) / 360) * totalDay;
+            return interest;
+        }
+
+        function leapYear(year) {
+            return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+        }
+
+        function totalDays(openDate, maturityDate) {
+            var timeDiff = maturityDate.getTime() - openDate.getTime();
+            var tdays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            return tdays;
+        }
+        function totalMonths(d1, d2) {
+            var months;
+            months = (d2.getFullYear() - d1.getFullYear()) * 12;
+            months -= d1.getMonth();
+            months += d2.getMonth();
+            return months <= 0 ? 0 : months;
+        }
+        function totalyears(d1, d2) {
+            var months;
+            months = (d2.getFullYear() - d1.getFullYear()) * 12;
+            months -= d1.getMonth();
+            months += d2.getMonth();
+            return months <= 0 ? 0 : months;
+        }
+
+        function GetDayMonthYear(openDate, maturityDate) {
+            var Tenure = {};
+            var odate = Date.parse(openDate);
+            var mdate = Date.parse(maturityDate);
+            var diff_date = mdate - odate;
+            var dt = new Date(maturityDate);
+            let isLeapY = leapYear(dt.getYear());
+            var num_years = diff_date / 31536000000;
+            var num_months = (diff_date % 31536000000) / 2628000000;
+            var num_days = ((diff_date % 31536000000) % 2628000000) / 86400000;
+
+            var MWOD = diff_date / 2628000000;
+            var tDay = diff_date / 86400000;
+
+            Tenure.Year = Math.floor(num_years);
+            Tenure.TMonth = Math.floor(MWOD);
+            Tenure.FracMonth = Math.floor(num_months);
+
+            if (isLeapY) {
+                Tenure.TDay = Math.floor(tDay) - 1;
+                Tenure.FracDay = Math.floor(num_days) - 1;
+            } else {
+                Tenure.TDay = Math.floor(tDay);
+                Tenure.FracDay = Math.floor(num_days);
+            }
+            return Tenure;
+        }
+
+        function GetTenure() {
+            var type = $('#TenureType').val();
+            var odate = $('#OpenDate').val();
+            var mdate = $('#MaturityDate').val();
+            var Tenure = GetDayMonthYear(odate, mdate);
+            if (type == 'Days') {
+                $('#Tenure').val(Tenure.TDay + ' Days');
+            } else if (type == 'Month') {
+                let month = '';
+                if (Tenure.FracDay > 0) {
+                    month = `${Tenure.TMonth} Month ${Tenure.FracDay} Days`;
+                } else if (Tenure.FracDay == 0) {
+                    month = `${Tenure.TMonth} Month`;
+                } else {
+                    month = `${Tenure.TMonth} Month`;
+                }
+                $('#Tenure').val(month);
+            } else if (type == 'Year') {
+                let year = '';
+                if (Tenure.FracMonth > 0 && Tenure.FracDay > 0) {
+                    year = `${Tenure.Year} Year ${Tenure.FracMonth} Month ${Tenure.FracDay} Days`;
+                } else if (Tenure.FracMonth == 0 && Tenure.FracDay > 0) {
+                    year = `${Tenure.Year} Year ${Tenure.FracDay} Days`;
+                } else if (Tenure.FracMonth > 0 && Tenure.FracDay == 0) {
+                    year = `${Tenure.Year} Year ${Tenure.FracMonth} Month`;
+                } else {
+                    year = `${Tenure.Year} Year`;
+                }
+                $('#Tenure').val(year);
+            } else {
+                $('#Tenure').val();
+            }
+        }
+
+    </script>
+}

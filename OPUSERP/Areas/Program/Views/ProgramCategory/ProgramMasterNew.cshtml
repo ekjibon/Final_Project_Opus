@@ -1,0 +1,596 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "ProgramMaster";
+}
+@section Style{
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <style>
+        div.justified {
+            display: flex;
+            justify-content: center;
+        }
+
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <a class="btn btn-success btn-sm" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                <h5 style="font-weight:bold; color:black">Project Information</h5>
+            </div>
+            <div class="card-body">
+                <form id="myForm" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    @{
+                        var id = 0;
+                        if (@ViewBag.masterId == null)
+                        {
+                            id = 0;
+                        }
+                        else
+                        {
+                            id = ViewBag.masterId;
+                        }
+                        <input type="hidden" name="masterId" id="masterId" value="@id">
+                    }
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-sm-4 col-form-label">Project Number<span style="color:red">*</span></label>
+                                <div class="col-md-8 col-sm-8">
+                                    <input type="text" name="number" id="number" class="form-control" readonly required value="@Model.number" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-3 col-sm-3 col-form-label">Project Name</label>
+                                <div class="col-md-9 col-sm-9">
+                                    <input type="text" name="name" id="name" class="form-control" required value="@Model.name" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="countryName" class="col-sm-4 col-form-label">Project Duration</label>
+                                <label for="nationality" class="col-sm-3 col-form-label">Start Date</label>
+                                <div class="col-sm-5">
+                                    <input type="text" data-parsley-trigger="keyup" class="form-control" name="fromdate" id="fromdate" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="todate" class="col-sm-3 col-form-label">End Date</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="todate" id="todate">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-sm-4 col-form-label">Project Location</label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input type="text" id="place" class="form-control" />
+                                </div>
+                                <div class="col-md-2">
+                                    <a class="btn btn-block btn-success" onclick="AddGroup()" style="color:white;" title="Add Location"><i class="fas fa-plus"></i></a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div id="SubLedgerList" class="form-group row">
+                            </div>
+                            <hr />
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-sm-4 col-form-label">Implementation Org</label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input type="text" id="partner" class="form-control" />
+                                </div>
+                                <div class="col-sm-2">
+                                    <a class="btn btn-block btn-success" onclick="AddGroupI()" style="color:white;" title="Add Location"><i class="fas fa-plus"></i></a>
+                                </div>
+                            </div>
+                            <hr />
+                            <div id="SubLedgerListI" class="form-group row">
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-sm-4 col-form-label">Total Budget</label>
+                                <div class="col-md-8 col-sm-8">
+                                    <input type="text" id="totalBudget" name="totalBudget" class="form-control" />
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">Source of Fund</label>
+                        <div class="col-md-9 col-sm-9 row">
+                            <input type="text" id="sourceName" class="col-sm-6 form-control ml-1 row" placeholder="Name" />
+                            <input type="text" id="percent" class="col-sm-3 form-control row" style="margin-left: 12px;" placeholder="Percent(%)" />
+                            <input type="text" id="amount" class="col-sm-3 form-control row" style="margin-left: 12px;" placeholder="Amount" />
+                        </div>
+                        <div class="col-sm-1">
+                            <a class="btn btn-block btn-success" onclick="AddGroupII()" style="color:white;" title="Add Location"><i class="fas fa-plus"></i></a>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="SubLedgerListII" class="form-group row">
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-sm-4 col-form-label">Impact</label>
+                                <div class="col-md-8 col-sm-8">
+                                    <select name="programImpactId" id="programImpactId" class="form-control">
+                                        <option value="">Select Impact</option>
+                                        @foreach (var item in Model.programImpacts)
+                                        {
+                                            <option value="@item.Id">@item.name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4 col-sm-4 col-form-label">Grant No.</label>
+                                <div class="col-md-8 col-sm-8">
+                                    <input type="text" name="grantNumber" id="grantNumber" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">Description</label>
+                                <div class="col-md-10">
+                                    <textarea name="description" id="description" class="form-control" rows="6"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <h5 style="font-weight:bold; color:black">Program Hierarchy</h5>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">OutCome <span class="redStar">*</span></label>
+                                <div class="col-md-10">
+                                    <textarea name="outcomeMasterId" id="outcomeMasterId" class="form-control" rows="3"></textarea>
+                                    @*<select name="outcomeMasterId" id="outcomeMasterId" class="form-control">
+                                            <option value="">Select OutCome</option>
+                                            @foreach (var item in Model.outcomeMasters)
+                                            {
+                                                <option value="@item.Id">@item.outcomeName</option>
+                                            }
+                                        </select>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">OutPut <span class="redStar">*</span></label>
+                                <div class="col-md-10">
+                                    <textarea name="outputMasterId" id="outputMasterId" class="form-control" rows="3"></textarea>
+                                    @*<select name="outputMasterId" id="outputMasterId" class="form-control">
+                                            <option value="">Select OutPut</option>
+                                            @foreach (var item in Model.outputMasters)
+                                            {
+                                                <option value="@item.Id">@item.outputName</option>
+                                            }
+                                        </select>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">Output Indicator <span class="redStar">*</span></label>
+                                <div class="col-md-10">
+                                    <textarea name="ouputIndicatorValue" id="ouputIndicatorValue" class="form-control" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">Planned (Value)</label>
+                                <div class="col-md-10">
+                                    <textarea name="outPutVal" id="outPutVal" class="form-control" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">Activity <span class="redStar">*</span></label>
+                                <div class="col-md-10">
+                                    <textarea name="activityName" id="activityName" class="form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">Indicator <span class="redStar">*</span></label>
+                                <div class="col-md-10">
+                                    <textarea name="indicatorValue" id="indicatorValue" class="form-control" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label">Values <span class="redStar">*</span></label>
+                                <div class="col-md-10">
+                                    <textarea name="values" id="values" class="form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-md-2 col-form-label"></label>
+                                <div class="col-md-10">
+                                    <button type="button" onclick="AddItemInfo()" value="Add" title="Add" class="btn btn-facebook btn-sm" style="float:right; margin-top:5px;width:80px;">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-responsive" id="tblfuelDetails" data-parsley-required="true" style="width:100%;">
+                                <thead style="background-color:lightgray;">
+                                    <tr>
+                                        <th width="15%">OutCome</th>
+                                        <th width="15%">OutPut</th>
+                                        <th width="10%">OutPut Indicator</th>
+                                        <th width="10%">OutPut Values</th>
+                                        <th width="15%">Activity</th>
+                                        <th width="10%">Indicator</th>
+                                        <th width="15%">Values</th>
+                                        <th width="8%"><span>Action</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <input type="button" id="saveForm" value="Submit" class="btn btn-success ml-1" style="float:right; margin-top:5px;" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+
+        $("#fromdate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+        $("#todate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+
+        let masterId = parseInt(@ViewBag.masterId) ? parseInt(@ViewBag.masterId) : 0;
+        if (masterId == null || masterId == 0) {
+
+        }
+        else {
+            Common.Ajax('GET', '/Program/ProgramCategory/GetActivityDetailsByMasterId/?masterId=' + masterId, [], 'json', ajaxGetActivityDetailsByMasterId);
+            Common.Ajax('GET', '/Program/ProgramCategory/GetProgramMasterById/?masterId=' + masterId, [], 'json', ajaxGetProgramMasterById);
+            Common.Ajax('GET', '/Program/ProgramCategory/GetProgramLocationBymasterId/?masterId=' + masterId, [], 'json', ajaxGetProgramLocationBymasterId);
+            Common.Ajax('GET', '/Program/ProgramCategory/GetProgramImplementorBymasterId/?masterId=' + masterId, [], 'json', ajaxGetProgramImplementorBymasterId);
+            Common.Ajax('GET', '/Program/ProgramCategory/GetProgramSourceFundBymasterId/?masterId=' + masterId, [], 'json', ajaxGetProgramSourceFundBymasterId);
+        }
+
+        //Form submit
+
+        $("#saveForm").click(function () {
+            var data = $("#myForm").serialize();
+            let number = $('#number').val();
+            let subject = $('#subject').val();
+
+            if (number == "") {
+                swal('Warning', 'Number can not be null', 'warning');
+                return false;
+            }
+
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+            }).then(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/Program/ProgramCategory/SaveProgramMasterNew",
+                    data: data,
+                    success: function (response) {
+                        swal('', 'Saved Successfully!', 'success')
+                        window.location.href = "/Program/ProgramCategory/ProgramMasterList";
+                    }
+                });
+            });
+            return false;
+        });
+    });
+
+    var TID = 1;
+    function AddGroup() {
+        var id = $('#place').val();
+
+        $('#SubLedgerList').append(' <div class="col-sm-2"></div><div class="col-sm-10 row"><input type="hidden" name="place[]" id="Lg' + TID + '" value="' + id + '"><span class="spanClass" id="LgId' + TID + '" >' + id + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + TID + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+        TID = TID + 1;
+        $('#place').val('');
+    }
+
+    var TEDITID = 1;
+    function ajaxGetProgramLocationBymasterId(response) {
+        $('#SubLedgerList').empty();
+        $.each(response, function (i, item) {
+            $('#SubLedgerList').append(' <div class="col-sm-2"></div><div class="col-sm-10 row"><input type="hidden" name="place[]" id="Lg' + TEDITID + '" value="' + item.location + '"><span class="spanClass" id="LgId' + TEDITID + '" >' + item.location + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroup(' + "'" + TEDITID + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+            TEDITID = TEDITID + 1;
+        });
+    }
+
+    function DeleteGroup(id) {
+        $('#Lg' + id).remove();
+        $('#LgId' + id).remove();
+    }
+
+    var TIDI = 1;
+    function AddGroupI() {
+        var id = $('#partner').val();
+
+        $('#SubLedgerListI').append(' <div class="col-sm-2"></div><div class="col-sm-10 row"><input type="hidden" name="partner[]" id="LgI' + TIDI + '" value="' + id + '"><span class="spanClass" id="LgIId' + TIDI + '" >' + id + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroupI(' + "'" + TIDI + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+        TIDI = TIDI + 1;
+        $('#partner').val('');
+    }
+
+    var TEDITIDI = 1;
+    function ajaxGetProgramImplementorBymasterId(response) {
+        $('#SubLedgerListI').empty();
+        $.each(response, function (i, item) {
+            $('#SubLedgerListI').append(' <div class="col-sm-2"></div><div class="col-sm-10 row"><input type="hidden" name="partner[]" id="LgI' + TEDITIDI + '" value="' + item.implementor + '"><span class="spanClass" id="LgIId' + TEDITIDI + '" >' + item.implementor + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroupI(' + "'" + TEDITIDI + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+            TEDITIDI = TEDITIDI + 1;
+        });
+    }
+
+    function DeleteGroupI(id) {
+        $('#LgI' + id).remove();
+        $('#LgIId' + id).remove();
+    }
+
+    var TIDII = 1;
+    function AddGroupII() {
+        var id = $('#sourceName').val();
+        var iid = $('#percent').val();
+        var iiid = $('#amount').val();
+
+        $('#SubLedgerListII').append(
+            ' <div class="col-sm-2"></div><div class="col-sm-10 row"><input type="hidden" name="source[]" id="LgII' +
+            TIDII + '" value="' + id + '"><input type="hidden" name="percent[]" id="LgIIP' +
+            TIDII + '" value="' + iid + '"><input type="hidden" name="amount[]" id="LgIIA' +
+            TIDII + '" value="' + iiid + '"><span class="spanClass" id="LgIIId' +
+            TIDII + '" >' + id + '-' + iid + '-' +
+            iiid + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroupII(' + "'" +
+            TIDII + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+
+        TIDII = TIDII + 1;
+        $('#sourceName').val('');
+        $('#percent').val('');
+        $('#amount').val('');
+    }
+
+    var TEDITIDII = 1;
+    function ajaxGetProgramSourceFundBymasterId(response) {
+        $('#SubLedgerListII').empty();
+        $.each(response, function (i, item) {
+            $('#SubLedgerListII').append(' <div class="col-sm-2"></div><div class="col-sm-10 row"><input type="hidden" name="source[]" id="LgII' + TEDITIDII + '" value="' + item.sourceName + '"><input type="hidden" name="percent[]" id="LgIIP' + TEDITIDII + '" value="' + item.percent + '"><input type="hidden" name="amount[]" id="LgIIA' + TEDITIDII + '" value="' + item.amount + '"><span class="spanClass" id="LgIIId' + TEDITIDII + '" >' + item.sourceName + '-' + item.percent + '-' + item.amount + '<a href="javascript:void(0)"><span class="crossButton" onclick="DeleteGroupII(' + "'" + TEDITIDII + "'" + ')"><i class="fas fa-minus"></i></span></a></span></div>');
+            TEDITIDII = TEDITIDII + 1;
+        });
+    }
+
+    function DeleteGroupII(id) {
+        $('#LgII' + id).remove();
+        $('#LgIIP' + id).remove();
+        $('#LgIIA' + id).remove();
+        $('#LgIIId' + id).remove();
+    }
+
+        function AddItemInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            //let outcomeName = $('#outcomeMasterId option:selected').text();
+            let outcomeMasterId = $('#outcomeMasterId').val();
+
+            //let outputName = $('#outputMasterId option:selected').text();
+            let outputMasterId = $('#outputMasterId').val();
+            let outPutValues = $('#outPutVal').val();
+
+            let activity = $('#activityName').val();
+            let activityValues = $('#values').val();
+            let indicator = $('#indicatorValue').val();
+            let outputIndic = $('#ouputIndicatorValue').val();
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblfuelDetails tbody>tr").length;
+
+            if (outcomeMasterId == null || outcomeMasterId == '') {
+                swal('Warning', 'You must be select a outcome!', 'warning');
+                return false;
+            }
+            else if (outputMasterId == null || outputMasterId == '') {
+                swal('Warning', 'You must be select a output!', 'warning');
+                return false;
+            }
+
+            //for (i = 0; i < RowCount; i++) {
+            //    var _itemId = $('#outcomeIdAll' + i + '').val();
+            //    if (_itemId == fuelTypeName && editOption == 0) {
+            //        swal('Warning', 'You have already added this ledger!', 'warning');
+            //        return false
+            //    }
+            //}
+
+            var dtTable = $("#tblfuelDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + outcomeMasterId + '<input type="hidden" id="outcome' + index + '" name="outcome" class="clsId" value="' + outcomeMasterId + '"></td>' +
+                '<td>' + outputMasterId + '<input type="hidden" id="output' + index + '" name="output" class="clsId" value="' + outputMasterId + '"></td>' +
+                '<td>' + outputIndic + '<input type="hidden" id="outputIndicator' + index + '" name="outputIndicator" class="clsId" value="' + outputIndic + '"></td>' +
+                '<td>' + outPutValues + '<input type="hidden" id="outPutValues' + index + '" name="outPutValues" class="clsId" value="' + outPutValues + '"></td>' +
+                '<td>' + activity + '<input type="hidden" id="activity' + index + '" name="activity" class="clsId" value="' + activity + '"></td>' +
+                '<td>' + indicator + '<input type="hidden" id="indicator' + index + '" name="indicator" class="clsId" value="' + indicator + '"></td>' +
+                '<td>' + activityValues + '<input type="hidden" id="activityv' + index + '" name="activityv" class="clsId" value="' + activityValues + '"></td>' +
+                '<td><a href="javascript:void(0)" style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                
+                '<a href="javascript:void(0)" style="border-color:black;" data-toggle="tooltip" title="Edit" class="btn btn-primary btn-xs" onclick="Edit(' + "'" + activityValues + "'" + ',' + "'" + indicator + "'" + ',' + "'" + activity + "'" + ',' + "'" + outPutValues + "'" + ',' + "'" + outputIndic + "'" + ',' + "'" + outputMasterId + "'" + ',' + "'" + outcomeMasterId +"'"+')"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;' +
+                '</td></tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+
+                $('#outcomeMasterId').val("");
+                $('#outputMasterId').val("");
+                $('#outPutVal').val("");
+                $('#activityName').val("");
+                $('#indicatorValue').val("");
+                $('#ouputIndicatorValue').val("");
+                $("#values").val("");
+                
+            }
+            else {
+                var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+        };
+
+        function Edit(activityValues, indicator, activity, outPutValues, outputIndic, outputMasterId, outcomeMasterId) {
+            
+            console.log(activityValues, indicator, activity,outPutValues,outputIndic,outputMasterId,outcomeMasterId);
+            $('#outcomeMasterId').val(outcomeMasterId);
+            $('#outputMasterId').val(outputMasterId.toString());
+            $('#outPutVal').val(outPutValues.toString());
+            $('#activityName').val(activity);
+            $('#indicatorValue').val(indicator);
+            $('#ouputIndicatorValue').val(outputIndic);
+            $("#values").val(activityValues);
+        };
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblfuelDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+    function ajaxGetActivityDetailsByMasterId(response) {
+        $("#tblfuelDetails tbody>tr").remove();
+        var ifExistIndex = window.localStorage.getItem("holdIndex");
+        var index = "0";
+        if (ifExistIndex == "null" || ifExistIndex == null) {
+            index = $("#tblfuelDetails tbody>tr").length;
+        }
+        else {
+            index = ifExistIndex;
+            tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+        }
+
+        $.each(response, function (key, value) {
+            index = $("#tblfuelDetails tbody>tr").length;
+            var dtTable = $("#tblfuelDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + value.outComeName + '<input type="hidden" id="outcome' + index + '" name="outcome" class="clsId" value="' + value.outComeName + '"></td>' +
+                '<td>' + value.outPutName + '<input type="hidden" id="output' + index + '" name="output" class="clsId" value="' + value.outPutName + '"></td>' +
+                '<td>' + value.outputIndicator + '<input type="hidden" id="outputIndicator' + index + '" name="outputIndicator" class="clsId" value="' + value.outputIndicator + '"></td>' +
+                '<td>' + value.outPutValues + '<input type="hidden" id="outPutValues' + index + '" name="outPutValues" class="clsId" value="' + value.outPutValues + '"></td>' +
+                '<td>' + value.activity + '<input type="hidden" id="activity' + index + '" name="activity" class="clsId" value="' + value.activity + '"></td>' +
+                '<td>' + value.indicator + '<input type="hidden" id="indicator' + index + '" name="indicator" class="clsId" value="' + value.indicator + '"></td>' +
+                '<td>' + value.values + '<input type="hidden" id="activityv' + index + '" name="activityv" class="clsId" value="' + value.values + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+        })
+    }
+
+    function ajaxGetProgramMasterById(response) {
+        $("#number").val(response.number);
+        $("#name").val(response.projectName);
+        $("#fromdate").val(getPurchaseDate(response.Startdate));
+        $("#todate").val(getPurchaseDate(response.Enddate));
+
+        $("#programImpactId").val(response.programImpactId);
+        $("#grantNumber").val(response.grantNumber);
+        $("#description").val(response.subject);
+    }
+
+    function getPurchaseDate(pdate) {
+        var formattedDate = new Date(pdate);
+        var d = formattedDate.getDate();
+        var m = formattedDate.getMonth();
+        var y = formattedDate.getFullYear();
+        var monthNames = [
+            "Jan", "Feb", "Mar",
+            "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct",
+            "Nov", "Dec"
+        ];
+        var fullDate = d + "-" + monthNames[m] + "-" + y;
+        return fullDate;
+    }
+    </script>
+}

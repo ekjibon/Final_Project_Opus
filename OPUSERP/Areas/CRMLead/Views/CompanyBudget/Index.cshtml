@@ -1,0 +1,132 @@
+﻿
+@model CompanyBudgetViewModel
+@{
+    ViewData["Title"] = "Company Budget Info";
+    Layout = "~/Areas/CRMMasterData/Views/Shared/_CRMMasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: #4e73df;">Company Budget</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="CRMLead" asp-controller="CompanyBudget" asp-action="Index" method="post" id="formCompanyBudget" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <input type="hidden" id="Id" name="Id" value="0">
+
+                                <div class="form-group row">
+
+                                    <label for="ratingYearId" class="col-sm-3 col-form-label">Rating Year</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="ratingYearId" name="ratingYearId">
+                                            <option value="">-Select-</option>
+                                            @{
+                                                foreach (var data in Model.years)
+                                                {
+                                                    <option value="@data.Id">@data.year</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="initialAmount" class="col-sm-3 col-form-label">Initial Amount</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" name="initialAmount" id="initialAmount" data-parsley-required="true" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="surveillanceAmount" class="col-sm-3 col-form-label">Surveillance Amount</label>
+                                    <div class="col-sm-9">
+                                        <input class="form-control" id="surveillanceAmount" name="surveillanceAmount" data-parsley-required="true" />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Company Budget List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="companyBudgetTable">
+                    <thead>
+                        <tr>
+                            <th>Year Name</th>
+                            <th>Initial Amount</th>
+                            <th>Surveillance Amount</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model?.companyBudgets)
+                        {
+                        <tr>
+                            <td>@data.year.year</td>
+                            <td>@data.initialAmount</td>
+                            <td>@data.surveillence</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Edit(@data.Id,'@data.yearId','@data.initialAmount','@data.surveillence')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsMD{
+    <script>
+
+        $(document).ready(function () {
+            $('#companyBudgetTable').DataTable();
+        });
+
+        function Edit(Id, yearId, initialAmount, surveillanceAmount) {
+            $("#Id").val(Id);
+            $("#ratingYearId").val(yearId);
+            $("#initialAmount").val(initialAmount);
+            $("#surveillanceAmount").val(surveillanceAmount);
+        }
+    </script>
+}
+
+
+

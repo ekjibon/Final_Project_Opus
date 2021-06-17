@@ -1,0 +1,283 @@
+﻿@model ItemPriceFixingViewModel
+@{
+    ViewData["Title"] = "Item Price Fixing";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Item Price Fixing</h5>
+        <hr>
+        <div class="container">
+
+            <form asp-area="Sales" asp-controller="ItemPriceFixing" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="itemName" class="col-sm-2 col-form-label">Item Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemName" id="itemName">
+                        <input type="hidden" name="itemId" id="itemId" value="0" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="itemSpecification" class="col-sm-2 col-form-label">Item Specification<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-6">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemSpecification" id="itemSpecification">
+                        <input type="hidden" name="itemSpecificationId" id="itemSpecificationId" value="0" />
+                    </div>
+                    <label for="purchasePrice" class="col-sm-2 col-form-label">Purchase Price </label>
+                    <div class="col-sm-2">
+                        <input data-parsley-type="number" class="form-control" style="text-align:right;" name="purchasePrice" id="purchasePrice" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    @*<label for="profit" class="col-sm-2 col-form-label" style="display:none">Profit (Taka)</label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number"  style="text-align:right;display:none" class="form-control" name="profit" id="profit" readonly>
+                    </div>*@
+                    <label for="price" class="col-sm-2 col-form-label">Price (Taka)<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" data-parsley-required="true" data-parsley-trigger="keyup" style="text-align:right;" class="form-control" name="price" id="price">
+                    </div>
+                   
+                </div>
+                <div class="form-group row">
+                   
+                    <label for="discount" class="col-sm-2 col-form-label">Discount (%)</label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" class="form-control" data-parsley-trigger="keyup" style="text-align:right;" name="discount" id="discount">
+                    </div>
+                    <label for="vat" class="col-sm-2 col-form-label">VAT (%) </label>
+                    <div class="col-sm-4">
+                        <input data-parsley-type="number" class="form-control" data-parsley-trigger="keyup" style="text-align:right;" name="vat" id="vat">
+                    </div>
+                </div>
+
+                <hr>
+
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Item Price Fixing List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="itemPriceTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Item Specification</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>VAT</th>
+                            <th>Bar Code</th>
+                            <th></th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.itemPriceFixings)
+                        {
+                            <tr>
+                                <td>@data.itemName</td>
+                                <td>@data.itemSpecification.specificationName</td>
+                                <td>@data.price?.ToString("0.00")</td>
+                                <td>@data.discountPersent?.ToString("0.00")</td>
+                                <td>@data.VAT?.ToString("0.00")</td>
+                                <td><barcode content="@data.barCode" width="200" height="70"></barcode><br /><span style="text-align:right;padding-left:22%;">@data.barCode</span></td>
+                                <td><button onclick="BarCodePrintOption(@data.Id,'@data.barCode')" title="Add Print Info" class="btn btn-sm btn-info"><i class="fa fa-info fa-fw"></i></button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="printBarCodeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Bar Code Print Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="itemPriceId" />
+                <div class="form-group row">
+                    <label for="imgUrl" class="col-sm-3 col-form-label">Bar Code</label>
+                    <div class="col-sm-6">
+                        <barcode id="imgUrl" content="99-043563" width="200" height="70"></barcode><br />
+                        <span id="txtBarCode" style="text-align:right;padding-left:22%;"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="printQTY" class="col-sm-3 col-form-label">Print Qty<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control numeric" name="printQTY" id="printQTY">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="barCodePrint()" class="btn btn-success" title="Print"><i class="fa fa-print fa-fw"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#itemPriceTable').DataTable();
+            //Common.Ajax('GET', '/global/api/getAllStockItemByStockIn', [], 'json', ajaxAllInStockItem);
+            Common.Ajax('GET', '/global/api/GetAllItemForRequisition', [], 'json', ajaxAllInStockItem);
+            $("#profit").keyup(function () {
+                let purchasePrice = parseFloat($('#purchasePrice').val()) ? parseFloat($('#purchasePrice').val()):0;
+                let thisVal = parseFloat(this.value) ? parseFloat(this.value) : 0;
+                $('#price').val(purchasePrice + thisVal);
+            });
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+        });
+
+        function barCodePrint() {
+            let itemPriceId = parseInt($('#itemPriceId').val()) ? parseInt($('#itemPriceId').val()):0;
+            let printCount = parseInt($('#printQTY').val()) ? parseInt($('#printQTY').val()) : 0;
+            if (itemPriceId != 0 || printCount != 0) {
+                window.open('/Sales/ItemPriceFixing/BarCodePrintOption?itemPriceId=' + itemPriceId + '&printCount=' + printCount, '_blank');
+            }
+        }
+
+        function BarCodePrintOption(itemPriceId, imgUrl) {
+            $('#imgUrl').attr('content', imgUrl);
+            $('#txtBarCode').html(imgUrl);
+            $('#itemPriceId').val(itemPriceId);
+            $('#printBarCodeModal').modal('show');
+        }
+
+        function ajaxAllInStockItem(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+
+                    $("#itemId").val(ui.item.key);
+                    //Common.Ajax('GET', '/global/api/getAllStockItemSpacificationByItemId/' + ui.item.key, [], 'json', ajaxAllInStockItemSpacification);
+                    //Common.Ajax('GET', '/global/api/ItemSpecPrice/' + ui.item.key, [], 'json', ajaxAllInStockItemSpacification);
+                    var ItemId = ui.item.key;
+                    Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetAllItemSpecificationByitemId/?ItemId=' + ItemId, [], 'json', ajaxAllInStockItemSpacification);
+                }
+            });
+        }
+        function ajaxgetpurchaserate(response) {
+            $("#purchasePrice").val(response);
+        }
+        function ajaxAllInStockItemSpacification(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                //obj.VAT = option.VAT;
+                // alert(obj.key);
+                obj.value = option.specificationName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecification').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecificationId").val(ui.item.key);
+                    //$("#vat").val(ui.item.VAT);
+                    // alert(ui.item.key);
+                    Common.Ajax('GET', '/global/api/GetItemPriceFixingBySpecId/' + ui.item.key, [], 'json', ajaxgetpurchaserateLast, false);
+                    //Common.Ajax('GET', '/api/itemPriceFixing/GetPurchaseProfitFromBoMBySpecId/' + ui.item.key, [], 'json', ajaxGetPurchaseProfitFromBoMBySpecId);
+
+
+                }
+            });
+        }
+
+        function ajaxgetpurchaserateLast(response) {
+            //$("#profit").val(response);
+            $("#purchasePrice").val(parseFloat(response.rate));
+        }
+
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/MasterData/Ledger/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Edit(Id, name, code, alias, have, group) {
+            $("#ledgerId").val(Id);
+            $("#accountName").val(name);
+            $("#accountCode").val(code);
+            $("#aliasName").val(alias);
+            $("#groupId").val(group);
+            if (have == 1 || have == 2) {
+                $("#haveSubLedger").prop('checked', true);
+                //alert("checked");
+            } else {
+                $("#haveSubLedger").prop('checked', false);
+                //alert("Unchecked");
+            }
+        }
+
+        function ajaxCode(response) {
+            if (response != null) {
+                $('#accountCode').val(response.accountCode);
+            } else {
+                $('#accountCode').val('');
+            }
+        }
+
+    </script>
+}
+
+

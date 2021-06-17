@@ -1,0 +1,8 @@
+﻿{
+  "title": "পদবি তথ্য",
+  "designationCode": "পদবি কোড",
+  "designationName": "পদবির নাম (ইংরেজি)",
+  "designationNameBn": "পদবির নাম (বাংলা)",
+  "shortName": "সংক্ষিপ্ত নাম",
+  "action": "প্রক্রিয়া"
+}

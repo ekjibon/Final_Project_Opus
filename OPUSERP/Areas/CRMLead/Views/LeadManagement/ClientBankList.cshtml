@@ -1,0 +1,90 @@
+﻿
+@model LeadBankViewModel
+@{
+    ViewData["Title"] = "Bank List";
+    Layout = "~/Areas/CRMClient/Views/Shared/_ClientForm.cshtml";
+
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Bank Information</h4>
+                <a href="javascript:void(0)" onclick="AddBank()" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Add New</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="bankTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Lead Name</th>
+                            <th>Bank Name</th>
+                            <th>Type</th>
+                            <th>Branch Name</th>
+                            <th>Address</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.leadsBankInfos)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td>@data?.leads?.leadName</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.bankBranchDetails.bank.bankName</td>
+                                    <td>@data.bankType</td>
+                                    <td>@data.bankBranchDetails.bankBranch.branchName</td>
+                                    <td>@data.bankBranchDetails.maillingAddress</td>
+                                    <td>
+                                        <a class="btn btn-success" href="javascript:void(0)" onclick="EditBank(@data.Id,@data.leadsId,'@data.leads.leadName')" title="Edit"><i class="fa fa-edit"></i></a>
+                                        @*<a class="btn btn-success" href="/CRMLead/Agreement/AgreementPdfAction?AgreementId=@data.Id" target="_blank" title="Print"><i class="fa fa-print"></i></a>*@
+
+                                    </td>
+                                </tr>
+                                i++;
+
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsClient{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#bankTable').DataTable();
+
+        });
+
+        function EditBank(Id, leadsId, leadName) {
+            window.location.href = "/CRMLead/LeadManagement/ClientBankInfo?id=" + Id + '&leadId=' + leadsId + '&leadName=' + leadName;
+
+        }
+        function AddBank() {
+            window.location.href = "/CRMLead/LeadManagement/ClientBankInfo?id=" + 0 + '&leadId=' + @ViewBag.leadId + '&leadName=' + '@ViewBag.leadName';
+
+        }
+    </script>
+}
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,348 @@
+﻿@model TaskInformationViewModel
+@{
+    ViewData["Title"] = "Task Assign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h6 class="card-title" style="color: black">Task Assign</h6>
+        <hr>
+        <div class="container">
+            <form asp-area="SEBA" asp-controller="ProblemReport" asp-action="TaskAssign" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                
+                @{
+                    var id = 0;
+                    if (@ViewBag.taskId == null)
+                    {
+                        id = 0;
+                    }
+                    else
+                    {
+                        id = ViewBag.taskId;
+                    }
+                    <input type="hidden" name="taskInformationId" id="taskInformationId" value="@id">
+                }
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <label for="problemName" class="col-sm-2 col-form-label">Problem</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="problemName" id="problemName" />
+                                <input type="hidden" name="problemMasterId" id="problemMasterId" value="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="problemList">
+                    <h6 style="color: black;"><b>Product Complain List</b></h6>
+                    <table class="table table-bordered" id="tblfuelDetails" data-parsley-required="true">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="employeeName" class="col-sm-4 col-form-label">Employee Name <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="employeeName" id="employeeName" data-parsley-required="true">
+                                <input type="hidden" name="employeeAssignId" id="employeeAssignId" value="" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="satrtDate" class="col-sm-4 col-form-label">Start Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control dateClass" id="satrtDate" name="satrtDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="endDate" class="col-sm-4 col-form-label">End Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control dateClass" id="endDate" name="endDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="estimatedHours" class="col-sm-4 col-form-label">Estimated Hours</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="estimatedHours" name="estimatedHours">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-4 col-form-label">Task Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="description" class="col-sm-4 col-form-label">Description</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="taskProjectId" class="col-sm-4 col-form-label">Project</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="taskProjectId" id="taskProjectId" data-parsley-required="true">
+                                    <option value="">Select Project</option>
+                                    @foreach (var data in Model.taskProjects)
+                                    {
+                                        <option value="@data.Id">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="taskSectionId" class="col-sm-4 col-form-label">Section</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="taskSectionId" id="taskSectionId" data-parsley-required="true">
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activityCategoryId" class="col-sm-4 col-form-label">Activity Category</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="activityCategoryId" id="activityCategoryId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.activityCategories)
+                                    {
+                                        <option value="@data.Id">@data.activityCategoryName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activitySessionId" class="col-sm-4 col-form-label">Activity Session</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="activitySessionId" id="activitySessionId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.activitySessions)
+                                    {
+                                        <option value="@data.Id">@data.activitySessionName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activityStatusId" class="col-sm-4 col-form-label">Activity Status</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="activityStatusId" id="activityStatusId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.activityStatuses)
+                                    {
+                                        <option value="@data.Id">@data.status</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activityTypeId" class="col-sm-4 col-form-label">Activity Type</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="activityTypeId" id="activityTypeId" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.activityTypes)
+                                    {
+                                        <option value="@data.Id">@data.activityTypeName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-sm" style="float:right;">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#problemList').hide();
+            
+            $(".dateClass").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2000:2050" }).datepicker("setDate", new Date());
+
+            Common.Ajax('GET', '/SEBA/ProblemReport/GetProblemsList', [], 'json', ajaxGetAllproblems);
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+
+            $("#taskProjectId").change(function () {
+                var taskProjectId = $('#taskProjectId').val();
+                Common.Ajax('GET', '/SEBA/ProblemReport/GetAllTaskSectionByProjectId/?masterId=' + taskProjectId, [], 'json', ajaxGetAllTaskSectionByProjectId);
+            });
+
+            let masterId = parseInt(@ViewBag.taskId) ? parseInt(@ViewBag.taskId) : 0;
+            if (masterId != 0) {
+                Common.Ajax('GET', '/SEBA/ProblemReport/GetTaskInformationById/?id=' + masterId, [], 'json', ajaxGetTaskInformationById); 
+            }
+
+            let problemId = parseInt(@ViewBag.problemId) ? parseInt(@ViewBag.problemId) : 0;
+            if (problemId != 0) {               
+                Common.Ajax('GET', '/global/api/ProblemReportController/GetProblemDetailByMasterId/' + problemId, [], 'json', ajaxGetProblemDetailByMasterId);
+                $('#problemList').show();
+                //Common.Ajax('GET', '/SEBA/ProblemReport/GetProblemphotoByProblemId/?Id=' + problemId, [], 'json', ajaxGetProblemphotoByProblemId);
+            }
+
+            let leadsId = parseInt(@ViewBag.leadId) ? parseInt(@ViewBag.leadId) : 0;
+            if (leadsId != 0) {
+                Common.Ajax('GET', '/CRMLead/LeadManagement/GetLeadContactAddress/?leadId=' + leadsId, [], 'json', ajaxGetLeadContactAddressWithLeadNameId);
+            }
+
+        });
+
+        function ajaxGetLeadContactAddressWithLeadNameId(response) {            
+            $("#problemName").val(response.leadsName + "(" + response.tokenNo + ")");           
+        }
+
+        function ajaxGetTaskInformationById(response) {
+            $("#problemMasterId").val(response.problemMasterId);
+            $("#employeeAssignId").val(response.employeeAssignId);
+            $("#employeeName").val(response.employeeAssign.nameEnglish);
+            $("#satrtDate").val(getPurchaseDate(response.satrtDate));
+            $("#endDate").val(getPurchaseDate(response.endDate));
+            $("#estimatedHours").val(response.estimatedHours);
+            $("#name").val(response.name);
+            $("#description").val(response.description);
+            $("#taskProjectId").val(response.taskSection.taskProjectId);
+            var taskProjectId = $('#taskProjectId').val();
+            Common.Ajax('GET', '/SEBA/ProblemReport/GetAllTaskSectionByProjectId/?masterId=' + taskProjectId, [], 'json', ajaxGetAllTaskSectionByProjectId, false);
+            $("#taskSectionId").val(response.taskSectionId);
+            $("#activityCategoryId").val(response.activityCategoryId);
+            $("#activitySessionId").val(response.activitySessionId);
+            $("#activityStatusId").val(response.activityStatusId);
+            $("#activityTypeId").val(response.activityTypeId);
+        }
+
+        function ajaxGetAllTaskSectionByProjectId(response) {
+            var options = '<option value="">Select Section</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.name + '</option>';
+            });
+            $('#taskSectionId').empty();
+            $('#taskSectionId').append(options);
+        }
+
+        function ajaxGetAllproblems(response) {
+            var GetLeadList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.leadName + "(" + option.tokenNo + ")";
+                GetLeadList[GetLeadList.length] = obj;
+            });
+            $('#problemName').autocomplete({
+                source: GetLeadList,
+                select: function (event, ui) {
+                    $("#problemName").val(ui.item.value);
+                    $("#problemMasterId").val(ui.item.key);
+
+                    Common.Ajax('GET', '/global/api/ProblemReportController/GetProblemDetailByMasterId/' + ui.item.key, [], 'json', ajaxGetProblemDetailByMasterId);
+                    //Common.Ajax('GET', '/SEBA/ProblemReport/GetProblemphotoByProblemId/?Id=' + ui.item.key, [], 'json', ajaxGetProblemphotoByProblemId);
+                    $('#problemList').show();
+                }
+            });
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                //obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#employeeAssignId").val(ui.item.key);
+                }
+            });
+        }
+
+        function ajaxGetProblemDetailByMasterId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            $.each(response, function (key, value) {
+
+                index = $("#tblfuelDetails tbody>tr").length;
+                var dtTable = $("#tblfuelDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.customerProductWarranty.itemSpecification.Item.itemName + '<input type="hidden" id="headAll' + index + '" name="headAll" class="clsId" value="' + value.customerProductWarranty.itemSpecification.Item.itemName + '"></td> <input type="hidden" id="headIdAll' + index + '" name="headIdAll" class="clsId" value="' + value.customerProductWarranty.Id + '"></td>' +
+                    '<td>' + value.problemTitle + '<input type="hidden" id="problemTitleAll' + index + '" name="problemTitleAll" class="clsId" value="' + value.problemTitle + '"></td>' +
+                    '<td>' + value.description + '<input type="hidden" id="descriptionAll' + index + '" name="descriptionAll" class="clsId" value="' + value.description + '"></td>' +
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/SEBA/ProblemReport/DeleteCustomerProductWarrantyById?Id=" + Id;
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+    </script>
+}
+
+
+

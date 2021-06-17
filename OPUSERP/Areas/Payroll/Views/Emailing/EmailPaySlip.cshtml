@@ -1,0 +1,152 @@
+﻿@model EmailingViewModel
+@{
+    ViewData["Title"] = "EmailPaySlip";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Process Pay Slip To Send Employees Email</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="Emailing" asp-action="EmailPaySlip" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="radio" name="All" id="All" value="1" required><scan style="color:black;font-size: 16px; margin-right: 23px;margin-left: 8px;">All</scan>
+                                <input type="radio" name="All" id="DateRange" value="0"><scan style="color:black;font-size: 16px;margin-left: 8px;">Individual</scan>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-4">
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-sm-5 col-form-label">Employee's Name </label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="salaryPeriodId" class="col-sm-5 col-form-label">Salary Period <span style="color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <select name="salaryPeriodId" id="salaryPeriodId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select Salary Period</option>
+                                    @foreach (var data in Model.salaryPeriods)
+                                    {
+                                        <option value="@data.Id">@data.periodName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="payDate" class="col-sm-5 col-form-label">Pay Date </label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="payDate" name="payDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="form-group row">
+                            <label for="mailSub" class="col-sm-2 col-form-label">Mail Subject <span style="color:red;">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="mailSub" name="mailSub" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mailText" class="col-sm-2 col-form-label">Mail Body <span style="color:red;">*</span></label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="mailText" name="mailText" cols="18" rows="12" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Save" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $("#payDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1960:2040" }).datepicker("setDate", new Date());
+
+            //$('#leaveTable').DataTable();
+
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);   
+
+            $('#salaryPeriodId').change(function () {
+                Common.Ajax('GET', '/Payroll/Emailing/GetSalaryPeriodById/?periodId=' + parseInt($('#salaryPeriodId').val()), [], 'json', ajaxGetSalaryPeriodById);
+            });
+
+        });
+
+        function ajaxGetSalaryPeriodById(response) {
+            console.log(response);
+            $("#mailSub").val(response.mailSub);
+            $("#mailText").val(response.mailText);
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+        
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

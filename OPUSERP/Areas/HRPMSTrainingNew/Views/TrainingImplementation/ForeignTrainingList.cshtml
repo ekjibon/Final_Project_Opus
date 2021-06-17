@@ -1,0 +1,110 @@
+﻿@model TrainingImplementationViewModel
+@{
+    ViewData["Title"] = Model.fLang.titleF;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+}
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.titleF</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="trainingPlaneTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.year</th>
+                            <th>@Model.fLang.course</th>
+                            <th>@Model.fLang.startDateActual</th>
+                            <th>@Model.fLang.endDateActual</th>
+                            <th>@Model.fLang.noOfParticipantsActual</th>
+                            <th>@Model.fLang.employeeType</th>
+                            <th>@Model.fLang.budget</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.trainingInfoNews)
+                        {
+                            <tr>
+                                <td>@data.year</td>
+                                <td>@data.course</td>
+                                <td>@data.startDateActual?.ToString("MM/dd/yy")</td>
+                                <td>@data.endDateActual?.ToString("MM/dd/yy")</td>
+                                <td>@data.noOfParticipantsActual</td>
+                                <td>@data.employeeTypeNames</td>
+                                <td>@data.budget</td>
+                                <td>
+                                    <a data-toggle="tooltip" title="Participants Particular" class="btn btn-info" href="~/HRPMSTrainingNew/TrainingImplementation/Enroll/@data.Id"><i class="fa fa-plus"></i></a>
+                                    <a data-toggle="tooltip" title="Revise Training Plan" class="btn btn-info" href="~/HRPMSTrainingNew/TrainingImplementation/Foreign/@data.Id"><i class="fa fa-edit"></i></a>
+                                    <a data-toggle="tooltip" title="Report" target="_blank" class="btn btn-success" href="~/HRPMSTrainingNew/TrainingImplementation/DetailsView/@data.Id"><i class="fa fa-eye"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //$("#award").addClass("active");
+            $('#trainingPlaneTable').DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: orgFullTitle,
+                        messageTop: 'List Of Foreign Training',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: orgFullTitle,
+                        messageTop: 'List Of Employee Training'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: orgFullTitle,
+                        messageTop: 'List Of Foreign Training',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        });
+
+    </script>
+}

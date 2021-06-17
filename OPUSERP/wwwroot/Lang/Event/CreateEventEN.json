@@ -1,0 +1,17 @@
+{
+  "create": "Create Event",
+  "edit": "Edit Event",
+  "eventTitle": "Event Title",
+  "evtPic": "Event Picture",
+  "description": "Event Description",
+  "participant": "Event Participant Limit",
+  "venue": "Venue",
+  "evtDate": "Event Date",
+  "evtRegDeadline": "Event Registration Deadline",
+  "daylong": "Day Long",
+  "evtStatrtTime": "Event Start Time",
+  "evtEndTime": "Event End Time",
+  "evtType": "Event Type",
+  "evtRegAmount": "Event Registration Amount",
+  "action": "Action"
+}

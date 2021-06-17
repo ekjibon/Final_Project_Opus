@@ -1,0 +1,173 @@
+﻿@model HrUnitViewModel
+@{
+    ViewData["TitleMD"] = "HR Unit";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">HR Unit</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="ServiceStatus" asp-action="HrUnit" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="hrUnitId" id="hrUnitId" value="0" />
+                    <label for="unitName" class="col-sm-3 col-form-label">Unit Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="unitName" id="unitName">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="unitNameBn" class="col-sm-3 col-form-label">Unit Name (Bn)</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="unitNameBn" id="unitNameBn">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="shortName" class="col-sm-3 col-form-label">Short Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="shortName" id="shortName">
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Unit List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Unit Name</th>
+                            <th>Unit Name (Bn)</th>
+                            <th>Short Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.hrUnits)
+                        {
+                            <tr>
+                                <td>@data.unitName</td>
+                                <td>@data.unitNameBn</td>
+                                <td>@data.shortName</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.unitName', '@data.unitNameBn', '@data.shortName')" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#serviceStatus").addClass("active");
+            $('#departmentTable').DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Employee Training'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ERP-HRPMS",
+                        messageTop: 'List Of Local Training',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+
+        });
+
+        function Edit(Id, unitName, unitNameBn, shortName) {
+            $("#hrUnitId").val(Id);
+            $("#unitName").val(unitName);
+            $("#unitNameBn").val(unitNameBn);
+            $("#shortName").val(shortName);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteHrUnitById", "ServiceStatus")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/HRPMSMasterData/ServiceStatus/HrUnit";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}
+

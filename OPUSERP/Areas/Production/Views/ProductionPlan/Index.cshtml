@@ -1,0 +1,378 @@
+﻿@model ProductionPlanViewModel
+@{
+    ViewData["Title"] = "Create Production";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row card">
+    <div class="col-sm-12">
+        <span style="font-size:1.5em;font-weight:700;color:gray;">Production Plan</span>
+        <button type="button" class="btn btn-default btn-sm pull-right" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("ProductPlanList", "ProductionPlan")'">Back To List</button>
+    </div>
+
+</div>
+
+<form asp-area="Production" asp-controller="ProductionPlan" asp-action="Index" method="post" data-parsley-validate="parsley" autocomplete="off">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-1 m-0 p-0"></div>
+        <div class="card col-md-10">
+
+            <div class="card-header p-0 m-0">
+                <h6 class="card-title">Production Plan</h6>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="planNumber" class="col-sm-4 col-form-label">Plan No<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" id="planNumber" name="planNumber" value="@Model.planNumber" class="form-control input-group-sm" data-parsley-required="true" readonly />
+                                <input type="hidden" id="planId" name="planId" value="@Model.planId" />
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="bOMMasterId" class="col-sm-4 col-form-label text-left">BOM Item<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select name="bOMMasterId" id="bOMMasterId" class="form-control input-group-sm" value="@Model.bOMMasterId" data-parsley-required="true">
+                                    <option value="">Select One</option>
+                                    @foreach (var data in Model.bOMMasters)
+                                    {
+                                        <option value="@data.Id">@data.itemSpecification.specificationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="planDate" class="col-sm-4 col-form-label text-left"> Plan Date<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input name="planDate" id="planDate" value="@Model.planDate?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" data-parsley-required="true" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="quantity" class="col-sm-4 col-form-label text-left">Plan Qty<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input name="quantity" id="quantity" value="@Model.quantity" min="1" class="form-control input-group-sm" data-parsley-required="true" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="targetDate" class="col-sm-4 col-form-label text-left">Plan Target Date<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input name="targetDate" id="targetDate" value="@Model.planDate?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" data-parsley-required="true" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-header p-0 m-0">
+                <h6 class="card-title">Production Batch</h6>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="batchDate" class="col-sm-4 col-form-label text-left">Batch Start Date<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" onchange="DateValidation()" name="batchDate" id="batchDate" value="" class="form-control input-group-sm" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="quantity" class="col-sm-4 col-form-label text-left">Batch Qty<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" onkeyup="qtyValidation()" name="batchQuantity" id="batchQuantity" value="" class="form-control input-group-sm numeric" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="batchDate" class="col-sm-4 col-form-label text-left">Batch Target Date<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" onchange="DateValidation()" id="batchTargetDate" value="" class="form-control input-group-sm" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="perDayTargetQuantity" class="col-sm-4 col-form-label text-left">Per Day Target Qty<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" name="perDayTargetQuantity" id="perDayTargetQuantity" value="" class="form-control input-group-sm" />
+                            </div>
+                        </div>
+
+                        
+
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-11">
+                        <a href="javascript:void(0)" style="float:right;color:white" onclick="fnLoadBOMDetails()" class="btn btn-sm btn-info">Add</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div style="height:10px;"></div>
+    <div class="row">
+        <div class="col-md-1 m-0 p-0"></div>
+        <div class="card col-md-10">
+            <div class="card-header p-0 m-0">
+                <h6 class="card-title">Production Batch </h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="productionDetailsTable">
+                    <thead>
+                        <tr>
+                            <th style="width:20%">Batch Number</th>
+                            <th style="width:20%">Start Date</th>
+                            <th style="width:20%">Target Date</th>
+                            <th style="width:20%">Quantity</th>
+                            <th style="width:20%">Per day Target Quantity</th>
+                            <th style="width:20%">Action</th>
+                    </thead>
+                    <tbody></tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div style="height:20px;"></div>
+    <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <input type="button" onclick="RefreshAll()" value="Refresh" class="btn btn-info btn-sm" style="width:100px;" />&nbsp;&nbsp;
+            <input type="submit" value="Save" id="btnPSave" class="btn btn-success btn-sm" style="width:100px;" />
+
+        </div>
+
+    </div>
+</form>
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function fnLoadBOMDetails() {
+            let batchDate = $('#batchDate').val();
+            let batchTargetDate = $('#batchTargetDate').val();
+            let planNumber = $('#planNumber').val();
+            let qty = parseFloat($('#batchQuantity').val()) ? parseFloat($('#batchQuantity').val()):0;
+            let perDayTargetQuantity = parseFloat($('#perDayTargetQuantity').val()) ? parseFloat($('#perDayTargetQuantity').val()) : 0;
+          
+            if (batchDate == '') {
+                swal('Attention', 'Please select Batch Date', 'warning');
+                return false;
+            } else if (qty==0) {
+                swal('Attention', 'Please Enter Batch Qty', 'warning');
+                return false;
+            } else if (perDayTargetQuantity==0) {
+                swal('Attention', 'Please Enter Batch Per Day Target Quantity', 'warning');
+                return false;
+            }
+
+                index = $("#productionDetailsTable tbody>tr").length;
+                var dtTable = $("#productionDetailsTable");
+            var tableBody = dtTable.find('tbody');
+
+            var batchId = planNumber + "/Batch/" + ++index;
+
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + batchId + '<input type="hidden" name="batchDates" value="' + batchId + '" /></td>' +
+                '<td>' + batchDate + '<input type="hidden" name="batchDates" value="' + batchDate + '" /></td>' +
+                '<td>' + batchTargetDate + '<input type="hidden" name="batchTargetDate" value="' + batchTargetDate + '" /></td>' +
+                    '<td>' + qty + '<input type="hidden" name="batchQuantitys" value="' + qty + '" /></td>' +
+                    '<td>' + perDayTargetQuantity + '<input type="hidden" name="perDayTargetQuantitys" value="' + perDayTargetQuantity + '" /></td>' +
+                    '<td><a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="DeleteBOM(' + index + ')"><i class="fa fa-trash"></i></a>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+        }
+
+        function GetBOMDetailList(response) {
+            $("#productionDetailsTable tbody>tr").empty();
+
+            $.each(response, function (key, value) {
+
+                index = $("#productionDetailsTable tbody>tr").length;
+                var dtTable = $("#productionDetailsTable");
+                var tableBody = dtTable.find('tbody');
+                var batchId = value.batchNumber;
+                let startDate = value.startDate;
+                let batchTargetDate = value.expectedEndDate;
+                let quantity = value.quantity;
+                let perDayTargetQuantity = value.perDayTargetQuantity;
+
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + batchId + '<input type="hidden" name="batchDates" value="' + batchId + '" /></td>' +
+                    '<td>' + formatDate(startDate) + '<input type="hidden" name="batchDates" value="' + startDate + '" /></td>' +
+                    '<td>' + formatDate(batchTargetDate) + '<input type="hidden" name="batchTargetDate" value="' + batchTargetDate + '" /></td>' +
+                    '<td>' + addCommas(quantity) + '<input type="hidden" name="batchQuantitys" value="' + quantity + '" /></td>' +
+                    '<td>' + addCommas(perDayTargetQuantity) + '<input type="hidden" name="perDayTargetQuantitys" value="' + perDayTargetQuantity + '" /></td>' +
+                    '<td><a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="DeleteBOM(' + index + ')"><i class="fa fa-trash"></i></a>' +
+                    '</tr>';
+
+                tableBody.append(trHtml);
+            })
+        }
+
+        function DeleteBOM(index) {
+            //alert(index);
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#productionDetailsTable #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+
+            return false;
+        }
+
+        function RefreshAll() {
+            $("#productionDetailsTable tbody>tr").empty();
+            $('#bomQty').val('');
+            $('#productionDate').val('');
+            $('#bOMId').val('');
+            $('#bomItem').val('');
+            $('#productionId').val(0);
+            $('#productionNo').val('');
+            location.reload();
+        }
+
+        $(document).ready(function () {
+            
+            //$('#batchDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+            $("#batchDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $('#batchTargetDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#targetDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            //$('#planDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $("#planDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            let prdcId = parseInt(@Model.planId) ? parseInt(@Model.planId) : 0;
+
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+
+            today = mm + '/' + dd + '/' + yyyy;
+            if (prdcId == 0) {
+                $('#productionDate').val(today);
+            }
+            if (prdcId > 0) {
+                $("#bOMMasterId").val(@Model.bOMMasterId);
+                Common.Ajax('GET', '/api/Production/GetProductionBatchByPlanId/' + @Model.planId , [], 'json', GetBOMDetailList);
+            }
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+        });
+
+        function DateValidation() {
+            var planQTY = parseInt($('#quantity').val()) ? parseInt($('#quantity').val()) : 0;
+            var batchQTY = parseInt($('#batchQuantity').val()) ? parseInt($('#batchQuantity').val()) : 0;
+            var targetDate = $('#batchTargetDate').val();
+            var batchDate = $('#batchDate').val();
+            var planDate = new Date($('#planDate').val());
+            const date1 = new Date(batchDate);
+            const date2 = new Date(targetDate);
+            const diffTime = Math.abs(date2 - date1 + 1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (date1 > date2) {
+                swal('Warning', 'Target Date must be greater then Batch Date', 'warning');
+                $('#batchTargetDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+                return false;
+            } else if (batchQTY > planQTY) {
+                swal('Warning', 'Plan QTY must be greater then Batch QTY', 'warning');
+                $('#quantity').val(0);
+                return false;
+            } else if (planDate > date1) {
+                swal('Warning', 'Batch Start Date must be greater then Plan Start Date', 'warning');
+                $('#batchDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+                return false;
+            }
+
+            var perdayqty = Math.abs(batchQTY / diffDays);
+            $('#perDayTargetQuantity').val(parseInt(perdayqty) ? parseInt(perdayqty):0);
+        }
+
+        function qtyValidation() {
+            var planQTY = parseInt($('#quantity').val()) ? parseInt($('#quantity').val()) : 0;
+            var batchQTY = parseInt($('#batchQuantity').val()) ? parseInt($('#batchQuantity').val()) : 0;
+            var targetDate = $('#batchTargetDate').val();
+            var batchDate = $('#batchDate').val();
+            const date1 = new Date(batchDate);
+            const date2 = new Date(targetDate);
+            const diffTime = Math.abs(date2 - date1 + 1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (date1 > date2) {
+                swal('Warning', 'Target Date must be greater then Batch Date', 'warning');
+                $('#batchTargetDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+                return false;
+            } else if (batchQTY > planQTY) {
+                swal('Warning', 'Plan QTY must be greater then Batch QTY', 'warning');
+                $('#batchQuantity').val(0);
+                return false;
+            }
+
+            var perdayqty = Math.abs(batchQTY / diffDays);
+            $('#perDayTargetQuantity').val(parseInt(perdayqty) ? parseInt(perdayqty) : 0);
+        }
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var date = new Date(date);
+
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+            return day + '-' + monthNames[monthIndex] + '-' + year;
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+    </script>
+}
+
+@section Style{
+    <style>
+    </style>
+}
+

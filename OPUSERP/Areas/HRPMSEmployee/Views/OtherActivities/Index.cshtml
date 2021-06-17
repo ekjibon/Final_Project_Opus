@@ -1,0 +1,184 @@
+﻿@model OtherActivitiesViewModel
+@{
+    ViewData["Title"] = "Other Activities Information";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+@section StyleEmp{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo?.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo?.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo?.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo?.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo?.activityStatus == 1 ? "Active" : "Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">Other Activities Information</u></h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="OtherActivities" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="activityType" class="col-sm-4 col-form-label">Activity Type <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="activityType" name="activityType" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    @foreach (var item in Model.hRPMSActivityTypes)
+                                    {
+                                        <option value="@item.Id">@item.name</option>
+                                    }
+                                </select>
+                                <input type="hidden" id="employeeID" name="employeeID" value="@Model.employeeID">
+                                <input type="hidden" id="activityID" name="activityID" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="activityName" class="col-sm-4 col-form-label">Activity Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="activityName" name="activityName" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="description" class="col-sm-4 col-form-label">Description </label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" rows="3" id="description" name="description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">Other Activities Information List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="otherActivitiesTable">
+                    <thead>
+                        <tr>
+                            <th>Activity Type</th>
+                            <th>Activity Name</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var data in Model.otherActivities)
+                        {
+                            <tr>
+                                <td>@data.activityName?.activityType?.name</td>
+                                <td>@data.activityName?.name</td>
+                                <td>@data.description</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.activityName?.activityTypeId', '@data.activityNameId', '@data.description')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id, @data.employeeID)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $("#otherActivities").addClass("active");
+            //$('#startDate').flatpickr({ dateFormat: "d-M-Y" });
+            //$('#endDate').flatpickr({ dateFormat: "d-M-Y" });
+
+            $('#otherActivitiesTable').DataTable();
+
+            $("#activityType").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/getActivityNameByType/' + id, [], 'json', ajaxActivityName, false);
+            });
+        });
+
+        function ajaxActivityName(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.name + '</option>';
+            });
+            $('#activityName').empty();
+            $('#activityName').append(options);
+        }
+
+        function Edit(Id, activityTypeId, activityNameId, description) {
+            $("#activityID").val(Id);
+            $("#activityType").val(activityTypeId);
+            Common.Ajax('GET', '/global/api/getActivityNameByType/' + activityTypeId, [], 'json', ajaxActivityName, false);
+            $("#activityName").val(activityNameId);
+            $("#description").html(description);
+        }
+        
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/HRPMSEmployee/OtherActivities/Delete/" + Id + "?empId=" + employeeId);
+            } else {
+                return false;
+            }
+        }
+
+    </script>
+}
+
+
+

@@ -1,0 +1,465 @@
+﻿@model ReportingViewModel
+@{
+    ViewData["Title"] = @Model.fLang.titleReport;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .buttons-csv {
+            color: white !important;
+            background-color: green !important;
+            border: 1px solid green !important;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.titleReport</h6>
+            </div>
+
+            <div class="card-body" style="display:block;">
+                <div class="container">
+                    <form>
+                        <div class="row">
+                            <div class="col-5 card" style="padding: 15px 15px 10px 25px;">
+                                <div class="form-group row">
+                                    <h6 class="m-0 font-weight-bold text-primary">Select Value For Query</h6>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="key" class="col-sm-3 col-form-label">Key</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="key" value="" name="key">
+                                            <option value="">Select</option>
+
+                                            <option value="Gender">Gender</option>
+                                            <option value="Religion">Religion</option>
+                                            <option value="BloodGroup">Blood Group</option>
+                                            <option value="Disability">Disability</option>
+                                            <option value="MaritalStatus">Marital Status</option>
+
+                                            <option value="FreedomFighter">Freedom Fighter</option>
+
+                                            <option value="NatureRecrutement">Nature of Recrutement</option>
+                                            <option value="joiningDesignation">Joining Designation</option>
+                                            <option value="CurrentDesignation">Current Designation</option>
+
+                                            <option value="HomeDistrict">Home District</option>
+                                            <option value="Division">Division</option>
+                                            <option value="District">District</option>
+                                            <option value="Thana">Thana/Upazila</option>
+
+                                            <option value="Degree">Degree</option>
+                                            <option value="Group">Group/Subject</option>
+                                            <option value="University">Board/University/Institution</option>
+
+                                            <option value="Language">Language</option>
+                                            <option value="TravelCountry">Travel Country</option>
+                                            <option value="LicenseCategory">License Category</option>
+
+                                            <option value="SBU">SBU</option>
+                                            <option value="PNS">PNS</option>
+
+                                            <option value="Project">Project</option>
+                                            <option value="Doner">Doner</option>
+                                            <option value="Activity">Activity</option>
+
+                                            @*<option value="LeaveType">Leave Type</option>*@
+                                            @*<option value="IBASS">IBASS</option>*@
+                                            @*<option value="EmployeePosition">Employee Position</option>*@
+                                            @*<option value="AdverseComment">ACR Adverse Comment</option>*@
+                                            @*<option value="SpouseHomeDistrict">Spouse Home District</option>*@
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="value" class="col-sm-3 col-form-label">Value</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="value" value="" name="value"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <button type="button" onclick="AddFilter()" class="btn btn-success btn-sm" style="float:right;"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 card" style="padding: 15px 15px 10px 25px;">
+                                <div class="form-group row">
+                                    <h6 class="m-0 font-weight-bold text-primary">Date Range For Query</h6>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="dateKey" class="col-sm-3 col-form-label">Key</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="dateKey" value="" name="dateKey">
+                                            <option value="">Select</option>
+                                            <option value="DateOfBirth">Date of Birth</option>
+                                            <option value="DateofJoining">Date of Joining</option>
+                                            <option value="DateofConfirmation">Date of Confirmation</option>
+                                            <option value="ACRStartDate">ACR Start Date</option>
+                                            <option value="ACREndDate">ACR End Date</option>
+                                            <option value="PassportIssueDate">Passport Issue Date</option>
+                                            <option value="PassportExpiryDate">Passport Expiry Date</option>
+                                            <option value="TravelStartDate">Travel Start Date</option>
+                                            <option value="TravelEndDate">Travel End Date</option>
+                                            <option value="LicenseIssueDate">License Issue Date</option>
+                                            <option value="LicenseExpiryDate">License Expiry Date</option>
+                                            <option value="ServiceFromDate">Service From Date</option>
+                                            <option value="ServiceToDate">Service To Date</option>
+                                            <option value="TrainingFromDate">Training From Date</option>
+                                            <option value="TrainingToDate">Training To Date</option>
+                                            <option value="ContractStartDate">Contract Start Date</option>
+                                            <option value="ContractEndDate">Contract End Date</option>
+
+                                            @*<option value="BookBorrowDate">Book Borrow Date</option>*@
+                                            @*<option value="BookReturnDate">Book Return Date</option>*@
+                                            @*<option value="LeaveFromDate">Leave From Date</option>*@
+                                            @*<option value="LeaveToDate">Leave To Date</option>*@
+                                            @*<option value="LPRDate">Date of Retirement</option>*@
+                                            @*<option value="PRLStartDate">PRL Start Date</option>*@
+                                            @*<option value="PRLEndDate">PRL End Date</option>*@
+                                            @*<option value="DateofRegularity">Date of Regularity</option>*@
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="fromDate" class="col-sm-3 col-form-label">Date From</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" id="fromDate" readonly placeholder="From Date" value="" name="fromDate" />
+                                    </div>
+                                    <label for="fromDate" class="col-sm-1 col-form-label text-center">To</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" id="toDate" readonly value="" placeholder="To Date" name="toDate" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <button type="button" onclick="AddRangeFilter()" class="btn btn-success btn-sm" style="float:right;"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-1 card" style="padding: 15px 15px 10px 25px;">
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <button type="button" onclick="LoadByFilterOnThisPage()" class="btn btn-success btn-sm" style="float:right;height:130px;"><i class="fas fa-search"></i> Load</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 card" style="padding: 15px 15px 10px 25px;">
+                                <div class="form-group row" id="allFilterString"></div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" style="width:100%;" id="allEmployeeListTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>@Model.fLang.name</th>
+                            <th>@Model.fLang.designation</th>
+                            <th>@Model.fLang.mobileNumber</th>
+                            <th>@Model.fLang.emailAddress</th>
+                            @*<th width="100px">@Model.fLang.action</th>*@
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var table;
+        $(document).ready(function () {
+            $('#fromDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+            $('#toDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+            $("#key").change(function () {
+                $("#value option").remove();
+                $("#value").append('<option value="">Select</option>');
+                if ($('#key').val() == "HomeDistrict") {
+                    $("#value").append('@foreach(var data in Model.districts)
+                    { <option value="@data.districtName">@data.districtName</option>}')
+                }
+                else if ($('#key').val() == "Disability") {
+                    $("#value").append('<option value="Yes">Yes</option><option value="No">No</option>')
+                }
+                else if ($('#key').val() == "Gender") {
+                    $("#value").append('<option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option>')
+                } else if ($('#key').val() == "MaritalStatus") {
+                    $("#value").append('<option value="Married">Married</option><option value="Unmarried">Unmarried</option><option value="Widow">Widow</option><option value="Separated">Separated</option>')
+                } else if ($('#key').val() == "Religion") {
+                    $("#value").append('@foreach(var data in Model.religions)
+                    { <option value="@data.Id">@data.name</option>}')
+                } else if ($('#key').val() == "BloodGroup") {
+                    $("#value").append('<option value="O+">O+</option><option value="O-">O-</option><option value="A+">A+</option><option value="A-">A-</option><option value="B+">B+</option><option value="B-">B-</option><option value="AB+">AB+</option><option value="AB-">AB-</option>')
+                } else if ($('#key').val() == "FreedomFighter") {
+                    $("#value").append('<option value="Yes">Yes</option><option value="No">No</option>')
+                } else if ($('#key').val() == "EmployeePosition") {
+                    $("#value").append('@foreach(var data in Model.employeeTypes)
+                    { <option value="@data.Id">@data.empType</option>}')
+                } else if ($('#key').val() == "NatureRecrutement") {
+                    $("#value").append('<option value="Direct">Direct</option><option value="Absorbed">Absorbed</option><option value="ByPromotion">ByPromotion</option>')
+                } else if ($('#key').val() == "joiningDesignation") {
+                    $("#value").append('@foreach(var data in Model.designations)
+                    { <option value="@data.designationName">@data.designationName</option>}')
+                } else if ($('#key').val() == "CurrentDesignation") {
+                    $("#value").append('@foreach(var data in Model.designations)
+                    { <option value="@data.designationName">@data.designationName</option>}')
+                } else if ($('#key').val() == "Division") {
+                    $("#value").append('@foreach(var data in Model.divisions)
+                    { <option value="@data.Id">@data.divisionName</option>}')
+                } else if ($('#key').val() == "District") {
+                    $("#value").append('@foreach(var data in Model.districts)
+                    { <option value="@data.Id">@data.districtName</option>}')
+                } else if ($('#key').val() == "Thana") {
+                    $("#value").append('@foreach(var data in Model.thanas)
+                    { <option value="@data.Id">@data.thanaName</option>}')
+                } else if ($('#key').val() == "Degree") {
+                    $("#value").append('@foreach(var data in Model.degrees)
+                    { <option value="@data.Id">@data.degreeName</option>}')
+                } else if ($('#key').val() == "Group") {
+                    $("#value").append('@foreach(var data in Model.subjects)
+                    { <option value="@data.Id">@data.subjectName</option>}')
+                } else if ($('#key').val() == "University") {
+                    $("#value").append('@foreach(var data in Model.organizations)
+                    { <option value="@data.Id">@data.organizationName</option>}')
+                } else if ($('#key').val() == "SpouseHomeDistrict") {
+                    $("#value").append('@foreach(var data in Model.districts)
+                    { <option value="@data.Id">@data.districtName</option>}')
+                } else if ($('#key').val() == "Language") {
+                    $("#value").append('@foreach(var data in Model.languages)
+                    { <option value="@data.Id">@data.languageName</option>}')
+                } else if ($('#key').val() == "AdverseComment") {
+                    $("#value").append('<option value="Yes">Yes</option><option value="No">No</option>')
+                } else if ($('#key').val() == "TravelCountry") {
+                    $("#value").append('@foreach(var data in Model.countries)
+                    { <option value="@data.Id">@data.countryName</option>}')
+                } else if ($('#key').val() == "IBASS") {
+                    $("#value").append('<option value="Yes">Yes</option><option value="No">No</option>')
+                } else if ($('#key').val() == "LicenseCategory") {
+                    $("#value").append('<option value="Light">Light</option><option value="Medium">Medium</option><option value="Heavy">Heavy</option>')
+                } else if ($('#key').val() == "LeaveType") {
+                    $("#value").append('@foreach(var data in Model.leaveTypelist)
+                    { <option value="@data.Id">@data.nameEn</option>}')
+                } else if ($('#key').val() == "SBU") {
+                    $("#value").append('@foreach(var data in Model.specialBranchUnits)
+                    { <option value="@data.Id">@data.branchUnitName</option>}')
+                } else if ($('#key').val() == "PNS") {
+                    $("#value").append('@foreach(var data in Model.pNs)
+                    { <option value="@data.Id">@data.name</option>}')
+                } else if ($('#key').val() == "Project") {
+                    $("#value").append('@foreach(var data in Model.hRProjects)
+                    { <option value="@data.Id">@data.name</option>}')
+                } else if ($('#key').val() == "Doner") {
+                    $("#value").append('@foreach(var data in Model.hRDoners)
+                    { <option value="@data.Id">@data.name</option>}')
+                } else if ($('#key').val() == "Activity") {
+                    $("#value").append('@foreach(var data in Model.hRActivities)
+                    { <option value="@data.Id">@data.name</option>}')
+                }
+            });
+
+        });
+
+        var index = 1;
+        function AddFilter() {
+            var key = $('#key').val();
+            var value = $('#value').val();
+            if (key != '' && value != '') {
+                $('#allFilterString').append(
+                    '<span id="filter' + index + '" style="margin-right:15px;margin-bottom:5px;margin-left: 20px;"><div class="form-group row"><input type="text" readonly style="border-radius:5px 0px 0px 5px;height:30.5px;" class="form-control col-10 clsStrings" id="strings' + index + '" value="' + key + '=' + value + '" name="strings' + index + '"><button type="button" style="border-radius: 0px 5px 5px 0px;margin-left: -5px;" id="button' + index + '" onclick="ClearbyID(' + index + ')" class="btn btn-danger btn-sm col-2"><i class="fas fa-times-circle"></i></button></div></span>'
+                )
+                index = index + 1;
+            }
+            $('#key').val('');
+            $('#value').val('');
+        }
+
+        function AddRangeFilter() {
+            var key = $('#dateKey').val();
+            var valueFrom = $('#fromDate').val();
+            var valueTo = $('#toDate').val();
+            if (key != '' && valueFrom != '' && valueTo != '') {
+                $('#allFilterString').append(
+                    '<span id="filter' + index + '" style="margin-right:15px;margin-bottom:5px;margin-left: 20px;"><div class="form-group row"><input type="text" readonly style="border-radius:5px 0px 0px 5px;height:30.5px;width:300px;" class="form-control col-10 clsStrings" id="strings' + index + '" value="' + key + '=' + valueFrom + '=' + valueTo + '" name="strings' + index + '"><button type="button" style="border-radius: 0px 5px 5px 0px;margin-left: -5px;" id="button' + index + '" onclick="ClearbyID(' + index + ')" class="btn btn-danger btn-sm col-2"><i class="fas fa-times-circle"></i></button></div></span>'
+                )
+                index = index + 1;
+            }
+            $('#dateKey').val('');
+            $('#fromDate').val('');
+            $('#toDate').val('');
+        }
+
+        function ClearbyID(indx) {
+            $('#allFilterString #filter' + indx).remove();
+        }
+
+        function LoadByFilter() {
+            var queryString = "";
+            var $allStrings = $("#allFilterString").find(".clsStrings");
+            $allStrings.each(function () {
+                queryString += '|' + $(this).val();
+            });
+            //console.log(queryString);
+            if (queryString=="") {
+                alert("Nothing To Query Please Add Query Element");
+            } else {
+                var win = window.open("/global/api/GenerateReport/" + queryString, '_blank');
+                win.focus();
+                //console.log(queryString);
+            }
+        }
+
+        function LoadByFilterOnThisPage() {
+            var queryString = "";
+            var $allStrings = $("#allFilterString").find(".clsStrings");
+            $allStrings.each(function () {
+                queryString += '|' + $(this).val();
+            });
+
+            if (queryString == "" || queryString == null) {
+                alert("Nothing To Query Please Add Query Element");
+                $('#allEmployeeListTable').DataTable().destroy();
+
+                table = $('#allEmployeeListTable').DataTable({
+                    ajax: {
+                        url: "/global/api/allEmpList/all",
+                        dataSrc: ""
+                    },
+                    scrollX: true,
+                    columns: [
+                        { data: "employeeCode" },
+                        { data: "nameEnglish" },
+                        { data: "designation" },
+                        { data: "mobileNumberOffice" },
+                        { data: "emailAddress" }
+                    ],
+                    stateSave: false,
+                    dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                        "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fa fa-file-excel"></i> Excel',
+                            titleAttr: 'Excel',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            },
+                            title: 'IFRC',
+                            messageTop: 'List Of Employee'
+                        },
+                        {
+                            extend: 'csvHtml5',
+                            text: '<i class="fa fa-file-excel"></i> CSV',
+                            titleAttr: 'CSV',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            },
+                            title: 'IFRC',
+                            messageTop: 'List Of Employee'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            titleAttr: 'Print',
+                            title: 'IFRC',
+                            messageTop: 'List Of Employee',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            },
+                            customize: function (doc) {
+                                $(doc.document.body).find('h1').css('font-size', '20pt');
+                                $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                                $(doc.document.body).find('h1').css('text-align', 'center');
+                            }
+                        }
+                    ]
+                });
+            }
+            else {
+                $('#allEmployeeListTable').DataTable().destroy();
+
+                table = $('#allEmployeeListTable').DataTable({
+                    ajax: {
+                        url: "/global/api/getEmployeeInfoAsQueryAble/" + queryString,
+                        dataSrc: ""
+                    },
+                    scrollX: true,
+                    columns: [
+                        { data: "id" },
+                        { data: "name" },
+                        { data: "currentDesignation" },
+                        { data: "mobile" },
+                        { data: "email" }
+                    ],
+                    stateSave: false,
+                    dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                        "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fa fa-file-excel"></i> Excel',
+                            titleAttr: 'Excel',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            },
+                            title: 'IFRC',
+                            messageTop: 'List Of Employee',
+                            class: 'btn btn-info'
+                        },
+                        {
+                            extend: 'csvHtml5',
+                            text: '<i class="fa fa-file-excel"></i> CSV',
+                            titleAttr: 'CSV',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            },
+                            title: 'IFRC',
+                            messageTop: 'List Of Employee'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fa fa-print"></i> Print',
+                            titleAttr: 'Print',
+                            title: 'IFRC',
+                            messageTop: 'List Of Employee',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3]
+                            },
+                            customize: function (doc) {
+                                $(doc.document.body).find('h1').css('font-size', '20pt');
+                                $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                                $(doc.document.body).find('h1').css('text-align', 'center');
+                            }
+                        }
+                    ]
+                });
+
+            }
+        }
+
+
+
+    </script>
+}

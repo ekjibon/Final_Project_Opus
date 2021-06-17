@@ -1,0 +1,102 @@
+﻿@model EventCategoryViewModel
+@{
+    ViewData["Title"] = "EventCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: #4e73df!important">Event Type Info</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Event" asp-controller="EventType" asp-action="EventCategory" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="eventTypeId" id="eventTypeId" value="0" />
+                    <label for="EventCategory" class="col-sm-4 col-form-label">Event Type Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="EventTypeName" id="EventTypeName">
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Event Type Info</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="eventTypeTable">
+                    <thead>
+                        <tr>
+                            <th>Event Type Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.eventCategories)
+                        {
+                            <tr>
+                                <td>@data.name</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.name')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" title="Delete Ownership Type" onclick="DeleteEventType(@data.Id)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $("#EventTypeName").addClass("active");
+            $('#eventTypeTable').DataTable();
+        });
+        function DeleteEventType(Id) {
+            //Common.Ajax('GET', '/CRMMasterData/Sector/DeleteSectorById/?id=' + Id, [], 'json', ajaxHandle);
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                window.location.href = "/Event/EventType/DeleteEventTypeById/?id=" + Id;
+                swal({
+                    title: '', text: 'Deleted Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                });
+            });
+        }
+        function Edit(Id, ownerShipTypeName) {
+            $("#eventTypeTable").val(Id);
+            $("#EventTypeName").val(ownerShipTypeName);
+        }
+    </script>
+}
+

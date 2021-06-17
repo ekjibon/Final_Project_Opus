@@ -1,0 +1,199 @@
+﻿@model VoucherSettingViewModel
+@{
+    ViewData["Title"] = "Voucher Setting";
+    Layout = "~/Areas/Accounting/Views/Shared/_AccountingMasterForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Voucher Setting Entry</h5>
+        <hr>
+        <div class="container">
+
+            <form asp-area="Accounting" asp-controller="VoucherSetting" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <input type="hidden" name="voucherSettingId" id="voucherSettingId" value="0" />
+                    <label for="name" class="col-sm-2 col-form-label">Voucher Posting Type<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select type="text" class="form-control" name="voucherTypeId" id="voucherTypeId" required>
+                            <option value="">Select One</option>
+                            <option value="1">Auto</option>
+                            <option value="2">Manual</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">Payment Mode<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select type="text" class="form-control" name="paymentModeId" id="paymentModeId" required>
+                            <option value="">Select One</option>
+                            @foreach (var data in Model.paymentModes)
+                            {
+                                <option value="@data.Id">@data.paymentModeName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="accountCode" class="col-sm-2 col-form-label">Bank Account Name<span style="float:right;" class="redStar">*</span></label>
+                    <input type="hidden" name="bankAccountLedgerId" id="bankAccountLedgerId" />
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="txtBankAccount" id="txtBankAccount" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="accountCode" class="col-sm-2 col-form-label">Cash Account Name<span style="float:right;" class="redStar">*</span></label>
+                    <input type="hidden" name="cashAccountLedgerId" id="cashAccountLedgerId" />
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="txtCashAccount" id="txtCashAccount" required>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Voucher Setting List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="voucherSettingTable">
+                    <thead>
+                        <tr>
+                            <th>Voucher Posting Type</th>
+                            <th>Payment Mode</th>
+                            <th>Bank Account Name</th>
+                            <th>Cash Account Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.voucherSettings)
+                        {
+                            var Voucherposting = "";
+                            if (data.voucherTypeId == 1)
+                            {
+                                Voucherposting = "Auto";
+                            }
+                            else
+                            {
+                                Voucherposting = "Manual";
+                            }
+                            <tr>
+                                <td>@Voucherposting</td>
+                                <td>@data.paymentMode.paymentModeName</td>
+                                <td>@data.bankAccountLedger.ledger.accountName</td>
+                                <td>@data.cashAccountLedger.ledger.accountName</td>
+                                <td>
+                                    <a class="btn btn-info" onclick="Edit(@data.Id, @data.voucherTypeId,'@data.bankAccountLedger.ledger.accountName','@data.cashAccountLedger.ledger.accountName',@data.paymentModeId,@data.bankAccountLedgerId,@data.cashAccountLedgerId)" href="#" title='Edit'><i class="fa fa-edit"></i></a>
+                                    @*<button title="Delete" class="btn btn-danger" onclick="Remove(@data.Id)"><i class="fa fa-trash"></i></button>*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#VoucherSetting").addClass("active");
+            $('#voucherSettingTable').DataTable();
+            Common.Ajax('GET', '/api/global/GetLedgerForVoucherSettingBank/', [], 'json', GetBankLedgerList);
+            Common.Ajax('GET', '/api/global/GetLedgerForVoucherSettingCash/', [], 'json', GetCashLedgerList);
+
+        });
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Edit(Id, voucherTypeId, bankAccountLedger, cashAccountLedger, paymentModeId, bankAccountLedgerId, cashAccountLedgerId) {
+            $("#voucherSettingId").val(Id);
+            $("#txtBankAccount").val(bankAccountLedger);
+            $("#txtCashAccount").val(cashAccountLedger);
+            $("#voucherTypeId").val(voucherTypeId);
+            $("#paymentModeId").val(paymentModeId);
+            $("#bankAccountLedgerId").val(bankAccountLedgerId);
+            $("#cashAccountLedgerId").val(cashAccountLedgerId);
+        }
+
+
+        function GetBankLedgerList(response) {
+            $('#txtBankAccount').empty();
+            $("#bankAccountLedgerId").val('');
+
+            var lstLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.ledgerId = option.ledgerId;
+                obj.accountCode = option.accountCode;
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                lstLedger[lstLedger.length] = obj;
+            });
+            $('#txtBankAccount').autocomplete({
+                source: lstLedger,
+                select: function (event, ui) {
+                    $('#txtBankAccount').val(ui.item.value);
+                    $("#bankAccountLedgerId").val(ui.item.key);
+
+                }
+            });
+        }
+        function GetCashLedgerList(response) {
+            $('#txtCashAccount').empty();
+            $("#cashAccountLedgerId").val('');
+
+            var lstLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.ledgerId = option.ledgerId;
+                obj.accountCode = option.accountCode;
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                lstLedger[lstLedger.length] = obj;
+            });
+            $('#txtCashAccount').autocomplete({
+                source: lstLedger,
+                select: function (event, ui) {
+                    $('#txtCashAccount').val(ui.item.value);
+                    $("#cashAccountLedgerId").val(ui.item.key);
+
+                }
+            });
+        }
+
+    </script>
+}
+
+
+
+

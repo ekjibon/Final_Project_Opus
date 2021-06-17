@@ -1,0 +1,574 @@
+﻿
+@model LeadViewModel
+@{
+    ViewData["Title"] = "Lead List";
+}
+
+@section Style{
+    <style>
+        #clientTable tbody tr {
+            cursor: pointer;
+        }
+        .loading-image {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+        }
+
+        .loader {
+            display: none;
+            width: 200px;
+            height: 200px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            margin-left: -50px;
+            margin-top: -100px;
+            z-index: 2;
+            overflow: auto;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Lead List</h4>
+                <a href="/CRMLead/LeadManagement/LeadInfo?Id=0" class="btn btn-success btn-sm pull-right">Add New</a>
+            </div>
+
+            <!-- Card Body -->
+
+        </div>
+    </div>
+
+</div>
+<div class="container">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="row">
+            <div class="col-lg-8 row border" style="border:solid;">
+
+                <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                    <div class="form-group row">
+                        <div class="col-sm-1">
+                            <input class="form-horizontal" type="checkbox" id="rdBdPerson" value="3" name="filterType" style="float:left;margin-top:3px" />
+                        </div>
+                        <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                            <label class="control-label input-sm" style="float:left;margin-right:0">BD Person</label>
+                        </div>
+                        <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                            <span style="float:left;padding-right: 1%;"> : </span>
+                            <input type="text" class="form-control input-sm " id="bdPerson" name="bdPerson" placeholder="BD Person" style="width:96%;" />
+                            <input type="hidden" id="bdPersonasp" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                    <div class="form-group row">
+                        <div class="col-sm-1">
+                            <input class="form-horizontal" type="checkbox" id="rdTlName" value="1" name="filterType" style="float:left;margin-top:3px" />
+                        </div>
+                        <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                            <label class="control-label input-sm" style="float:left;margin-right:0">Bank Name</label>
+                        </div>
+                        <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                            <span style="float:left;padding-right: 1%;"> : </span>
+                            <input type="text" class="form-control input-sm " id="tlName" name="tlName" placeholder="Bank Name" style="width:96%;" />
+                            <input type="hidden" id="tlasp" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-1">
+                            <input class="form-horizontal" type="checkbox" id="rdFaName" value="2" name="filterType" style="float:left;margin-top:3px" />
+                        </div>
+                        <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                            <label class="control-label input-sm" style="float:left;margin-right:0">Branch Name</label>
+                        </div>
+                        <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                            <span style="float:left;padding-right: 1%;"> : </span>
+                            <input type="text" class="form-control input-sm " id="faName" name="faName" placeholder="Branch Name" style="width:96%;" />
+                            <input type="hidden" id="faasp" />
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="col-lg-4 row">
+                <div class="col-lg-12 col-sm-4 col-md-4">
+
+
+                    <img id="xxxx" class="loading-image" src="~/Upload/logo/load.gif" alt="loading.." style="display:none">
+                    <div class="form-group row">
+                        <div class="col-sm-1">
+
+                        </div>
+                        <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                            <label class="control-label input-sm" style="float:left;margin-right:0">Account Name</label>
+                        </div>
+                        <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                            <span style="float:left;padding-right: 1%;"> : </span>
+                            <input type="text" class="form-control input-sm " id="accName1" name="accName1" placeholder="Account Name" style="width:96%;" />
+
+                            <input type="hidden" id="accName1asp" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" style="margin-top:20px;">
+            <div class="col-lg-2 col-md-2 col-sm-2" style="padding-right:0;">
+
+            </div>
+            <div class="col-lg-7 col-md-5 col-sm-5">
+
+            </div>
+
+            <div class="col-lg-3">
+                <input type="button" id="AllSearch" value="Search" class="btn-sm btn btn-info" />&nbsp;&nbsp;
+                @*<input type="button" id="allrefresh" value="Export To Excel" class="btn-sm btn btn-danger " />*@
+            </div>
+        </div>
+
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <table class="table table-striped table-bordered table-responsive" width="100%" id="clientTable">
+            @*<thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Lead Name</th>
+                    <th>Short Name</th>
+                    <th>Lead Number</th>
+                    <th>Bank Name</th>
+                    <th>Branch Name</th>
+                    <th>Sector Name</th>
+                    <th>Lead Owner</th>
+                    <th>Industry</th>
+                    <th>Agreement category</th>
+                    <th>Agreement Status</th>
+               
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.getLeadInfoListViewModels.OrderByDescending(x => x.Id))
+                {
+                    <tr>
+                        <td>
+                            <a class="btn btn-success" data-toggle="tooltip" title="Edit" href="/CRMLead/LeadManagement/LeadInfo/?Id=@data.Id&leadName=@data.leadName"><i class="fa fa-edit"></i></a>
+                       
+                        </td>
+                        <td><span style="display:none">-@data.Id-</span>@data.leadName</td>
+                        <td>@data.leadShortName</td>
+                        <td>@data.leadNumber</td>
+                        <td>@data?.bankName</td>
+                        <td>@data?.BranchName</td>
+                        <td>@data.sectorName</td>
+                        <td>@data.leadOwner</td>
+                        <td>@data.groupName</td>
+                        <td>@data.agreementCategoryName</td>
+                        <td>@data.agreementStatusName</td>
+                        <td>@data.AgreementDate?.ToString("dd-MMM-yyyy")</td>
+                        <td>@data.expiredDate?.ToString("dd-MMM-yyyy")</td>
+
+                    </tr>
+                }
+            </tbody>*@
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function ajaxGetFIById(response) {
+
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankName;
+
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#tlName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#tlName").val(ui.item.value);
+                    $("#tlasp").val(ui.item.value);
+                    Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + ui.item.key, [], 'json', ajaxGetBranchByBankId);
+                }
+            });
+        }
+        function ajaxGetBranchByBankId(response) {
+            //var options = '<option value="">Select</option>';
+            //$.each(response, function (i, item) {
+            //    options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            //});
+            //$('#bankBranchDetailsId').empty();
+            //$('#bankBranchDetailsId').append(options);
+            console.log(response);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankBranch.branchName;
+                //obj.designation = option.designation;
+                //obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#faName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#faName").val(ui.item.value);
+                    $("#faasp").val(ui.item.value);
+
+                }
+            });
+        }
+        function ajaxGetCRMEmployees(response) {
+            console.log();
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.nameEnglish;
+                obj.emailAddress = option.emailAddress;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#bdPerson').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#bdPerson").val(ui.item.value);
+                    $("#bdPersonasp").val(ui.item.employeeCode);
+
+                }
+            });
+        }
+        $(document).ready(function () {
+          
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBankByFIId/?Id=' + 0, [], 'json', ajaxGetFIById, false);
+            Common.Ajax('GET', '/global/api/GetEmployeeInfoCRMAnalyst', [], 'json', ajaxGetCRMEmployees, false);
+         GetAllClientData();
+            $("#accName1").keydown(function () {
+                // alert("bb");
+                $("#rdTlName").prop("checked", false);
+                $("#rdFaName").prop("checked", false);
+                $("#rdBdPerson").prop("checked", false);
+
+                $("#tlName").val('');
+                $("#tlasp").val('');
+                $("#faName").val('');
+                $("#faasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+
+            });
+            $("#rdTlName").change(function () {
+
+                if ($("input[Id='rdTlName']:checked").val() != 1) {
+                    $("#tlName").val('');
+                    $("#tlasp").val('');
+
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdFaName").change(function () {
+
+
+                if ($("input[Id='rdFaName']:checked").val() != 2) {
+                    $("#faasp").val('');
+                    $("#faName").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdBdPerson").change(function () {
+
+                if ($("input[Id='rdBdPerson']:checked").val() != 3) {
+                    $("#bdPerson").val('');
+                    $("#bdPersonasp").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+
+
+
+            $("#AllSearch").click(function () {
+
+                var TeamLeader = $("#tlasp").val();
+
+                if (TeamLeader == "") {
+                    TeamLeader = "NoData"
+                }
+                if ($("input[Id='rdTlName']:checked").val() == 1) {
+                    if (TeamLeader == "NoData") {
+                        swal("Please Enter Bank Name.");
+                        return false;
+                    }
+
+                }
+                var Fa = $("#faasp").val();
+                if (Fa == "") {
+                    Fa = "NoData"
+                }
+                if ($("input[Id='rdFaName']:checked").val() == 2) {
+                    if (Fa == "NoData") {
+                        swal("Please Enter Branch Name.");
+                        return false;
+                    }
+
+                }
+                var BD = $("#bdPersonasp").val();
+                if (BD == "") {
+                    BD = "NoData"
+                }
+                if ($("input[Id='rdBdPerson']:checked").val() == 3) {
+
+                    if (BD == "NoData") {
+                        swal("Please Enter BD Person.");
+                        return false;
+                    }
+
+                }
+                var LeadId = $("#accName1").val();
+
+
+                if (LeadId == "") {
+                    LeadId = "NoData"
+                }
+
+                //Common.Ajax('GET', '/global/api/GetAllClientListS/'  + TeamLeader + "/" + Fa + "/" + BD + "/" + LeadId , [], 'json', ajaxGetMaster);
+                GetAllClientDataS(TeamLeader, Fa, BD, LeadId);
+
+
+            });
+        });
+        function EditClient(leadsId, leadName) {
+
+            //window.location.href = "/CRMClient/Client/ClientInfo?Id=" + leadsId + '&leadName=' + leadName;
+            window.location.href = "/CRMLead/LeadManagement/LeadInfo/?Id=" + leadsId + '&leadName=' + leadName;
+
+        }
+          function GetAllClientDataS(TeamLeaderName,FaName,BD,LeadId) {
+             $('#xxxx').show();
+              //$('#clientTable').DataTable().destroy();
+         
+
+            $('#clientTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("AllLeadListFilter", "LeadManagement")',
+                    data: {
+                        TeamLeader: TeamLeaderName,
+                        Fa: FaName,
+                        BD: BD,
+                        LeadId: LeadId
+                    },
+                    dataSrc: ""
+                },
+                destroy: true,
+                columns: [
+                    {
+                        title: "Action", "width": "10%",
+                        "render": function (data, type, e, meta) {
+                            return '<a class="btn btn-info" href="javascript:void(0)" title="Edit" onclick="EditClient(' + e.Id + ',' + "'" + 'cc' + "'" + ')"><i class="fa fa-edit"></i></a>';
+                        }
+                    },
+                    { data: "leadName", title: "Lead Name", width: "20%" },
+                    { data: "leadShortName", title: "Short Name", width: "5%" },
+                    { data: "leadNumber", title: "Lead Number", width: "20%" },
+                    { data: "bankName", title: "Bank", width: "10%" },
+                    { data: "BranchName", title: "Branch", width: "10%" },
+                    { data: "sectorName", title: "Sector Name", width: "10%" },
+                    { data: "leadOwner", title: "Lead Owner", width: "10%" },
+                    { data: "groupName", title: "Industry", width: "10%" },
+                    
+                   
+                   
+                    { data: "agreementCategoryName", title: "Agreement category", width: "10%" },
+                    { data: "agreementStatusName", title: "Agreement Status", width: "10%" },
+                    { data: "leadOwner", title: "Lead Owner", width: "10%" },
+                    //{ data: "agreementCategoryName", title: "Agreement Type", width: "10%" },
+                    //{ data: "agreementStatusName", title: "Agreement Status", width: "10%" },
+                   
+                    //{ data: "AgreementDate", title: "Agreement Date", width: "10%" },
+                    //{ data: "expiredDate", title: "Expire Date", width: "10%" },
+                   
+                  
+                    
+                    //{ data: "Ageing", title: "Ageing", width: "5%" },
+                   
+                    
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4,5,6,7,8,9,10,11,12,13]
+                        },
+                        title: "ClientList",
+                        messageTop: 'Client List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        title: "ClientList",
+                        messageTop: 'Client List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ClientList",
+                        messageTop: 'Client List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+            $('#xxxx').hide();
+        }
+
+         function GetAllClientData() {
+             $('#xxxx').show();
+            // $('#clientTable').DataTable().destroy();
+         
+
+            $('#clientTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("AllLeadListS", "LeadManagement")',
+                    //data: {
+                    //    TeamLeader: TeamLeaderName,
+                    //    Fa: FaName,
+                    //    BD: BD,
+                    //    LeadId: LeadId
+                    //},
+                    dataSrc: ""
+                },
+                destroy: true,
+                columns: [
+                    {
+                        title: "Action", "width": "10%",
+                        "render": function (data, type, e, meta) {
+                            return '<a class="btn btn-info" href="javascript:void(0)" title="Edit" onclick="EditClient(' + e.Id + ',' + "'" + 'cc' + "'" + ')"><i class="fa fa-edit"></i></a>';
+                        }
+                    },
+                    { data: "leadName", title: "Lead Name", width: "20%" },
+                    { data: "leadShortName", title: "Short Name", width: "5%" },
+                    { data: "leadNumber", title: "Lead Number", width: "20%" },
+                    { data: "bankName", title: "Bank", width: "10%" },
+                    { data: "BranchName", title: "Branch", width: "10%" },
+                    { data: "sectorName", title: "Sector Name", width: "10%" },
+                    { data: "leadOwner", title: "Lead Owner", width: "10%" },
+                    { data: "groupName", title: "Industry", width: "10%" },
+                    
+                   
+                   
+                    { data: "agreementCategoryName", title: "Agreement category", width: "10%" },
+                    { data: "agreementStatusName", title: "Agreement Status", width: "10%" },
+                    { data: "leadOwner", title: "Lead Owner", width: "10%" },
+                    //{ data: "agreementCategoryName", title: "Agreement Type", width: "10%" },
+                    //{ data: "agreementStatusName", title: "Agreement Status", width: "10%" },
+                    
+                    //{ data: "AgreementDate", title: "Agreement Date", width: "10%" },
+                    //{ data: "expiredDate", title: "Expire Date", width: "10%" },
+                   
+                  
+                    
+                    //{ data: "Ageing", title: "Ageing", width: "5%" },
+                   
+                    
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        title: "ClientList",
+                        messageTop: 'Client List',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        title: "ClientList",
+                        messageTop: 'Client List'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "ClientList",
+                        messageTop: 'Client List',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+            $('#xxxx').hide();
+        }
+
+    </script>
+}
+

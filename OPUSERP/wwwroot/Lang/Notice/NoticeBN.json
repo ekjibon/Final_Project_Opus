@@ -1,0 +1,17 @@
+﻿{
+  "title": "বিজ্ঞপ্তি তৈরী",
+  "subject": "বিষয়",
+  "bdEngineClub": "বাংলাদেশ ইঞ্জিনিয়ার্স  ক্লাব লিমিটেড",
+  "viewAttachment": "সংযুক্তি দেখান",
+  "memoNo": "স্মারকলিপি নং",
+  "date": "তারিখ",
+  "name": "নাম",
+  "designation": "পদবি",
+  "attachment": "সংযুক্তি",
+  "notice": "বিজ্ঞপ্তি",
+  "noticeList": "সব বিজ্ঞপ্তি",
+  "noticeType": "বিজ্ঞপ্তি ধরণ ",
+  "memberCode": "সদস্য কোড",
+  "memberName": "সদস্যের কোড",
+  "action": "প্রক্রিয়া"
+}

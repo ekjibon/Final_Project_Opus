@@ -1,0 +1,232 @@
+﻿@model PRLApplicationViewModel
+
+@{
+    ViewData["Title"] = "Apply Resign";
+}
+
+@section Style{
+    <style>
+        .redClolor {
+            color: red;
+        }
+
+        .btnWith {
+            width: 95%;
+        }
+
+        h5 {
+            color: darkblue;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Apply For Resign</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSRetirementAndTermination" asp-controller="ApplyForPRL" asp-action="ApplyResign" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="card" style="padding:2%;">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group row">
+                                <label for="employeeId" class="col-sm-2 col-form-label">Employee <span style="color:red;">*</span></label>
+                                <input type="hidden" id="employeeId" name="employeeId" data-parsley-required="true" />
+                                <input type="hidden" id="resignId" name="resignId" value="0" />
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="empNameId" name="empNameId">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="designation" class="col-sm-4 col-form-label">@Model.flang.designation</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="designation" id="designation" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="employeeName" class="col-sm-4 col-form-label">@Model.flang.employeeName</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="employeeName" id="employeeName" data-parsley-required="true" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="padding: 2%; margin-top: 1%;">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="resignDate" class="col-sm-4 col-form-label">Resign Date <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="resignDate" id="resignDate" data-parsley-required="true">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="lastWorkingDate" class="col-sm-4 col-form-label">Last Working Date <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="lastWorkingDate" id="lastWorkingDate" data-parsley-required="true">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group row">
+                                <label for="resignReason" class="col-2 col-form-label">Resign Reason <span style="color:red;">*</span></label>
+                                <div class="col-10">
+                                    <textarea class="form-control" rows="3" name="resignReason" id="resignReason" data-parsley-required="true"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Applied Resign List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="childrenTable">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Designation</th>
+                            <th>Resign Date</th>
+                            <th>Last Working Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.resignInformation)
+                        {
+                            <tr>
+                                <td>@data.employee?.nameEnglish</td>
+                                <td>@data.employee?.designation</td>
+                                <td>@data.resignDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.lastWorkingDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.employeeId','@data.employee?.nameEnglish','@data.employee?.designation','@data.employee?.employeeCode','@data.resignDate?.ToString("dd-MMM-yyyy")','@data.lastWorkingDate?.ToString("dd-MMM-yyyy")','@data.resignReason')" href="#"><i class="fa fa-edit"></i></a>
+                                    @*<a class="btn btn-danger" onclick="Remove(@data.Id,@data.employeeId)" href="#"><i class="fa fa-trash-alt"></i></a>*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#resignDate').datepicker({});
+            $('#lastWorkingDate').datepicker({ uiLibrary: 'bootstrap4' });
+
+            Common.Ajax('GET', '/global/api/getEmployeeInfoByOrg/', [], 'json', ajaxEmployeeList, false);
+        });
+
+        function ajaxEmployeeList(response) {
+            console.log(response);
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode + ' - ' + option.nameEnglish;
+                obj.name = option.nameEnglish;
+                obj.designation = option.designation;
+                obj.orgType = option.orgType;
+                obj.mobileNumberPersonal = option.mobileNumberPersonal;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#empNameId').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#employeeId").val(ui.item.key);
+                    $("#designation").val(ui.item.designation);
+                    $("#employeeName").val(ui.item.name);
+                }
+            });
+        }
+
+        function ClearFiles() {
+            $("#type").val("");
+            $("#fileTitle").val("");
+            $('#uploadFile').val("");
+        }
+
+        var index = 0;
+        function addTable() {
+            var table = $("#fileHistoryList tbody");
+            var type = $("#type").val();
+            var fileTitle = $("#fileTitle").val();
+            var filename = $('#uploadFile').val().split('\\').pop();
+            var sl = 1;
+            sl = sl + index;
+            if (type == '') {
+                alert("Please entry type of file");
+                return false;
+            }
+            if (fileTitle == '') {
+                alert("Please entry type of fileTitle");
+                return false;
+            }
+            if (uploadFile == '') {
+                alert("Please entry type of uploadFile");
+                return false;
+            }
+            var validation = $(".clsFileName").html();
+            if (validation == filename) {
+                alert("this file already uploaded !!!!. Choose another file");
+                $('#uploadFile').val("");
+                return false;
+            }
+            table.append("<tr id='trId" + index + "'>" +
+                "<td>" + sl + "</td><td>" + type + "</td><td>" + fileTitle + "</td><td class='clsFileName' id='filename" + index + "'>" + filename + "</td><td><button class='btn btn-danger btn-sm' onclick='DeletetableTr(" + index + ")'><i class='fa fa-trash'></i></button></td>"
+                + "</tr >")
+
+            index = index + 1;
+            ClearFiles();
+        }
+
+        function DeletetableTr(index) {
+            $("#trId" + index).remove();
+        }
+
+        function Edit(Id, employeeId, nameEnglish, designation, employeeCode, resignDate, lastWorkingDate, resignReason) {
+            $('#resignId').val(Id);
+            $('#employeeId').val(employeeId);
+            $('#empNameId').val(employeeCode + '-' + nameEnglish);
+            $('#designation').val(designation);
+            $('#employeeName').val(nameEnglish);
+            $('#resignDate').val(resignDate);
+            $('#lastWorkingDate').val(lastWorkingDate);
+            $('#resignReason').val(resignReason);
+            
+        }
+
+    </script>
+}

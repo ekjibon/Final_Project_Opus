@@ -1,0 +1,102 @@
+﻿@model TransferViewModel
+@{
+    ViewData["Title"] = "Transfer List";
+    //Layout = "~/Areas/Inventory/Views/shared/_InventoryLayout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Transfer List</h4>
+                <a href="/Purchase/Transfer/Index?id=0" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Add New</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="TransferList">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th width="15%">Transfer No</th>
+                            <th width="10%">Transfer Date</th>
+                            <th width="25%">Transfer From</th>
+                            <th width="25%">Transfer To</th>
+                            <th width="10%">Action</th>
+</thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+
+
+                            @foreach (var data in Model.transferMasters)
+                            {
+                        <tr>
+                            <td>@i</td>
+                            <td><span style="display:none">-@data.Id-</span>@data.transferNO</td>
+                            <td>@data.transferDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.storeFrom.storeName</td>
+                            <td>@data.storeTo.storeName</td>
+                            <td>
+                                @if (data.isStockClose != 1)
+                                {
+                                    <a class="btn btn-success" href="/Purchase/Transfer/Index?id=@data.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-success"  title="Edit">Stocked</a>
+                                }
+                                @*<a class="btn btn-success" href="/Inventory/Transfer/TransferPdfAction?MasterId=@data.Id" target="_blank" title="Transfer Challan"><i class="fa fa-print"></i></a>*@
+                            </td>
+                        </tr>
+                                i++;
+                            }
+
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#TransferList').DataTable();
+
+
+            var table = $('#TransferList').DataTable();
+
+            $('#TransferList tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[1];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var vid = parseInt(id.split('-')[1]);
+                window.location.href = "/Inventory/Transfer/TransferDetail/?id=" + vid;
+            });
+            $('#TransferList tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+
+        });
+    </script>
+}
+
+
+@section Style{
+    <style>
+        #TransferList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+

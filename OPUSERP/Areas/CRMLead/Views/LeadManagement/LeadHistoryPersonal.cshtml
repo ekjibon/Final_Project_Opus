@@ -1,0 +1,77 @@
+﻿@model LeadsHistoryViewModel
+
+@{
+    ViewData["Title"] = "History";
+    Layout = "~/Areas/CRMLead/Views/Shared/_LeadFormPersonal.cshtml";
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary" style="text-align:center;">Lead Name: @ViewBag.leadName</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="statusTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Action Name</th>
+                            <th>Action Details</th>
+                            <th>Date & Time</th>
+                            <th>User</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.leadsHistories)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td>@data.actionName</td>
+                                    <td>@data.actionDetails</td>
+                                    <td>@data.createdAt?.ToString("dd-MMM-yyyy hh:mm:ss tt")</td>
+                                    <td>@data.createdBy</td>
+
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsLead{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#LeadHistory").addClass("active");           
+            $('#statusTable').DataTable();
+
+        });
+       
+
+    </script>
+}
+
+
+@section StyleLead{
+    <style>
+
+        .redStar {
+            color: red;
+        }        
+    </style>
+}
+
+
+
+
+
+

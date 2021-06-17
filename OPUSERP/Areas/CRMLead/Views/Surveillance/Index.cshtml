@@ -1,0 +1,481 @@
+﻿@model AgreementViewModel
+@{
+    ViewData["Title"] = "Surveillance Propose";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@section Style{
+    <style>
+
+        .redStar {
+            color: red;
+        }
+
+        #statusTable tbody tr {
+            cursor: pointer;
+        }
+
+        .loading-image {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+        }
+
+        .loader {
+            display: none;
+            width: 200px;
+            height: 200px;
+            position: fixed;
+            top: 50%;
+            left: 40%;
+            text-align: center;
+            margin-left: -40px;
+            margin-top: -100px;
+            z-index: 2;
+            overflow: auto;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black; font-weight:bold">Surveillance Propose</h5>
+        <hr>
+        @*<div class="row" style="margin-top:0;margin-left:2px;">
+            <div class="col-lg-3 col-md-3 col-sm-3" style="padding:0;">
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="form-group row">
+                    <div class="col-sm-4 col-md-4 col-lg-4" style="overflow:hidden;padding:0;">
+                        <label class="control-label input-sm" style="float:left;margin-right:0">FROM</label>
+                    </div>
+                    <div class="col-sm-8 col-md-8 col-lg-8" style="padding:0;">
+                        <span style="float:left;padding-right: 1%;"> : </span>
+                        <input type="text" class="form-control input-sm" id="fdate" name="" placeholder="" style="width:96%;" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="form-group row">
+                    <div class="col-sm-4 col-md-4 col-lg-4" style="overflow:hidden;padding:0;">
+                        <label class="control-label input-sm" style="float:left;margin-right:0">TO</label>
+                    </div>
+                    <div class="col-sm-8 col-md-8 col-lg-8" style="padding:0;">
+                        <span style="float:left;padding-right: 1%;"> : </span>
+                        <input type="text" class="form-control input-sm" id="tdate" name="" placeholder="" style="width:96%;" />
+                    </div>
+                </div>
+            </div>
+            <img id="xxxx" class="loading-image" src="~/Upload/logo/load.gif" alt="loading.." style="display:none">
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <input type="button" class="btn-sm btn btn-info" id="dateSearch" onclick="GetProposeList()" value="Search" />
+            </div>
+
+        </div>*@
+        <div class="container">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-8 row border" style="border:solid;">
+
+                        <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdBdPerson" value="3" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">BD Person</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="bdPerson" name="bdPerson" placeholder="BD Person" style="width:96%;" />
+                                    <input type="hidden" id="bdPersonasp" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-lg-6 col-sm-6 col-md-6" style="margin-top:2px">
+
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdTlName" value="1" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Bank Name</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="tlName" name="tlName" placeholder="Bank Name" style="width:96%;" />
+                                    <input type="hidden" id="tlasp" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+                                    <input class="form-horizontal" type="checkbox" id="rdFaName" value="2" name="filterType" style="float:left;margin-top:3px" />
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Branch Name</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="faName" name="faName" placeholder="Branch Name" style="width:96%;" />
+                                    <input type="hidden" id="faasp" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 row">
+                        <div class="col-lg-12 col-sm-4 col-md-4">
+
+
+                            <img id="xxxx" class="loading-image" src="~/Upload/logo/load.gif" alt="loading.." style="display:none">
+                            <div class="form-group row">
+                                <div class="col-sm-1">
+
+                                </div>
+                                <div class="col-sm-4" style="overflow:hidden;padding:0;">
+                                    <label class="control-label input-sm" style="float:left;margin-right:0">Account Name</label>
+                                </div>
+                                <div class="col-sm-7 col-md-7 col-lg-7" style="padding:0;">
+                                    <span style="float:left;padding-right: 1%;"> : </span>
+                                    <input type="text" class="form-control input-sm " id="accName1" name="accName1" placeholder="Account Name" style="width:96%;" />
+
+                                    <input type="hidden" id="accName1asp" />
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-lg-2 col-md-2 col-sm-2" style="padding-right:0;">
+
+                    </div>
+                    <div class="col-lg-7 col-md-5 col-sm-5">
+
+                    </div>
+
+                    <div class="col-lg-3">
+                        <input type="button" id="AllSearch" value="Search" class="btn-sm btn btn-info" />&nbsp;&nbsp;
+                        @*<input type="button" id="allrefresh" value="Export To Excel" class="btn-sm btn btn-danger " />*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <h5 class="card-title" style="color: black">List to Proposal</h5>
+        <hr>
+        <div class="container">
+            <form id="frmProposal" aria- data-parsley-validate="parsley" autocomplete="off">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <table class="table table-bordered table-striped table-responsive" id="tblitemDetails" width="100%" data-parsley-required="true">
+                    <thead style="background-color:lightgray;">
+                        <tr>
+                            <th style="width:10%">Action</th>
+                            <th style="width:12%">Client Name</th>
+                            <th style="width:10%">Rating Type</th>
+                            <th style="width:7%">Year</th>
+                            <th style="width:10%">Date</th>
+                            <th style="width:10%">Bank kName</th>
+                            <th style="width:10%">Branch Name</th>
+                            <th style="width:10%">Lead Owner</th>
+                            <th style="width:10%">Last Status</th>
+                            <th style="width:10%">Valid Till</th>
+                            <th style="width:10%">Ageing</th>
+                            <th style="width:15%;text-align:right;">Agree. Amount</th>
+                            <th style="width:10%;text-align:right;">Rating Fees</th>
+                            <th style="width:10%;text-align:right;">Vat Amount</th>
+                            <th style="width:10%;text-align:right;">Tax Amount</th>
+                            <th style="width:10%;text-align:right;">Total Amount</th>
+
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        function ajaxGetFIById(response) {
+
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankName;
+
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#tlName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#tlName").val(ui.item.value);
+                    $("#tlasp").val(ui.item.value);
+                    Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + ui.item.key, [], 'json', ajaxGetBranchByBankId);
+                }
+            });
+        }
+        function ajaxGetBranchByBankId(response) {
+            //var options = '<option value="">Select</option>';
+            //$.each(response, function (i, item) {
+            //    options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            //});
+            //$('#bankBranchDetailsId').empty();
+            //$('#bankBranchDetailsId').append(options);
+            console.log(response);
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.bankBranch.branchName;
+                //obj.designation = option.designation;
+                //obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#faName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#faName").val(ui.item.value);
+                    $("#faasp").val(ui.item.value);
+
+                }
+            });
+        }
+        function ajaxGetCRMEmployees(response) {
+            console.log();
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.nameEnglish;
+                obj.emailAddress = option.emailAddress;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#bdPerson').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#bdPerson").val(ui.item.value);
+                    $("#bdPersonasp").val(ui.item.employeeCode);
+
+                }
+            });
+        }
+        $(document).ready(function () {
+            $('#tblitemDetails').DataTable();
+            $("#fdate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#tdate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBankByFIId/?Id=' + 0, [], 'json', ajaxGetFIById, false);
+            Common.Ajax('GET', '/global/api/GetEmployeeInfoCRMAnalyst', [], 'json', ajaxGetCRMEmployees, false);
+            var preDate = getPurchaseDate(new Date(Date.now() - 365 * 24 * 60 * 60 * 1000));
+            var postDate = getPurchaseDate(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
+          
+            $('#xxxx').show();
+            Common.Ajax('GET', '/CRMLead/Surveillance/GetAgreementDetailsbyRatingDate/?FDate=' + preDate + '&TDate=' + postDate, [], 'json', ajaxGetAgreementDetailsbyRatingDate);
+             $("#accName1").keydown(function () {
+                // alert("bb");
+                $("#rdTlName").prop("checked", false);
+                $("#rdFaName").prop("checked", false);
+                $("#rdBdPerson").prop("checked", false);
+             
+                $("#tlName").val('');
+                $("#tlasp").val('');
+                $("#faName").val('');
+                $("#faasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+                $("#bdPerson").val('');
+                $("#bdPersonasp").val('');
+               
+            });
+            $("#rdTlName").change(function () {
+               
+                if ($("input[Id='rdTlName']:checked").val() != 1) {
+                    $("#tlName").val('');
+                    $("#tlasp").val('');
+
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdFaName").change(function () {
+
+               
+                if ($("input[Id='rdFaName']:checked").val() != 2) {
+                    $("#faasp").val('');
+                    $("#faName").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+            $("#rdBdPerson").change(function () {
+                
+                if ($("input[Id='rdBdPerson']:checked").val() != 3) {
+                    $("#bdPerson").val('');
+                    $("#bdPersonasp").val('');
+                }
+                else {
+                    $("#accName1").val('');
+                }
+
+            });
+        
+
+           
+            $("#AllSearch").click(function () {
+              
+                var TeamLeader = $("#tlasp").val();
+
+                if (TeamLeader == "") {
+                    TeamLeader = "NoData"
+                }
+                if ($("input[Id='rdTlName']:checked").val() == 1) {
+                    if (TeamLeader == "NoData") {
+                        swal("Please Enter Bank Name.");
+                        return false;
+                    }
+
+                }
+                var Fa = $("#faasp").val();
+                if (Fa == "") {
+                    Fa = "NoData"
+                }
+                if ($("input[Id='rdFaName']:checked").val() == 2) {
+                    if (Fa == "NoData") {
+                        swal("Please Enter Branch Name.");
+                        return false;
+                    }
+
+                }
+                var BD = $("#bdPersonasp").val();
+                if (BD == "") {
+                    BD = "NoData"
+                }
+                if ($("input[Id='rdBdPerson']:checked").val() == 3) {
+
+                    if (BD == "NoData") {
+                        swal("Please Enter BD Person.");
+                        return false;
+                    }
+
+                }
+                var LeadId = $("#accName1").val();
+                
+
+                if (LeadId == "") {
+                    LeadId = "NoData"
+                }
+                $('#xxxx').show();
+                Common.Ajax('GET', '/CRMLead/Surveillance/GetAgreementDetailsbyRatingDateS/?FDate=' + preDate + '&TDate=' + postDate + '&TeamLeader=' + TeamLeader + "&Fa=" + Fa + "&BD=" + BD + "&LeadId=" + LeadId, [], 'json', ajaxGetAgreementDetailsbyRatingDate);
+                //Common.Ajax('GET', '/global/api/GetAllClientListS/'  + TeamLeader + "/" + Fa + "/" + BD + "/" + LeadId , [], 'json', ajaxGetMaster);
+                //GetAllClientDataS(TeamLeader,Fa,BD,LeadId);
+
+
+            });
+
+        });
+
+        function GetProposeList() {
+            $('#xxxx').show();
+            Common.Ajax('GET', '/CRMLead/Surveillance/GetAgreementDetailsbyRatingDate/?FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val(), [], 'json', ajaxGetAgreementDetailsbyRatingDate);
+
+        }
+
+        function ajaxGetAgreementDetailsbyRatingDate(response) {
+            console.log(response);
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            $('#tblitemDetails').DataTable().destroy();
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblitemDetails tbody").empty();
+            $.each(response, function (key, value) {
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td><a onclick="EditProposeTbl(' + index + "," + value.ratingYearId + ", " + value.agreementId + "," + value.Id + ')"  title="Propose" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a ></td>' +
+                    '<td>' + value.leadName + '<input type="hidden" id="leadName' + index + '" name="leadName" class="clsleadName" value="' + value.leadName + '"/></td>' +
+                    '<td>' + value.ratingTypeName + '</td>' +
+                    '<td>' + value.ratingYearName + '</td>' +
+                    '<td>' + getPurchaseDate(value.ratingDate ?.toString("dd-MMM-yyyy")) + '</td>' +
+                    '<td>' + value.bankName + '</td>' +
+                    '<td>' + value.BranchName + '</td>' +
+                    '<td>' + value.leadOwner + '</td>' +
+                    '<td>' + value.jobStatusName + '</td>' +
+                    '<td>' + value.Validtill + '</td>' +
+                    '<td>' + value.Ageing + '</td>' +
+
+                    '<td style="text-align:right;">' + value.agreementAmount + '</td>' +
+                    '<td style="text-align:right;">' + value.ratingAmount + '</td>' +
+                    '<td style="text-align:right;">' + value.vatAmount + '</td>' +
+                    '<td style="text-align:right;">' + value.taxAmount + '</td>' +
+                    '<td style="text-align:right;">' + value.totalAmount + '</td>' +
+
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            //index = index + 1;
+            $('#tblitemDetails').DataTable();
+            $('#xxxx').hide();
+        }
+        function EditProposeTbl(index, ratingYearId, agreementId, Id) {
+            window.location.href = "/CRMLead/Surveillance/SurveillanceProposal?id=" + agreementId + '&FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val();
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+
+
+    </script>
+}
+
+

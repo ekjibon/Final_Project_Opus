@@ -1,0 +1,102 @@
+﻿@model GeneralInformationViewModel
+@{
+    ViewData["Title"] = "General Information";
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header row">
+        <div class="col-md-10">
+            <h6 class="m-0 font-weight-bold text-primary">General Information</h6>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-sm btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/Index/@Model?.registrationForm?.Id">Back To List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSInformation" asp-controller="GeneralInformation" asp-action="EditGI" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Company Name </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="companyName" name="companyName" value="@Model?.registrationForm?.companyName" data-parsley-required="true" />
+                            <input type="hidden" id="companyId" name="companyId" value="@Model?.registrationForm?.Id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Trade License Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="tradeLicenseNumber" name="tradeLicenseNumber" value="@Model?.registrationForm?.tradeLicenseNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">eTin Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="eTinNumber" name="eTinNumber" value="@Model?.registrationForm?.eTinNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">VAT Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="vatNumber" name="vatNumber" value="@Model?.registrationForm?.vatNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Contact Person Name </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="contactPersonName" name="contactPersonName" value="@Model?.registrationForm?.contactPersonName" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Contact Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="contactNumber" name="contactNumber" value="@Model?.registrationForm?.contactNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Company Email </span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="companyEmail" name="companyEmail" value="@Model?.registrationForm?.companyEmail" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Alternative Email </span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="alternativeEmail" name="alternativeEmail" value="@Model?.registrationForm?.alternativeEmail" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                    @*<a class="btn btn-danger btn-sm" href="/VEMSHome/VendorHome/Index" style="float:right;" onclick=""><i class="fa fa-times"></i> Cancel</a>*@
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

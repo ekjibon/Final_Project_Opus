@@ -1,0 +1,552 @@
+﻿@model BOMViewModel
+@{
+    ViewData["Title"] = "Trade Entry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int masterId = Convert.ToInt32(ViewBag.masterId);
+}
+<link href="~/SweetAlert/sweetalert2.css" rel="stylesheet" />
+<div class="card p-0 m-0">
+    <div class="row">
+        <div class="col-sm-10">
+            <h5 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;">Trade Information</h5>
+        </div>
+        <div class="col-md-2 pull-right" style="padding-top:2px">
+            <button type="button" class="btn btn-default btn-sm pull-right" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("TradeList", "Trade")'">Back To List</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="frmTrade" aria- data-parsley-validate="parsley" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Trade Basic</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="bomNo" class="col-sm-4 col-form-label text-left">Trade No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="bomNo" id="bomNo" readonly value="@ViewBag.bomNo" />
+                                    <input type="hidden" id="bOMMasterId" name="bOMMasterId" value="0" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="bomItemName" class="col-sm-4 col-form-label text-left">Trade Item Name<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="bomItemName" id="bomItemName">
+                                    <input type="hidden" name="bomItemsId" id="bomItemsId" value="0" />
+
+
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="itemSpecification" class="col-sm-4  col-form-label">Item Specification<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="hidden" id="bomitemSpecificationId" name="bomitemSpecificationId" />
+                                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="bomitemSpecificationName" id="bomitemSpecificationName">
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="bomItemDescription" class="col-sm-4 col-form-label text-left">Trade Item Description</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control input-group-sm" name="bomItemDescription" id="bomItemDescription"></textarea>
+
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="bomQty" class="col-sm-4 col-form-label">Quantity<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="bomQty" id="bomQty" min="0">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Unit" class="col-sm-4 col-form-label">Unit</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="bomunit" id="bomunit" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="row">
+                        <div class="col-sm-12 p-0">
+
+                            <div class="form-group row">
+                                <label for="itemSpecification" class="col-sm-2  col-form-label">Item Specification<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-10" style="padding-right: 28px;">
+                                    <input type="hidden" id="bomitemSpecificationId" name="bomitemSpecificationId" />
+                                    <input style="margin-left: 5px" type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="bomitemSpecificationName" id="bomitemSpecificationName">
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+            
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Overhead Details</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="ledgerName" class="col-sm-4 col-form-label">Account Name<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="ledgerName" id="ledgerName">
+                                    <input type="hidden" name="legersId" id="legersId" value="0" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="costs" class="col-sm-4 col-form-label">Cost<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="costs" id="costs" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row" id="CostType">
+                                <label for="Unit" class="col-sm-4 col-form-label">Cost Type</label>
+                                <div class="col-sm-8">
+                                    <select name="costTypes" id="costTypes" class="form-control input-group-sm input-group-text bg-white">
+                                        <option value="Direct">Direct</option>
+                                        <option value="InDirect">InDirect</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <button type="button" onclick="AddOverheadDetails()" value="Add" title="Add" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+
+                        <input type="hidden" id="detailsIdOverhead" name="detailsIdOverhead" value="0" />
+                        <input type="hidden" id="IsEditOverhead" name="IsEditOverhead" value="0" />
+                        <div class="col-12">
+                            <table class="table table-bordered table-striped" id="tblitemDetailsOverhead" data-parsley-required="true">
+                                <thead style="width:100%;background-color:lightgray;">
+                                    <tr>
+                                        <th style="width:50%">Account Name</th>
+                                        <th style="width:20%">Cost Type</th>
+                                        <th style="width:15%;text-align:right;">Cost</th>
+                                        <th style="width:15%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-8">&nbsp;</div>
+                        <label for="totalAmountOverhead" class="col-sm-1 col-form-label" style="text-align:left;">Total </label>
+                        <div class="col-sm-2" style="padding-right: 45px;margin-left: -34px;">
+                            <input type="text" class="form-control" name="totalAmountOverhead" id="totalAmountOverhead" style="text-align:right;" readonly>
+                        </div>
+                        <div class="col-sm-1">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+
+            <div class="row">
+                <div class="col-md-9">
+
+                </div>
+                <div class="col-md-3" style="text-align:right">
+                    <input type="button" onclick="RefreshAll()" id="btnRefesh" value="Refresh" class="btn btn-outline-secondary btn-sm" style="width:90px;" />&nbsp;&nbsp;
+                    <input type="submit" id="btnSave" value="Save" class="btn btn-info btn-sm" style="width:90px;" />
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+
+</div>
+
+
+
+
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="~/SweetAlert/sweetalert2.common.js"></script>
+    <script src="~/SweetAlert/sweetalert2.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            Common.Ajax('GET', '/global/api/GetItemForTrade', [], 'json', ajaxGetAllItem);
+            Common.Ajax('GET', '/api/global/getLedersForOverhead/', [], 'json', GetLedgerForParticular);
+
+            $('#Qty').keyup(function () {
+                checkvalidQty();
+            })
+
+             if (@masterId>0) {
+                 Common.Ajax('GET', '/Production/BOM/GetBOMMasterById/?BOMMasterId=' + @ViewBag.masterId, [], 'json', ajaxGetBOMMasterById);
+                 
+                 Common.Ajax('GET', '/Production/BOM/GetBOMOverheadDetailByBOMMasterId/?BOMMasterId=' + @ViewBag.masterId, [], 'json', ajaxGetOverheadDetailByBOMMasterId);
+            }
+
+            $("#btnSave").click(function (e) {
+                let rowCount = $("#tblitemDetailsOverhead tbody>tr").length;
+                if ($("#bomitemSpecificationId").val() == "0") {
+                    alert("Please Enter Trade Item Specification Name.!!!");
+                    return false;
+                }
+
+                if (rowCount<1) {
+                    alert("Please Add Item from Overhead Details!!!");
+                    return false;
+                }
+                e.preventDefault();
+
+                var form = $("#frmTrade");
+                $.ajax({
+                    url:'/Production/Trade/Index',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+
+                            swal({
+                                title: '', text: 'Save Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                            }).then(function () {
+                                //window.location.href = "/Production/BOM/BOMDetail?id=" + records;
+                                window.location.href = "/Production/Trade/TradeList";
+                            });
+
+
+
+
+                    }
+                });
+            });
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+
+        });
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        function ajaxGetAllItem(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                obj.unitName = option.unit.unitName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+           
+            $('#bomItemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#bomItemsId").val(ui.item.key);
+                    $("#bomunit").val(ui.item.unitName);
+                    $("#bomitemSpecificationId").val('');
+                    $("#bomitemSpecificationName").val('');
+                    Common.Ajax('GET', '/global/api/ItemSpec/' + ui.item.key, [], 'json', ajaxGetbomItemSpacification);
+
+                }
+            });
+        }
+        function ajaxGetbomItemSpacification(response) {
+
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                console.log(option);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#bomitemSpecificationName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#bomitemSpecificationId").val(ui.item.key);
+
+                }
+            });
+        }
+        function GetLedgerForParticular(response) {
+            $('#ledgerName').empty();
+            $("#legersId").val('');
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.ledgerId = option.ledgerId;
+                obj.haveSubLedger = option.haveSubLedger;
+
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                obj.accountCode = option.accountCode;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#ledgerName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#ledgerName').val(ui.item.value);
+                    $("#legersId").val(ui.item.ledgerId);
+                    
+                }
+            });
+        }
+        function RefreshAll() {
+            window.location.href = "/Production/Trade/Index?id=" + 0;
+
+        }
+      
+        function ajaxGetBOMMasterById(response) {
+            $("#bOMMasterId").val(response.Id);
+            $("#bomNo").val(response.bomNo);
+            $("#bomitemSpecificationId").val(response.itemSpecificationId);
+            $("#bomItemName").val(response.itemSpecification.Item.itemName);
+            $("#bomitemSpecificationName").val(response.itemSpecification.specificationName);
+            $("#bomItemDescription").val(response.bomItemDescription);
+            $("#bomQty").val(response.quantity);
+            $("#bomunit").val(response.itemSpecification.Item.unit.unitName);
+
+        }
+
+       
+
+        function AddOverheadDetails() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex2");
+
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetailsOverhead tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetailsOverhead tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsIdOH").val();
+            }
+
+            if ($("#ledgerName").val() == "") {
+                alert("Plaese Enter Valid Account Name.");
+                return false
+            }
+
+            if ($("#legersId").val() == "" || $("#legersId").val() == "0") {
+
+                alert("Plaese Enter Valid Account Name.");
+                return false
+            }
+
+            if ($("#costs").val() == "") {
+                alert("Plaese Enter Valid Cost.");
+                return false
+            }
+            if ($("#costTypes").val() == "") {
+                alert("Plaese Select Cost Type!");
+                return false
+            }
+
+
+            let id = parseInt($("#detailsIdOverhead").val()) ? parseInt($("#detailsIdOverhead").val()) : 0;
+            var ledgerName = $("#ledgerName").val();
+            var legersId = $("#legersId").val();
+            var costs = parseFloat($("#costs").val());
+            var costTypes = $("#costTypes").val();
+            if (costTypes == null) {
+                alert("Plaese Select Cost Type!");
+                return false
+            }
+
+            var RowCount = $("#tblitemDetailsOverhead tbody>tr").length;
+            var editOption = parseInt($('#IsEditOverhead').val()) ? parseInt($('#IsEditOverhead').val()) : 0;
+
+            for (i = 0; i < RowCount; i++) {
+                var _ledgerId = $("#ledgerId" + i).val();
+
+                if (_ledgerId == legersId && editOption == 0) {
+                    alert('You have already added this Account!');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblitemDetailsOverhead");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + ledgerName + '<input type="hidden" name="id"class="clsIdOH" value="' + id + '"><input type="hidden" id="ledgerId' + index + '" name="ledgerId" class="clsledgerId" value="' + legersId + '"/></td>' +
+                '<td>' + costTypes + '<input type="hidden" id="costType' + index + '" name="costType" class="clscostType" value="' + costTypes + '"/></td>' +
+                '<td style="text-align:right;">' + costs + '<input type="hidden" id="cost' + index + '" name="cost" class="clscost" value="' + costs + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteOverhead(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                //'<a onclick="EditTblOverhead(' + index + "," + legersId + ", " + costs + ", `" + ledgerName + "`,  '" + costTypes + "',  " + id  + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetailsOverhead tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex2", null);
+                ifExistIndex = null;
+            }
+            fnGrandTotalOverhead();
+            RefreshOverhead();
+        }
+        function EditTblOverhead(index, legersId, costs, ledgerName, costTypes, Id) {
+            var rightIndex = index;
+            $("#IsEditOverhead").val(1);
+            $('#detailsIdOverhead').val(Id);
+            $('#legersId').val(legersId);
+            $('#costs').val(costs);
+            $('#ledgerName').val(ledgerName);
+            $('#costTypes').val(costTypes);
+
+            window.localStorage.setItem('holdIndex2', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex2', rightIndex);
+            }
+        }
+
+        function RefreshOverhead() {
+            $("#IsEditOverhead").val('');
+            $('#detailsIdOverhead').val('');
+            $('#legersId').val('');
+            $('#costs').val('');
+            $('#ledgerName').val('');
+            $('#costTypes').val('');
+
+            window.localStorage.setItem("holdIndex2", null);
+            ifExistIndex = null;
+        }
+
+        function DeleteOverhead(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblitemDetailsOverhead #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success');
+                fnGrandTotalOverhead();
+            });
+
+        }
+
+        function ajaxGetOverheadDetailByBOMMasterId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex2");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetailsOverhead tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetailsOverhead tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsIdOH").val();
+            }
+            $("#tblitemDetailsOverhead tbody>tr").empty();
+            $.each(response, function (key, value) {
+                itemtotalAmount = value.quantity * value.rate;
+                index = $("#tblitemDetailsOverhead tbody>tr").length;
+                var dtTable = $("#tblitemDetailsOverhead");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.ledger.accountName + '<input type="hidden" name="id"class="clsIdOH" value="' + value.Id + '"><input type="hidden" id="ledgerId' + index + '" name="ledgerId" class="clsledgerId" value="' + value.ledgerId + '"/></td>' +
+                    '<td>' + value.costType + '<input type="hidden" id="costType' + index + '" name="costType" class="clscostType" value="' + value.costType + '"/></td>' +
+                    '<td style="text-align:right;">' + value.cost + '<input type="hidden" id="cost' + index + '" name="cost" class="clscost" value="' + value.cost + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteOverhead(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    //'<a onclick="EditTblOverhead(' + index + "," + value.ledgerId + ", " + value.cost + ", `" + value.ledger.accountName + "`,  `"  + value.costType + "', " + value.Id  + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetailsOverhead tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex2", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+            fnGrandTotalOverhead();
+        }
+        function fnGrandTotalOverhead() {
+            var totalAmountOH = 0;
+
+            $(".clscost").each(function () {
+                totalAmountOH += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            });
+
+            $("#totalAmountOverhead").val(totalAmountOH.toFixed(2));
+        }
+
+        function GetTradeNo() {
+            Common.Ajax('GET', '/api/global/GetTradeNo/' + [], 'json', setAutoNumber);
+        }
+
+        function setAutoNumber(response) {
+            $('#bomNo').val(response);
+        }
+    </script>
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+
+
+
+
+
+
+

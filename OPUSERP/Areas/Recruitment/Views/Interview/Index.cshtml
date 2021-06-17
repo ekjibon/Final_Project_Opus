@@ -1,0 +1,231 @@
+﻿@model InterviewCallingViewModel
+@{
+    ViewData["Title"] = "Interview calling";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+}
+<br /><hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Valid Candidate List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="jobRequisitionTable">
+                    <thead>
+                        <tr>
+                            <th>Job No</th>
+                            <th>Designation</th>
+                            <th>Requisition Date</th>
+                            <th>Appointment Date</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.candidateInfos)
+                        {
+                            <tr>
+                                <td>@data.candidateName</td>
+                                @*<td>@data.</td>*@
+                                <td>@data.dateOfBirth</td>
+                                <td>@data.email</td>
+                                <td>@data.mobile</td>
+                                <td>@data.gender</td>
+                                <td>@data.religion</td>
+                                <td>@data.status</td>
+                                <td>
+                                    <a href="#" class="btn btn-facebook" data-toggle="modal" data-target="#interviewModal" style="font-size:12px;width:40%;" onclick="AddValue(@data.Id,'@data.candidateName','@data.candidateName','@data.candidateName','@data.email','@data.mobile','@data.gender','@data.religion','@data.status')"><span data-toggle="tooltip" title='Interview Scheduling'><i class="fas fa-info"></i></span></a>
+                                    @*<button class="btn btn-info" data-toggle="modal" data-target="#jobPostingModal" title="Reject" type="submit" onclick="AddValue(@data.Id)"><i class="fa fa-eye"></i></button>*@
+                                    <a href="#" class="btn btn-info" data-toggle="modal" data-target="#jobPostingModal" style="font-size:12px;width:40%;"><span data-toggle="tooltip" onclick="ReqAdd(@data.Id)" title='Interview Scheduling'><i class="fas fa-plus-square"></i></span></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="interviewModal" tabindex="-1" role="dialog" aria-labelledby="interviewModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Interview Scheduling</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-area="Recruitment" asp-controller="Interview" asp-action="Index" method="post" data-parsley-validate="parsley">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="form-group row">
+                        <input type="hidden" name="jobId" id="jobId" value="0" />
+                        <input type="hidden" name="reqId" id="reqId" value="0" />
+                        <input type="hidden" name="candidateId" id="candidateId" value="0" />
+
+                        <label for="interviewType" class="col-sm-2 col-form-label">Interview Type</label>
+                        <div class="col-sm-4">
+                            <input type="checkbox" data-parsley-required="true" class="form-control" name="interviewType" id="interviewType" />Written
+                            <input type="checkbox" data-parsley-required="true" class="form-control" name="interviewType" id="interviewType" />Viva
+                            @*<input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="interviewType" id="interviewType">*@
+                        </div>
+
+                        <label for="venue" class="col-sm-2 col-form-label">Venue</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="venue" id="venue">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="interviewDate" class="col-sm-2 col-form-label">Interview Date</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="interviewDate" id="interviewDate">
+                        </div>
+
+                        <label for="interviewTime" class="col-sm-2 col-form-label">Interview Time</label>
+                        <div class="col-sm-4">
+                            <input type="time" class="form-control" name="interviewTime" id="interviewTime">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="communicationType" class="col-sm-2 col-form-label">Communication Type</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="communicationType" id="communicationType">
+                        </div>
+
+                        <label for="status" class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" name="status" id="status">
+                        </div>
+                    </div>
+                    <hr>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+                @*<div class="card" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: black">Interview calling</h5>
+                        <hr>
+                        <div class="container">
+                            <form asp-area="Recruitment" asp-controller="Interview" asp-action="Index" method="post" data-parsley-validate="parsley">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                <div class="form-group row">
+                                    <input type="hidden" name="jobId" id="jobId" value="0" />
+                                    <input type="hidden" name="reqId" id="reqId" value="0" />
+                                    <input type="hidden" name="candidateId" id="candidateId" value="0" />
+
+                                    <label for="interviewType" class="col-sm-2 col-form-label">Interview Type</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="interviewType" id="interviewType">
+                                    </div>
+
+                                    <label for="venue" class="col-sm-2 col-form-label">Venue</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="venue" id="venue">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="interviewDate" class="col-sm-2 col-form-label">Interview Date</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="interviewDate" id="interviewDate">
+                                    </div>
+
+                                    <label for="interviewTime" class="col-sm-2 col-form-label">Interview Time</label>
+                                    <div class="col-sm-4">
+                                        <input type="time" class="form-control" name="interviewTime" id="interviewTime">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="communicationType" class="col-sm-2 col-form-label">Communication Type</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="communicationType" id="communicationType">
+                                    </div>
+
+                                    <label for="status" class="col-sm-2 col-form-label">Status</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" name="status" id="status">
+                                    </div>
+                                </div>
+                                <hr>
+                                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>*@
+
+                <br />
+                <hr />
+                <div class="row clearfix">
+                    <div class="col-12">
+                        <div class="card mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Title</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <table class="table table-striped table-bordered" id="interviewTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Interview Type</th>
+                                            <th>Venue</th>
+                                            <th>Interview Date</th>
+                                            <th>Interview Time</th>
+                                            @*<th>organization</th>
+                                                <th>action</th>*@
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var data in Model.interviewCallings)
+                                        {
+                                            <tr>
+                                                <td>@data.interviewType</td>
+                                                <td>@data.venue</td>
+                                                <td>@data.interviewDate</td>
+                                                <td>@data.interviewTime</td>
+                                                <td>
+                                                    @*<a class="btn btn-success" onclick="Edit(@data.Id, '@data.awardName', '@data.awardNameBn', '@data.awardShortName')" href="#"><i class="fa fa-edit"></i></a>*@
+                                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-alt"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @section Scripts{
+                    <script>
+                        $(document).ready(function () {
+                            $('#interviewDate').flatpickr({ dateFormat: "d-M-Y" });
+                            $('#jobRequisitionTable').DataTable();
+                        });
+
+                        function Edit(Id, awardName, awardNameBn, awardShortName) {
+                            $("#awardId").val(Id);
+                            $("#awardName").val(awardName);
+                            $("#awardNameBn").val(awardNameBn);
+                            $("#awardShortName").val(awardShortName);
+                        }
+
+                        function ReqAdd(id) {
+                            $("#candidateId").val(id);
+                        }
+                    </script>
+                }

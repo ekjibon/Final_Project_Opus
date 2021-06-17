@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header">
+        <h1>Login </h1>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSHome" asp-controller="VendorHome" asp-action="Login" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-3"><span class="col-form-label">Email </span></div>
+                        <div class="col-9">
+                            <input type="text" class="form-control" id="loginId" name="loginId" data-parsley-required="true" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-3"><span class="col-form-label">Password </span></div>
+                        <div class="col-9">
+                            <input type="password" class="form-control" id="password" name="password" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-user-check"></i> Login</button>
+                            <a class="btn btn-danger btn-sm" href="/VEMSHome/VendorHome/Index" style="float:right;" onclick=""><i class="fa fa-times"></i> Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </form>
+    </div>
+</div>

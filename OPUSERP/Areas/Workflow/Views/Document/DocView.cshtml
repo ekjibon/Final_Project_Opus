@@ -1,0 +1,85 @@
+﻿@model DocumentViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_WMS.cshtml";
+
+}
+
+<htmlpageheader name="page-header">
+    <p style="text-align: center;">@Model.doc.doc.noteType</p>
+</htmlpageheader>
+
+<div class="mainlayoutLeft">
+
+    <h3 class="docNo">@Model.doc.doc.number</h3>
+    <p class="subject" style="margin: 10px 0px 0px 0px; text-transform: uppercase;"><B><u>@Model.doc.doc.subject</u></B></p>
+
+    <div class="description" style="margin: 20px 0px 0px 0px;">@Model.doc.doc.content</div>
+
+
+    <div class="sincerely">
+        <img src="~/@Model.doc.employeeSignature.url" alt="" height="30px;" width="120px">
+        <p style="margin: 1px; font-size: 13px;">@Model.doc.doc.employee.nameEnglish</p>
+        <p style="margin: 1px; font-size: 13px; padding-bottom: 5px; ">@Model.doc.doc.employee?.designation</p>
+    </div>
+
+    <div style=" width: 100%; text-align: left; padding-left: 67%;">
+        <p style="margin: 1px; font-size: 13px;">@Model.doc.doc.Date?.ToString("dd MM yyyy")</p>
+    </div>
+
+    @*@foreach( $Routing as $dataR)
+        @if($dataR->sequence == 1) @continue; @endif*@
+    @foreach (var data in Model.docRoute)
+    {
+        @if (data.docRoute.order == 1)
+        {
+            continue;
+        }
+
+        <div class="comment">
+            <p style="margin: 1px; font-size: 14px;"><B><U>@data.docRoute.employee.nameBangla</U></B></p>
+            @if (data.docRoute.action != null)
+            {
+                <p style=" margin: 25px 0px 0px 0px; min-width: 20px; ">@data?.docRoute?.action?.description</p>
+                <div style="text-align: left; padding-left: 75%;">
+                    <br><br>
+                    <img src="~/@data.employeeSignature.url" alt="" height="30px;" width="120px" align="right">
+                    <p style="margin: 5px; font-size: 13px; margin-left: 10px">@data.docRoute.action.createdAt</p>
+                </div>
+            }
+        </div>
+    }
+
+</div>
+<div class="mainlayoutRight">
+    <p><i><u>Encl</u></i></p>
+    <div class="attatchMents">
+        @foreach (var data in Model.docAttachment)
+        {
+            <p>@data.title</p>
+        }
+    </div>
+</div>
+
+@*@for ($i = 0;$i < count($nots);$i++)
+    <pagebreak></pagebreak>
+        <div style="width: 100%; text-align: center"><h3>Note :{{$i+1}}</h3></div>
+        <div style="width: 100%; padding-right: 70px;">
+
+            <div class="note">
+                <p class="description">{{ $nots[$i]->content }} </p>
+            </div>
+
+            <div class="sincerely2">
+                <img src="{{asset($nots[$i]->designation->user->signature)}}" alt="" height="30px;" width="120px">
+                <p style="margin: 5px; font-size: 16px;"><B>{{$nots[$i]->designation->name}}</B></p>
+                <p style="margin: 5px; font-size: 13px;">{{$nots[$i]->designation->user->name}}</p>
+            </div>
+        </div>
+
+        @endfor*@
+
+@*<htmlpagefooter name="page-footer">
+    <p style="text-align: center;">@Model.doc.doc.noteType</p>
+</htmlpagefooter>*@

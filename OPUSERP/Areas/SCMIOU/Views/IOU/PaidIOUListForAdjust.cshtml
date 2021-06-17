@@ -1,0 +1,103 @@
+﻿@model IOUViewModel
+@{
+    ViewData["Title"] = "IOU List For Adjustment";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">IOU List For Adjustment</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreatePO", "PurchaseOrder")'">Create IOU</button>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="paidIOUListTable">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>IOU Date</th>
+                            <th>IOU No</th>
+                            <th>Payment Date</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.iOUPayments)
+                        {
+                        <tr>
+                            <td>@data.IOU?.project?.projectName</td>
+                            <td>@data.IOU?.iouDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.IOU?.iouNo</td>
+                            <td>@data.paymentDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.paymentAmount?.ToString("0.00")</td>
+                            <td>
+                                <a class="btn btn-info" href="/SCMIOU/IOU/IOUAdjust?id=@data.Id"><i class="fa fa-cogs"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @*<br />
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">Adjusted IOU List </h6>
+                </div>
+                <div class="col-md-2">
+                   
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="adjustedIOUListTable">
+                    <thead>
+                        <tr>
+                            <th>IOU Date</th>
+                            <th>IOU No</th>
+                            <th>Project</th>
+                            <th>Adjust Date</th>
+                            <th>Payment Amount</th>
+                            <th>Adjusted Amount</th>
+                            <th>Return Amount</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.iOUAdjustments)
+                        {
+                        <tr>
+                            <td>@data.IOU?.iouDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.IOU?.iouNo</td>
+                            <td>@data.IOU?.project?.projectName</td>
+                            <td>@data.adjustmentDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.paymentAmount?.ToString("0.00")</td>
+                            <td>@data.adjustmentAmount?.ToString("0.00")</td>
+                            <td>@data.balance?.ToString("0.00")</td>
+                            
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>*@
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$('#adjustedIOUListTable').DataTable();
+            $('#paidIOUListTable').DataTable();
+        });
+    </script>
+}
+

@@ -1,0 +1,35 @@
+HM6NR-QXX7C-DFW2Y-8B82K-WTYJV    --Visual Studio Product Key
+
+----===*********************************************************
+FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss:fff')
+FORMAT(GETDATE(),'dd/MM/yyyy hh:mm:ss')
+FORMAT(GETDATE(),'dd/MM/yyyy HH:mm:ss tt')
+
+=IIf(First(Fields!PeriodName.Value, "Payroll")="Pronodona Allowance (29/03/2020-27/04/2020)",false,true)
+=IIf(First(Fields!PeriodName.Value, "Payroll") LIKE "*Pronodona*",false,true)
+
+{ field: "ReceiveDate", title: "First GR Date", width: 200, filterable: { multi: true, search: true } },
+
+.replace(/'/g, "''")
+.replace(/\"/g, "&#34")
+, format: "{0:n2}", attributes: { style: "text-align:right !important" }
+, aggregates: ["sum"], footerTemplate: "<div style='float:right'>#= kendo.toString(sum, 'n2')#</div>", attributes: { style: "text-align:right !important" }
+
+ aggregate: [
+                { field: "Amount", aggregate: "sum" },
+            ]
+
+var initialLoad = true;
+, requestStart: function () {
+                if (initialLoad)
+                    kendo.ui.progress($("#Grid"), true);
+            },
+            requestEnd: function () {
+                if (initialLoad)
+                    kendo.ui.progress($("#Grid"), false);
+                initialLoad = false;
+            },
+
+
+=First(IIF(Fields!UpJoiningDate.Value=1,"Red","No Color"), "Preview")
+=IIF(Fields!SummaryIdEs.Value=0,"Red","No Color")

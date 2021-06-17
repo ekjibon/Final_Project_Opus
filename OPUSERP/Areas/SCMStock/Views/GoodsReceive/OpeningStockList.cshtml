@@ -1,0 +1,93 @@
+﻿@model OpeningStockViewModel
+@{
+    ViewData["Title"] = "Opening Stock List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Opening Stock/Purchase List</h6>
+                <a href="/SCMStock/GoodsReceive/OpeningStock?Id=0" style="margin-left:506px" class="btn btn-success btn-sm pull-right">Add New</a>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="ledgerOpeningBalanceTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Item Spec</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Stock/Purchase Date</th>
+                            <th>Stock Type</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.stockDetails)
+                        {
+                            <tr>
+                                <td>@data?.itemSpecification?.Item?.itemName</td>
+                                <td>@data?.itemSpecification?.specificationName</td>
+                                <td>@data.grQty</td>
+                                <td>@data.purchaseRate</td>
+                                <td>@data?.stockMaster?.StockDate?.ToString("dd-MMM-yyyy")</td>
+                                @if (@data?.stockMaster?.stockStatusId == 3)
+                                {
+                                    <td>Opening</td>
+                                }
+                                else if (@data?.stockMaster?.stockStatusId == 1)
+                                {
+                                    <td>Purchase</td>
+                                }
+                                <td>
+                                    <a class="btn btn-info" href="/SCMStock/GoodsReceive/OpeningStock/?Id=@data.stockMaster?.Id" title='Edit/Update'><i class="fa fa-edit"></i></a>
+                                    &nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.stockMaster?.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#ledgerOpeningBalanceTable').DataTable();
+
+        });
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteStockMasterDetailsByMasterId", "GoodsReceive")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/SCMStock/GoodsReceive/OpeningStockList";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}
+
+@section Style{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}

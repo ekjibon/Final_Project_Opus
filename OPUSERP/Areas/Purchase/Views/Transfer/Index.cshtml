@@ -1,0 +1,658 @@
+﻿
+@model TransferViewModel
+@{
+    ViewData["Title"] = "Transfer Entry";
+    //Layout = "~/Areas/Inventory/Views/shared/_InventoryLayout.cshtml";
+    int masterId = Convert.ToInt32(ViewBag.masterId);
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<link href="~/SweetAlert/sweetalert2.css" rel="stylesheet" />
+<div class="card p-0 m-0">
+    <div class="row">
+        <div class="col-sm-10">
+            <h5 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;">Transfer Entry</h5>
+        </div>
+        <div class="col-md-2 pull-right" style="padding-top:2px">
+            <button type="button" class="btn btn-default btn-sm pull-right" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("TransferList", "Transfer")'">Back To List</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="frmTransfer" aria- data-parsley-validate="parsley" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Transfer Information</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="purchaseNo" class="col-sm-4 col-form-label text-left">Transfer No</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" name="transferNO" id="transferNO" readonly value="@ViewBag.transferNO" />
+                                    <input type="hidden" id="transferId" name="transferId" value="0" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="storeFromId" class="col-sm-4 col-form-label text-left">Transfer From<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="storeFromId" name="storeFromId" data-parsley-required="true" data-parsley-trigger="keyup">
+                                        <option value="">Select Store</option>
+                                        @foreach (var data in Model.stores)
+                                        {
+                                            <option value="@data.Id">@data.storeName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+
+                            <div class="form-group row">
+                                <label for="transferDate" class="col-sm-4 col-form-label text-left">Transfer Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="transferDate" id="transferDate" class="form-control input-group-sm" readonly />
+                                    <div class="input-group-prepend">
+                                        <label for="transferDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+                                <label for="storeToId" class="col-sm-4 col-form-label text-left">Transfer To<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="storeToId" name="storeToId" data-parsley-required="true" data-parsley-trigger="keyup">
+                                        <option value="">Select Store</option>
+                                        @foreach (var data in Model.stores)
+                                        {
+                                            <option value="@data.Id">@data.storeName</option>
+                                        }
+                                    </select>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left">Transfer Details</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="itemName" class="col-sm-4 col-form-label">Item Name<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemName" id="itemName">
+                                    <input type="hidden" name="itemsId" id="itemsId" value="0" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="onHand" class="col-sm-4 col-form-label">Blance Quantity</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="onHand" id="onHand" value="0" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 p-0">
+
+                            <div class="form-group row">
+                                <label for="itemSpecification" class="col-sm-2  col-form-label">Item Specification<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-10">
+                                    <input type="hidden" id="itemSpecificationId" name="itemSpecificationId" />
+                                    <input style="margin-left: 5px" type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemSpecificationName" id="itemSpecificationName">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="Unit" class="col-sm-4 col-form-label">Unit</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="unit" id="unit" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+
+
+                            <div class="form-group row">
+                                <label for="quantity" class="col-sm-4 col-form-label">Quantity<span style="float:right;color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control numeric" name="Qty" id="Qty" min="0">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <button type="button" onclick="AdditemDetails()" value="Add" title="Add" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+
+                        <input type="hidden" id="detailsId" name="detailsId" value="0" />
+                        <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                        <div class="col-12">
+                            <table class="table table-bordered table-striped" id="tblitemDetails" data-parsley-required="true">
+                                <thead style="width:100%;background-color:lightgray;">
+                                    <tr>
+                                        <th style="width:17%">Item</th>
+                                        <th style="width:20%">Item Specification</th>
+                                        <th style="width:8%">Unit</th>
+                                        @*<th style="width:15%;text-align:right;">Price</th>*@
+                                        <th style="width:15%;text-align:right;">Quantity</th>
+                                        @*<th style="width:17%;text-align:right;">Total</th>*@
+                                        <th style="width:8%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-7">&nbsp;</div>
+                        <label for="grossTotal" class="col-sm-2 col-form-label" style="text-align:right;"> Total </label>
+                        <div class="col-sm-2" style="padding-right: 49px;">
+                            <input type="text" class="form-control" name="totalQty" id="totalQty" style="text-align:right;" readonly>
+                        </div>
+
+                        <div class="col-sm-1">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+
+            <div class="row">
+                <div class="col-md-9">
+
+                </div>
+                <div class="col-md-3" style="text-align:right">
+                    <input type="button" onclick="RefreshAll()" id="btnRefesh" value="Refresh" class="btn btn-outline-secondary btn-sm" style="width:90px;" />&nbsp;&nbsp;
+                    <input type="submit" id="btnSave" value="Save" class="btn btn-info btn-sm" style="width:90px;" />
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+
+</div>
+
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="~/SweetAlert/sweetalert2.common.js"></script>
+    <script src="~/SweetAlert/sweetalert2.js"></script>
+    <script type="text/javascript">
+
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            //m += 1;  // JavaScript months are 0-11
+            var y = formattedDate.getFullYear();
+
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function getCurrentDate() {
+            $("#transferDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+        }
+
+        $(document).ready(function () {
+
+            $("#transferDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#transferDate").change(function () {
+                getTRNo();
+            });
+
+            Common.Ajax('GET', '/global/api/GetAllItemForRequisition', [], 'json', ajaxGetAllItem);
+
+            $('#Qty').keyup(function () {
+                checkvalidQty();
+            })
+
+            if (@masterId> 0) {
+                 Common.Ajax('GET', '/Purchase/Transfer/GetAllTransferMasterByMasterId/?Id=' + @ViewBag.masterId, [], 'json', ajaxGetAllTransferMasterByMasterId);
+                 //Common.Ajax('GET', '/Purchase/Transfer/GetAllTransferDetailsBytransferMasterId/' + @ViewBag.masterId, [], 'json', ajaxGetAllTransferDetailsBytransferMasterId);
+            }
+
+            $("#btnSave").click(function (e) {
+                let rowCount = $("#tblitemDetails tbody>tr").length;
+                if ($("#storeFromId").val() == "") {
+                    alert("Please Enter Transfer From !!!");
+                    return false;
+                }
+                if ($("#storeToId").val() == "") {
+                    alert("Please Enter Transfer To !!!");
+                    return false;
+                }
+                if ($("#storeFromId").val() == $("#storeToId").val()) {
+                    alert("From store and destination store can't be same !!!");
+                    return false;
+                }
+                if (rowCount<1) {
+                    alert("Please Add Item from Transfer Details!!!");
+                    return false;
+                }
+                e.preventDefault();
+
+                var form = $("#frmTransfer");
+
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, save it!'
+                }).then(function () {
+                    $.ajax({
+                        url: '/Purchase/Transfer/Index',
+                        data: form.serialize(),
+                        type: 'POST',
+                        success: function (records) {
+                            swal({
+                                title: '', text: 'Save Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                            }).then(function () {
+                                window.location.href = "/Purchase/Transfer/TransferDetail?id=" + records;
+                            });
+                        }
+                    });
+                });
+            });
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+
+        });
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+        function ajaxGetAllItem(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                obj.unitName = option.unit.unitName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#itemsId").val(ui.item.key);
+                    $("#unit").val(ui.item.unitName);
+                    $("#itemSpecificationId").val('');
+                    $("#itemSpecificationName").val('');
+                    Common.Ajax('GET', '/global/api/ItemSpec/' + ui.item.key, [], 'json', ajaxGetItemSpacification);
+
+                }
+            });
+        }
+
+
+
+        function ajaxGetItemSpacification(response) {
+
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                //console.log(option);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecificationName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecificationId").val(ui.item.key);
+                    Common.Ajax('GET', '/global/api/OnHanStockBySpecIdForTransfer/' + ui.item.key, [], 'json', ajaxSetOnhand);
+                }
+            });
+        }
+
+        function ajaxSetOnhand(response) {
+            console.log(response);
+            $("#onHand").val(response);
+        }
+
+        function RefreshAll() {
+            window.location.href = "/Purchase/Transfer/Index?id=" + 0;
+
+        }
+
+
+        function AdditemDetails() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            if ($("#itemName").val() == "") {
+                alert("Plaese Enter Valid Item Name.");
+                return false
+            }
+            if ($("#itemSpecificationName").val() == "") {
+                alert("Plaese Enter Valid Item Specification.");
+                return false
+            }
+            if ($("#itemSpecificationId").val() == "" || $("#itemSpecificationId").val() == "0") {
+                alert("Plaese Enter Valid Item Specification.");
+                return false
+            }
+
+            if ($("#Qty").val() == "") {
+                alert("Plaese Enter Valid Quantity.");
+                return false
+            }
+            //if ($("#price").val() == "") {
+            //    alert("Plaese Enter Valid Price.");
+            //    return false
+            //}
+
+            let id = parseInt($("#detailsId").val()) ? parseInt($("#detailsId").val()) : 0;
+            var itemName = $("#itemName").val();
+            var itemsId = $("#itemsId").val();
+            var itemSpecification = $("#itemSpecificationName").val();
+            var specid = $("#itemSpecificationId").val();
+            //var price = parseFloat($("#price").val());
+            var quantity = parseFloat($("#Qty").val());
+            var balance = parseFloat($("#onHand").val());
+            var unit = $("#unit").val();
+
+            if (quantity > balance) {
+                alert("Plaese Enter Valid Quantity.");
+                return false
+            }
+            //var totalAmount = (price * quantity);
+
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+
+            for (i = 0; i < RowCount; i++) {
+                var _itemSpecification = $("#itemSpecification" + i).val();
+
+                if (_itemSpecification == specid && editOption == 0) {
+                    alert('You have already added this Item Specification!');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblitemDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + itemName + '<input type="hidden" name="id"class="clsId" value="' + id + '"><input type="hidden" id="itemId' + index + '" name="itemId" class="clsitemId" value="' + itemsId + '"/></td>' +
+                '<td>' + itemSpecification + '<input type="hidden" id="itemSpecification' + index + '" name="itemSpecification" class="clsitemSpecification" value="' + specid + '"/></td>' +
+                '<td>' + unit + '</td>' +
+                //'<td style="text-align:right;">' + price + '<input type="hidden" id="rate' + index + '" name="rate" class="clsrate" value="' + price + '"/></td>' +
+                '<td style="text-align:right;">' + quantity + '<input type="hidden" id="quantity' + index + '" name="quantity" class="clsquantity" value="' + quantity + '"/></td>' +
+
+                //'<td style="text-align:right;">' + totalAmount + '<input type="hidden" id="itemtotalAmount' + index + '" name="itemtotalAmount" class="clstotalAmount" value="' + totalAmount + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTbl(' + index + "," + itemsId + ", " + quantity + ", `" + itemName + "`,  `" + itemSpecification + "`,`" + unit + "`, " + specid + "," + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+            '</tr>';
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            fnGrandTotal();
+            Refresh();
+        }
+        function EditTbl(index, itemsId, quantity, itemName, itemSpecification, unit, specid, Id) {
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+            $('#detailsId').val(Id);
+
+            $('#Qty').val(quantity);
+            //$('#price').val(price);
+            $('#itemName').val(itemName);
+            $('#itemsId').val(itemsId);
+            $('#itemSpecificationName').val(itemSpecification);
+            $('#itemSpecificationId').val(specid);
+            $('#unit').val(unit);
+            Common.Ajax('GET', '/global/api/OnHanStockBySpecIdForTransfer/' + specid, [], 'json', ajaxSetOnhand);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+        function Refresh() {
+            $('#detailsId').val('');
+            $("#IsEdit").val(0);
+
+            $('#Qty').val('');
+            //$('#price').val('');
+            $('#itemName').val('');
+            $('#itemsId').val('');
+            $('#itemSpecificationName').val('');
+            $('#itemSpecificationId').val('');
+            $('#unit').val('');
+            $('#onHand').val('0');
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblitemDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success');
+                fnGrandTotal();
+            });
+
+        }
+        function ajaxGetAllTransferMasterByMasterId(response) {
+
+            $("#transferId").val(response.Id);
+            $("#transferDate").val(getPurchaseDate(response.transferDate.toString("dd-MMM-yyyy")));
+            $("#storeFromId").val(response.storeFromId);
+            $("#storeToId").val(response.storeToId);
+            Common.Ajax('GET', '/global/api/GetAllTransferDetailsBytransferMasterId/' + @masterId, [], 'json', ajaxGetAllTransferDetailsBytransferMasterId);
+
+        }
+
+        function ajaxGetAllTransferDetailsBytransferMasterId(response) {
+            //console.log(response);
+            //alert("dgfs");
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+            $("#tblitemDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+                //itemtotalAmount = value.qty * value.rate;
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.itemSpecification.Item.itemName + '<input type="hidden" name="id"class="clsId" value="' + value.Id + '"><input type="hidden" id="itemId' + index + '" name="itemId" class="clsitemId" value="' + value.itemSpecification.Item.Id + '"/></td>' +
+                    '<td>' + value.itemSpecification.specificationName + '<input type="hidden" id="itemSpecification' + index + '" name="itemSpecification" class="clsitemSpecification" value="' + value.itemSpecification.Id + '"/></td>' +
+                    '<td>' + value.itemSpecification.Item.unit.unitName + '</td>' +
+                    //'<td style="text-align:right;">' + value.rate + '<input type="hidden" id="rate' + index + '" name="rate" class="clsrate" value="' + value.rate + '"/></td>' +
+                    '<td style="text-align:right;">' + value.qty + '<input type="hidden" id="quantity' + index + '" name="quantity" class="clsquantity" value="' + value.qty + '"/></td>' +
+
+                    //'<td style="text-align:right;">' + itemtotalAmount + '<input type="hidden" id="itemtotalAmount' + index + '" name="itemtotalAmount" class="clstotalAmount" value="' + itemtotalAmount + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTbl(' + index + "," + value.itemSpecification.Item.Id + ", " + value.qty + ", `" + value.itemSpecification.Item.itemName + "`,  `" + value.itemSpecification.specificationName + "`,`" + value.itemSpecification.Item.unit.unitName + "`, " + value.itemSpecificationId+ ","  + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                    '</tr>';
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+            fnGrandTotal();
+        }
+        function fnGrandTotal() {
+
+            var totalAmount = 0;
+            var totalqty = 0;
+
+            //$(".clstotalAmount").each(function () {
+            //    totalAmount += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            //});
+
+            $(".clsquantity").each(function () {
+                totalqty += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            });
+            $("#totalQty").val(totalqty.toFixed(2));
+            //$("#totalAmount").val(totalAmount.toFixed(2));
+
+
+        }
+
+        function checkvalidQty() {
+            let Qty = $('#Qty').val();
+            let QtyLen = $('#Qty').val().length;
+
+            if (Qty < 0) {
+                alert("Please insert Valid Quantity");
+                $('#Qty').val('');
+                return false;
+            }
+            if (QtyLen > 8) {
+                alert("Please insert Max 8 digit");
+                $('#Qty').val('');
+                return false;
+            }
+
+        }
+        //function checkvalidRate() {
+        //    let Rate = $('#price').val();
+        //    let RateLen = $('#price').val().length;
+        //    if (Rate < 0) {
+        //        alert("Please insert Valid Price");
+        //        $('#price').val('');
+        //        return false;
+        //    }
+        //    if (RateLen > 8) {
+        //        alert("Please insert Max 8 digit");
+        //        $('#price').val('');
+        //        return false;
+        //    }
+        //}
+        function checkvalidVatTax() {
+            let TaxLen = $('#taxPercent').val().length;
+            let VatLen = $('#vatPercent').val().length;
+
+            if (TaxLen > 2) {
+                alert("Please insert Max 2 digit");
+                $('#taxPercent').val('');
+                return false;
+            }
+            if (VatLen > 2) {
+                alert("Please insert Max 2 digit");
+                $('#vatPercent').val('');
+                return false;
+            }
+        }
+        function getTRNo() {
+
+            let transferDate = $('#transferDate').val();
+            Common.Ajax('GET', '/api/global/getTRNumber/' + transferDate, [], 'json', setAutoNumber);
+        }
+
+        function setAutoNumber(response) {
+            $('#poNo').val(response);
+        }
+    </script>
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+
+
+
+
+
+
+

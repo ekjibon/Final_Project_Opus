@@ -1,0 +1,203 @@
+﻿
+@model AssetDepreciationViewModel
+@{
+    ViewData["Title"] = "Asset Depreciation";
+    Layout = "~/Areas/FAMSAssetRegister/Views/Shared/_AssetRegisterForm.cshtml";
+}
+
+
+@section StyleAssetRegister{
+    <style>
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h5 class="m-0 font-weight-bold text-primary">Asset Depreciation Process</h5>
+    </div>
+    <div class="card-body">
+        <div class="container">
+            <form asp-area="FAMSAssetRegister" asp-controller="AssetDepreciation" asp-action="AssetDepreciation" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="depriciationPeriodId" class="col-sm-4 col-form-label">Period Name</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="depriciationPeriodId" name="depriciationPeriodId" required="required">
+                                    <option value="">-Select-</option>
+                                    @foreach (var data in Model.depriciationPeriods)
+                                    {
+                                        <option value="@data.Id">@data.PeriodName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="itemCategoryId" class="col-sm-4 col-form-label">Depreciation Name</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="itemCategoryId" name="itemCategoryId" required="required">
+                                    <option value="0">All</option>
+                                    @foreach (var data in Model.depriciationRates)
+                                    {
+                                        <option value="@data.Id">@data.depreciationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="itemCategoryId" class="col-sm-4 col-form-label"></label>
+                            <div class="col-sm-8">
+                                <button type="submit" value="Process" title="Process" class="btn btn-success btn-sm" style="width:90px;">Process</button>
+                                &nbsp;
+                                <button type="button" onclick="UnProcessDepreciation()" title="UnProcess" class="btn btn-danger btn-sm" style="width:90px;">Unprocess</button>
+                                @*<button type="button" value="Search" onclick="SearchAssetDepreciation()" title="Search" class="btn btn-info btn-sm" style="width:70px;">Search</button>
+                                    &nbsp;*@
+                                &nbsp;
+                                <button type="button" onclick="ReportAssetDepreciation()" title="Report" class="btn btn-secondary btn-sm" style="width:70px;">Report</button>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="col-sm-4">
+                            <button type="submit" value="Calculation" title="Calculation" class="btn btn-success btn-sm" style="width:90px;">Calculation</button>
+                            &nbsp;
+                            <button type="button" value="Search" onclick="SearchAssetDepreciation()" title="Search" class="btn btn-info btn-sm" style="width:70px;">Search</button>
+                            &nbsp;
+                            <button type="button" value="Search" onclick="ReportAssetDepreciation()" title="Report" class="btn btn-secondary btn-sm" style="width:70px;">Report</button>
+                        </div>*@
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row clearfix" hidden>
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="assetDepreciationTable">
+                    <thead>
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Asset No</th>
+                            <th>Period Name</th>
+                            <th>Depriciation Rate</th>
+                            <th>Dep.This Period</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int a = 1;
+                            @foreach (var data in Model.assetDepreciations)
+                            {
+                                <tr>
+                                    <td>@a</td>
+                                    <td>@data.assetRegistration.assetNo</td>
+                                    <td>@data.depriciationPeriod.PeriodName</td>
+                                    <td style="text-align:right;">@data.depriciationRate</td>
+                                    <td style="text-align:right;">@data.depriciationValue</td>
+                                </tr>
+                                a++;
+                            }
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" style="text-align:right;">Total</th>
+
+                            <th style="text-align:right;">@Model.assetDepreciations.Sum(x => x.depriciationValue)</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsAssetRegister{
+    <script>
+        $(document).ready(function () {
+            $('#assetDepreciationTable').DataTable();
+        });
+        function SearchAssetDepreciation() {
+            if ($('#depriciationPeriodId').val() == "") {
+                alert("Please Select Period");
+                return false;
+            }
+            if ($('#itemCategoryId').val() == "") {
+                alert("Please Select Depreciation");
+                return false;
+            }
+            Common.Ajax('GET', '/FAMSAssetRegister/AssetDepreciation/GetAssetDepreciationByPeriodId/?periodId=' + $("#depriciationPeriodId").val() + '&itemcatId=' + $("#itemCategoryId").val(), [], 'json', ajaxGetAssetDepreciation);
+        }
+
+        function ReportAssetDepreciation() {
+            if ($('#depriciationPeriodId').val() == "") {
+                alert("Please Select Period");
+                return false;
+            }
+            if ($('#itemCategoryId').val() == "") {
+                alert("Please Select Depreciation");
+                return false;
+            }
+            window.open('/FAMSAssetRegister/AssetReport/AssetDepreciationReportByPeriodId?rptType=' + "FAMNTHDEPRE" + "&periodId=" + $("#depriciationPeriodId").val() + "&itemcatId=" + $("#itemCategoryId").val(), '_blank');
+        }
+
+        function ajaxGetAssetDepreciation(response) {
+            $('#assetDepreciationTable').DataTable().destroy();
+            var dtTable = $("#assetDepreciationTable");
+            var tableBody = dtTable.find('tbody');
+            var tablefoot = dtTable.find('tfoot');
+            tableBody.empty();
+            tablefoot.empty();
+            var i = 1;
+            var Total = "Total";
+            var TotalDep = 0;
+            $.each(response, function (key, value) {
+                var trHtml = '<tr><td>' + i + '</td><td>' + value.assetRegistration.assetNo + '</td><td>' + value.depriciationPeriod.PeriodName + '</td><td style="text-align:right;">' + value.depriciationRate + '</td><td style="text-align:right;">' + value.depriciationValue + '</td></tr>';
+                tableBody.append(trHtml);
+                i++;
+                TotalDep = TotalDep + value.depriciationValue;
+            });
+            var trHtmlfoot = '<tr><td colspan="4" style="text-align:right;">' + Total + '</td><td style="text-align:right;">' + TotalDep + '</td></tr>';
+            tablefoot.append(trHtmlfoot);
+            $('#assetDepreciationTable').DataTable();
+        }
+
+        function UnProcessDepreciation() {
+            let depPeriodId = $('#depriciationPeriodId').val();
+            let depRateId = $('#itemCategoryId').val();
+
+            if (depPeriodId == "") {
+                alert("Please Select Period");
+                return false;
+            }
+            if (depRateId == "") {
+                alert("Please Select Depreciation");
+                return false;
+            }
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to unprocess this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, unprocess it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("UnProcessAssetDepreciation", "AssetDepreciation")',
+                    data: { depPeriodId: depPeriodId, depRateId: depRateId },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Unprocessed Successfully!', 'success');
+                        window.location.href = "/FAMSAssetRegister/AssetDepreciation/AssetDepreciation";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be unprocessed. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}

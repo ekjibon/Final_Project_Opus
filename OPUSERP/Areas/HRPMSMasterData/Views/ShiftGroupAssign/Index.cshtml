@@ -1,0 +1,293 @@
+﻿@model ShiftGroupAssignViewModel
+@{
+    ViewData["TitleMD"] = Model.fLang.title;
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Assign Shift</h5>
+        <hr>
+        <div class="container">
+            <form id="frmShiftGroupAssign" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row" id="forShiftType">
+                    <label for="sbu" class="col-sm-4 col-form-label">Assign Shift Type</label>
+
+                    <div class="col-sm-8">
+                        <select class="form-control" id="ShiftType" name="ShiftType">
+                            <option value="">Please Select</option>
+                            <option value="SBU">SBU</option>
+                            <option value="Department">Department</option>
+                            <option value="Individual">Individual</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row" id="forsbu">
+                    <label for="sbu" class="col-sm-4 col-form-label">SBU</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="sbu" name="sbu">
+                            <option value="">Select</option>
+                            @foreach (var data in Model.specialBranchUnits)
+                            {
+                                <option value="@data.Id">@data.branchUnitName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row" id="fordepartment">
+                    <label for="department" class="col-sm-4 col-form-label">Department</label>
+                    <div class="col-sm-8">
+                        <select type="text" class="form-control" id="department" name="department">
+                            <option value="">Select</option>
+                            @foreach (var data in Model.departments)
+                            {
+                                <option value="@data.Id">@data.deptName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row" id="foremployeeName">
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <label for="employeeInfoId" class="col-md-4 col-form-label">Employee Name</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-trigger="keyup">
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="sbu" class="col-sm-4 col-form-label">Shift Group</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="shiftGroup" name="shiftGroup" data-parsley-required="true">
+                            <option value="">Select</option>
+                            @foreach (var data in Model.shiftGroupMasterlist)
+                            {
+                                <option value="@data.Id">@data.shiftName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <button type="button" id="btnSaveProcess" onclick="SaveShiftGroupAssign()" style="float:right; margin-top:5px;" class="btn-success btn-sm">Save</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Search Shift Information</h6> 
+            </div>
+            <div class="card-body">
+                <div class="container">
+                    <div class="form-group row">
+                        <div class="col-md-10">
+                            <input type="text" class="form-control input-sm" id="txtSearch" placeholder="Search By........Employee Name/Code/Department/Shift" />
+                        </div>
+                        <div class="col-md-2">
+                            <span class="input-group-btn">
+                                <button type="button" id="btnSearch" onclick="LoadEmployeeInfo()" class="btn btn-info btn-sm">Search</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="employeeIfoTable"  style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>Employee Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Shift Name</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+           
+            //$('#employeeIfoTable').DataTable({
+            //    stateSave: false,
+            //    dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+            //        "<'row'<'col-sm-12't>>" +
+            //        "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+            //    buttons: [
+            //        'csv', 'excel', 'pdf', 'print'
+            //    ]
+            //});
+
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+            $("#foremployeeName").hide();
+            $("#forsbu").hide();
+            $("#fordepartment").hide();
+            $("#ShiftType").change(function () {
+
+                if ($("#ShiftType").val() == 'SBU') {
+                    $("#forsbu").show();
+
+                    $("#fordepartment").hide();
+                    $("#foremployeeName").hide();
+                }
+                else if ($("#ShiftType").val() == 'Department') {
+                    $("#fordepartment").show();
+
+                    $("#forsbu").hide();
+                    $("#foremployeeName").hide();
+                }
+                else if ($("#ShiftType").val() == 'Individual') {
+                    $("#foremployeeName").show();
+
+                    $("#forsbu").hide();
+                    $("#fordepartment").hide();
+                }
+
+                else {
+                    $("#foremployeeName").hide();
+                    $("#forsbu").hide();
+                    $("#fordepartment").hide();
+                }
+
+            });
+
+        });
+
+        function SaveShiftGroupAssign() {
+
+            if ($('#ShiftType').val() == "") {
+                alert("Please Select Shift Type");
+                return false;
+            }
+            if ($('#shiftGroup').val() == "") {
+                alert("Please Select shift Group");
+                return false;
+            }
+            var form = $("#frmShiftGroupAssign");
+                $.ajax({
+                    url: '@Url.Action("Index", "ShiftGroupAssign")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Assigned Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+                            window.location.href = "/HRPMSMasterData/ShiftGroupAssign/Index";
+                        });
+
+                    }
+                });
+        }
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+        function LoadEmployeeInfo() {
+            if ($("#txtSearch").val() == '' || $("#txtSearch").val() == null || $("#txtSearch").val() == '0') {
+                alert("Attention.!! Please enter employee search entity");
+                return false;
+            }           
+            var searchValues = $("#txtSearch").val();
+            fnGetEmployeeInfoBySearch(searchValues);
+        }
+
+        function fnGetEmployeeInfoBySearch(searchValues) {
+            table = $('#employeeIfoTable').DataTable({
+                ajax: {
+                    url: "/global/api/GetEmployeeInfoBySearch/" + searchValues,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "shiftName" }
+                ],               
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "Shift Information",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "Shift Information",
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Shift Information",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+    </script>
+}

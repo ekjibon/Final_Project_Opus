@@ -1,0 +1,1037 @@
+﻿@model DailyBillReceiveViewModel
+@{
+    ViewData["Title"] = "Invoice Payment";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+
+<div class="card p-0 m-0">
+    <div class="row">
+        <div class="col-sm-10">
+            <span style="font-size:1.5em;font-weight:700;color:gray;">Non PO Invoice Payment</span>
+        </div>
+        @*<div class="col-sm-2 text-right">
+                <a class="btn btn-sm btn-dark" href="/Accounting/PaymentVoucher/PaymentVoucherList">Back To List</a>
+            </div>*@
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <form id="formInvoicePayment" aria- data-parsley-validate="parsley" autocomplete="off">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>List of Invoice Received</u></label>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-bordered" id="AssetYearTable">
+                        <thead>
+                            <tr>
+                                <th>Process No</th>
+                                <th>Vendor Name</th>
+                                <th>PO No</th>
+                                <th>Bill Receive Date</th>
+                                <th>Bill Payment Date</th>
+                                <th>Action</th>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.dailyBillReceives.Where(x => x.BillStatusId == 0))
+                            {
+                                <tr>
+                                    <td style="width:18%">@data.ProcessNo</td>
+                                    <td style="width:18%">@data.supplier.organizationName</td>
+                                    <td style="width:18%">@data.PoNo</td>
+                                    <td style="width:18%">@data.BillReceiveDate?.ToString("dd-MM-yyyy")</td>
+                                    <td style="width:18%">@data.PaymentDate?.ToString("dd-MM-yyyy")</td>
+                                    <td style="width:10%">
+                                        <a class="btn btn-success" onclick="ShowData(@data.Id,@data.supplierId,'@data.ProcessNo','@data.InvoiceNo','@data.PaymentDate','@data.BillReceiveDate',@data.Total,@data.Commission,@data.Other)" title="select">select</a>
+                                        <a class="btn btn-success" href="/Accounting/NonPOTransaction/BillReceivePdf?id=@data.Id" target="_blank" title="Bill receive Report"><i class="fa fa-print"></i></a>
+                                        @*<a class="btn btn-success" href="/Accounting/NonPOTransaction/JournalVoucherPdfAction?MasterId=@data.Id" target="_blank" title="Voucher Report"><i class="fa fa-eye-dropper"></i></a>*@
+                                    </td>
+                                </tr>
+
+
+                            }
+
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Invoice Details</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+                            <div class="form-group row">
+                                <label for="invoiceNo" class="col-sm-4 col-form-label text-left">Invoice Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" readonly name="InvoiceNo" id="InvoiceNo" />
+                                    <input type="hidden" class="form-control input-group-sm" readonly name="billReceiveId" id="billReceiveId" />
+                                    <input type="hidden" class="form-control input-group-sm" readonly name="supplierId" id="supplierId" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="processNo" class="col-sm-4 col-form-label text-left">Process Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control input-group-sm" readonly name="ProcessNo" id="ProcessNo" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="invoiceDate" class="col-sm-4 col-form-label text-left">Invoice Date</label>
+                                <div class="col-sm-8 input-group">
+                                    <input name="BillReceiveDate" id="BillReceiveDate" class="form-control input-group-sm" />
+                                    <div class="input-group-prepend">
+                                        <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="invoiceAmt" class="col-sm-4 col-form-label text-left">Invoice Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="number" name="Total" id="Total" readonly class="form-control input-group-sm read text-right" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="commissionAmt" class="col-sm-4 col-form-label text-left">Commission Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="number" name="Commission" id="Commission" readonly class="form-control input-group-sm read text-right" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="otherAmt" class="col-sm-4 col-form-label text-left">Other Amount</label>
+                                <div class="col-sm-8">
+                                    <input type="number" name="Other" id="Other" readonly class="form-control input-group-sm read text-right" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:5px;"></div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>Transaction Details</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0">
+
+
+                            <div class="form-group row">
+                                <label for="payFrom" class="col-sm-4 col-form-label text-left">Payment From</label>
+                                <div class="col-sm-8 input-group">
+                                    <input type="text" class="form-control input-group-sm" name="payFrom" id="payFrom" />
+                                    <input type="hidden" class="form-control input-group-sm" name="hdnPaymentAccId" id="hdnPaymentAccId" />
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="costCentre" class="col-sm-4 col-form-label text-left">Cost Centre</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="coscentreId" name="coscentreId">
+                                        <option></option>
+                                        @foreach (var data in Model.costCentres)
+                                        {
+                                            <option value="@data.Id">@data.centreName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="card">
+                <div class="card-header" style="padding:6px 0px 0px 3px;">
+                    <label style="padding:0px 0px 0px 0px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><u>VAT &amp; TAX Calculation</u></label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 p-0" style="border:1px solid;padding: 8px !important; ">
+                            <p style="text-align:center;"><b>VAT Table</b></p>
+                            <div class="form-group row">
+                                <div class="col-sm-6 row">
+                                    <label for="rate" class="col-sm-4 col-form-label">Rate :</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="vatrate" name="vatrate">
+                                            <option></option>
+                                            @foreach (var data in Model.VatTaxRates.Where(x => x.rateType.RateTypeName == "VAT"))
+                                            {
+                                                <option value="@data.Id">@data.rate</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 row">
+                                    <div class="col-sm-6" style="margin-left:140px;">
+                                        <input id="invoiceAmtVat" type="checkbox" class="form-check-input" />Invoice Amount
+                                    </div>
+
+
+                                    <div class="col-sm-6" style="margin-left:140px;">
+                                        <input id="commissionVat" type="checkbox" class="form-check-input" />Commission
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            @*<div class="form-group row">
+
+
+
+                                </div>*@
+                            <div class="form-group row">
+                                <label for="vatExempted" class="col-sm-3 col-form-label">VAT Exempted?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="vatExemptedYes" value="1" name="vatExempted">
+                                    <label class="form-check-label" for="vatExemptedYes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="vatExemptedNo" value="0" onclick="getcheckvalue(this)" name="vatExempted">
+                                    <label class="form-check-label" for="vatExemptedNo">No</label>
+                                </div>
+
+                                <label for="rebatable" class="col-sm-3 col-form-label">Rebatable?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="rebatableYes" value="1" name="rebatable">
+                                    <label class="form-check-label" for="rebatableYes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="rebatableNo" value="0" name="rebatable">
+                                    <label class="form-check-label" for="rebatableNo">No</label>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+
+
+                                <label for="deductable" class="col-sm-3 col-form-label">Deductable?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="deductableYes" value="1" name="deductable">
+                                    <label class="form-check-label" for="deductableYes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="deductableNo" value="0" name="deductable">
+                                    <label class="form-check-label" for="deductableNo">No</label>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatInclusive" class="col-sm-3 col-form-label">VAT Inclusive?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="vatInclusivedYes" value="1" name="vatInclusive">
+                                    <label class="form-check-label" for="vatInclusiveYes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="vatInclusiveNo" value="0" name="vatInclusive">
+                                    <label class="form-check-label" for="vatInclusiveNo">No</label>
+                                </div>
+
+                                <label for="vatBearer" class="col-sm-3 col-form-label">VAT Bearer?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="vatBearerYes" value="1" name="vatBearer">
+                                    <label class="form-check-label" for="vatBearerYes">bKash</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="vatBearerNo" value="0" name="vatBearer">
+                                    <label class="form-check-label" for="vatBearerNo">Vendor</label>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="mushok" class="col-sm-3 col-form-label">Mushok Provide?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="mushokYes" value="1" name="mushok">
+                                    <label class="form-check-label" for="mushokYes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="mushokNo" value="0" name="mushok">
+                                    <label class="form-check-label" for="mushokNo">No</label>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <input type="button" id="btnExVat" onclick="getVAT()" class="btn btn-info" style="margin-left:150px;" value="Execute" />
+                                </div>
+                            </div><br /><br />
+
+                            <div class="form-group row">
+                                <label for="subLedgerVat" class="col-sm-3 col-form-label">Sub Ledger</label>
+                                <div class="col-sm-3">
+                                    <input name="subLedgerVat" id="subLedgerVat" class="form-control input-group-sm" />
+                                    <input type="hidden" name="subLedgerVatId" id="subLedgerVatId" class="form-control input-group-sm" />
+                                </div>
+
+                                <label for="vatAmount" class="col-sm-3 col-form-label">VAT Amount</label>
+                                <div class="col-sm-3">
+                                    <input name="vatAmount" id="vatAmount" class="form-control input-group-sm" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="vatPayableAmount" class="col-sm-3 col-form-label">VAT Payable Amount</label>
+                                <div class="col-sm-3">
+                                    <input name="vatPayableAmount" id="vatPayableAmount" class="form-control input-group-sm" readonly />
+                                </div>
+
+                                <label for="vatCurrentAmount" class="col-sm-3 col-form-label">VAT Current Amount</label>
+                                <div class="col-sm-3">
+                                    <input name="vatCurrentAmount" id="vatCurrentAmount" class="form-control input-group-sm" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 p-0" style="border:1px solid;padding: 8px !important; ">
+                            <p style="text-align:center;"><b>TAX Table</b></p>
+                            <div class="form-group row">
+
+
+                                <div class="col-sm-8 form-group row" style="margin-left:11px">
+                                    <div class="col-sm-4">
+                                        <input class="form-check-input" type="radio" value="1" id="radRate" onclick="checkradio()" name="radRateSlab">
+                                        <label class="form-check-label" for="rate">Rate</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input class="form-check-input" type="radio" value="0" id="radSlab" onclick="checkradio()" name="radRateSlab">
+                                        <label class="form-check-label" for="slab">Slab</label>
+                                    </div>
+                                    <div class="col-sm-8 form-group row" id="cboRate">
+                                        <label for="rebate" class="col-sm-4 col-form-label">Rate</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="taxrate" name="taxrate">
+                                                <option></option>
+                                                @foreach (var data in Model.VatTaxRates.Where(x => x.rateType.RateTypeName == "Tax"))
+                                                {
+                                                    <option value="@data.Id">@data.rate</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8 form-group row" id="cboSlab" style="display:none">
+                                        <label for="rebate" class="col-sm-4 col-form-label">Slab</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="taxslabid" name="taxslabid">
+                                                <option></option>
+                                                @foreach (var data in Model.taxYears)
+                                                {
+                                                    <option value="@data.Id">@data.taxYearName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8 form-group row" id="cboType" style="display:none">
+                                        <label for="rebate" class="col-sm-4 col-form-label">Type</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="typeid" name="typeid">
+
+                                                <option value="0">Execution of contract</option>
+                                                <option value="1">Others</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-sm-4 row">
+                                    <div class="col-sm-12">
+                                        <input id="invoiceAmtTax" type="checkbox" class="form-check-input" />Invoice Amount
+                                    </div>
+
+                                    <div class="col-sm-12">
+                                        <input id="commissionTax" type="checkbox" class="form-check-input" />Commission
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="taxExempted" class="col-sm-3 col-form-label">Tax Exempted?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="taxExemptedYes" name="taxExempted">
+                                    <label class="form-check-label" for="radTaxExemptedYes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="taxExemptedNo" name="taxExempted">
+                                    <label class="form-check-label" for="radTaxExemptedNo">No</label>
+                                </div>
+
+
+
+                            </div>
+                            <div class="form-group row">
+                                <label for="taxInclusive" class="col-sm-3 col-form-label">Tax Inclusive?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="taxInclusiveYes" name="taxInclusive">
+                                    <label class="form-check-label" for="taxInclusiveYes">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="taxInclusiveNo" name="taxInclusive">
+                                    <label class="form-check-label" for="taxInclusiveNo">No</label>
+                                </div>
+
+                                <label for="taxBearer" class="col-sm-3 col-form-label">Tax Bearer?</label>
+                                <div class="col-sm-3">
+                                    <input class="form-check-input" type="radio" id="radTaxBkash" name="taxBear">
+                                    <label class="form-check-label" for="taxBearerBkash">bKash</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="form-check-input" type="radio" id="radTaxVendor" name="taxBear">
+                                    <label class="form-check-label" for="taxBearerVendor">Vendor</label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input type="button" class="btn btn-info" onclick="getTAX()" style="margin-left:150px;" value="Execute" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="taxableAmt" class="col-sm-3 col-form-label">This Year Taxable Amount</label>
+                                <div class="col-sm-3">
+                                    <input name="taxableAmt" id="taxableAmt" class="form-control input-group-sm" readonly />
+                                </div>
+
+                                <label for="totalTaxableAmt" class="col-sm-3 col-form-label">Total Taxable Amount</label>
+                                <div class="col-sm-3">
+                                    <input name="totalTaxableAmt" id="totalTaxableAmt" class="form-control input-group-sm" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="taxDeducted" class="col-sm-3 col-form-label">This Year Tax Deducted</label>
+                                <div class="col-sm-3">
+                                    <input name="taxDeducted" id="taxDeducted" class="form-control input-group-sm" readonly />
+                                </div>
+
+                                <label for="totalTax" class="col-sm-3 col-form-label">Total Tax</label>
+                                <div class="col-sm-3">
+                                    <input name="totalTax" id="totalTax" class="form-control input-group-sm" readonly />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="subLedgerTax" class="col-sm-3 col-form-label">Sub Ledger</label>
+                                <div class="col-sm-3">
+                                    <input name="subLedgerTax" id="subLedgerTax" class="form-control input-group-sm" />
+                                    <input type="hidden" name="subLedgerTaxId" id="subLedgerTaxId" class="form-control input-group-sm" />
+                                </div>
+
+                                <label for="taxAmount" class="col-sm-3 col-form-label">Tax Amount</label>
+                                <div class="col-sm-3">
+                                    <input name="taxAmount" id="taxAmount" class="form-control input-group-sm" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="taxPayableAmt" class="col-sm-3 col-form-label">Tax Payable Amount</label>
+                                <div class="col-sm-3">
+                                    <input name="taxPayableAmt" id="taxPayableAmt" class="form-control input-group-sm" readonly />
+                                </div>
+
+                                @*<label for="penalty" class="col-sm-3 col-form-label">Penalty</label>
+                                    <div class="col-sm-3">
+                                        <input name="penalty" id="penalty" class="form-control input-group-sm" />
+                                    </div>*@
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="button" id="btnPrevInvAmt" class="btn btn-info" style="margin-left:250px;" value="Vendor Wise Previous Invoice" />
+                            </div>
+                        </div>
+
+                    </div><br /><br />
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="form-group row">
+                                <label for="narration" class="col-sm-4 col-form-label">Narration</label>
+                                <div class="col-sm-8">
+                                    <textarea id="narration" name="narration" class="form-control input-group-sm"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group row">
+                                <input type="button" id="btnVatTaxPost" class="btn btn-outline-success" value="Post Tax & VAT" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<div style="height:5px;"></div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List Of Bill</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="paymentbilltable">
+                    <thead>
+                        <tr>
+                            <th>Process No</th>
+                            <th>Vendor Name</th>
+                            <th>PO No</th>
+                            <th>Bill Receive Date</th>
+                            <th>Bill Payment Date</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.dailyBillReceives.Where(x => x.BillStatusId == 1))
+                        {
+                            <tr>
+                                <td style="width:18%">@data.ProcessNo</td>
+                                <td style="width:18%">@data.supplier.organizationName</td>
+                                <td style="width:18%">@data.PoNo</td>
+                                <td style="width:18%">@data.BillReceiveDate?.ToString("dd-MM-yyyy")</td>
+                                <td style="width:18%">@data.PaymentDate?.ToString("dd-MM-yyyy")</td>
+                                <td style="width:10%">
+
+                                    <a class="btn btn-success" href="/Accounting/NonPOTransaction/BillReceivePdf?id=@data.Id" target="_blank" title="Bill receive Report"><i class="fa fa-print"></i></a>
+                                    @*<a class="btn btn-success" href="/Accounting/NonPOTransaction/JournalVoucherPdfAction?MasterId=@data.Id" target="_blank" title="Voucher Report"><i class="fa fa-eye-dropper"></i></a>*@
+                                </td>
+                            </tr>
+
+
+                        }
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="height:5px;"></div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Invoice for Payment</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="voucherList">
+                    <thead>
+                        <tr>
+                            <th width="15%">Voucher No</th>
+                            <th width="15%">Voucher Date</th>
+                            <th width="45%">Remarks</th>
+                            <th width="10%">Voucher Amount</th>
+
+                            <th width="15%"></th>
+                    </thead>
+                    <tbody>
+                       
+
+
+
+                            @foreach (var data in Model.GetVoucherMasters)
+                            {
+                                <tr>
+                                    <td><span style="display:none">-@data.Id-</span>@data.voucherNo</td>
+                                    <td>@data.voucherDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.remarks</td>
+                                    <td style="text-align:right">@data.voucherAmount?.ToString("0,0.00")</td>
+
+                                    <td>
+
+                                        <a class="btn btn-success" href="/Accounting/PaymentVoucher/PaymentVoucherPdfAction?MasterId=@data.Id" target="_blank" title="Voucher Report"><i class="fa fa-eye-dropper"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                       
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="coscentre" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Costcentre</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">Particular :</label>
+                        <input type="text" class="form-control" id="costparticularName" readonly name="costparticularName">
+                        <input type="hidden" id="costparticularId" name="costparticularId" />
+                    </div>
+                    @*<div class="col-6">
+                            <label for="recipient-name" class="col-form-label">Coscentre Name :</label>
+                            <select class="form-control" id="coscentreId" name="coscentreId">
+                                <option></option>
+                                @foreach (var data in Model?.costCentres)
+                                {
+                                    <option value="@data.Id">@data.centreName</option>
+                                }
+                            </select>
+                        </div>*@
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">Total Amount :</label>
+                        <input type="number" class="form-control" id="totalAmount" readonly name="totalAmount">
+                    </div>
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">Amount :</label>
+                        <input type="number" class="form-control" style="text-align:right" id="costAmount" name="costAmount">
+                    </div>
+                    <div class="col-6">
+                        <label for="recipient-name" class="col-form-label">Due Amount :</label>
+                        <div class="row" style="margin-left:8px">
+                            <input type="number" class="form-control col-8" style="margin-left:-6px" id="dueAmount" name="dueAmount" readonly>
+                            <button type="button" onclick="AddCostCentre()" value="Add" title="Add Cost Centre" class="btn btn-success btn-lg ml-1" style="float:right;height:45px;margin-top:-5px"><i class="fas fa-plus fa-w-1"></i></button>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <br />
+                <div class="form-group">
+                    <table class="table table-striped table-bordered" id="tblCoscentre">
+                        <thead>
+                            <tr>
+                                <th width="50%">Centre Name</th>
+                                <th width="40%" style="text-align:right">Amount</th>
+
+                                <th width="10%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:void(0)" style="color:deepskyblue" id="btnCancel" data-dismiss="modal">Cancel</a>&nbsp;
+                <button type="button" style="background-color:#024972;" onclick="AddParticularWithCostCentre()" class="btn-primary btn-sm">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section ScriptsV{
+
+
+    <script type="text/javascript">
+        function getTAX() {
+            var BasePrice = 0;
+            var VATRate = 0;
+            var VATExempted = 0;
+            var VATInclusive = 0;
+            var MushokProvided = 0;
+            var Rebatable = 0;
+            var Deductable = 0;
+            var VATPayBy = 0;
+            var Rebate = 0;
+            var taxyearId = 0;
+            var calId = 0;
+            var BaseCalculatePrice = 0;
+            var vendorId = 0;
+            vendorId = $("#supplierId").val();
+            if ($('#radRate')[0].checked == true) {
+                //alert("ccnc");
+                VATRate = $("#taxrate option:selected").text();
+                //alert(VATRate);
+                taxyearId = 0;
+            }
+            else {
+                VATRate = 0;
+                taxyearId = $("#taxslabid").val();
+                //alert(taxyearId);
+            }
+
+            calId = $("#typeid").val();
+
+            if ($('#invoiceAmtTax')[0].checked == true) {
+                BasePrice = $("#Total").val();
+                BaseCalculatePrice = $("#Total").val();
+                // alert(BasePrice);
+            }
+            else {
+                alert("Please check invoice amount.");
+                return;
+
+            }
+            if ($('#commissionTax')[0].checked == true) {
+                BasePrice = BasePrice + parseFloat($("#Commission").val());
+
+                BaseCalculatePrice = parseFloat($("#Total").val()) + parseFloat($("#Commission").val());
+            }
+
+            if ($('#taxExemptedYes')[0].checked == true) {
+
+                VATExempted = 1;
+            }
+            //if ($('#rebatableYes')[0].checked == true) {
+
+            //    Rebatable = 1;
+            //}
+            if ($('#taxInclusiveYes')[0].checked == true) {
+
+                VATInclusive = 1;
+            }
+            //if ($('#deductableYes')[0].checked == true) {
+
+            //    Deductable = 1;
+            //}
+            if ($('#radTaxBkash')[0].checked == true) {
+
+                VATPayBy = 1;
+            }
+            //if ($('#mushokYes')[0].checked == true) {
+
+            //    MushokProvided = 1;
+            //}
+
+
+            Common.Ajax('GET', '/global/api/TAXCal/' + BasePrice + '/' + VATRate + '/' + VATExempted + '/' + VATInclusive + '/' + VATPayBy + '/' + vendorId + '/' + taxyearId + '/' + calId + '/' + BaseCalculatePrice, [], 'json', GetTAXData);
+
+
+
+
+
+        };
+        function GetTAXData(response) {
+            $("#taxableAmt").val(response.BalanceAount.toFixed(2));
+            $("#totalTaxableAmt").val((parseFloat(response.VatPayableAmount) + parseFloat(response.BaseCalculatePrice)).toFixed(2));
+            $("#taxAmount").val(response.VatAmount.toFixed(2));
+            $("#taxDeducted").val(response.PaidTAX.toFixed(2));
+            $("#taxDeducted").val(response.PaidTAX.toFixed(2));
+            $("#taxPayableAmt").val((parseFloat(response.VatPayableAmount) - parseFloat(response.PaidTAX)).toFixed(2));
+            $("#totalTax").val(response.VatPayableAmount.toFixed(2));
+            if ($("#taxPayableAmt").val() == "0.00") {
+                $("#subLedgerTax").attr("disabled", true);
+            }
+            else {
+                $("#subLedgerTax").attr("disabled", false);
+            }
+        };
+        function getVAT() {
+            var BasePrice = 0;
+            var VATRate = 0;
+            var VATExempted = 0;
+            var VATInclusive = 0;
+            var MushokProvided = 0;
+            var Rebatable = 0;
+            var Deductable = 0;
+            var VATPayBy = 0;
+            var Rebate = 0;
+            VATRate = $("#vatrate option:selected").text();
+            if ($('#invoiceAmtVat')[0].checked == true) {
+                BasePrice = $("#Total").val();
+                // alert(BasePrice);
+            }
+            else {
+                alert("Please check invoice amount.");
+                return;
+
+            }
+            if ($('#commissionVat')[0].checked == true) {
+                BasePrice = parseFloat($("#Total").val()) + parseFloat($("#Commission").val());
+            }
+
+            if ($('#vatExemptedYes')[0].checked == true) {
+
+                VATExempted = 1;
+            }
+            if ($('#rebatableYes')[0].checked == true) {
+
+                Rebatable = 1;
+            }
+            if ($('#vatInclusivedYes')[0].checked == true) {
+
+                VATInclusive = 1;
+            }
+            if ($('#deductableYes')[0].checked == true) {
+
+                Deductable = 1;
+            }
+            if ($('#vatBearerYes')[0].checked == true) {
+
+                VATPayBy = 1;
+            }
+            if ($('#mushokYes')[0].checked == true) {
+
+                MushokProvided = 1;
+            }
+
+
+            Common.Ajax('GET', '/global/api/VATCal/' + BasePrice + '/' + VATRate + '/' + VATExempted + '/' + VATInclusive + '/' + MushokProvided + '/' + Rebatable + '/' + Deductable + '/' + VATPayBy + '/' + Rebatable, [], 'json', GetVATData);
+
+
+
+
+
+        };
+        function GetVATData(response) {
+            $("#vatAmount").val(response.VatAmount.toFixed(2));
+            $("#vatCurrentAmount").val(response.VatCurrentAmount.toFixed(2));
+            $("#vatPayableAmount").val(response.VatPayableAmount.toFixed(2));
+            if ($("#vatAmount").val() == "0.00") {
+                $("#subLedgerVat").attr("disabled", true);
+            }
+            else {
+                $("#subLedgerVat").attr("disabled", false);
+            }
+        };
+        function getcheckvalue(arg) {
+            if (arg.checked) {
+
+                return arg.value;
+            }
+        };
+
+        function ShowData(Id, supplierId, ProcessNo, InvoiceNo, PaymentDate, BillReceiveDate, Total, Commission, Other) {
+            $("#InvoiceNo").val(InvoiceNo);
+            $("#ProcessNo").val(ProcessNo);
+            $("#billReceiveId").val(Id);
+            $("#supplierId").val(supplierId);
+            // $("#BillReceiveDate").val(BillReceiveDate);
+            $("#Total").val(Total);
+            $("#Commission").val(Commission);
+            $("#Other").val(Other);
+
+
+        };
+        function GetVATLedger(response) {
+            //$('#itemName').empty();
+            //$("#itemId").val('');
+            console.log(response);
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.subLedger.accountName;
+                lstParticular[lstParticular.length] = obj;
+
+            });
+
+            $('#subLedgerVat').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#subLedgerVatId').val(ui.item.key);
+                    $("#subLedgerVat").val(ui.item.value);
+
+
+                }
+            });
+        }
+        function GetTAXLedger(response) {
+            //$('#itemName').empty();
+            //$("#itemId").val('');
+            console.log(response);
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.subLedger.accountName;
+
+                lstParticular[lstParticular.length] = obj;
+
+            });
+            $('#subLedgerTax').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#subLedgerTaxId').val(ui.item.key);
+                    $("#subLedgerTax").val(ui.item.value);
+
+
+                }
+            });
+        }
+        function checkradio() {
+
+            if ($('#radRate:checked').val() == 1) {
+
+                $("#cboRate").show();
+                $("#cboSlab").hide();
+            }
+            else {
+                $("#cboRate").hide();
+                $("#cboSlab").show();
+
+            }
+            if ($('#radSlab:checked').val() == 0) {
+
+                $("#cboRate").hide();
+                $("#cboSlab").show();
+
+            }
+            else {
+
+                $("#cboRate").show();
+                $("#cboSlab").hide();
+            }
+        };
+        function GetBill(response) {
+            //$('#itemName').empty();
+            //$("#itemId").val('');
+            // console.log(response);
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish;
+                lstParticular[lstParticular.length] = obj;
+
+            });
+            $('#responsiblename').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#employeeInfoId').val(ui.item.key);
+                    $("#responsiblename").val(ui.item.value);
+
+
+                }
+            });
+            $('#usetDeptResponsible').autocomplete({
+
+                source: lstParticular,
+                select: function (event, ui) {
+
+                    $('#ResposneemployeeInfoId').val(ui.item.key);
+                    $("#usetDeptResponsible").val(ui.item.value);
+
+
+                }
+            });
+        }
+
+
+
+        $(document).ready(function () {
+            $('.haveSubledger').hide();
+            window.localStorage.clear("holdIndex");
+
+            $('#paymentInvoiceTable').DataTable();
+            $('#transactionListTable').DataTable();
+            $('#invoiceReceivedTable').DataTable();
+            $('#voucherList').DataTable();
+            $('#paymentbilltable').DataTable();
+
+            $("#BillReceiveDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#vatChalanDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#billPaymentDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#expBillReturnDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#sendDeptDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#deptRecvDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#vendorPayRecvDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#chqRcvFinDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#trFromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#trToDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#invToDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#invFromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            Common.Ajax('GET', '/global/api/VATLedger', [], 'json', GetVATLedger);
+            Common.Ajax('GET', '/global/api/TAXLedger', [], 'json', GetTAXLedger);
+            Common.Ajax('GET', '/api/global/getLedersForPayment/', [], 'json', GetLedgerList);
+            $("#pNo").on('click', function () {
+                //$('input[name="forProcessNo"]').show();
+                $("#forProcessNo").show();
+                $("#forSupplier").hide();
+            });
+            $("#btnVatTaxPost").click(function () {
+                var data = $("#formInvoicePayment").serialize();
+
+                if ($("#InvoiceNo").val() == "") {
+                    swal('Warning', 'Select one invoice from table!', 'warning');
+                    return false;
+                }
+                if ($("#BillReceiveDate").val() == "") {
+                    swal('Warning', 'Select Date!', 'warning');
+                    return false;
+                }
+
+
+
+
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: '/Accounting/NonPOTransaction/InvoicePayment',
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            window.location.href = "/Accounting/NonPOTransaction/InvoicePayment";
+                        }
+                    });
+                });
+
+                return false;
+            });
+
+
+        });
+        function GetLedgerList(response) {
+            $('#txtPaymentAccount').empty();
+            $("#txtPaymentAccountId").val('');
+            $("#hdnPaymentAccId").val('');
+            $("#txtPaymentAccountCode").val('');
+            var lstLedger = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                lstLedger[lstLedger.length] = obj;
+            });
+            $('#payFrom').autocomplete({
+                source: lstLedger,
+                select: function (event, ui) {
+                    $('#payFrom').val(ui.item.value);
+
+                    $("#hdnPaymentAccId").val(ui.item.key);
+                    //GetVoucherNo();
+                    //Common.Ajax('GET', '/api/global/getOpenBalanceById/' + ui.item.key, [], 'json', GetPaymentLedgerBalance);
+
+                }
+            });
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+    </script>
+}
+
+@section StyleV{
+    <style>
+        input[readonly] {
+            background-color: transparent;
+        }
+    </style>
+}
+
+
+

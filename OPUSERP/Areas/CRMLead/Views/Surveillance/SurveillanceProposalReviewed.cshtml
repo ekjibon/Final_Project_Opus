@@ -1,0 +1,939 @@
+﻿
+@model SurveillanceViewModel
+@{
+    ViewData["Title"] = "Surveillance Proposal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int masterId = Convert.ToInt32(ViewBag.masterId);
+    
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div id="veri" class="row" style="padding-top:5px;padding-bottom:0px;">
+                        <span style="color:black;" class="col-sm-9 m-1"><a class="btn btn-facebook ml-1" href="/CRMLead/Surveillance/ReviewedSurveillance">Back To Review List</a></span>
+
+                    </div>
+                   
+
+                    <div style="height:5px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="container-fluid" id="entrydata">
+                    <form id="frmSurveillance" aria- data-parsley-validate="parsley" autocomplete="off">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div>
+                            <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600;color:black;" class="col-sm-10 pull-left">Agreement Information</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="leadName" class="col-sm-4 col-form-label">Lead Name<span style="float:right;color:red;">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="leadName" id="leadName" readonly="readonly">
+                                        <input type="hidden" name="leadsId" id="leadsId" value="0" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <input type="hidden" name="agreementId" id="agreementId" value="0" />
+                                    <input type="hidden" name="agreementStatusId" id="agreementStatusId" value="1" />
+                                    <input type="hidden" id="fdate" name="fdate" value="@ViewBag.fdate">
+                                    <input type="hidden" id="tdate" name="tdate" value="@ViewBag.tdate">
+                                    <label for="agreementTypeId" class="col-sm-4 col-form-label">Agreement Type</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="agreementTypeId" name="agreementTypeId" data-parsley-required="true" readonly="readonly">
+                                            <option value="">Select Agreement Type</option>
+                                            @foreach (var data in Model.agreementTypes)
+                                            {
+                                                <option value="@data.Id">@data.agreementTypeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="agreementNo" class="col-sm-4 col-form-label">Agreement No</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="agreementNo" id="agreementNo" readonly value="@ViewBag.agreementNo">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="agreementCategoryId" class="col-sm-4 col-form-label">Category</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="agreementCategoryId" name="agreementCategoryId" data-parsley-required="true" readonly>
+                                            <option value="">Select Category</option>
+                                            @foreach (var data in Model.agreementCategories)
+                                            {
+                                                <option value="@data.Id">@data.agreementCategoryName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="noOfReports" class="col-sm-4 col-form-label">No. Of Reports</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control numeric" name="noOfReports" id="noOfReports" style="text-align:right;" maxlength="3" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="loanLimitAmount" class="col-sm-4 col-form-label">loan Limit</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control numeric" name="loanLimitAmount" id="loanLimitAmount" style="text-align:right;" maxlength="6" data-parsley-required="true" readonly>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" id="loanLimitUnit" name="loanLimitUnit" data-parsley-required="true" readonly>
+                                            <option value="">Select Unit</option>
+                                            <option value="Million">Million</option>
+                                            <option value="Crore">Crore</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
+                                    <div class="col-sm-8">
+                                        <textarea type="text" class="form-control" id="remarks" name="remarks" maxlength="300" readonly></textarea>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="agreementDate" class="col-sm-4 col-form-label">Agreement Date</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="agreementDate" id="agreementDate" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="sendingDate" class="col-sm-4 col-form-label">Sending Date</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="sendingDate" id="sendingDate" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="signingDate" class="col-sm-4 col-form-label">Signing Date</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="signingDate" id="signingDate" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="expiredDate" class="col-sm-4 col-form-label">Expired Date</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="expiredDate" id="expiredDate" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="expectedReportDate" class="col-sm-4 col-form-label">Expected Report Date</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="expectedReportDate" id="expectedReportDate" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="priority" class="col-sm-4 col-form-label">Priority</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="priority" name="priority" data-parsley-required="true" readonly>
+                                            <option value="High" selected="selected">High</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                        <br />
+                        <div>
+                            <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600;color:black;" class="col-sm-10 pull-left">Fees Info</label>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="agreementAmounts" class="col-sm-4 col-form-label">Last Year Collection</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control numeric" name="lastcollection" id="lastcollection" style="text-align:right;" maxlength="10" value="@ViewBag.totalcollection" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ratingYear" class="col-sm-4 col-form-label">Year</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="ratingYear" name="ratingYear">
+                                            <option value="0">Select Year</option>
+                                            @foreach (var data in Model.ratingYears)
+                                            {
+                                                <option value="@data.Id">@data.ratingYearName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="agreementAmounts" class="col-sm-4 col-form-label">Agreement Amount</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control numeric" name="agreementAmounts" id="agreementAmounts" style="text-align:right;" maxlength="10">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ratingAmounts" class="col-sm-4 col-form-label">Ratings Fees</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control numeric" name="ratingAmounts" id="ratingAmounts" style="text-align:right;" maxlength="10" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="vatPercent" class="col-sm-4 col-form-label">Vat(%)</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control numeric" name="vatPercent" id="vatPercent" style="text-align:right;" maxlength="4" value="7.5">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" id="vatType" name="vatType">
+                                            @foreach (var data in Model.vatCategories)
+                                            {
+                                                <option value="@data.Id">@data.vatCategoryName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="taxRate" class="col-sm-4 col-form-label">Tax(%)</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control numeric" name="taxRate" id="taxRate" style="text-align:right;" maxlength="4" value="7.5">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" id="taxType" name="taxType">
+                                            @foreach (var data in Model.taxCategories)
+                                            {
+                                                <option value="@data.Id">@data.taxCategoryName</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="remarks" class="col-sm-4 col-form-label">Fin Remarks</label>
+                                    <div class="col-sm-8">
+                                        <textarea type="text" class="form-control" id="finremarks" name="finremarks" maxlength="300" readonly></textarea>
+
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="remarks" class="col-sm-4 col-form-label">BD Remarks</label>
+                                    <div class="col-sm-8">
+                                        <textarea type="text" class="form-control" id="revremarks" name="revremarks" maxlength="300"></textarea>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="rDate" class="col-sm-4 col-form-label">Rating Date</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="rDate" id="rDate">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="vatAmounts" class="col-sm-4 col-form-label">Vat Amount</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="vatAmounts" id="vatAmounts" style="text-align:right;" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="vatAmount" class="col-sm-4 col-form-label">Tax Amount</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="taxAmounts" id="taxAmounts" style="text-align:right;" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="totalAmount" class="col-sm-4 col-form-label">Total Amount</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="totalAmounts" id="totalAmounts" style="text-align:right;" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-success btn-sm" style="float:right;" id="btnEdit">Edit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+
+                            <input type="hidden" id="detailsId" name="detailsId" value="0" />
+                            <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                            <input type="hidden" id="agreementDetailId" name="agreementDetailId" value="0" />
+                            <input type="hidden" id="isProposed" name="isProposed" value="0" />
+                            <div class="col-12">
+                                <table class="table table-bordered table-responsive table-striped" id="tblitemDetails" data-parsley-required="true">
+                                    <thead style="background-color:lightgray;">
+                                        <tr>
+                                            <th style="width:10%">Action</th>
+                                            <th style="width:12%">Rating Type</th>
+                                            <th style="width:7%">Year</th>
+                                            <th style="width:10%">Date</th>
+                                            <th style="width:8%;text-align:right;">Agree. Amount</th>
+                                            <th style="width:8%;text-align:right;">Rating Fees</th>
+                                            <th style="width:8%;text-align:right;">Vat Rate</th>
+                                            <th style="width:8%;text-align:right;">Vat Amount</th>
+                                            <th style="width:8%;text-align:right;">Tax Rate</th>
+                                            <th style="width:8%;text-align:right;">Tax Amount</th>
+                                            <th style="width:8%;text-align:right;">Total Amount</th>
+                                            <th style="width:10%;text-align:right;">Status</th>
+                                            <th style="width:10%;text-align:right;">Fin Remarks</th>
+                                            <th style="width:10%;text-align:right;">BD Remarks</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <br />
+                        <div>
+                            <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600;color:black;" class="col-sm-10 pull-left">Signatory/Witness</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="Company" class="col-sm-4 col-form-label"></label>
+                                    <div class="col-sm-8">
+                                        <label for="Company" class="col-sm-4 col-form-label">Company</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="companySignatory" class="col-sm-4 col-form-label">Signatory</label>
+                                    <div class="col-sm-8">
+                                        @*<select class="form-control" id="companySignatory" name="companySignatory" data-parsley-required="true" data-parsley-trigger="keyup">
+                                            <option value="">Select Signatory</option>
+                                            @foreach (var data in Model.employeeInfos)
+                                            {
+                                                <option value="@data.nameEnglish">@data.nameEnglish</option>
+                                            }
+                                        </select>*@
+                                        <input class="form-control" type="text" id="companySignatory" name="companySignatory" value="" readonly />
+
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="cosigdesignation">
+                                    <label for="companySignatory" class="col-sm-4 col-form-label">Designation</label>
+                                    <div class="col-sm-8">
+
+
+                                        <input type="text" class="form-control" name="cosigdesignationName" id="cosigdesignationName" readonly>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="companyWitness" class="col-sm-4 col-form-label">Witness</label>
+                                    <div class="col-sm-8">
+                                        @*<select class="form-control" id="companyWitness" name="companyWitness" data-parsley-trigger="keyup">
+                                            <option value="">Select Witness</option>
+                                            @foreach (var data in Model.employeeInfos)
+                                            {
+                                                <option value="@data.nameEnglish">@data.nameEnglish</option>
+                                            }
+                                        </select>*@
+                                        <input type="text" class="form-control" id="companyWitness" name="companyWitness" value="" readonly />
+
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="cowitdesignation">
+                                    <label for="companySignatory" class="col-sm-4 col-form-label">Designation</label>
+                                    <div class="col-sm-8">
+
+
+                                        <input type="text" class="form-control" name="cowitdesignationName" id="cowitdesignationName" readonly>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label for="Company" class="col-sm-4 col-form-label"></label>
+                                    <div class="col-sm-8">
+                                        <label for="Company" class="col-sm-3 col-form-label">Lead</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="contactSignatoryId" class="col-sm-4 col-form-label">Signatory</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="contactSignatoryId" name="contactSignatoryId" data-parsley-required="true" data-parsley-trigger="keyup" readonly>
+                                            <option value="0">Select Signatory</option>
+                                            @foreach (var data in Model.contacts)
+                                            {
+                                                <option value="@data.Id">@data.resource.resourceName</option>
+                                            }
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="consigdesignation">
+                                    <label for="companySignatory" class="col-sm-4 col-form-label">Designation</label>
+                                    <div class="col-sm-8">
+
+
+                                        <input type="text" class="form-control" name="consigdesignationName" id="consigdesignationName" readonly>
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="contactWitnessId" class="col-sm-4 col-form-label">Witness</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="contactWitnessId" name="contactWitnessId" data-parsley-required="true" data-parsley-trigger="keyup" readonly>
+                                            <option value="">Select Witness</option>
+                                            @foreach (var data in Model.contacts)
+                                            {
+                                                <option value="@data.Id">@data.resource.resourceName</option>
+                                            }
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="conwitdesignation">
+                                    <label for="companySignatory" class="col-sm-4 col-form-label">Designation</label>
+                                    <div class="col-sm-8">
+
+
+                                        <input type="text" class="form-control" name="conwitdesignationName" id="conwitdesignationName" readonly>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //$("#agreements").addClass("active");
+            Common.Ajax('GET', '/global/api/GetLeadsByLeadOwner', [], 'json', ajaxGetLeadsByLeadOwner);
+            Common.Ajax('GET', '/CRMLead/Agreement/getemployee', [], 'json', ajaxGetemployee);
+            $("#agreementDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#expiredDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#sendingDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#signingDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#rDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#expectedReportDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $('#statusTable').DataTable();
+
+            $(".numeric").keydown(function (e) {
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                    (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+            $("#agreementAmounts").keyup(function () {
+                CalculateVat();
+            });
+            $("#vatPercent").keyup(function () {
+                CalculateVat();
+            });
+            $("#vatType").change(function () {
+                CalculateVat();
+            });
+            $("#taxRate").keyup(function () {
+                CalculateVat();
+            });
+            $("#taxType").change(function () {
+                CalculateVat();
+            });
+
+            if (@masterId>0) {
+                Common.Ajax('GET', '/CRMLead/Agreement/GetAgreementByAgreementId/?AgreementId=' + @masterId, [], 'json', ajaxGetAgreementByAgreementId);
+                Common.Ajax('GET', '/CRMLead/Agreement/GetAgreementDetailsbyAgreementId/?AgreementId=' + @masterId, [], 'json', ajaxGetAgreementDetailsbyAgreementId);
+                @*Common.Ajax('GET', '/CRMLead/Surveillance/GetAgreementDetailsbyAgreementIdRatingDate/?AgreementId=' + @masterId + '&FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val(), [], 'json', ajaxGetAgreementDetailsbyAgreementId);*@
+            }
+            $("#btnEdit").click(function (e) {
+                let agreementDetailId = $('#agreementDetailId').val();
+                if (agreementDetailId == 0 || agreementDetailId == null) {
+                    swal("Please Select One Rating Fees Info");
+                    return false;
+
+                }
+                let totalAmounts = $('#totalAmounts').val();
+                if (totalAmounts == 0 || totalAmounts == null || totalAmounts == "") {
+                    swal("Please Insert Agreement Amount");
+                    return false;
+
+                }
+                
+
+                e.preventDefault();
+
+                var form = $("#frmSurveillance");
+                $.ajax({
+                    url: '/CRMLead/Surveillance/EditSurveillanceProposal',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Edit Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+                            window.location.href = "/CRMLead/Surveillance/SurveillanceProposalReviewed?id=" + @masterId + '&FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val();
+                        });
+                    }
+                });
+            });
+
+    });
+        function ajaxGetAgreementByAgreementId(response) {
+            var exdate = "";
+            if (response.expectedReportDate != "1900-01-01T00:00:00") {
+                exdate = getPurchaseDate(response.expectedReportDate.toString("dd-MMM-yyyy"));
+            }
+            $("#agreementId").val(response.Id);
+            $("#leadsId").val(response.leadsId);
+            $("#leadName").val(response.leads.leadName);
+            $("#agreementNo").val(response.agreementNo);
+            $("#agreementTypeId").val(response.agreementTypeId);
+            $("#agreementDate").val(getPurchaseDate(response.agreementDate.toString("dd-MMM-yyyy")));
+            $("#expiredDate").val(getPurchaseDate(response.expiredDate.toString("dd-MMM-yyyy")));
+            $("#sendingDate").val(getPurchaseDate(response.sendingDate.toString("dd-MMM-yyyy")));
+            $("#signingDate").val(getPurchaseDate(response.signingDate.toString("dd-MMM-yyyy")));
+            $("#expectedReportDate").val(exdate);
+            $("#agreementCategoryId").val(response.agreementCategoryId);
+            $("#noOfReports").val(response.noOfReports);
+            $("#loanLimitAmount").val(response.loanLimitAmount);
+            $("#loanLimitUnit").val(response.loanLimitUnit);
+            $("#priority").val(response.priority);
+            $("#remarks").val(response.remarks);
+            $("#companySignatory").val(response.companySignatory);
+            $("#companyWitness").val(response.companyWitness);
+            $("#contactSignatoryId").val(response.contactSignatoryId);
+            $("#contactWitnessId").val(response.contactWitnessId);
+            $("#agreementStatusId").val(response.agreementStatusId);
+            $("#consigdesignationName").val(response.contactSignatoryDesignation);
+            $("#conwitdesignationName").val(response.contactWitnessDesignation);
+            $("#cowitdesignationName").val(response.companyWitnessDesignation);
+            $("#cosigdesignationName").val(response.companySignatoryDesignation);
+            //Common.Ajax('GET', '/CRMLead/Agreement/getcontactdetailbyId/?id=' + response.contactSignatoryId, [], 'json', ajaxGetcontactId);
+            //Common.Ajax('GET', '/CRMLead/Agreement/getcontactdetailbyId/?id=' + response.contactWitnessId, [], 'json', ajaxGetcontactwitconId);
+            //Common.Ajax('GET', '/CRMLead/Agreement/getemployeebyempcode/?empCode=' + response.companySignatory, [], 'json', ajaxGetcontactsigcomId);
+            //Common.Ajax('GET', '/CRMLead/Agreement/getemployeebyempcode/?empCode=' + response.companyWitness, [], 'json', ajaxGetcontactwitcomId);
+        }
+        function ajaxGetemployee(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#companySignatory').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#companySignatory").val(ui.item.value);
+                    //Common.Ajax('GET', '/CRMLead/Agreement/GetAllContactsByLeadsId/?LeadsId=' + ui.item.key, [], 'json', ajaxGetAllContactsByLeadsId);
+                    Common.Ajax('GET', '/CRMLead/Agreement/getemployeebyempcode/?empCode=' + ui.item.value, [], 'json', ajaxGetcontactsigcomId);
+                }
+            });
+            $('#companyWitness').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#companyWitness").val(ui.item.value);
+                    Common.Ajax('GET', '/CRMLead/Agreement/getemployeebyempcode/?empCode=' + ui.item.value, [], 'json', ajaxGetcontactwitcomId);
+                }
+            });
+        }
+        function ajaxGetcontactId(response) {
+            console.log(response);
+            if (response != null) {
+                $("#consigdesignationName").val(response.resource ?.crmdesignations ?.designationName);
+
+            }
+            
+
+        }
+        function ajaxGetcontactwitconId(response) {
+            console.log(response);
+            if (response != null) {
+
+                $("#conwitdesignationName").val(response.resource ?.crmdesignations ?.designationName);
+            }
+          
+
+        }
+
+        function ajaxGetcontactwitcomId(response) {
+            console.log(response);
+            if (response != null) {
+                $("#cowitdesignationName").val(response.designation);
+            }
+
+
+        }
+        function ajaxGetcontactsigcomId(response) {
+            console.log(response);
+            if (response != null) {
+
+                $("#cosigdesignationName").val(response.designation);
+            }
+
+
+        }
+        function ajaxGetAgreementDetailsbyAgreementId(response) {
+            console.log(response);
+            $("#tblitemDetails tbody").empty();
+            window.localStorage.setItem("holdIndex1", null);
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            var status = "";
+            var isvisible = 0;
+          
+            $.each(response, function (key, value) {
+                var vatcat = value.vatCategoryId;
+                var taxcat = value.taxCategoryId;
+               
+                var vatper = (value.vatAmount * 100 / value.agreementAmount).toFixed(2);
+                if (vatcat == "1")
+                {
+                  
+                    vatper = (value.agreementAmount * 100 / (value.agreementAmount - value.vatAmount) - 100).toFixed(2);
+                }
+                var taxper = (value.taxAmount * 100 / value.agreementAmount).toFixed(2);
+                if (taxcat == "1") {
+                    taxper = (value.agreementAmount * 100 / (value.agreementAmount - value.taxAmount) - 100).toFixed(2);
+                }
+                index = $("#tblitemDetails tbody>tr").length;
+                
+                if (value.isProposed == 0) {
+                    status = "Create";
+                }
+               else if (value.isProposed == 1) {
+                    status = "Proposed";
+                }
+                else if (value.isProposed == 2) {
+                    status = "Verified";
+                }
+                else if (value.isProposed == 3) {
+                    status = "Reviewed";
+                }
+                else if (value.isProposed == 6) {
+                    status = "Reviewed";
+                }
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td><a id="btnEditDetails' + index + '" onclick = "EditTbl(' + index + "," + value.ratingYearId + ", " + value.vatCategoryId + ", '" + value.ratingDate + "', " + value.taxCategoryId + ", " + value.agreementAmount + ", " + value.ratingAmount + ", " + value.vatAmount + ", " + value.taxAmount + ", " + value.totalAmount + ", " + vatper + "," + taxper+"," + value.Id + ", " + value.isProposed + "," + "'" + value.remarks + "'" + "," + "'" + value.revremarks + "'" + ')" href = "javascript:void(0)" title = "Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >&nbsp;&nbsp; ' +
+                    '<a id="btnProposeDetails' + index + '" onclick = "ProposeForApprove(' + index + "," + value.ratingYearId + ", " + value.vatCategoryId + ", '" + value.ratingDate + "', " + value.taxCategoryId + ", " + value.agreementAmount + ", " + value.ratingAmount + ", " + value.vatAmount + ", " + value.taxAmount + ", " + value.totalAmount + ", " + value.Id + ')" href = "javascript:void(0)" title = "Propose" class="btn btn-info btn-xs" > <i class="fa fa-paper-plane"></i></a ></td>' +
+                    '<td>' + value.ratingYear.ratingType + '<input type="hidden" name="id"class="clsId" value="' + value.Id + '"><input type="hidden" id="ratingYearId' + index + '" name="ratingYearId" class="clsratingYearId" value="' + value.ratingYearId + '"/></td>' +
+                    '<td>' + value.ratingYear.ratingYearName + '<input type="hidden" id="vatCategoryId' + index + '" name="vatCategoryId" class="clsvatCategoryId" value="' + value.vatCategoryId + '"/><input type="hidden" id="taxCategoryId' + index + '" name="taxCategoryId" class="clstaxCategoryId" value="' + value.taxCategoryId + '"/></td>' +
+                    '<td>' + value.ratingDate + '<input type="hidden" id="ratingDate' + index + '" name="ratingDate" class="clsratingDate" value="' + value.ratingDate + '"/></td>' +
+                    '<td style="text-align:right;">' + value.agreementAmount.toFixed(0) + '<input type="hidden" id="agreementAmount' + index + '" name="agreementAmount" class="clsagreementAmount" value="' + value.agreementAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.ratingAmount.toFixed(0) + '<input type="hidden" id="ratingAmount' + index + '" name="ratingAmount" class="clsratingAmount" value="' + value.ratingAmount + '"/></td>' +
+                    '<td>' + vatper + '</td>' +
+                    '<td style="text-align:right;">' + value.vatAmount.toFixed(0) + '<input type="hidden" id="vatAmount' + index + '" name="vatAmount" class="clsvatAmount" value="' + value.vatAmount + '"/></td>' +
+                    '<td>' + taxper + '</td>' +
+                    '<td style="text-align:right;">' + value.taxAmount.toFixed(0) + '<input class="clstaxAmount" type="hidden" id="taxAmount' + index + '" name="taxAmount"  value="' + value.taxAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + value.totalAmount.toFixed(0) + '<input type="hidden" id="totalAmount' + index + '" name="totalAmount" class="clstotalAmount" value="' + value.totalAmount + '"/></td>' +
+                    '<td style="text-align:right;">' + status + '<input type="hidden" id="status' + index + '" name="status" class="clsstatus" value="' + status + '"/></td>' +
+                    '<td style="text-align:right;">' + value.remarks + '<input type="hidden" id="status' + index + '" name="status" class="clsstatus" value="' + value.remarks + '"/></td>' +
+                    '<td style="text-align:right;">' + value.revremarks + '<input type="hidden" id="status' + index + '" name="status" class="clsstatus" value="' + value.revremarks + '"/></td>' +
+
+                   
+                   
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+                if (value.isProposed == 0 || value.isProposed == 3|| value.isProposed == 6) {
+                    if (isvisible != 0) {
+
+                        $("#btnEditDetails" + index).hide();
+                        $("#btnProposeDetails" + index).hide();
+
+                    }
+                    isvisible = 1;
+                }
+                else {
+                    //alert(index)
+                    $("#btnEditDetails" + index).hide();
+                    $("#btnProposeDetails" + index).hide();
+                }
+            })
+            status = "";
+            index = index + 1;
+
+        }
+        function ajaxGetLeadsByLeadOwner(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.leadName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#leadName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#leadsId").val(ui.item.key);
+                    Common.Ajax('GET', '/CRMLead/Agreement/GetAllContactsByLeadsId/?LeadsId=' + ui.item.key, [], 'json', ajaxGetAllContactsByLeadsId);
+                }
+            });
+    }
+    function ajaxGetAllContactsByLeadsId(response) {
+        $.each(response, function (key, value) {
+            $('#contactSignatoryId').append('<option value="' + value.Id + '">' + value.resource.resourceName + '</option');
+            $('#contactWitnessId').append('<option value="' + value.Id + '">' + value.resource.resourceName + '</option');
+        });
+    }
+        function CalculateVat() {
+
+            var vat = 0;
+            var tax = 0;
+            var totalAmount = 0;
+            var netTotal = 0;
+            var agreementAmount = 0;
+
+            if ($("#agreementAmounts").val() != "") {
+                agreementAmount = $("#agreementAmounts").val();
+            }
+
+            if ($("#vatType").val() == "1") {
+                if ($("#vatPercent").val() != "" && $("#agreementAmounts").val() != "") {
+                    var vatPercentage = $("#vatPercent").val();
+                    var vatPercentageA = 100 + parseFloat(vatPercentage);
+                    totalAmount = (parseFloat(agreementAmount) / vatPercentageA) * 100;
+                    vat = parseFloat(agreementAmount) - parseFloat(totalAmount);
+                    netTotal = parseFloat(totalAmount) + vat;
+                    totalAmount = parseFloat(agreementAmount) - vat;
+
+                    //alert(totalAmount);
+                }
+            }
+            if ($("#vatType").val() == "2") {
+                if ($("#vatPercent").val() != "" && $("#agreementAmounts").val() != "") {
+                    var vatPercentage = $("#vatPercent").val();
+                    vat = agreementAmount * vatPercentage / 100;
+                    totalAmount = parseFloat(agreementAmount);
+                    netTotal = parseFloat(agreementAmount) + vat;
+                }
+            }
+
+            if ($("#vatType").val() == "3") {
+                if ($("#agreementAmounts").val() != "") {
+                    vat = 0;
+                    totalAmount = parseFloat(agreementAmount);
+                    netTotal = parseFloat(agreementAmount);
+                }
+            }
+            if ($("#taxType").val() == "1") {
+                if ($("#vatPercent").val() != "" && $("#agreementAmounts").val() != "") {
+                    var vatPercentage = $("#taxRate").val();
+                    var vatPercentageA = 100 + parseFloat(vatPercentage);
+                    totalAmount = (parseFloat(agreementAmount) / vatPercentageA) * 100;
+                    tax = parseFloat(agreementAmount) - parseFloat(totalAmount);
+                    netTotal = parseFloat(totalAmount) + tax;
+                    totalAmount = parseFloat(agreementAmount) - tax;
+                }
+            }
+            if ($("#taxType").val() == "2") {
+                if ($("#taxRate").val() != "" && $("#agreementAmounts").val() != "") {
+                    var vatPercentage = $("#taxRate").val();
+                    tax = agreementAmount * vatPercentage / 100;
+                    totalAmount = parseFloat(agreementAmount);
+                    netTotal = parseFloat(agreementAmount) + tax;
+                }
+            }
+            if ($("#taxType").val() == "3") {
+                if ($("#agreementAmounts").val() != "") {
+                    tax = 0;
+                    totalAmount = parseFloat(agreementAmount);
+                    netTotal = parseFloat(agreementAmount);
+                }
+            }
+            if ($("#vatType").val() == "1" && $("#taxType").val() == "1") {
+                totalAmount = parseFloat(agreementAmount) - vat - tax;
+                netTotal = parseFloat(agreementAmount);
+            }
+            if ($("#vatType").val() == "1" && $("#taxType").val() == "2") {
+                totalAmount = parseFloat(agreementAmount) - vat;
+                netTotal = parseFloat(agreementAmount) + tax;
+            }
+            if ($("#vatType").val() == "1" && $("#taxType").val() == "3") {
+                totalAmount = parseFloat(agreementAmount) - vat;
+                netTotal = parseFloat(agreementAmount);
+            }
+            if ($("#vatType").val() == "2" && $("#taxType").val() == "1") {
+                totalAmount = parseFloat(agreementAmount) - tax;
+                netTotal = parseFloat(agreementAmount) + vat;
+            }
+            if ($("#vatType").val() == "2" && $("#taxType").val() == "2") {
+                totalAmount = parseFloat(agreementAmount);
+                netTotal = parseFloat(agreementAmount) + vat + tax;
+            }
+            if ($("#vatType").val() == "2" && $("#taxType").val() == "3") {
+                totalAmount = parseFloat(agreementAmount);
+                netTotal = parseFloat(agreementAmount) + vat + tax;
+            }
+            if ($("#vatType").val() == "3" && $("#taxType").val() == "3") {
+                totalAmount = parseFloat(agreementAmount);
+                netTotal = parseFloat(agreementAmount);
+            }
+
+            if ($("#vatType").val() == "3" && $("#taxType").val() == "2") {
+                totalAmount = parseFloat(agreementAmount);
+                netTotal = parseFloat(agreementAmount) + tax;
+            }
+            if ($("#vatType").val() == "3" && $("#taxType").val() == "1") {
+                totalAmount = parseFloat(agreementAmount) - tax;
+                netTotal = parseFloat(agreementAmount);
+            }
+           // alert(totalAmount);
+            $("#vatAmounts").val(vat.toFixed(0));
+            $("#taxAmounts").val(tax.toFixed(0));
+            $("#ratingAmounts").val(totalAmount.toFixed(0));
+            $("#totalAmounts").val(netTotal.toFixed(0));
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+
+        function RefreshAll() {
+            location.reload();
+        }
+       
+
+        function EditTbl(index, ratingYearId, vatCategoryId, ratingDate, taxCategoryId, agreementAmount, ratingAmount, vatAmount, taxAmount, totalAmount,vatper,taxper, Id, isProposed, remarks, revremarks) {
+          
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+            $('#agreementDetailId').val(Id)
+            $('#detailsId').val(Id);
+            $('#ratingYear').val(ratingYearId);
+            $('#vatType').val(vatCategoryId);
+            $("#rDate").val(getPurchaseDate(ratingDate.toString("dd-MMM-yyyy")));
+            $('#taxType').val(taxCategoryId);
+            $('#agreementAmounts').val(agreementAmount);
+            $('#ratingAmounts').val(ratingAmount);
+            $('#vatAmounts').val(vatAmount);
+            $('#taxAmounts').val(taxAmount);
+            $('#totalAmounts').val(totalAmount);
+            $('#finremarks').val(remarks);
+            $('#revremarks').val(revremarks);
+            $('#isProposed').val(isProposed);
+            $("#vatPercent").val(vatper);
+            $("#taxRate").val(taxper);
+
+
+            window.localStorage.setItem('holdIndex1', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex1', rightIndex);
+            }
+        }
+      
+        function ProposeForApprove(index, ratingYearId, vatCategoryId, ratingDate, taxCategoryId, agreementAmount, ratingAmount, vatAmount, taxAmount, totalAmount, Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to Propose this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Propose it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("UpdateAgreementDetailsReviewed", "Surveillance")',
+                    data: { Id: Id, statusId: 1, remarks: $("#revremarks").val() },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Proposed Successfully!', 'success');
+                         //window.location.href = "/CRMLead/Surveillance/SurveillanceProposalReviewed?id=" + @masterId + '&FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val();
+                        window.location.href = "/CRMLead/Surveillance/ReviewedSurveillance";
+                    })
+                    .fail(function () {
+                        alert("Unable to Propose. Please Try Again");
+                    });
+            });
+        }
+
+        function Refresh() {
+            $('#detailsId').val('');
+            $("#IsEdit").val(0);
+
+            $('#ratingYearId').val('0');
+            $('#vatType').val('');
+            $('#taxType').val('');
+            $('#agreementAmounts').val('');
+            $('#ratingAmounts').val('');
+            $('#vatAmounts').val('');
+            $('#taxAmounts').val('');
+            $('#totalAmounts').val('');
+            $("#rDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            window.localStorage.setItem("holdIndex1", null);
+            ifExistIndex = null;
+        }
+
+        
+
+
+    </script>
+}
+
+
+@section Style{
+    <style>
+
+        .redStar {
+            color: red;
+        }
+
+        #statusTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+
+
+
+

@@ -1,0 +1,260 @@
+﻿@model BelongingsViewModel
+@{
+    ViewData["Title"] = "Belongings Information";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+@section StyleEmp{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo?.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo?.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo?.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo?.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo?.activityStatus == 1 ? "Active" : "Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">Belongings Information</u></h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="Belongings" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-6">
+                        @*<div class="form-group row">
+                            <label for="itemCategory" class="col-sm-4 col-form-label">Item Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="itemName" name="itemName" data-parsley-required="true">
+                                <input type="hidden" id="itemID" name="itemID" value="0">
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="specification" class="col-sm-4 col-form-label">Specification <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="specification" name="specification" data-parsley-required="true">
+                                <input type="hidden" id="specificationID" name="specificationID" value="0">
+                            </div>
+                        </div>*@
+
+                        <div class="form-group row">
+                            <label for="belongingId" class="col-sm-4 col-form-label">Belongings Item </label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="belongingId" name="belongingId">
+                                    <option value="">Select One</option>
+                                    @foreach (var data in Model.belongingItems)
+                                    {
+                                        <option value="@data.Id">@data.ItemName</option>
+                                    }
+                                </select>
+                                <input type="hidden" id="employeeID" name="employeeID" value="@Model.employeeID">
+                                <input type="hidden" id="belongingsItemID" name="belongingsItemID" value="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="assetNo" class="col-sm-4 col-form-label">Asset No </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="assetNo" name="assetNo">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="issueDate" class="col-sm-4 col-form-label">Issue Date </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="issueDate" name="issueDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="returnDate" class="col-sm-4 col-form-label">Return Date </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="returnDate" name="returnDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-4 col-form-label">Remarks </label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" rows="6" id="remarks" name="remarks"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">Belongings Information List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="belongingsTable">
+                    <thead>
+                        <tr>
+                            <th>Item name</th>
+                            <th>Item Code</th>
+                            <th>Asset No</th>
+                            <th>Issue Date</th>
+                            <th>Return Date</th>
+                            <th>Action</th>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var data in Model.belongings)
+                        {
+                            <tr>
+                                <td>@data?.belongingItem?.ItemName</td>
+                                <td>@data?.belongingItem?.ItemCode</td>
+                                <td>@data.assetNo</td>
+                                <td>@data.issueDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.returnDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.belongingItemId','@data.assetNo','@data.description', '@data.issueDate?.ToString("dd-MMM-yyyy")', '@data.returnDate?.ToString("dd-MMM-yyyy")')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id, @data.employeeId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $("#belongings").addClass("active");
+            //$('#issueDate').flatpickr({ dateFormat: "d-M-Y" });
+            //$('#returnDate').flatpickr({ dateFormat: "d-M-Y" });
+            $('#issueDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#returnDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+
+            $('#belongingsTable').DataTable();
+
+            Common.Ajax('GET', '/global/api/GetAllFixedAssetItem', [], 'json', ajaxGetAllFixedAssetItem);
+            
+        });
+
+        function ajaxGetAllFixedAssetItem(response) {
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                GetList[GetList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#itemName").val(ui.item.value);
+                    $("#itemID").val(ui.item.key);
+                    var ItemId = ui.item.key;
+                    Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetAllItemSpecificationByitemId/?ItemId=' + ItemId, [], 'json', ajaxGetItemSpecification);
+                    //Common.Ajax('GET', '/global/api/Item/' + ItemId, [], 'json', GetItemName);
+                }
+            });
+        }
+
+        function ajaxGetItemSpecification(response) {
+            console.log(response);
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                GetList[GetList.length] = obj;
+            });
+            $('#specification').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#specification").val(ui.item.value);
+                    $("#specificationID").val(ui.item.key);
+                    //var ItemId = ui.item.key;
+                    //Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetAllItemSpecificationByitemId/?ItemId=' + ItemId, [], 'json', ajaxGetItemSpecification);
+                    //Common.Ajax('GET', '/global/api/Item/' + ItemId, [], 'json', GetItemName);
+                }
+            });
+        }
+
+        function Edit(Id, itemId, assetNo, description, issueDate, returnDate) {
+            $("#belongingsItemID").val(Id);
+            $("#belongingId").val(itemId);
+            $("#assetNo").val(assetNo);
+            $("#issueDate").val(issueDate);
+            $("#remarks").val(description);
+            $("#returnDate").val(returnDate);
+        }
+
+        //function Remove(Id, employeeId) {
+        //    chk = confirm('Do you want to delete this?');
+        //    if (chk) {
+        //        location.replace("/HRPMSEmployee/Belongings/Delete/" + Id + "?empId=" + employeeId);
+        //    } else {
+        //        return false;
+        //    }
+        //}
+
+        function Remove(Id, employeeId) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                location.replace("/HRPMSEmployee/Belongings/Delete/" + Id + "?empId=" + employeeId);
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+    </script>
+}
+
+
+
+
+

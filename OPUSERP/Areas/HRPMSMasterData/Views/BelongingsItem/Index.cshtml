@@ -1,0 +1,190 @@
+﻿@model BelongingsItemViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+
+<style>
+    #belongings-card-item-header-id h3 {
+        font-weight: bold;
+    }
+</style>
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Belonging Item</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSMasterData" asp-controller="BelongingsItem" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="itemName" class="col-sm-3 col-form-label">
+                        Item Name
+                        <span style="float:right;" class="redStar"></span>
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemName" id="itemName">
+                    </div>
+                </div>
+                <div>
+                    <input type="hidden" name="itemId" id="itemId" />
+                    <input type="hidden" name="id" id="id" value="0" />
+                </div>
+                <div class="form-group row">
+                    <label for="itemCode" class="col-sm-3 col-form-label">Item Code</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="itemCode" id="itemCode" data-parsley-required="true">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="itemCode" class="col-sm-3 col-form-label">Brand Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="brandName" id="brandName" >
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="itemCode" class="col-sm-3 col-form-label">Model Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="modelName" id="modelName" >
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="itemCode" class="col-sm-3 col-form-label">Serial Number</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="serialNumber" id="serialNumber" >
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateOfBirth" class="col-sm-3 col-form-label">Date Of procurement </label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control datePicker" id="dateOfProcurement" value="@Model.dateOfProcurement?.ToString("MM/dd/yyyy")" name="dateOfProcurement">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateOfBirth" class="col-sm-3 col-form-label">Date of Submission</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control datePicker" id="dateOfSubmission" value="@Model.dateOfSubmission?.ToString("MM/dd/yyyy")" name="dateOfSubmission">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateOfBirth" class="col-sm-3 col-form-label">Date of Last physical verification</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control datePicker" id="dateOfLastPhysicalVerification" value="@Model.dateOfSubmission?.ToString("MM/dd/yyyy")" name="dateOfLastPhysicalVerification">
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Belonging Item List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="belongingsTable">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Item Code</th>
+                            <th>Brand Name</th>
+                            <th>Model Name</th>
+                            <th>Serial Number</th>
+                            <th>Date Of procurement</th>
+                            <th>Date of Submission</th>
+                            <th>Date of Last physical verification</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.belongingItems)
+                        {
+                            <tr>
+                                <td>@data.ItemName</td>
+                                <td>@data.ItemCode</td>
+                                <td>@data.brandName</td>
+                                <td>@data.modelName</td>
+                                <td>@data.serialNumber</td>
+                                <td>@data.dateOfProcurement?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.dateOfSubmission?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.dateOfLastPhysicalVerification?.ToString("dd-MMM-yyyy")</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.itemId','@data.ItemName','@data.ItemCode','@data.brandName', '@data.modelName', '@data.serialNumber', '@data.dateOfProcurement?.ToString("dd-MMM-yyyy")', '@data.dateOfSubmission?.ToString("dd-MMM-yyyy")', '@data.dateOfLastPhysicalVerification?.ToString("dd-MMM-yyyy")')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#" onclick="Remove(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#belongingsTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetAllFixedAssetItem', [], 'json', ajaxGetAllFixedAssetItem);
+        });
+
+        $('#dateOfProcurement').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+        $('#dateOfSubmission').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+        $('#dateOfLastPhysicalVerification').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+
+        function ajaxGetAllFixedAssetItem(response) {
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                GetList[GetList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#itemName").val(ui.item.value);
+                    $("#itemId").val(ui.item.key);
+                    var ItemId = ui.item.key;
+                }
+            });
+        }
+
+        function Edit(Id, itemId, name, code, brandName, modelName, serialNumber, dateOfProcurement, dateOfSubmission, dateOfLastPhysicalVerification ) {
+            $("#id").val(Id);
+            $("#itemId").val(itemId);
+            $("#itemName").val(name);
+            $("#itemCode").val(code);
+            $("#brandName").val(brandName);
+            $("#modelName").val(modelName);
+            $("#serialNumber").val(serialNumber);
+            $("#dateOfProcurement").val(dateOfProcurement);
+            $("#dateOfSubmission").val(dateOfSubmission);
+            $("#dateOfLastPhysicalVerification").val(dateOfLastPhysicalVerification);
+
+        }
+
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/HRPMSMasterData/BelongingsItem/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+    </script>
+}

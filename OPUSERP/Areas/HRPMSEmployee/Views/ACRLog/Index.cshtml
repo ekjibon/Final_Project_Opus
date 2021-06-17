@@ -1,0 +1,284 @@
+﻿@model OPUSERP.Areas.HRPMSEmployee.Models.ACRLogViewModel
+@{
+    ViewData["Title"] = Model.fLang2.title;
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department?.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo.activityStatus == 1 ? "Active" : "Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">@Model.fLang2.title</u></h5>               
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="ACRLog" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="hidden" id="ID" name="ID" value="0" />
+                        <input type="hidden" id="employeeId" name="employeeId" value="@ViewBag.employeeID" />
+                        <div class="form-group row">
+                            <label for="year" class="col-sm-4 col-form-label">@Model.fLang2.year <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" min="1" class="form-control" id="year" name="year" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="startDate" class="col-sm-4 col-form-label">@Model.fLang2.startDate <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="startDate" name="startDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="supervisorCode" class="col-sm-4 col-form-label">Supervisor's PIN </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="supervisorCode" name="supervisorCode" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="supervisorName" class="col-sm-4 col-form-label">@Model.fLang2.supervisorName <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="supervisorName" name="supervisorName" autocomplete="off" data-parsley-required="true" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="supervisorDesignation" class="col-sm-4 col-form-label">@Model.fLang2.supervisorDesignation</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="supervisorDesignation" name="supervisorDesignation" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="score" class="col-sm-4 col-form-label">@Model.fLang2.score <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="score" name="score" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="endDate" class="col-sm-4 col-form-label">@Model.fLang2.endDate <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="endDate" name="endDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="signatoryCode" class="col-sm-4 col-form-label">Approvers's PIN </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="signatoryCode" name="signatoryCode" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="signatoryName" class="col-sm-4 col-form-label">@Model.fLang2.signatoryName <span class="redStar">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="signatoryName" name="signatoryName" autocomplete="off" data-parsley-required="true" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="signatoryDesignation" class="col-sm-4 col-form-label">@Model.fLang2.signatoryDesignation</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="signatoryDesignation" name="signatoryDesignation" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="advanceComment" class="col-sm-4 col-form-label">@Model.fLang2.advanceComment</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="advanceComment" name="advanceComment" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-4 col-form-label">@Model.fLang2.remarks</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="remarks" name="remarks" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="finalStatus" class="col-sm-4 col-form-label">Final Status</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="finalStatus" name="finalStatus" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="effectiveDate" class="col-sm-4 col-form-label">Effective Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="effectiveDate" name="effectiveDate" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button data-toggle="tooltip" title="Save" type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">@Model.fLang2.title</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="acrLogTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang2.startDate</th>
+                            <th>@Model.fLang2.endDate</th>
+                            <th>@Model.fLang2.supervisorName</th>
+                            <th>@Model.fLang2.signatoryName</th>
+                            <th>@Model.fLang2.action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.acrInfos)
+                        {
+                            <tr>
+                                <td>@data.startDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.endDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.supervisorName</td>
+                                <td>@data.signatoryName</td>
+                                <td>
+                                    <a class="btn btn-info" data-toggle="tooltip" title="Edit" href="#" onclick="Edit(@data.Id,'@data.startDate?.ToString("dd-MMM-yyyy")','@data.endDate?.ToString("dd-MMM-yyyy")','@data.supervisorName','@data.supervisorDesg','@data.signatoryName','@data.signatoryDesg','@data.remarks','@data.year','@data.score','@data.advanceComment','@data.supervisorCode','@data.signatoryCode','@data.finalStatus','@data.effectiveDate?.ToString("dd-MMM-yyyy")')"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id,@data.employeeId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+            $("#ACRHistory").addClass("active");
+            $('#acrLogTable').DataTable();           
+            $('#startDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $('#endDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+            $("#effectiveDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" });
+
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetSupervisors);
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetApprovers);
+        });
+
+        function Edit(Id, startDate, endDate, supervisorName, supervisorDesg, signatoryName, signatoryDesg, remarks, year, score, advanceComment, supervisorCode, signatoryCode, finalStatus, effectiveDate) {
+            $('#ID').val(Id);
+            $('#startDate').val(startDate);
+            $('#endDate').val(endDate);
+            $('#supervisorName').val(supervisorName);
+            $('#supervisorDesignation').val(supervisorDesg);
+            $('#signatoryName').val(signatoryName);
+            $('#signatoryDesignation').val(signatoryDesg);
+            $('#remarks').val(remarks);
+            $('#year').val(year);
+            $('#score').val(score);
+            $('#advanceComment').val(advanceComment);
+            $('#supervisorCode').val(supervisorCode);
+            $('#signatoryCode').val(signatoryCode);
+            $('#finalStatus').val(finalStatus);
+            $('#effectiveDate').val(effectiveDate);
+        }
+        
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/HRPMSEmployee/ACRLog/Delete/" + Id + "?empId=" + employeeId);
+            } else {
+                return false;
+            }
+        }
+
+        function ajaxGetSupervisors(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode;
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                obj.nameEnglish = option.nameEnglish;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#supervisorCode').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#supervisorCode").val(ui.item.value);
+                    $("#supervisorDesignation").val(ui.item.designation);
+                    $("#supervisorName").val(ui.item.nameEnglish);
+                }
+            });
+        }
+
+        function ajaxGetApprovers(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.employeeCode;
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                obj.nameEnglish = option.nameEnglish;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#signatoryCode').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#signatoryCode").val(ui.item.value);
+                    $("#signatoryDesignation").val(ui.item.designation);
+                    $("#signatoryName").val(ui.item.nameEnglish);
+                }
+            });
+        }
+
+    </script>
+}

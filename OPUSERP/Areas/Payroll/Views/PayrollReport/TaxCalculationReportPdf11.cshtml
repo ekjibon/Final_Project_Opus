@@ -1,0 +1,170 @@
+﻿@model TaxCertificateViewModel
+@{
+    ViewData["Title"] = "TaxCalculationReportPdf";
+    Layout = "~/Views/Shared/_layout.cshtml";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@*<div class="card">
+    <div class="col-sm-12">
+        <div class="col-sm-6">
+            <img src="@Model.company.filePath" alt="OPUS ERP" style="height:50px;" />
+        </div>
+
+        <div class="col-sm-6">
+            <h4>@Model.company.companyName</h4>
+            <h5>Draft Tax Calculation</h5>
+        </div>
+
+
+    </div>
+    <div class="col-sm-12">
+
+        <div class="col-sm-6">
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Name of Employee</td>
+                        <td style="border:solid 1px;">@Model?.employeeInfo.nameEnglish</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Gender</td>
+                        <td style="border:solid 1px;">@Model?.employeeInfo.gender</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Date of Joining</td>
+                        <td style="border:solid 1px;">@Model?.employeeInfo?.joiningDatePresentWorkstation?.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div>
+                <table style="border:solid 0px;width:100%;">
+                    <tr>
+                        <td style="border:solid 1px;">Income Year</td>
+                        <td style="border:solid 1px;">@Model?.salaryPeriod.taxYear.taxYearName</td>
+                    </tr>
+                    <tr>
+                        <td style="border:solid 1px;">Calculation Period</td>
+                        <td style="border:solid 1px;">@Model?.salaryPeriod.periodName</td>
+                    </tr>
+                   
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+</div>*@
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="col-sm-6">
+                    <img src="@Model.company.filePath" alt="OPUS ERP" style="height:50px;" />
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>@Model.company.companyName</h4>
+                    <h5>Draft Tax Calculation</h5>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <div class="col-sm-6">
+                    <div>
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="border:solid 1px;">Name of Employee</td>
+                                <td style="border:solid 1px;">@Model?.employeeInfo.nameEnglish</td>
+                            </tr>
+                            <tr>
+                                <td style="border:solid 1px;">Gender</td>
+                                <td style="border:solid 1px;">@Model?.employeeInfo.gender</td>
+                            </tr>
+                            <tr>
+                                <td style="border:solid 1px;">Date of Joining</td>
+                                <td style="border:solid 1px;">@Model?.employeeInfo?.joiningDatePresentWorkstation?.ToString("dd-MMM-yyyy")</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div>
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="border:solid 1px;">Income Year</td>
+                                <td style="border:solid 1px;">@Model?.salaryPeriod.taxYear.taxYearName</td>
+                            </tr>
+                            <tr>
+                                <td style="border:solid 1px;">Calculation Period</td>
+                                <td style="border:solid 1px;">@Model?.salaryPeriod.periodName</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+
+        });
+    </script>
+}
+<style>
+
+    .divstyle {
+        color: black;
+    }
+
+    .print-card-body {
+        width: 100%;
+        padding-bottom: 10px;
+    }
+
+    .vartical-table th {
+        width: 25%;
+    }
+
+    .vartical-table td {
+        width: 25%;
+    }
+
+    .table td, .table th {
+        padding: .3rem;
+        font-size: 15px;
+    }
+
+    table {
+        page-break-inside: auto
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    tfoot {
+        display: table-footer-group
+    }
+</style>
+
+

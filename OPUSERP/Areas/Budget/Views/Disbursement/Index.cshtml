@@ -1,0 +1,322 @@
+﻿@model DisbursmentViewModel
+@{
+    ViewData["Title"] = "Budget Disbursment";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<section>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header row">
+                <div class="col-md-8 col-sm-6">
+                    <h5 style="color: black; font-weight:bold">Budget Disbursment</h5>
+                </div>
+                <div class="col-md-4 col-xs-6">
+                    <a class="btn btn-success btn-sm ml-1" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+                    <button type="button" class="btn btn-default btn-sm ml-2" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("BudgetDisbursmentList", "Disbursement")'">Go To List</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="myForm" enctype="multipart/form-data" data-parsley-validate="parsley">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Number<span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" value="@Model.number" name="number" id="number" class="form-control" readonly required />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Date <span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <input type="text" name="date" id="date" class="form-control" value="@Model.date?.ToString("MM/dd/yyyy")" required autocomplete="off" />
+                            <input type="hidden" name="Id" id="Id" class="form-control" value="@Model.Id" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Fiscal Year<span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="year" id="year" class="form-control" required>
+                                <option value=""> Select One </option>
+                                @foreach (var data in Model.fiscalYears)
+                                {
+                                    if (Model.Id > 0 && data.Id == Model.year)
+                                    {
+                                        <option selected="selected" value="@data.Id">@data.yearName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@data.Id">@data.yearName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-sm-2 col-form-label">Branch<span style="color:red">*</span></label>
+                        <div class="col-md-10 col-sm-10">
+                            <select name="branch" id="branch" class="form-control" required>
+                                <option value=""> Select Branch </option>
+                                @if (ViewBag.sbuId > 0)
+                                {
+                                    @foreach (var data in Model.specialBranchUnits.Where(x=>x.Id==ViewBag.sbuId))
+                                    {
+                                        if (Model.Id > 0 && data.Id == Model.branch)
+                                        {
+                                            <option selected="selected" value="@data.Id">@data.branchUnitName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@data.Id">@data.branchUnitName</option>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    @foreach (var data in Model.specialBranchUnits)
+                                    {
+                                        if (Model.Id > 0 && data.Id == Model.branch)
+                                        {
+                                            <option selected="selected" value="@data.Id">@data.branchUnitName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@data.Id">@data.branchUnitName</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <p><b>Program Details</b></p>
+                                </div>
+                                <div class="card-body">
+                                    <div id="ItemInfo" class="tabcontent">
+                                        <div class="form-group row">
+                                            <label for="itemId" class="col-md-2 col-sm-2 col-form-label">Head Name</label>
+                                            <div class="col-md-4 col-sm-4">
+                                                <input type="text" class="form-control" id="headName" />
+                                                <input type="hidden" class="form-control" id="headId" autocomplete="off" />
+                                            </div>
+                                            <label for="itemId" class="col-md-2 col-sm-2 col-form-label">Amount</label>
+                                            <div class="col-md-4 col-sm-4">
+                                                <input type="number" class="form-control" id="amount" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" onclick="AddItemInfo()" value="Add" title="Add" class="btn btn-success ml-1" style="float:right; margin-top:5px;">Add</button>&nbsp;&nbsp;
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Program Details List</h5>
+                                            <table class="table table-bordered" id="tblfuelDetails" data-parsley-required="true">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Head Name</th>
+                                                        <th>Amount</th>
+                                                        <th><span>Action</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <input type="button" id="saveForm" value="Submit" class="btn btn-success ml-1" style="float:right; margin-top:5px;" />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+            $('#programCategoryTable').DataTable();
+            $('#date').datepicker({ uiLibrary: 'bootstrap4' });
+            GetBudgetHead();
+            let prdcId = parseInt(@Model.Id) ? parseInt(@Model.Id) : 0;
+            if (prdcId > 0) {
+                Common.Ajax('GET', '/global/api/GetBudgetDisbursementDetailBymasterId/' + @Model.Id , [], 'json', GetDisbursementDetailList);
+            }
+            //Save confirmation
+            $("#saveForm").click(function () {
+                var data = $("#myForm").serialize();
+                let name = $('#name').val();
+                let date = $('#date').val();
+                let year = $('#year').val();
+                let branch = $('#branch').val();
+                if (name == "") {
+                    swal('Warning', 'Name can not be null', 'warning');
+                    return false;
+                }
+                if (date == "") {
+                    swal('Warning', 'Date can not be null', 'warning');
+                    return false;
+                }
+                if (year == "") {
+                    swal('Warning', 'Year can not be null', 'warning');
+                    return false;
+                }
+                if (branch == "") {
+                    swal('Warning', 'Branch can not be null', 'warning');
+                    return false;
+                }                
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Budget/Disbursement/Index",
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            window.location.href = "/Budget/Disbursement/BudgetDisbursmentList";
+                        }
+                    });
+                });
+                return false;
+            });
+        });
+
+        // Program Details
+        function AddItemInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $('#headName').val();
+            let headId = $('#headId').val();
+            let amount = $('#amount').val();
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblfuelDetails tbody>tr").length;
+            if (fuelTypeName == null || fuelTypeName == '') {
+                swal('Warning', 'You must be enter Head Name!', 'warning');
+                return false;
+            }
+            if (amount == null || amount == '') {
+                swal('Warning', 'You must be enter Amount!', 'warning');
+                return false;
+            }
+            if (headId == null || headId == '') {
+                swal('Warning', 'You must be enter an valid Head!', 'warning');
+                return false;
+            }
+            for (i = 0; i < RowCount; i++) {
+                var _itemId = $('#headAll' + i + '').val();
+                if (_itemId == fuelTypeName && editOption == 0) {
+                    swal('Warning', 'You have already added this Head!', 'warning');
+                    return false
+                }
+            }
+            var dtTable = $("#tblfuelDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" id="headAll' + index + '" name="headAll" class="clsId" value="' + fuelTypeName + '"></td> <input type="hidden" id="headIdAll' + index + '" name="headIdAll" class="clsId" value="' + headId + '"></td>' +
+                '<td>' + amount + '<input type="hidden" id="amountAll' + index + '" name="amountAll" class="clsId" value="' + amount + '"></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '</tr>';
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+        }
+        function Delete(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblfuelDetails #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function GetBudgetHead() {
+            var GetList = [];
+            $.ajax({
+                url: '/api/BudgetSubHead/GetBudgetHead',
+                type: 'GET',
+                dataType: 'json',
+                async: true,
+                success: function (response) {
+                    $.each(response, function (id, option) {
+                        var obj = new Object();
+                        obj.key = option.Id;
+                        obj.value = option.code + ' - ' + option.name;
+                        GetList[GetList.length] = obj;
+                    })
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve Data.' + ex);
+                }
+            })
+            $('#headName').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $('#headId').val(ui.item.key);
+                }
+            });
+        }
+
+
+        function GetDisbursementDetailList(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            $.each(response, function (key, value) {
+                index = $("#tblfuelDetails tbody>tr").length;
+                var dtTable = $("#tblfuelDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.budgetHead.name + '<input type="hidden" id="headAll' + index + '" name="headAll" class="clsId" value="' + value.budgetHead.name + '"></td> <input type="hidden" id="headIdAll' + index + '" name="headIdAll" class="clsId" value="' + value.budgetHead.Id + '"></td>' +
+                    '<td>' + value.amount + '<input type="hidden" id="amountAll' + index + '" name="amountAll" class="clsId" value="' + value.amount + '"></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '</tr>';
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+        }
+    </script>
+}

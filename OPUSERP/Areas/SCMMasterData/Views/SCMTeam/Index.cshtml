@@ -1,0 +1,190 @@
+﻿@model TeamMasterViewModel
+@{
+    ViewData["Title"] = "Team Leader";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <style>
+        .ui-autocomplete {
+            cursor: pointer;
+            height: 400px;
+            width: 300px;
+            overflow-y: scroll;
+            background-color: white;
+            color: rgb(0,188,212);
+            z-index: 1050;
+            /*outline-style:outset;*/
+        }
+
+        .node {
+            cursor: pointer;
+            width: 500px;
+        }
+
+            .node circle {
+                fill: #fff;
+                stroke: steelblue;
+                stroke-width: 2px;
+            }
+
+            .node text {
+                font: 14px sans-serif;
+                text-align: center;
+            }
+
+        .link {
+            fill: none;
+            stroke: #C80;
+            stroke-width: 2px;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Team Leader Information</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="SCMMasterData" asp-controller="SCMTeam" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="col-1"></div>
+                <div class="col-8">
+                    <div class="form-group row">
+                        <label for="teamCode" class="col-sm-4 col-form-label">Team Code<i style="color:red">*</i></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="teamCode" value="" name="teamCode" data-parsley-required="true">
+                            <input type="hidden" class="form-control" id="teamMasterId" value="0" name="teamMasterId">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="teamName" class="col-sm-4 col-form-label">Team Name<i style="color:red">*</i></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="teamName" value="" name="teamName" data-parsley-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="teamLeader" class="col-sm-4 col-form-label">Leader Name<i style="color:red">*</i></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="teamLeader" value="" name="teamName" data-parsley-required="true">
+                            <input type="hidden" id="leaderId" name="leaderId" />
+                        </div>
+                    </div>
+                    <hr />
+                    <button type="button" data-toggle="tooltip" title="Refresh" onclick="RefreshAll()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;margin-left: 8px;"><i class="fas fa-sync"></i></button>
+                    <button data-toggle="tooltip" title="Save" type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </div>
+               
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Team Leader List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="itemTable">
+                    <thead>
+                        <tr>
+
+                            <th>Team Code</th>
+                            <th>Team Name</th>
+                            <th>Team Leader</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.teamMasters)
+                        {
+                            <tr>
+
+                                <td>@data.teamCode</td>
+                                <td>@data.teamName</td>
+                                <td>@data.teamLeader</td>
+
+                                <td>
+                                    <a title='Edit' class="btn btn-success" onclick="Edit(@data.Id,'@data.teamCode','@data.teamName',@data.leaderId,'@data.teamLeader')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    <a style="color:white" title="Delete" class="btn btn-danger" onclick="Remove(@data.Id)"><i class="fa fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js" type="text/javascript"></script>
+    <script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            $("#Item").addClass("active");
+            $('#itemTable').DataTable();
+            GetUserInfoList();
+            //Common.Ajax('GET', '/global/api/patentItemCategory/', [], 'json', GetItemCategoryList);
+
+
+        });
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/SCMMasterData/SCMTeam/DeleteTeam/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+        function GetUserInfoList() {
+            var result=@Html.Raw(Json.Serialize(Model.aspNetUsersViews));
+            var lstPOP = [];
+            $.each(result, function (i, option) {
+                var obj = new Object();
+                obj.key = option.UserId;
+                obj.value = option.EmpName;
+                lstPOP[lstPOP.length] = obj;
+            });
+            $('#teamLeader').autocomplete({
+                source: lstPOP,
+                select: function (event, ui) {
+                    $("#teamLeader").val(ui.item.value);
+                    $("#leaderId").val(ui.item.key);
+
+                }
+            });
+
+        }
+        
+        function Edit(Id, teamCode, teamName, leaderId, teamLeader) {
+            $("#teamMasterId").val(Id);
+            $("#teamCode").val(teamCode);
+            $("#teamName").val(teamName);
+
+            $("#teamLeader").val(teamLeader);
+            $("#leaderId").val(leaderId);
+        }
+        
+        function RefreshAll() {
+            location.reload();
+        }
+
+        
+
+       
+    </script>
+}
+
+
+

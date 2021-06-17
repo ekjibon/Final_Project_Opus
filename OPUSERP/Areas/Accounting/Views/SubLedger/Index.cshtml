@@ -1,0 +1,224 @@
+﻿@model LedgerViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Accounting/Views/Shared/_AccountingMasterForm.cshtml";
+}
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Sub Ledger Entry</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Accounting" asp-controller="SubLedger" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <input type="hidden" name="subLedgerId" id="subLedgerId" value="0" />
+                    <label for="accountName" class="col-sm-2 col-form-label">Sub Ledger Name<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="accountName" id="accountName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">Alias Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="aliasName" id="aliasName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="specialBranchUnitId" class="col-sm-2 col-form-label">SBU <span class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select type="text" class="form-control" name="specialBranchUnitId" id="specialBranchUnitId" required>
+                            <option value="">Select One</option>
+                            @if (ViewBag.branchid > 0)
+                            {
+                                @foreach (var data in Model.specialBranchUnits.Where(x => x.Id == ViewBag.branchid))
+                                {
+                                    <option value="@data.Id">@data.branchUnitName</option>
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var data in Model.specialBranchUnits)
+                                {
+                                    <option value="@data.Id">@data.branchUnitName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="accountCode" class="col-sm-2 col-form-label">Sub Ledger Account Code</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="accountCode" id="accountCode" value="@Model.accountCode" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="SubLedgerof" class="col-sm-2 col-form-label">Sub-Ledger of</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="SubLedgerof" name="SubLedgerof">
+                        <input type="hidden" class="form-control" id="LedgerIds" name="LedgerIds">
+                        <input type="hidden" class="form-control" id="LedgerNames" name="LedgerNames">
+                    </div>
+                    <div class="col-sm-1">
+                        <a class="btn btn-block btn-success" onclick="AddGroup()" style="color:white;" title="Add Ledger"><i class="fas fa-plus"></i></a>
+                    </div>
+                </div>
+                <br /><hr />
+                <div class="form-group row">
+                    <div class="col-sm-2"></div>
+                    <div id="SubLedgerList" class="col-sm-10 row"></div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Sub Ledger List</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Sub Ledger Account Name</th>
+                            <th>Sub Ledger Account Code</th>
+                            <th>Sub Ledger Alias Name</th>
+                            <th>SBU Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.ledgers)
+                        {
+                            <tr>
+                                <td>@data.accountName</td>
+                                <td>@data.accountCode</td>
+                                <td>@data.aliasName</td>
+                                <td>@data?.specialBranchUnit?.branchUnitName</td>
+                                <td>
+                                    <a class="btn btn-info" title="Edit/Update" onclick="Edit(@data.Id, '@data.accountName','@data.accountCode','@data.aliasName',@data.specialBranchUnitId)" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#SubLedger").addClass("active");
+            $('#departmentTable').DataTable();
+            $("#specialBranchUnitId").change(function () {
+                var sbuId = $("#specialBranchUnitId").val();
+                Common.Ajax('GET', '/global/api/LedgerController/GetLedgerWithSubLedgerBySbu/' + sbuId, [], 'json', GetLedgerForSubLedger, false);
+            });
+        });
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function Edit(Id, name, code, alias, specialBranchUnitId) {
+            $("#subLedgerId").val(Id);
+            $("#accountName").val(name);
+            $("#accountCode").val(code);
+            $("#aliasName").val(alias);
+            Common.Ajax('GET', '/global/api/GetLedgerRelationBySubLedgerId/' + Id, [], 'json', ajaxLedgerRelation, false);
+            //$("#specialBranchUnitId").val(specialBranchUnitId);
+        }
+
+        function GetLedgerForSubLedger(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.name = option.accountName;
+                obj.value = option.accountName + ' (' + option.accountCode + ')';
+                obj.accountCode = option.accountCode;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#SubLedgerof').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#LedgerIds').val(ui.item.key);
+                    $("#LedgerNames").val(ui.item.name);
+                }
+            });
+        }
+
+        function AddGroup() {
+            var id = $('#LedgerIds').val();
+            var value = $('#SubLedgerof').val();
+            $('#SubLedgerList').append('<input type="hidden" name="ids[]" id="Lg' + id + '" value="' + id + '"><span class="spanClass" id="LgId' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="DeleteGroup(' + "'" + id + "'" + ')">X</span></a></span>');
+            $('#SubLedgerof').val('')
+        }
+
+        function DeleteGroup(id) {
+            $('#Lg' + id).remove();
+            $('#LgId' + id).remove();
+        }
+
+        function ajaxLedgerRelation(response) {
+            $('#SubLedgerList').empty();
+            $.each(response, function (i, item) {
+                $('#SubLedgerList').append('<span class="spanClass" id="LgRln' + item.id + '" >' + item.ledger.accountName + '</span>');
+                $("#specialBranchUnitId").val(item.ledger.specialBranchUnitId);
+            });
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $.ajax({
+                    url: '@Url.Action("DeleteSubLedger", "SubLedger")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Accounting/SubLedger/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+    </script>
+}

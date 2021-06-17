@@ -1,0 +1,164 @@
+﻿@model ReportMasterViewModel
+@{
+    ViewData["Title"] = "Requisition View";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    .table-bordered {
+        border-collapse: collapse !important;
+    }
+
+    .table-bordered th {
+        border: 1px solid gray !important;
+    }
+
+    .table-bordered td {
+        border: 1px solid gray !important;
+    }
+</style>
+
+<div>
+    <div>
+        <div>
+            <div style="width:100%;">
+                <div style="width:250px;float:left;">
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+                </div>
+                <div style="width:80%;">
+                    <h3 style="text-align:center;color:black;"><b>@Model.companies.FirstOrDefault().companyName</b></h3>
+                    <h9 style="text-align:center;color:black;">@Model.companies.FirstOrDefault().addressLine</h9>
+                    <h5 style="text-align:center;color:black;font-size:larger;">Requisition</h5>
+                </div>
+                <div style="width:10%;float:right;">
+
+                </div>
+            </div>
+
+            <br /><br />
+
+            <div style="margin-bottom:30px;color:black">
+                <span style="float:left;font-weight:600;">Requisition Date :@Model.requisitionMaster.FirstOrDefault().reqDate</span>
+                <span style="text-align:right;float:right;font-weight:600;">Requesting Division Name: @Model.requisitionMaster.FirstOrDefault().</span>
+                <br />
+                <span style="float:left;font-weight:600;">PR No : @Model.requisitionMaster.FirstOrDefault().reqNo</span>
+                <span style="text-align:right;float:right;font-weight:600;">Subject : @Model.requisitionMaster.FirstOrDefault().subject</span>
+            </div>
+        </div>
+        <div class="row">
+            <span style="font-weight:bold;font-size:20px;">
+                Description of the Product/Services: (Details may be attached)
+            </span>
+        </div>
+        <div class="row">
+            <table class="table table-striped table-bordered" id="voucherList">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Specifications</th>
+                        <th>Unit</th>
+                        <th>Target Date</th>
+                        <th>Justification</th>
+                        <th style="text-align:right;">Qty</th>
+                        <th style="text-align:right;">Rate</th>
+                        <th style="text-align:right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        decimal? total = 0;
+                        decimal? itemtotal = 0;
+                        foreach (var data in Model.requisitionDetailsList)
+                        {
+                            itemtotal = (@data.reqQty * @data.reqRate);
+                            <tr>
+                                <td>@data.itemSpecification.Item.itemName</td>
+                                <td>@data.itemSpecification.specificationName</td>
+                                <td>@data.itemSpecification.Item.unit.unitName</td>
+                                <td>@data.targetDate</td>
+                                <td>@data.justification</td>
+                                <td style="text-align:right;">@data.reqQty</td>
+                                <td style="text-align:right;">@data.reqRate</td>
+                                <td style="text-align:right;">@itemtotal</td>
+                            </tr>
+                            total = total + itemtotal;
+
+                        }
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:right;">Total:</td>
+                            <td style="text-align:right;">@total</td>
+                        </tr>
+                    }
+                </tbody>
+             
+            </table>
+        </div>
+
+        <div>
+            <div style="text-align:left;width:100%;">
+                <span style="color:black"><span style="font-weight:600">Amount In Word:</span>&nbsp; &nbsp;@ViewBag.InWord</span>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <span style="font-weight:bold;font-size:20px;">
+                Requisition Approve History
+            </span>
+        </div>
+        <br />
+        <div>
+            <table class="table table-striped table-bordered" width="100%" id="voucherList">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th style="text-align:center;width:30%">Process By</th>
+                        <th style="text-align:center; width:30%">Date</th>
+                       
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var i = 0;
+                        @foreach (var data in Model.approerPanelList)
+                        {
+
+                            i = i + 1;
+                            <tr>
+                                <td>@i</td>
+                                <td>@data.EmpName</td>
+                                <td>@data.ProcessDate</td>
+                                
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+
+        <br /><br /><br /><br /><br /><br />
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

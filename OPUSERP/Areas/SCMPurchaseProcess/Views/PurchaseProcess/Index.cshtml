@@ -1,0 +1,116 @@
+﻿@model CSRequisitionList
+@{
+    ViewData["Title"] = "Purchase Process";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <br />
+            <div class="row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">REQUISITION LIST</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreatePO", "PurchaseOrder")'">Create PO</button>*@
+                </div>
+            </div>
+            <hr />
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="requisitionListTable" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:35%">Requisition No.</th>
+                            <th style="width:10%">Requisition Date</th>
+                            <th style="width:25%">Subject</th>
+                            <th style="width:10%">Assigned Date</th>
+                            <th style="width:5%">Status</th>
+                            <th style="width:15%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var data in Model.requisitionForCSViewModels)
+                    {
+                        <tr>
+                            <td>@data.reqNo</td>
+                            <td>@data.reqDate</td>
+                            <td>@data.subject</td>
+                            <td>@data.jobAssignDate</td>
+                            <td>@data.csStatus</td>
+                            <td>
+                                <a class="btn btn-success btn-sm" href="/SCMPurchaseProcess/PurchaseProcess/QutaionProcess?reqId=@data.Id&projeectId=@data.projectId">Create CS</a>
+                                <a class="btn btn-info" title="Print PR" target='_blank' href="/SCMReport/ReportMaster/PurchaseRequisitionPdf/?reqId=@data.Id"><i class='fa fa-print'></i></a>
+                            </td>
+                        </tr>
+                    }
+
+                    </tbody>
+                </table>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">CS LIST</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreatePO", "PurchaseOrder")'">Create PO</button>*@
+                </div>
+            </div>
+            <hr />
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="csListTable">
+                    <thead>
+                        <tr>
+                            <th>Requisition No.</th>
+                            <th>Requisition Date</th>
+                            <th>Procurement Person</th>
+                            <th>CS No</th>
+                            <th>CS Creation Date</th>
+                            <th>Final Approver</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                    @foreach (var data in Model.cSMasters)
+                    {
+                        <tr>
+                            <td>@data.requisition.reqNo</td>
+                            <td>@data.requisition.reqDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.procurementPerson</td>
+                            <td>@data.csNo</td>
+                            <td>@data.csDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.approverName</td>
+                            <td>
+                                <a class="btn btn-success" href="/Requisition/RequisitionMaster/CreateRequisition/?Id=@data.Id"><i class="fa fa-edit"></i></a>
+                                <a class="btn btn-info" title="Print PR" target='_blank' href="/SCMReport/ReportMaster/PurchaseRequisitionPdf/?reqId=@data.Id"><i class='fa fa-print'></i></a>
+
+                            </td>
+                        </tr>
+                    }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#requisitionListTable').DataTable({
+                //scrollY: '50vh',
+                scrollCollapse: true,
+                paging: true
+            });
+
+            $('#csListTable').DataTable({
+                scrollY: '50vh',
+                scrollCollapse: true,
+                paging: true
+            });
+        });
+    </script>
+}
+

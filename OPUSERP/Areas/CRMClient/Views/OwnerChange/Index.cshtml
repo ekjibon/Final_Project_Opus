@@ -1,0 +1,462 @@
+﻿@model OwnerChangeViewModel
+@{
+    ViewData["Title"] = "OwnerChange";
+    Layout = "~/Areas/CRMMasterData/Views/Shared/_CRMMasterDataForm.cshtml";
+}
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .loading-image {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            width: 100px;
+            height: 100px;
+            z-index: 10;
+        }
+
+        .loader {
+            display: none;
+            width: 200px;
+            height: 200px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            margin-left: -50px;
+            margin-top: -100px;
+            z-index: 2;
+            overflow: auto;
+        }
+    </style>
+}
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Owner Change</h5>
+        <hr>
+        <div class="container">
+            <form id="frmOwnerChange">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-lg-8 row border" style="border:solid;">
+
+                            <div class="col-lg-12" style="margin-top:2px">
+                                <div class="form-group row">
+                                    <div class="col-sm-1">
+                                        <input class="form-horizontal" type="radio" id="rdTlName" value="1" name="filterType" style="float:left;margin-top:3px" />
+                                    </div>
+                                    <div class="col-sm-2" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">Lead Owner</label>
+                                    </div>
+                                    <div class="col-sm-7" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="tlName" name="tlName" placeholder="Lead Owner" style="width:96%;" />
+                                        <input type="hidden" id="tlasp" name="tlasp" />
+                                    </div>
+                                    <div class="col-sm-2" style="padding:0;">
+                                        <button type="button" style="border-radius: 15px;background-color:#3131b9;color:white" id="btnSearch" onclick="Search()" class="btn-sm">Search</button>
+                                    </div>
+                                </div>
+                                <img id="xxxx" class="loading-image" src="~/Upload/logo/load.gif" alt="loading.." style="display:none">
+                                <div class="form-group row">
+                                    <div class="col-sm-1">
+                                        <input class="form-horizontal" type="radio" id="rdFaName" value="2" name="filterType" style="float:left;margin-top:3px" />
+                                    </div>
+                                    <div class="col-sm-2" style="overflow:hidden;padding:0;">
+                                        <label class="control-label input-sm" style="float:left;margin-right:0">Lead Name</label>
+                                    </div>
+                                    <div class="col-sm-7" style="padding:0;">
+                                        <span style="float:left;padding-right: 1%;"> : </span>
+                                        <input type="text" class="form-control input-sm " id="faName" name="faName" placeholder="Lead Name" style="width:96%;" />
+                                        <input type="hidden" id="faasp" name="faasp" />
+                                    </div>
+                                    <div class="col-sm-2" style="padding:0;">
+                                        <button type="button" style="border-radius: 15px;background-color:#1cc88a;color:white" id="btnRefresh" onclick="Refresh()" class="btn-sm">Refresh</button>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-sm-4">
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <br />
+
+                <div class="form-group row">
+                    <input type="hidden" name="newOwnerUser" id="newOwnerUser" value="" />
+
+                    <label for="newOwner" class="col-sm-2 col-form-label">New Owner<span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="newOwner" id="newOwner">
+                        <input type="hidden" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="newOwneremail" id="newOwneremail">
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="button" id="btnSaveProcess" style="border-radius: 15px;background-color:#4e73df;color:white" onclick="SaveProcess()" class="btn-sm">Update</button>
+                    </div>
+                </div>
+
+                <br />
+                
+                <div class="row">
+                    
+                    <input type="hidden" id="detailsId" name="detailsId" value="0" />
+                    <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                    <input type="hidden" id="isProposeds" name="isProposeds" value="0" />
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped" id="tblitemDetails" data-parsley-required="true">
+                            <thead style="width:100%;background-color:lightgray;">
+                                <tr>
+
+                                    <th><input type="checkbox" id="main" style="height:20px; width:20px;" onclick="check()" /></th>
+                                    <th>Lead Name</th>
+                                 
+                                  
+                                   
+                                    <th>Lead Owner</th>
+                                    <th>Bank</th>
+                                    <th>Branch</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row" id="divselectedListTable" style="display:none">
+                    <div class="card-body">
+                        <table class="table table-bordered" id="selectedListTable">
+                            <thead style="background:whitesmoke; text-align:center">
+                                <tr>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+
+
+
+@section ScriptsMD{
+    <script>
+        function check() {
+            if (document.getElementById("main").checked == true) {
+                $(".SelectCheckBox").trigger("click");
+            } else {
+                $(".SelectCheckBox").trigger("click");
+            }
+        }
+        function Refresh()
+        {
+           $("#faName").val('');
+        }
+        function Search()
+        {
+            var data = $("#faName").val();
+            $('#xxxx').show();
+            Common.Ajax('GET', '/CRMClient/OwnerChange/GetAllLeadsByNameSP/?lead=' + data, [], 'json', ajaxGetAllLeadsById, false);
+
+
+        }
+        function ajaxGetLeads(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.leadName + "(" + option.leadNumber + ")";
+
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#faName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#faName").val(ui.item.value);
+                    $("#faasp").val(ui.item.key);
+                    $('#xxxx').show();
+
+                    Common.Ajax('GET', '/CRMClient/OwnerChange/GetAllLeadsById/?Id=' + ui.item.key, [], 'json', ajaxGetAllLeadsById, false);
+
+                }
+            });
+
+
+
+        }
+        function ajaxGetAllLeadsById(response) {
+            console.log(response);
+            $('#tblitemDetails').DataTable().destroy();
+            //$('#tblitemDetails').DataTable();
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblitemDetails tbody").empty();
+            $.each(response, function (key, value) {
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td><input class="SelectCheckBox" type="checkbox" id="' + value.Id + '" style="height:20px; width:20px;" onclick="AddInfo(this)" /></td>' +
+                    '<td>' + value.leadName + '</td>' +
+
+                    '<td>' + value.leadOwner + '</td>' +
+                    '<td>' + value.bankName + '</td>' +
+                    '<td>' + value.branchName + '</td>' +
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+            })
+           
+            index = index + 1;
+            $('#tblitemDetails').DataTable();
+            $('#xxxx').hide();
+
+        }
+    $(document).ready(function () {
+       // $('#divselectedListTable').hide();
+            //Common.Ajax('GET', '/global/api/GetAllActiveEmployeeInfoForOwnerChange', [], 'json', ajaxGetEmployees);
+        Common.Ajax('GET', '/global/api/GetEmployeeInfoCRMAnalyst', [], 'json', ajaxGetEmployees, false);
+       // Common.Ajax('GET', '/CRMClient/OwnerChange/GetAllLeadsList', [], 'json', ajaxGetLeads, false);
+        $('#tblitemDetails').DataTable();
+        $("#tlName").keydown(function () {
+            $("#rdTlName").attr("checked", true);
+            $("#rdFaName").attr("checked", false);
+
+            $("#faName").val('');
+            $("#faasp").val('');
+
+
+        });
+        $("#faName").keydown(function () {
+
+            $("#rdTlName").attr("checked", false);
+            $("#rdFaName").attr("checked", true);
+
+            $("#tlName").val('');
+            $("#tlasp").val('');
+
+
+        });
+
+        });
+        function SaveProcess() {
+            $('#progress').show();
+            if ($('#changeType').val() == "") {
+                swal('Attention.!!', 'Please Select Change Type!!', 'warning');
+                $('#progress').hide();
+                return false;
+            }
+            if ($('#previousOwner').val() == "") {
+                swal('Attention.!!', 'Please Select Previous Owner!!', 'warning');
+                $('#progress').hide();
+                return false;
+            }
+            if ($('#newOwner').val() == "") {
+                swal('Attention.!!', 'Please Select New Owner!!', 'warning');
+                $('#progress').hide();
+                return false;
+            }
+            let rowCount = $("#selectedListTable tbody>tr").length;
+            if ($('#changeType').val() == "SingleorMultiple") {
+                if (rowCount < 1) {
+                    swal('Attention.!!', 'Please Select Minimum One Lead!!', 'warning');
+                    $('#progress').hide();
+                    return false;
+                }
+            }
+
+            var form = $("#frmOwnerChange");
+            swal({
+                title: 'Are you sure?', text: 'Do you want to change record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Change it!'
+            }).then(function () {
+                $.ajax({
+                    url: '@Url.Action("SaveOwnerChange", "OwnerChange")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Changed Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+                            window.location.href = "/CRMClient/OwnerChange/Index";
+                            $('#changeType').val("");
+                            $('#previousOwner').val("");
+                            $('#newOwner').val("");
+                            $('#progress').hide();
+                        });
+
+                    }
+                });
+            });
+
+        }
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                obj.emailAddress = option.emailAddress;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            //$('#previousOwner').autocomplete({
+            //    source: GeEmployeesList,
+            //    select: function (event, ui) {
+            //        $("#previousOwner").val(ui.item.value);
+            //        //$("#previousOwnerUser").val(ui.item.UserName);
+            //        $("#previousOwneremail").val(ui.item.emailAddress);
+            //        //if ($('#changeType').val() == "SingleorMultiple") {
+            //        //    Common.Ajax('GET', '/CRMClient/OwnerChange/GetAllLeadsByuser/?UserName=' + $("#previousOwnerUser").val(), [], 'json', ajaxGetAllLeadsByuser);
+            //        //}
+            //        Common.Ajax('GET', '/CRMClient/OwnerChange/GetAllLeadsByuser/?UserName=' + ui.item.emailAddress, [], 'json', ajaxGetAllLeadsByuser, false);
+
+            //    }
+            //});
+
+            $('#tlName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#tlName").val(ui.item.value);
+                    //$("#previousOwnerUser").val(ui.item.UserName);
+                    $("#tlasp").val(ui.item.emailAddress);
+                    //if ($('#changeType').val() == "SingleorMultiple") {
+                    //    Common.Ajax('GET', '/CRMClient/OwnerChange/GetAllLeadsByuser/?UserName=' + $("#previousOwnerUser").val(), [], 'json', ajaxGetAllLeadsByuser);
+                    //}
+                    $('#xxxx').show();
+                    Common.Ajax('GET', '/CRMClient/OwnerChange/GetAllLeadsByuserSP/?UserName=' + ui.item.emailAddress, [], 'json', ajaxGetAllLeadsByuser, false);
+
+                }
+            });
+            $('#newOwner').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#newOwner").val(ui.item.value);
+                    $("#newOwneremail").val(ui.item.emailAddress);
+                }
+            });
+        }
+        function ajaxGetAllLeadsByuser(response) {
+            console.log(response);
+        $('#tblitemDetails').DataTable().destroy();
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblitemDetails tbody").empty();
+            $.each(response, function (key, value) {
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td><input class="SelectCheckBox" type="checkbox" id="' + value.Id + '" style="height:20px; width:20px;" onclick="AddInfo(this)" /></td>' +
+                    '<td>' + value.leadName + '</td>' +
+
+                    '<td>' + value.leadOwner + '</td>' +
+                    '<td>' + value.bankName + '</td>' +
+                    '<td>' + value.branchName + '</td>' +
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        $('#tblitemDetails').DataTable();
+        $('#xxxx').hide();
+    }
+    function AddInfo(arg) {
+
+        var dtTable = $("#selectedListTable");
+        var tableBody = dtTable.find('tbody');
+        var trHtml = "";
+        var trId = 0;
+        var isValid = true;
+        var id = arg.getAttribute('id');
+
+        if (arg.checked) {
+
+            // Add New Item in the List
+
+            trId = id;
+            var locationList = "";
+            var index = $("#selectedListTable tbody>tr").length;
+            trHtml = '<tr class=' + id + ' id=' + index + "_" + id +
+                '>' +
+                '<td>' + id +
+                '<input type="hidden"  class="leadsId"  name="leadsId" value="' + id + '"/>' +
+                '</td>' +
+
+                '</tr>';
+
+            tableBody.append(trHtml);
+
+        } else {
+            DeleteMultiple(id);
+
+        }
+
+    }
+
+    function DeleteMultiple(index) {
+        $("#selectedListTable ." + index).remove();
+        //swal('', 'Uncheck Successfully!', 'success');
+
+        return false;
+    }
+
+    </script>
+}
+
+
+

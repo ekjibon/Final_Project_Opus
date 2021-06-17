@@ -1,0 +1,187 @@
+﻿@model SalesInvoiceViewModel
+@{
+    ViewData["Title"] = "Service Customer List";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        #tblInvoiceList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Service Customer List</h5>
+            </div>
+            <div class="col-6">
+                @*<a href="/OtherSales/SalesInvoice/RentIndex?id=0" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Add New</a>*@
+            </div>
+        </div>
+        <hr />
+        <div class="col-md-12">
+            
+
+            <div class="form-group row">
+                <label for="customerId" class="col-sm-2 col-form-label">From Date</label>
+                <div class="col-sm-4">
+
+                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="fromDate" id="fromDate" placeholder="" value="">
+
+                </div>
+                <label for="customerId" class="col-sm-2 col-form-label">To Date</label>
+                <div class="col-sm-4">
+
+                    <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="toDate" id="toDate" placeholder="" value="">
+
+                </div>
+            </div>
+
+           
+
+            <div class="form-group row">
+                <label class="col-sm-10"></label>
+                <div class="col-sm-2">
+                    <br />
+                    <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-sm"><i class="fas fa-sync"></i></button>&nbsp;
+                    <button id="LoadButton" class="btn btn-success btn-sm" title="Load"><i class="fas fa-shower"></i></button>
+                  
+
+                </div>
+            </div>
+
+        </div>
+        <hr />
+        <div class="container">
+            <div class="row">
+                <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                <div class="col-12">
+                    <table class="table table-bordered table-striped" id="tblInvoiceList" data-parsley-required="true">
+                        <thead style="width:100%;background-color:lightgray;">
+                            <tr>
+                                <th width="5%">SL#</th>
+                                <th width="15%">Customer Name</th>
+                                <th width="10%">Mobile No</th>
+                                <th width="15%">Address</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                          
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#tblInvoiceList').DataTable();
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+           // var table = $('#tblInvoiceList').DataTable();
+          
+            $("#LoadButton").click(function () {
+                //var address = $("#address").val();
+                //if (address == "")
+                //{
+                //    address = "NoData";
+                //}
+                var from = $("#fromDate").val();
+                var to = $("#toDate").val();
+               
+                Common.Ajax('GET', '/global/api/getAllPInvoiceLIstCSR/' + from + '/' + to, [], 'json', ajaxgetdata);
+            });
+
+
+        });
+        function ajaxAllCustomerM(response) {
+            var GetInStockItemSpacificationList = [];
+            console.log(response);
+            $.each(response, function (id, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.Leads.leadNumber;
+                obj.customer = option.Leads.leadName + '(' + option.Leads.leadNumber + ')';
+                obj.bin = option.Leads.leadNumber;
+
+                obj.orgId = option.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#binNo').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#binNo").val(ui.item.bin);
+                    $("#customerName").val(ui.item.customer);
+                  
+                }
+            });
+        }
+        function ajaxAllCustomer(response) {
+            var GetInStockItemSpacificationList = [];
+            console.log(response);
+            $.each(response, function (id, option) {
+
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.Leads.leadName + '(' + option.Leads.leadNumber + ')';
+                obj.bin = option.Leads.leadNumber;
+
+                obj.orgId = option.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#customerName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#binNo").val(ui.item.bin);
+                   
+                }
+            });
+        }
+        function ajaxgetdata(response) {
+            console.log(response);
+            $("#tblInvoiceList").DataTable().destroy();
+            $("#tblInvoiceList tbody>tr").remove();
+            var dtTable = $("#tblInvoiceList");
+            var tableBody = dtTable.find('tbody');
+            if (response != null) {
+                var x = 0;
+                var index = 0;
+                $.each(response, function (i, ite) {
+                    x++;
+                    var trHtml = '<tr id=' + index + '>' +
+                        '<td>' + x + '</td>' +
+                        
+                        '<td>' + ite ?.customerName + '</td>' +
+                            '<td>' + ite ?.mobile + '</td>' +
+
+                                '<td>' + ite ?.presentAddress + '</td>' +
+                                       
+                    '</tr>';
+                    tableBody.append(trHtml);
+                    index = index + 1;
+                    $("#rowCount").val(index);
+                })
+            }
+            $("#tblInvoiceList").DataTable();
+            //ClearLineItem();
+            //CalculateGrossTotal();
+        }
+    </script>
+}
+

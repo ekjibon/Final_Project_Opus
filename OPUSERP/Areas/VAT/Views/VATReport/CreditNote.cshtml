@@ -1,0 +1,262 @@
+﻿
+@{
+    ViewData["Title"] = "Credit Note";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+
+<br />
+@*@if (@Model?.printHistories?.Count() > 0)
+{
+    <div class="row">
+        <div class="col-11"></div>
+        <p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">@Model?.printHistories?.FirstOrDefault()?.printStatus</span></p>
+    </div>
+}*@
+    <div class="row">
+        <div class="col-11"></div>
+        <p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">ggggg</span></p>
+        @*<p class="text-md-center col-1" style="color:black;font-size:25px; font-weight:bolder; margin-bottom: 0px;background-color:lightgray"><span style="padding:3px;">@Model?.printHistories?.FirstOrDefault()?.printStatus</span></p>*@
+    </div>
+<div>
+    <div class="row">
+        <p class="text-right col-12" style="color:black;font-size:15px; font-weight:bolder; margin-bottom: 0px;"><span style="border:1px solid black;padding:3px;">মূসক ৬.৭</span></p>
+    </div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:17px; font-weight:bolder; margin-bottom: 0px;">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</p>
+    </div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:15px; font-weight:bolder; margin-bottom: 0px;">জাতীয় রাজস্ব বোর্ড</p>
+    </div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:15px; font-weight:bolder; margin-bottom: 0px;">ক্রেডিট নোট</p>
+    </div>
+    <div class="row">
+        <p class="text-center col-12" style="color:black;font-size:13px; font-weight:bolder; margin-bottom: 0px;">[বিধি ৪০ এর উপবিধি (১) এর দফা (ছ) দ্রষ্টব্য]</p>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-12">
+        <table style="width:100%; margin-left: 30px;">
+            <thead>
+                <tr>
+                    <th colspan="2">ফেরত প্রদানকারী ব্যক্তির - </th>
+                    <th colspan="2">ফেরত গ্রহণকারী ব্যক্তির - </th>
+                </tr>
+                <tr>
+                    <td style="width:10%;">নাম</td>
+                    <td style="width:40%;">: sdfgfdsgdf</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.companyName</td>*@
+                    <td style="width:10%;">নাম</td>
+                    <td style="width:40%;">: sdfgasdfgas</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.organizationName</td>*@
+                </tr>
+                <tr>
+                    <td style="width:10%;">বিআইএন</td>
+                    <td style="width:40%;">: 64654654</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.binNo</td>*@
+                    <td style="width:10%;">বিআইএন</td>
+                    <td style="width:40%;">: 6465464</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.supplierBinNo</td>*@
+                </tr>
+                <tr>
+                    <td style="width:10%;">মূল চালান নম্বর</td>
+                    <td style="width:40%;">: 784558</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.invoiceNumber</td>*@
+                    <td style="width:10%;">ক্রেডিট নোট নম্বর</td>
+                    <td style="width:40%;">: 454544</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.debitNoteNo</td>*@
+                </tr>
+                <tr>
+                    <td style="width:10%;">মূল চালান ইস্যুর তারিখ</td>
+                    <td style="width:40%;">: @DateTime.Now.ToString("dd/MMM/YYYY")</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.invoiceDate</td>*@
+                    <td style="width:10%;">ইস্যুর তারিখ</td>
+                    <td style="width:40%;">: @DateTime.Now.ToString("dd/MMM/YYYY")</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.issueDate</td>*@
+                </tr>
+                <tr>
+                    <td style="width:10%;"></td>
+                    <td style="width:40%;"></td>
+                    <td style="width:10%;">ইস্যুর সময়</td>
+                    <td style="width:40%;">: @DateTime.Now.ToString("dd/MMM/YYYY")</td>
+                    @*<td style="width:40%;">: @Model?.VATReportSixPointEightViewModel?.FirstOrDefault()?.issuetime</td>*@
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-body">
+            <div class="container" style="background:white">
+                <div class="row">
+                    <p class="text-center col-12" style="color:black;font-size:17px; font-weight:bolder; margin-bottom: 0px;">সরবরাহের বিবরণ</p>
+                </div>
+                <div class="row">
+                    @{
+                        decimal totalTA = 0; decimal totalVATRate = 0; decimal totalVATAmount = 0;
+                        <table class="table table-striped table-bordered" id="voucherList" style="margin-left: -11px;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;font-size:15px;">ক্রমিক সংখ্যা</th>
+                                    <th style="text-align:center;font-size:15px;">ফেরতপ্রাপ্ত সরবরাহের বিবরণ</th>
+                                    <th style="text-align:center;font-size:15px;">সরবরাহের একক</th>
+                                    <th style="text-align:center;font-size:15px;">পরিমাণ</th>
+                                    <th style="text-align:center;font-size:15px;">একক মূল্য <sup>১</sup> (টাকায়)</th>
+                                    <th style="text-align:center;font-size:15px;">মোট মূল্য (টাকায়)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                                        <tr>
+                                            <td style="text-align:center;">1</td>
+                                            <td style="text-align:left;">itemName</td>
+                                            <td style="text-align:center;">unitName</td>
+                                            <td style="text-align:right;">4563</td>
+                                            <td style="text-align:right;">453</td>
+                                            <td style="text-align:right;">435</td>
+                                        </tr>
+                                       
+                            </tbody>
+                            @*<tbody>
+                                @{
+                                    int sl = 1;
+                                    @foreach (var item in Model.VATReportSixPointEightViewModel)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center;">@sl</td>
+                                            <td style="text-align:left;">@item.itemName</td>
+                                            <td style="text-align:center;">@item.unitName</td>
+                                            <td style="text-align:right;">@item.quantity?.ToString("0.00")</td>
+                                            <td style="text-align:right;">@item.rate?.ToString("0.00")</td>
+                                            <td style="text-align:right;">@item.totalAmount?.ToString("0.00")</td>
+                                        </tr>
+                                        sl++;
+                                    }
+                                }
+                            </tbody>*@
+                            <tfoot>
+                                <tr>
+                                    <th colspan="5" style="text-align:right;font-weight:400;">মোট মূল্য</th>
+                                    <td style="text-align:right;">45646</td>
+                                    @*<td style="text-align:right;">@Model.VATReportSixPointEightViewModel.Sum(x => x.totalAmount)?.ToString("0.00")</td>*@
+                                </tr>
+                                <tr>
+                                    <th colspan="5" style="text-align:right;font-weight:400;">বাদ কর্তন <sub>২</sub></th>
+                                    <td style="text-align:right;"></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="5" style="text-align:right;font-weight:400;">মূসকসহ মূল্য</th>
+                                    <td style="text-align:right;">45646</td>
+                                    @*<td style="text-align:right;">@Model.VATReportSixPointEightViewModel.Sum(x => x.netAmount)?.ToString("0.00")</td>*@
+                                </tr>
+                                <tr>
+                                    <th colspan="5" style="text-align:right;font-weight:400;">মূসকের পরিমাণ</th>
+                                    @*<td style="text-align:right;">@Model.VATReportSixPointEightViewModel.Sum(x => x.vatOnTotal)?.ToString("0.00")</td>*@
+                                    <td style="text-align:right;">45646</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="5" style="text-align:right;font-weight:400;">সম্পূরক শুল্কের পরিমাণ</th>
+                                    <td style="text-align:right;"></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="5" style="text-align:right;font-weight:400;">মোট কর <sub>৩</sub></th>
+                                    @*<td style="text-align:right;">@Model.VATReportSixPointEightViewModel.Sum(x => x.vatOnTotal)?.ToString("0.00")</td>*@
+                                    <td style="text-align:right;">45646</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    }
+                </div>
+
+                <div class="row" style="margin-left: -22px;">
+                    <div style="text-align:left;width:100%;">
+                        <span style="color:black;">ফেরতের কারণ</span><br />
+                        <textarea type="text" style="width:100%;"></textarea>
+                    </div>
+                </div>
+
+                <br /><br />
+
+                <div class="row">
+                    <div style="text-align:left;">
+                        <span style="color:black;">দায়িত্বপ্রাপ্ত ব্যক্তির স্বাক্ষর</span>
+                    </div>
+                </div>
+
+                <br /><br /><br /><br /><br /><br /><br />
+
+                <div class="row">
+                    <div style="text-align:left;">
+                        <span style="color:black;">১ প্রতি একক পণ্য / সেবার মূসক ও সম্পূরক শুল্কসহ মূল্য</span><br />
+                        <span style="color:black;">২ ফেরত প্রদানের জন্য কোন কর্তন থাকলে উহার পরিমাণ</span><br />
+                        <span style="color:black;">৩ মূসক ও সমূরক শুল্কের যোগফল</span>
+
+                        <br /><br /><br />
+                        <span style="color:black;">১ এসআরও নং-১৫৯ - আইন / ২০১৭/ ০২- মূসক, তারিখ : ১ জুন , ২০১৭ দ্বারা প্রতিষ্ঠাপিত।</span>
+
+                        <br /><br /><br /><br /><br />
+                        <span style="color:black;">@DateTime.Now</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

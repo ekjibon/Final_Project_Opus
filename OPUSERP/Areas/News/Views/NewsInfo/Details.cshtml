@@ -1,0 +1,78 @@
+﻿@model NewsInfoViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+@section Style{
+    <style>
+        p {
+            color: black;
+            font-size: 15px;
+        }
+
+        h6 {
+            color: black;
+        }
+
+        h4 {
+            color: black;
+        }
+
+        h5 {
+            padding: 20px;
+            color: black;
+        }
+
+        b {
+            color: black;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="col-12">
+        <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        </div>
+        <div class="row">
+            <!-- Blog Post -->
+            <div class="col-12" style="padding:20px">
+                <div class="card ">
+                    <h5 class="card-title">@Model.newsInfo.title</h5>
+                    <br />
+                    <img class="card-img-top" src="~/@Model.newsInfo.url" alt="Card image cap">
+                    <br />
+                    <div class="card-body">
+                        <p class="card-title">@Model.newsInfo.description</p>
+
+                        <h4>@Model.fLang.date : @Model.newsInfo.date?.ToString("yyyy-MM-dd")</h4>
+
+                    </div>
+    
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            //$('#batchCreateDate').datepicker({ uiLibrary: 'bootstrap4' });
+        });
+
+        function TransferId(id) {
+            $('#eventId').val(id)
+        }
+
+
+    </script>
+}
+
+

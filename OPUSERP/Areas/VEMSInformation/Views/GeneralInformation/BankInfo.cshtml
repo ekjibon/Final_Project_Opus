@@ -1,0 +1,88 @@
+﻿@model  BankInformationViewModel
+@{
+    ViewData["Title"] = "Bank Info";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header row">
+        <div class="col-md-10">
+            <h6 class="m-0 font-weight-bold text-primary">Bank Information</h6>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-sm btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/Index/@Model?.companyId">Back To List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSInformation" asp-controller="GeneralInformation" asp-action="BankInfo" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Account Name <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="accountName" name="accountName" value="@Model?.bankInformation?.accountName" data-parsley-required="true" />
+                            <input type="hidden" id="companyId" name="companyId" value="@Model?.companyId" />
+                            <input type="hidden" id="bankInfoId" name="bankInfoId" value="@Model?.bankInformation?.Id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Account Number <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="accountNumber" name="accountNumber" value="@Model?.bankInformation?.accountNumber" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Bank Name <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="bankName" name="bankName" value="@Model?.bankInformation?.bankName" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Branch Name <span style="color:red;">*</span></span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="branchName" name="branchName" value="@Model?.bankInformation?.branchName" data-parsley-required="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Routing Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="routingNumber" name="routingNumber" value="@Model?.bankInformation?.routingNumber" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$('#dateofEstablishment').flatpickr({ dateFormat: "d-M-Y" });
+        });
+    </script>
+}

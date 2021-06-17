@@ -1,0 +1,70 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "ProgramReportView";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    .header-cls {
+        text-align: left;
+        color: black;
+    }
+
+    p{
+        color:black;
+    }
+
+    .text-align-center-cls {
+        text-align: center;
+    }
+
+    .table-cls {
+        margin-top: 100px;
+    }
+
+    .signature-div-cls p {
+        text-align: right;
+        color: black;
+        margin-right: 50px;
+    }
+</style>
+
+<br />
+<section>
+    <div class="container-fluid">
+        @*<div class="header-cls">
+            <h5>কার্যক্রমের নাম : &nbsp; &nbsp; @Model.programReportListModel.MainCategory</h5>
+            <h5>প্রতিবেদনের নাম : &nbsp; &nbsp; @Model.programReportListModel.SubCategory</h5>
+            <h5>তারিখ : &nbsp; &nbsp; @Model.programReportListModel.FromDate থেকে  @Model.programReportListModel.ToDate</h5>
+        </div>*@
+        <table>
+            @foreach (var data in Model.programReportListModel.programReportListSubModels)
+            {
+                <tr>
+                    <td align="center" width="100%">
+                        <img src="~/@data.url" height="350" width="1000" />
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100%">
+                        <p>কার্যক্রমের নাম : &nbsp; &nbsp; @Model.programReportListModel.MainCategory</p>
+                        <p>প্রতিবেদনের নাম : &nbsp; &nbsp; @Model.programReportListModel.SubCategory</p>
+                        <p>তারিখ : &nbsp; &nbsp; @data.date?.ToString("dd/MM/yy")</p>
+                    </td>
+                </tr>
+            }
+
+            @*@foreach (var data in Model.programReportListModel.programReportListSubModels)
+        {
+            <tr>
+                <td>@data.date?.ToString("dd/MM/yy")</td>
+                <td>@data.place</td>
+                <td>@data.union </td>
+                <td>@data.thana</td>
+                <td>@data.number</td>
+                <td>@data.present</td>
+            </tr>
+        }*@
+        </table>
+    </div>
+</section>

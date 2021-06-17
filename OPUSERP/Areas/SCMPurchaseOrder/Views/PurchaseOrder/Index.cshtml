@@ -1,0 +1,120 @@
+﻿@model PurchaseOrderViewModel
+@{
+    ViewData["Title"] = "Purchase Order List";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">List of Purchase Order</h6>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreatePO", "PurchaseOrder")'">Create PO</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="csListTable">
+                    <thead>
+                        <tr>
+                            <th>PO No.</th>
+                            <th>PO Creation Date</th>
+                            <th>CS No</th>
+                            <th>Bill to location</th>
+                            <th>Supplier Name</th>
+                            @*<th>Saving Amount</th>
+                            <th>Savings(%)</th>*@
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.purchaseOrderMasters)
+                        {
+                            <tr>
+                                <td>@data.poNo</td>
+                                <td>@data.poDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.cSMaster.csNo</td>
+                                <td>@data.billToLocation</td>
+                                <td>@data.supplier.organizationName</td>
+                                @*<td>@data.savingAmount</td>
+                                <td>@data.savingPercent</td>*@
+                                <td>
+                                    <a class="btn btn-success" target="_blank" href="/SCMReport/ReportMaster/PurchaseOrderPdf?poId=@data.Id"><i class="fa fa-eye"></i></a>
+                                    @*<a class="btn btn-info" title="Print PR" target='_blank' href="/Report/ReportMaster/PurchaseRequisitionPdf/?reqId=@data.Id"><i class='fa fa-print'></i></a>*@
+
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height:15px;"></div>
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">List of Issued Purchase Order</h6>
+                </div>
+                <div class="col-md-2">
+                    @*<button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreatePO", "PurchaseOrder")'">Create PO</button>*@
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="issuedPOTable">
+                    <thead>
+                        <tr>
+                            <th>PO No.</th>
+                            <th>PO Creation Date</th>
+                            <th>CS No</th>
+                            <th>Bill to location</th>
+                            <th>Supplier Name</th>
+                            @*<th>Saving Amount</th>
+                            <th>Savings(%)</th>*@
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.issuedpurchaseOrder)
+                        {
+                            <tr>
+                                <td>@data.poNo</td>
+                                <td>@data.poDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.cSMaster.csNo</td>
+                                <td>@data.billToLocation</td>
+                                <td>@data.supplier.organizationName</td>
+                                @*<td>@data.savingAmount</td>
+                                <td>@data.savingPercent</td>*@
+                                <td>
+                                    <a class="btn btn-success" target="_blank" href="/SCMReport/ReportMaster/PurchaseOrderPdf?poId=@data.Id"><i class="fa fa-eye"></i></a>
+                                    @*<a class="btn btn-info" title="Print PR" target='_blank' href="/Report/ReportMaster/PurchaseRequisitionPdf/?reqId=@data.Id"><i class='fa fa-print'></i></a>*@
+
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#csListTable').DataTable();
+            $('#issuedPOTable').DataTable();
+
+        });
+    </script>
+}
+

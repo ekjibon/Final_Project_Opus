@@ -1,0 +1,1147 @@
+﻿@model SupplierViewModel
+@{
+    ViewData["Title"] = "Supplier Entry";
+    Layout = "~/Areas/MasterData/Views/Shared/_CustomerDataForm.cshtml";
+}
+
+<div class="row" style="padding:0px 5px 0px 3px;">
+    <div class="col-sm-10"></div>
+    <div class="col-sm-2">
+
+        <a class="btn btn-info btn-sm" style="background-color:#024972;float:right" href="~/SCMSupplier/Supplier/SupplierList/">Cancel</a>
+
+    </div>
+</div>
+<div class="row" style="height:15px"><hr /></div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'CustomerInfo')" id="defaultOpen"><i class="fas fa-list-ul"></i> Supplier Info</button>
+            <button class="tablinks" onclick="openTab(event, 'Contacts')" id="contacts"><i class="fas fa-address-book"></i> Contacts</button>
+            <button class="tablinks" onclick="openTab(event, 'Address')" id="address"><i class="fas fa-address-card"></i> Address</button>
+            <button class="tablinks" onclick="openTab(event, 'ItemInfo')" id="fuel"><i class="fas fa-apple-alt"></i> Item Info</button>
+
+        </div>
+    </div>
+    <div class="col-md-9" style="margin-top:-17px;background-color:#ffffff">
+        <form asp-area="MasterData" asp-controller="SupplierInfo" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row" style="margin-left:-40px;">
+                <div class="container">
+                    <div id="CustomerInfo" class="tabcontent">
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Supplier Information</h4></div>
+                        <div class="form-group row">
+                            <label for="orgCode" class="col-sm-3 col-form-label text-right">Organization Code</label>
+                            <div class="col-sm-8">
+                                <input type="text" maxlength="100" class="form-control" name="orgCode" id="orgCode" value="@ViewBag.OrgCode" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nameEnglish" class="col-sm-3 col-form-label text-right">Organization Name<i style="color:red">*</i></label>
+                            <div class="col-sm-8">
+                                <input type="text" maxlength="100" class="form-control" name="nameEnglish" id="nameEnglish" value="@Model?.GetOrganizationbyId?.organizationName" data-parsley-required="true">
+                                <input type="hidden" id="organizationId" name="organizationId" value="@Model?.GetOrganizationbyId?.Id" />
+                                <input type="hidden" class="form-control" name="relSupplierCustomerResourseId" id="relSupplierCustomerResourseId" value="@Model?.relSupplierCustomerResourseId">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="LicenseNumber" class="col-sm-3 col-form-label text-right">License Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="LicenseNumber" id="LicenseNumber" value="@Model?.GetOrganizationbyId?.LicenseNumber" maxlength="50" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="eTinNumber" class="col-sm-3 col-form-label text-right">e-Tin Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="eTinNumber" id="eTinNumber" value="@Model?.GetOrganizationbyId?.eTinNumber" maxlength="50" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="VATNumber" class="col-sm-3 col-form-label text-right">VAT Number</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="VATNumber" id="VATNumber" value="@Model?.GetOrganizationbyId?.VATNumber" maxlength="50" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-3 col-form-label text-right">Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" name="email" id="email" value="@Model?.GetOrganizationbyId?.email">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="alternativeEmail" class="col-sm-3 col-form-label text-right">Alternative Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" name="alternativeEmail" id="alternativeEmail" value="@Model?.GetOrganizationbyId?.alternativeEmail">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="mobile" class="col-sm-3 col-form-label text-right">Contact Number<i style="color:red">*</i></label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" name="mobile" id="mobile" value="@Model?.GetOrganizationbyId?.mobile" maxlength="20" data-parsley-trigger="keyup" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="phone" class="col-sm-3 col-form-label text-right">Phone Number</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" name="phone" id="phone" value="@Model?.GetOrganizationbyId?.phone" maxlength="20" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                    </div>
+
+                    <div id="Contacts" class="tabcontent" style="padding-left:1px;padding-right:1px">
+
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Contacts</h4></div>
+
+                        <div class="form-group row">
+                            <label for="personName" class="col-sm-3 col-form-label text-right">Person Name<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="personName" id="personName" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="PhoneNumber" class="col-sm-3 col-form-label text-right">Phone Number<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="number" maxlength="20" class="form-control" name="phoneNumber" id="phoneNumber" value="">
+                                <input type="hidden" id="contactid" name="contactid" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="MobileNumber" maxlength="20" class="col-sm-3 col-form-label text-right">Mobile Number</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" name="mobileNumber" id="mobileNumber" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="Department" class="col-sm-3 col-form-label text-right">Department</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="Department" id="Department" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-3 col-form-label text-right">Designation</label>
+                            <div class="col-sm-9">
+                                <input type="text" maxlength="100" class="form-control" name="Designation" id="Designation" value="">
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-9">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" onclick="AddContactInfo()" value="Addcon" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                <button type="button" onclick="RefreshContact()" value="Refreshcon" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Contact Details</h5>
+
+                                <input type="hidden" id="IsEditCon" name="IsEditCon" value="0" />
+                                <table class="table table-responsive col-form-label " id="tblcontactDetails" data-parsley-required="true">
+                                    <thead style="width:100%">
+                                        <tr>
+                                            <th width="10%">Person Name</th>
+                                            <th width="10%">Phone</th>
+                                            <th width="10%">Mobile</th>
+                                            <th width="10%">Department</th>
+                                            <th width="10%">Designation</th>
+                                            <th width="10%"><span>Action</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <br />
+                        <br />
+                    </div>
+
+                    <div id="Address" class="tabcontent" style="padding-left:1px">
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Address</h4></div>
+
+                        <div class="row">
+                            <div class="col-sm-12 card-body">
+                                <div class="form-group row">
+                                    <label for="txtaddressCategoryId" class="col-sm-3 col-form-label text-right">Address Category <i style="color:red">*</i></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtaddressCategoryId">
+                                            <option value="0">Select Category</option>
+                                            @foreach (var data in Model.addressTypes)
+                                            {
+                                                <option value="@data.Id">@data.typeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgUnion" class="col-sm-3 col-form-label text-right">Road</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" maxlength="100" class="form-control" id="txtorgUnion" value="">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="txtorgVillage" class="col-sm-3 col-form-label text-right">House/Village</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" maxlength="100" class="form-control" id="txtorgVillage" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgBlockSector" class="col-sm-3 col-form-label text-right">Block/Sector</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" maxlength="100" class="form-control" id="txtorgBlockSector" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgPostCode" class="col-sm-3 col-form-label text-right">Post Code</label>
+                                    <div class="col-sm-9">
+                                        <input data-parsley-type="number" data-parsley-length="[4, 6]" data-parsley-trigger="keyup" class="form-control" id="txtorgPostCode" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgPostOffice" class="col-sm-3 col-form-label text-right">Post Office</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" maxlength="100" class="form-control" id="txtorgPostOffice" value="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgDivision" class="col-sm-3 col-form-label text-right">Division</label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtorgDivision"></select>
+                                        <input type="hidden" id="txtorgAddressID" value="" />
+                                        <input type="hidden" id="IsEditadd" name="IsEditadd" value="0" />
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="txtorgDistrict" class="col-sm-3 col-form-label text-right">District</label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtorgDistrict" value=""></select>
+                                        <input type="hidden" id="distId" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+
+                                    <label for="txtorgUpazila" class="col-sm-3 col-form-label text-right">Upazila</label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="txtorgUpazila"></select>
+                                        <input type="hidden" id="thanaId" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+
+                                <div class="row">
+                                    <label class="col-md-8 p-2 m-2"><u>Address Details List</u></label>
+                                    <div class="col-md-3 p-1">
+                                        <button type="button" onclick="AddAddress()" value="Addcon" title="Add" class="btn btn-success btn-sm ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                        <button type="button" onclick="RefreshAddress()" value="Refreshcon" title="Refresh" class="btn btn-success btn-sm ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                                    </div>
+                                </div>
+                                <table id="tblAddress" class="table table-striped table-bordered" style="width:100%;float:right">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Road</th>
+                                            <th>House/Village</th>
+                                            <th>Block/Sector</th>
+                                            <th>Post Code</th>
+                                            <th>Upazila</th>
+                                            <th>District</th>
+                                            <th>Division</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ItemInfo" class="tabcontent">
+
+                        <div class="card-title" style="border:solid 0px;padding-left:3px"><h4>Item Info</h4></div>
+
+
+                        <div class="row">
+                            <label for="itemId" class="col-sm-3 col-form-label text-right">Item</label>
+                            <div class="col-sm-9">
+                           
+                                <select class="form-control" id="itemId" name="itemId">
+                                        <option></option>
+                                        @foreach (var data in Model.items)
+                                        {
+                                            <option value="@data.Id">@data.itemName</option>
+                                        }
+                                    </select>
+
+
+                                <input type="hidden" id="customerItemInfoId" name="customerItemInfoId" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-9">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" onclick="AddItemInfo()" value="Add" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                                <button type="button" onclick="Refresh()" value="Refresh" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                                <h5 class="card-title pull-left col-md-12 col-form-label " style="color: black;margin-left:0px;padding-left:0px;">Item Details</h5>
+
+                                <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                                <table class="table table-responsive col-form-label " id="tblfuelDetails" data-parsley-required="true">
+                                    <thead style="width:100%">
+                                        <tr>
+                                            <th width="45%">Item Name</th>
+                                            <th width="20%"><span>Action</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-left:500px">
+
+                <input type="submit" value="Submit" id="btnSubmit" class="btn btn-success" style="float:right;background-color:#024972; margin-top:5px;margin-bottom:5px;" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section ScriptsMD{
+
+    <script type="text/javascript">
+        function checkvalidText(Id) {
+
+            let QtyLen = $('#' + Id).val().length;
+
+
+            if (QtyLen > 150) {
+                alert("Text limit over...");
+                $('#' + Id).val('');
+                return false;
+            }
+
+        }
+
+        function Refresh() {
+            $('#customerItemInfoId').val('');
+            $('#itemId').val('');
+            $("#IsEdit").val(0);
+            $('#itemAuto').val('');
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+
+        //Address Info
+        function RefreshAddress() {
+            $('#txtaddressCategoryId').val(0);
+            $('#txtorgUnion').val('');
+            $('#txtorgVillage').val('');
+            $('#txtorgBlockSector').val('');
+            $("#txtorgPostCode").val('');
+
+            $('#txtorgPostOffice').val('');
+            $('#orgDivision').val('');
+            $('#txtorgDistrict').val('');
+            $('#txtorgUpazila').val('');
+            $('#IsEditadd').val(0);
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        function AddAddress() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblAddress tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsaddressCategoryId").val();
+            }
+
+            let orgAddressID = 0;
+            let addressCategoryId = $('#txtaddressCategoryId').val();
+            let txtaddressCategory = $('#txtaddressCategoryId option:selected').text();
+            let orgUnion = $('#txtorgUnion').val();
+            let orgHouseVillage = $('#txtorgVillage').val();
+            let orgBlockSector = $('#txtorgBlockSector').val();
+            let orgPostCode = $('#txtorgPostCode').val();
+            let orgPostOffice = $('#txtorgPostOffice').val();
+            let orgDivision = $('#txtorgDivision').val();
+            let txtorgDivision = $('#txtorgDivision option:selected').text();
+            let orgDistrict = $('#txtorgDistrict').val();
+            let txtorgDistrict = $('#txtorgDistrict option:selected').text();
+            let orgUpazila = $('#txtorgUpazila').val();
+            let txtorgUpazila = $('#txtorgUpazila option:selected').text();
+            if (addressCategoryId == 0) {
+                swal('Please Select Category!');
+                return false;
+            }
+            //else if (orgUnion == '') {
+            //    swal('Please Entered Road No');
+            //    return false;
+            //}
+            //else if (orgPostCode == '') {
+            //    swal('Please Entered Post Code');
+            //    return false;
+            //}
+            else if (orgUpazila == null || orgUpazila == '') {
+                swal('Please Select Upazila');
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEditadd').val()) ? parseInt($('#IsEditadd').val()) : 0;
+            var RowCount = $("#tblAddress tbody>tr").length;
+            //for (i = 0; i < RowCount; i++) {
+            //    var _itemId = $('#txtaddressCategoryId' + i + '').val();
+
+            //    if (_itemId == addressCategoryId && editOption == 0) {
+            //        alert('You have already added this category!');
+            //        return false
+            //    }                
+            //}
+            var dtTable = $("#tblAddress");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + txtaddressCategory + '<input type="hidden" name="addressCategoryId"  id="addressCategoryId' + index + '" class="clsaddressCategoryId" value="' + addressCategoryId + '"/></td>' +
+                '<td>' + orgUnion + '<input type="hidden" name="orgUnion" class="clsorgUnion"value="' + orgUnion + '"/><input type="hidden" name="orgAddressID" class="clsorgAddressID"value="' + orgAddressID + '"/></td>' +
+                '<td>' + orgHouseVillage + '<input type="hidden" name="orgHouseVillage" class="clsorgVillage" value="' + orgHouseVillage + '"/></td>' +
+                '<td>' + orgBlockSector + '<input type="hidden" name="orgBlockSector" class="clsorgBlockSector" value="' + orgBlockSector + '"/></td>' +
+                '<td>' + orgPostCode + '<input type="hidden" name="orgPostCode" class="clsorgPostCode" value="' + orgPostCode + '"/><input type="hidden" name="orgPostOffice" class="clsorgPostOffice" value="' + orgPostOffice + '"/></td>' +
+                '<td>' + txtorgUpazila + '<input type="hidden" name="orgUpazila" class="clsorgUpazila" value="' + orgUpazila + '"/></td>' +
+                '<td>' + txtorgDistrict + '<input type="hidden" name="orgDistrict" class="clsorgDistrict" value="' + orgDistrict + '"/></td>' +
+                '<td>' + txtorgDivision + '<input type="hidden" name="orgDivision" class="clsorgDivision" value="' + orgDivision + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteAddress(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditaddTbl(' + index + ", " + addressCategoryId + ",'" + orgUnion + "', '" + orgHouseVillage + "','" + orgBlockSector + "','" + orgPostCode + "','" + orgPostOffice + "'," + orgUpazila + "," + orgDistrict + "," + orgDivision + "," + orgAddressID + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            //index = index + 1;
+            RefreshAddress();
+        }
+
+        function DeleteAddress(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                //$("#tblfuelDetails #" + index).remove();
+                $("#tblAddress #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+
+            return false;
+        }
+
+        function ajaxGetAddress(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblAddress tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsaddressCategoryId").val();
+            }
+            $("#tblAddress tbody>tr").empty();
+
+            $.each(response, function (key, rc) {
+                index = $("#tblAddress tbody>tr").length;
+                let orgAddressID = rc.Id;
+                let addressCategoryId = rc.addressTypeId;
+                //let txtaddressCategory = rc.addressCategory.name;
+                let txtaddressCategory = rc.addressType.typeName;
+                let orgUnion = rc.union;
+                let orgHouseVillage = rc.houseVillage;
+                let orgBlockSector = rc.blockSector;
+                let orgPostCode = rc.postCode;
+                let orgPostOffice = rc.postOffice;
+                let orgDivision = rc.division.Id;
+                let txtorgDivision = rc.division.divisionName;
+                let orgDistrict = rc.district.Id;
+                let txtorgDistrict = rc.district.districtName;
+                let orgUpazila = rc.thana.Id;
+                let txtorgUpazila = rc.thana.thanaName;
+                var dtTable = $("#tblAddress");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + txtaddressCategory + '<input type="hidden" name="addressCategoryId"  id="addressCategoryId' + index + '" class="clsaddressCategoryId" value="' + addressCategoryId + '"/></td>' +
+                    '<td>' + orgUnion + '<input type="hidden" name="orgUnion" class="clsorgUnion"value="' + orgUnion + '"/><input type="hidden" name="orgAddressID" class="clsorgAddressID"value="' + orgAddressID + '"/></td>' +
+                    '<td>' + orgHouseVillage + '<input type="hidden" name="orgHouseVillage" class="clsorgVillage" value="' + orgHouseVillage + '"/></td>' +
+                    '<td>' + orgBlockSector + '<input type="hidden" name="orgBlockSector" class="clsorgBlockSector" value="' + orgBlockSector + '"/></td>' +
+                    '<td>' + orgPostCode + '<input type="hidden" name="orgPostCode" class="clsorgPostCode" value="' + orgPostCode + '"/><input type="hidden" name="orgPostOffice" class="clsorgPostOffice" value="' + orgPostOffice + '"/></td>' +
+                    '<td>' + txtorgUpazila + '<input type="hidden" name="orgUpazila" class="clsorgUpazila" value="' + orgUpazila + '"/></td>' +
+                    '<td>' + txtorgDistrict + '<input type="hidden" name="orgDistrict" class="clsorgDistrict" value="' + orgDistrict + '"/></td>' +
+                    '<td>' + txtorgDivision + '<input type="hidden" name="orgDivision" class="clsorgDivision" value="' + orgDivision + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteAddress(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditaddTbl(' + index + ", " + addressCategoryId + ",'" + orgUnion + "', '" + orgHouseVillage + "','" + orgBlockSector + "','" + orgPostCode + "','" + orgPostOffice + "'," + orgUpazila + "," + orgDistrict + "," + orgDivision + "," + orgAddressID + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblAddress tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+
+            })
+        }
+
+        //End Address
+
+        function EditaddTbl(index, addressCategoryId, orgUnion, orgHouseVillage, orgBlockSector, orgPostCode, orgPostOffice, orgUpazila, orgDistricts, orgDivision, orgAddressID) {
+            var rightIndex = index;
+
+            $('#txtorgDivision').val(orgDivision);
+
+
+            Common.Ajax('GET', '/global/api/districts/' + orgDivision, [], 'json', orgDistrict);
+
+            $('#distId').val(orgDistricts);
+            Common.Ajax('GET', '/global/api/thanas/' + orgDistricts, [], 'json', orgThana);
+            $('#thanaId').val(orgUpazila);
+
+            $('#txtaddressCategoryId').val(addressCategoryId);
+
+            $('#txtorgUnion').val(orgUnion);
+            $('#txtorgVillage').val(orgHouseVillage);
+            $('#txtorgBlockSector').val(orgBlockSector);
+            $('#txtorgPostCode').val(orgPostCode);
+            $('#txtorgPostOffice').val(orgPostOffice);
+
+            $('#IsEditadd').val(1);
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+
+
+        }
+        function RefreshContact() {
+            //alert("refresh")
+
+            $('#contactid').val('');
+            $('#Department').val('');
+            $('#mobileNumber').val('');
+
+            $('#personName').val('');
+            $('#phoneNumber').val('');
+            $('#Designation').val('');
+
+            $("#IsEditCon").val(0);
+            $("#IsEditCon").val(0);
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+        function ajaxGetContactId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblcontactDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#tblcontactDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+                //console.log(response);
+                index = $("#tblcontactDetails tbody>tr").length;
+                var dtTable = $("#tblcontactDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.personName + '<input type="hidden" name="contactall"  id="txtcontactId" class="clscontactDetailsId" value="' + value.personName + '"/></td>' +
+                    '<td>' + value.phoneNumber + '<input type="hidden"name="phoneall" class="clsQtypdone"value="' + value.phoneNumber + '"/></td>' +
+                    '<td>' + value.mobileNumber + '<input type="hidden"name="mobileall" class="clsQtmmy"value="' + value.mobileNumber + '"/></td>'
+                    +
+                    '<td>' + value.Department + '<input type="hidden"name="deptall" class="clsQtmmy"value="' + value.Department + '"/></td>'
+                    +
+                    '<td>' + value.Designation + '<input type="hidden"name="desall" class="clsQtmmy"value="' + value.Designation + '"/></td>'
+                    +
+
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    //'<a onclick="EditconTbl(' + index + "', '" + value.phoneNumber + "','" + value.mobileNumber + ", " + value.resourceId + ", "+ value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+
+        function AddContactInfo() {
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblcontactDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+
+
+            let id = parseInt($("#contactid").val()) ? parseInt($("#contactid").val()) : 0;
+
+            let contactName = $('#personName').val();
+            if (contactName == null || contactName == '') {
+                alert("Please entry person name first");
+                return
+            }
+
+            let Department = $('#Department').val();
+            if (Department == null || Department == '') {
+                Department = "N/A";
+            }
+
+            let Designation = $('#Designation').val();
+            if (Designation == null || Designation == '') {
+                Designation = "N/A";
+            }
+
+            let mobile = $('#mobileNumber').val();
+            if (mobile == null || mobile == '') {
+                mobile = "N/A";
+            }
+
+            let phone = $('#phoneNumber').val();
+            if (phone == null || phone == '') {
+                alert("Please entry phone number first");
+                return
+            }
+
+            let resouceid = $('#resourceId').val();
+
+            if (resouceid == '')
+            {
+                resouceid = 0;
+
+            }
+            if (contactName == "")
+            {
+                alert("Please entire contact name");
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEditCon').val()) ? parseInt($('#IsEditCon').val()) : 0;
+            var RowCount = $("#tblcontactDetails tbody>tr").length;
+
+            var dtTable = $("#tblcontactDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + contactName + '<input type="hidden" name="contactall"  id="txtcontactId" class="clscontactDetailsId" value="' + contactName + '"/></td>' +
+                '<td>' + phone + '<input type="hidden"name="phoneall" class="clsQtypdone"value="' + phone + '"/></td>' +
+                '<td>' + mobile + '<input type="hidden"name="mobileall" class="clsQtmmy"value="' + mobile + '"/></td>'
+                +
+                '<td>' + Department + '<input type="hidden"name="deptall" class="clsQtmmy"value="' + Department + '"/></td>'
+                +
+                '<td>' + Designation + '<input type="hidden"name="desall" class="clsQtmmy"value="' + Designation + '"/></td>'
+                   +
+
+
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteContact(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+               
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblcontactDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            index = index + 1;
+            RefreshContact();
+        }
+
+        function ajaxGetItemByCustomerId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+            $("#tblfuelDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            console.log(response);
+            $.each(response, function (key, value) {
+
+                index = $("#tblfuelDetails tbody>tr").length;
+                var dtTable = $("#tblfuelDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.item.itemName + '<input type="hidden" name="fuelidall"class="clsId" value="' + value.Id + '"><input type="hidden" name="itemidall"  id="txtitemId" class="clsitemId"value="' + value.itemId + '"/></td>' +
+
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTbl(' + index + "," + value.itemId + ",'" + value.item.itemName + "', "  + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+
+        function AddItemInfo() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblfuelDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsitemId").val();
+            }
+
+            let id = parseInt($("#customerItemInfoId").val()) ? parseInt($("#customerItemInfoId").val()) : 0;
+            let itemId = $('#itemId').val();
+            let fuelTypeName = $("#itemId option:selected").text();
+
+            if (itemId == 0) {
+                alert("Please select Item");
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblfuelDetails tbody>tr").length;
+
+            for (i = 0; i <RowCount; i++) {
+
+                var _itemId = $('#txtitemId' + i + '').val();
+                if (_itemId == itemId && editOption == 0) {
+                    alert('You have already added this item!');
+                    return false
+                }
+            }
+
+            var dtTable = $("#tblfuelDetails");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + fuelTypeName + '<input type="hidden" name="fuelidall"class="clsId" value="' + id + '"><input type="hidden" name="itemidall"  id="txtitemId' + index + '" class="clsitemId"value="' + itemId + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTbl(' + index + "," + itemId + ",'" + fuelTypeName  + "', " + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblfuelDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            Refresh();
+        }
+        function Delete(index) {
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblfuelDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function DeleteContact(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                //window.location.href = "/Purchase/PurchaseOrder/DeleteComments?Id=" + Id + '&actionId=' + actionTypeId;;
+                $("#tblcontactDetails #" + index).remove();
+
+                swal('', 'Deleted Successfully!', 'success')
+            });
+
+            return false;
+        }
+        function EditconTbl(index, contactName, phone, mobile, resourceId, Id) {
+            var rightIndex = index;
+            $('#contactid').val(Id);
+            $('#phone').val(phone);
+            $('#mobile').val(mobile);
+            $('#resourceName').val(contactName);
+            $('#resourceId').val(resourceId);
+            $("#IsEditCon").val(1);
+
+        window.localStorage.setItem('holdIndex', null);
+        if (rightIndex != null) {
+            window.localStorage.setItem('holdIndex', rightIndex);
+        }
+        }
+        function EditTbl(index, itemId,name, Id) {
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+
+            $('#customerItemInfoId').val(Id);
+            $('#itemId').val(itemId);
+            $('#itemAuto').val(name);
+            $('#itemName').val(name);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+
+
+        function openTab(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace("active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += "active";
+        }
+
+
+     document.getElementById("@Model.actionType").click();
+        $(document).ready(function () {
+            $("#defaultOpen").css("background-color", "lightgrey");
+            $('#btnSubmit').click(function () {
+                if ($('#nameEnglish').val() == "") {
+
+                    $("#defaultOpen").css("background-color", "lightgrey");
+
+                    $('#defaultOpen').click();
+
+                }
+            })
+            $('#defaultOpen').click(function () {
+
+
+                $("#defaultOpen").css("background-color", "lightgrey");
+                $("#contacts").css("background-color", "white");
+                $("#address").css("background-color", "white");
+
+                $("#fuel").css("background-color", "white");
+
+            })
+            $('#contacts').click(function () {
+
+                $("#contacts").css("background-color", "lightgrey");
+                $("#defaultOpen").css("background-color", "white");
+                $("#address").css("background-color", "white");
+
+                $("#fuel").css("background-color", "white");
+
+            })
+            $('#address').click(function () {
+
+                $("#address").css("background-color", "lightgrey");
+                $("#defaultOpen").css("background-color", "white");
+                $("#contacts").css("background-color", "white");
+
+                $("#fuel").css("background-color", "white");
+
+            })
+            $('#fuel').click(function () {
+
+                $("#fuel").css("background-color", "lightgrey");
+                $("#defaultOpen").css("background-color", "white");
+                $("#address").css("background-color", "white");
+                $("#contacts").css("background-color", "white");
+
+
+            })
+
+
+            Common.Ajax('GET', '/global/api/divisions/' + @ViewBag.bangladeshcountryId, [], 'json', orgDivision, false);
+            //Common.Ajax('GET', '/global/api/GetAllItem', [], 'json', ajaxItem, false);
+
+            $("#txtorgDivision").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', orgDistrict);
+            });
+
+            $("#txtorgDistrict").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', orgThana);
+            });
+
+            //  Present
+
+
+        //Organization
+
+            if (@ViewBag.addcount.division.Id> 0) {
+                var masterId = @Model?.GetOrganizationbyId?.Id;
+                Common.Ajax('GET', '/global/api/supplier/GetAddressListByOrganizationId/' + masterId, [], 'json', ajaxGetAddress);
+
+                @*$('#txtorgDivision').val(@ViewBag.addcount.division.Id);
+                var divisionId = @ViewBag.addcount.division.Id;
+
+                Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', orgDistrict, false);
+
+                $('#txtorgDistrict').val(@ViewBag.addcount.district.Id);
+                var districtId = @ViewBag.addcount.district.Id;
+                Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', orgThana, false);
+
+                $('#orgUpazila').val(@ViewBag.addcount.thana.Id);*@
+            }
+
+            if (@Model.GetOrganizationbyId?.Id> 0)
+            {
+                var masterId = @Model?.GetOrganizationbyId?.Id;
+
+                Common.Ajax('GET', '/SCMSupplier/Supplier/GetcontactbyOrganizationId/?Id=' + masterId, [], 'json', ajaxGetContactId);
+                Common.Ajax('GET', '/SCMSupplier/Supplier/GetCustomerItemInfobyOrganizationId/?Id=' + masterId, [], 'json', ajaxGetItemByCustomerId);
+
+                //Common.Ajax('GET', '/global/api/supplier/GetAddressListByOrganizationId/' + masterId, [], 'json', ajaxGetAddress);
+            }
+
+        });
+
+
+        function orgDivision(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#txtorgDivision').empty();
+            $('#txtorgDivision').append(options);
+        }
+        function orgDistrict(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#txtorgDistrict').empty();
+            $('#txtorgDistrict').append(options);
+
+            if ($('#IsEditadd').val() == 1) {
+                $('#txtorgDistrict').val($('#distId').val());
+            }
+        }
+
+        function orgThana(response) {
+
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#txtorgUpazila').empty();
+            $('#txtorgUpazila').append(options);
+            if ($('#IsEditadd').val() == 1) {
+                $('#txtorgUpazila').val($('#thanaId').val());
+            }
+        }
+
+        //function ajaxItem(response) {
+        //    var lstParticular = [];
+        //    $.each(response, function (i, option) {
+        //        var obj = new Object();
+        //        obj.key = option.Id;
+        //        obj.name = option.itemName;
+
+        //        obj.value = option.itemName + ' (' + option.itemCode + ')';
+        //        obj.accountCode = option.itemCode;
+        //        lstParticular[lstParticular.length] = obj;
+        //    });
+        //    $('#itemAuto').autocomplete({
+        //        source: lstParticular,
+        //        select: function (event, ui) {
+        //            $('#itemId').val(ui.item.key);
+        //            $("#itemName").val(ui.item.name);
+        //        }
+        //    });
+        //}
+    </script>
+}
+
+
+@section StyleMD{
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        /* Style the tab */
+        .tab {
+            float: left;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            width: 100%;
+            font-size: 1.1em;
+        }
+
+            /* Style the buttons that are used to open the tab content */
+            .tab button {
+                display: block;
+                background-color: inherit;
+                color: black;
+                padding: 22px 16px;
+                width: 100%;
+                border: none;
+                outline: none;
+                text-align: left;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                /* Change background color of buttons on hover */
+                .tab button:hover {
+                    background-color: #ddd;
+                }
+
+                /* Create an active/current "tab button" class */
+                .tab button.active {
+                    background-color: #ccc;
+                }
+
+        /* Style the tab content */
+        .tabcontent {
+            border: 1px solid #ccc;
+        }
+
+        .form-control-new {
+            color: #606066 !important;
+            font-size: 14px !important;
+            padding: 1px 4px 1px 8px;
+            border: 1px solid #606066;
+            height: 30px;
+            width: 90%;
+        }
+
+        .active {
+            width: 5px;
+            height: 5px;
+            background: green;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .inactive {
+            width: 5px;
+            height: 5px;
+            background: blue;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .sold {
+            width: 5px;
+            height: 5px;
+            background: gray;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .inshop {
+            width: 5px;
+            height: 5px;
+            background: yellow;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .outservice {
+            width: 5px;
+            height: 5px;
+            background: red;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+        }
+    </style>
+}

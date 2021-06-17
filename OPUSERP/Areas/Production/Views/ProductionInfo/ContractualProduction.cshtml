@@ -1,0 +1,60 @@
+﻿@model ProductionViewModel
+@{
+    ViewData["Title"] = "Contractual Production";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header row">
+                <div class="col-md-10">
+                    <h6 class="m-0 font-weight-bold text-primary">List of Contractual Production</h6>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("CreateContractualProduction", "ProductionInfo")'">Add New</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="productionTable">
+                    <thead>
+                        <tr>
+                            <th style="width:15%">Production No</th>
+                            <th style="width:15%">Production Date</th>
+                            <th style="width:20%">BOM Item</th>
+                            <th style="width:8%">Qty</th>
+                            <th style="width:5%">Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.productionMasters)
+                        {
+                            <tr>
+                                <td>@data.productionNo</td>
+                                <td>@data.productionDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.bOM.itemSpecification.specificationName</td>
+                                <td>@data.bomQty</td>
+                                <td>
+                                    <a class="btn btn-success" title="View" href="javascript:void(0)"><i class="fa fa-eye"></i></a>
+                                    <a class="btn btn-info" title="Edit" href="/Production/ProductionInfo/CreateContractualProduction?id=@data.Id"><i class="fa fa-pen"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#productionTable').DataTable();
+
+        });
+    </script>
+}

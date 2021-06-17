@@ -1,0 +1,535 @@
+﻿
+@model HallRentalViewModel
+@{
+    ViewData["Title"] = "CalenderView";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <link href="~/lib/main.css" rel="stylesheet" />
+    <style>
+        /* Top Counter */
+        .leftImgBox {
+            width: 20%;
+            height: 100%;
+            float: left;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 13px;
+        }
+
+            .leftImgBox img {
+                width: 100%;
+            }
+
+            .leftImgBox i {
+                font-size: 42px !important;
+            }
+
+        .counterBox {
+            float: right;
+            text-align: center;
+            margin: 10px;
+        }
+
+        .counter {
+            font-size: 25px;
+            margin-bottom: 0;
+        }
+
+        .counterBox1 {
+            float: right;
+            text-align: right;
+            margin: 0;
+        }
+
+        .counter1 {
+            font-size: 20px !important;
+            margin-bottom: 0;
+        }
+
+        .counter p {
+            text-align: right;
+        }
+
+        .title {
+            font-size: 15px;
+        }
+
+        a {
+            color: white !important;
+        }
+
+            a:hover {
+                color: white;
+            }
+
+
+
+
+
+        .redStar {
+            color: red;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+            color: black;
+            margin-bottom: 10px;
+            background: oldlace;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .box {
+            width: 14.28%;
+            height: 100px;
+            /*transition: width 2s, height 2s, transform 2s;*/
+            transition: background-color 2s, color 2s;
+            border-radius: 15px;
+        }
+
+            .box:hover {
+                background-color: #E5E5E5 !important;
+            }
+
+        .clicked {
+            background-color: #1E2E41 !important;
+            color: white !important;
+        }
+
+        .box a {
+            transition: color 2s;
+        }
+
+            .box a:hover {
+                color: black !important;
+            }
+
+
+
+
+
+        .fc-daygrid-day-number {
+            color: black !important;
+        }
+
+        .fc-day-past {
+            background-color: #F0F3F4 !important;
+        }
+
+        a.fc-col-header-cell-cushion {
+            color: black !important;
+        }
+
+        .fc-timeGridWeek-button, .fc-timeGridDay-button {
+            display: none !important;
+        }
+
+        .page-link {
+            color: black !important;
+        }
+    </style>
+}
+
+<div class="row mt-2" style="width: 96%;  margin-bottom: 20px; margin-left: 13px;">
+    <input id="tId" type="hidden" value="0" />
+    <div class="col-sm-3 py-1 box" id="stationary-btn" style="background-color: #309FDB; border: 5px solid white; cursor: pointer">
+        <a href="javascript:void(0)">
+            <div class="leftImgBox">
+                <i class="far fa-plus-square"></i>
+            </div>
+            <div class="counterBox1">
+                <p class="counter1">New</p>
+            </div>
+        </a>
+    </div>
+    @*id and onclick function for onging approved canceled list and grid view show*@
+    <div class="col-sm-3 py-1 box" style="background-color: yellowgreen;  color: black !important; border: 5px solid white;" id="ongoingbtn" onclick="location.href="/Rental/RentInvoice/HallRentalList">
+    <a href="/Rental/RentInvoice/HallRentalList">
+        <div class="leftImgBox">
+            <i class="far fa-list-alt"></i>
+        </div>
+        <div class="counterBox1">
+            <p class="counter1">List</p>
+        </div>
+
+    </a>
+   
+</div>
+
+
+
+@*/SCMStock/ManualStockIn/OngoingList*@
+
+
+
+
+<div class="card" style="width: 100%;" id="calenderView">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title my-0" style="color: black">Booking Events</h5>
+            </div>
+            @*<div class="col-6">
+                <a href="/Rental/RentInvoice/Index?id=0" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Add New</a>
+                </div>*@
+        </div>
+        <hr>
+        @*<div class="row">
+                <div class="col-6">
+                    <button style="background-color:#024972; float:left;" class="btn btn-info btn-sm" onclick="Calender()">Calender View</button>
+                    <button style="background-color:#024972; float:left;" class="btn btn-info btn-sm" onclick="List()">List View</button>
+
+                </div>
+                <div class="col-6">
+                </div>
+            </div>
+            <br />*@
+        <div class="container">
+            <div class="row" id='calendar' title="click for confirmation" style="height:20%; width:100%; color: black !important;"></div>
+            @*<div class="row" id="list" style=" display:none;">
+                    <input type="hidden" id="rowCount" name="rowCount" value="0" />
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped table-responsive" id="tblInvoiceList" data-parsley-required="true">
+                            <thead style="width:100%;background-color:lightgray;">
+                                <tr>
+                                    <th width="5%">SL#</th>
+                                    <th width="10%">Action</th>
+                                    <th width="15%">User Name</th>
+                                    <th width="10%">Hall Name</th>
+                                    <th>Booking Time</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+</div>
+@*For Grid and List Icon*@
+<div id="gridlistCard" style="display:none">
+
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#home" id="gridviewbtn">
+                <i class="fas fa-th" style="font-size:40px!important;color:#13087E" aria-hidden="true"></i>
+            </a>
+        </li>
+        <li class="pl-3" id="listviewbtn">
+            <a data-toggle="tab" href="#menu1">
+                <i class="fa fa-bars " style="font-size:40px!important;color:#13087E" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+<h1 style="margin:10px 0 10px 0"></h1>
+@*For Grid and List view Show*@
+<div id="view" style="display:none">
+    <div id="gridView" class="row" style="display:none;margin:0 20px 0 5px;">
+
+    </div>
+    <div id="listView" style="display:none">
+        <div class="row">
+            @*<div class="col-2">
+
+                </div>*@
+            <div class="col-11">
+                <table class="table table-bordered" id="table_hallInfo">
+                    <thead>
+                        <tr>
+                            <th>Hall</th>
+                            <th>Title</th>
+                            <th>Presided By</th>
+                            <th>Time</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            @*<div class="col-2">
+
+                </div>*@
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/main.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#list").show();
+
+            $('.fc-day-past').attr('disabled', 'disabled').off('click');
+            $('.fc-day-past').off('click');
+
+            $('a.fc-daygrid-day-number').click(false).css('text-decoration', 'none');
+        });
+        //
+        function btnClick(id) {
+            $('#tId').val(id);
+            $('#view').show();
+            $('#gridlistCard').show();
+            $('#calenderView').hide();
+        }
+        $('#gridviewbtn').click(function () {
+            var id = $('#tId').val();
+            loadDataInGrid(id);
+        })
+        $('#listviewbtn').click(function () {
+            var id = $('#tId').val();
+            loadDataInList(id);
+        })
+        function loadDataInGrid(id) {
+            Common.Ajax('GET', '/SCMStock/IssueStock/GetConferenceBookingInformationByStatus?statusId=' + id, [], 'json', getHallBookingInfos, false);
+        } function loadDataInList(id) {
+            Common.Ajax('GET', '/SCMStock/IssueStock/GetConferenceBookingInformationByStatus?statusId=' + id, [], 'json', getHallBookingInfos1, false);
+        }
+        function getHallBookingInfos(res) {
+            console.log(res);
+            var option = "";
+            $.each(res, function (i, item) {
+                item.bookingDate = formatDate(item.bookingDate);
+
+                //console.log(item)
+                option += `<a href="/SCMStock/IssueStock/HallBooklingPreview?hallId=${item.Id}" style="text-decoration:none!important;" class="col-xl-3 col-xl-2 col-md-3 col-sm-4 px-1" title="${item.hallInfo.hallName}">
+                                                <div class="card itemCard mb-1" style="color:black; font-size:20px !important;background-color: lavender;height:270px!important;">
+                                                    <div class="text-center px-0 pt-0 crdColor" style="height: 225px;">
+                                                    <span>${item.bookingDate}</span><br />
+                                                    <span>${item.startTime}</span> to <span>${item.endTime}</span><br />
+                                                    <span>${item.meetingTitle}</span><br/>
+                                                    <span>Presided By:</span><br/>
+                                                    <span>${item.presidedBy}</span>
+                                                    </div>
+                                                    <div class="card-footer text-center px-0 pt-0" style="background-color: beige;">
+                                                        <span>${item.hallInfo.hallName}</span>
+                                                    </div>
+                                                </div>
+                                            </a>`;
+            });
+            $('#gridView').empty();
+            $('#gridView').append(option);
+
+            $('#gridView').show();
+            $('#listView').hide();
+
+        }
+        function getHallBookingInfos1(res) {
+            console.log(res);
+            $("#table_hallInfo").DataTable().destroy();
+            var table = $("#table_hallInfo tbody");
+            table.empty();
+            var option = "";
+            //var table = `<table class="table table-bordered" style="padding:20px;margin:0 20px 0 5px;" id="maintable">
+            //                <thead>
+            //                    <tr style="background-color:cadetblue;text-align:center;">
+            //                        <th>Hall</th>
+            //                        <th>Title</th>
+            //                        <th>Presided By</th>
+            //                        <th>Time</th>
+            //                        <th>Date</th>
+            //                    </tr>
+            //                </thead>
+            //                <tbody id="tbl"></tbody>
+            //            </table>`
+            //$('#gridView').empty();
+            //$('#gridView').append(table);
+
+            $.each(res, function (i, item) {
+                item.bookingDate = formatDate(item.bookingDate);
+                //console.log(item)
+                option += `<tr>
+                                                <td>${item.hallInfo.hallName}</td>
+                                                <td>${item.meetingTitle}</td>
+                                                <td>${item.presidedBy}</td>
+                                                <td>${item.startTime} to ${item.endTime}</td>
+                                                <td>${item.bookingDate}</td>
+                                                <td><a href="/SCMStock/IssueStock/HallBooklingPreview?hallId=${item.Id}" class="btn btn-success">Details</a></td>
+                                            </tr>`
+            });
+            table.append(option);
+            $("#table_hallInfo").DataTable();
+            $('#gridView').hide();
+            $('#listView').show();
+        }
+        $('#ongoingbtn').click(function () {
+            $('#gridView').show();
+            $('#gridviewbtn').click();
+        })
+        $('#approvebtn').click(function () {
+            $('#gridView').show();
+            $('#gridviewbtn').click();
+        })
+        $('#btnConCancel').click(function () {
+            $('#gridView').show();
+            $('#gridviewbtn').click();
+        })
+        function formatDate(date) {
+            date = new Date(date);
+            var year = date.getFullYear(),
+                month = date.getMonth() + 1, // months are zero indexed
+                day = date.getDate(),
+                hour = date.getHours(),
+                minute = date.getMinutes(),
+                second = date.getSeconds(),
+                hourFormatted = hour % 12 || 12, // hour returned in 24 hour format
+                minuteFormatted = minute < 10 ? "0" + minute : minute,
+                morning = hour < 12 ? "am" : "pm";
+
+            return month + "/" + + day + "/" + year;
+        }
+
+        function DayDiffrence(date1, date2) {
+            //var date1, date2;
+            //define two date object variables with dates inside it
+            date1 = new Date(date1);
+            date2 = new Date(date2);
+
+            //calculate time difference
+            var time_difference = date2.getTime() - date1.getTime();
+
+            //calculate days difference by dividing total milliseconds in a day
+            var days_difference = time_difference / (1000 * 60 * 60 * 24);
+
+            return days_difference;
+        }
+
+        document.addEventListener('DOMContentLoaded', function (e) {
+            console.log(e);
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+
+                initialDate: Date.now(),
+                navLinks: true, // can click day/week names to navigate views
+                selectable: true,
+                selectMirror: true,
+                select: function (arg) {
+                    //alert(arg.startStr);
+
+                    var diff = DayDiffrence(formatDate(new Date()), formatDate(arg.startStr));
+                    //alert(diff);
+
+                    if (diff < 0) {
+                        swal("You Can't Set Schedule in previous day!!", "warning");
+                        return false;
+                    } else {
+                        window.location.href = "/Rental/RentInvoice/CalenderBarNew?date=" + arg.startStr;
+                    }
+
+                    calendar.unselect()
+                },
+                eventClick: function (arg) {
+                    if (confirm('Are you sure you want to delete this event?')) {
+                        arg.event.remove()
+                    }
+                },
+                editable: true,
+                dayMaxEvents: true, // allow "more" link when too many events
+                events: function (start, end, timezone, callback) {
+                    $.ajax({
+                        url: "/Rental/RentInvoice/HallRental",
+                        type: "GET",
+                        dataType: "JSON",
+                        success: function (result) {
+                            var events = [];
+                            $.each(result, function (i, data) {
+                                events.push({
+                                    //title: data.applicantName,
+                                    //backgroundColor: "#9501fc",
+                                    //borderColor: "#fc0101"
+                                });
+                            });
+                            //$.each(result, function (i, data) {
+                            //    events.push(
+                            //        {
+                            //            title: data.Title,
+                            //            description: data.Desc,
+                            //            start: moment(data.Start_Date).format('YYYY-MM-DD'),
+                            //            end: moment(data.End_Date).format('YYYY-MM-DD'),
+                            //            backgroundColor: "#9501fc",
+                            //            borderColor: "#fc0101"
+                            //        });
+                            //});
+
+                            callback(events);
+                        }
+                    });
+                },
+                eventRender: function (event, element) {
+                    element.qtip(
+                        {
+                            content: event.description
+                        });
+                },
+
+                editable: false
+            });
+
+            calendar.render();
+        });
+        function Refresh() {
+            location.reload();
+        }
+
+        function List() {
+
+            $("#list").show();
+        };
+
+        $('#stationary-btn').click(function () {
+            $('#calenderView').show();
+
+            $('#view').hide();;
+            $('#gridlistCard').hide();
+
+        })
+                        //$('#btnApprove').click(function () {
+                        //    $('#divApprove').show();
+                        //    $('#divOngoing').hide();
+                        //    $('#divDraft').hide();
+                        //    $('#calenderView').hide();
+                        //})
+
+                        //$('#btnConDraft').click(function () {
+                        //    $('#divDraft').show();
+                        //    $('#divOngoing').hide();
+                        //    $('#divApprove').hide();
+                        //    $('#calenderView').hide();
+                        //})
+                        //$('#btnConOngoing').click(function () {
+                        //    $('#divOngoing').show();
+                        //    $('#divDraft').hide();
+                        //    $('#divApprove').hide();
+                        //    $('#calenderView').hide();
+                        //})
+
+    </script>
+}
+

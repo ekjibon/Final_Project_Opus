@@ -1,0 +1,346 @@
+﻿
+@model EmployeeExitInterviewViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    #brand-title-id {
+        margin-top: 10px;
+    }
+
+    .body-section {
+        margin-top: 20px;
+    }
+
+    .heading-cls {
+        text-align: center;
+        color: black;
+    }
+
+    .signature-cls {
+        text-align: center;
+    }
+
+    .card-footer {
+        text-align: center;
+    }
+</style>
+
+<section>
+    <div class="employee-exit-interview-form-cls">
+        @*<div class="top-section">
+            <div class="container-fluid">
+                <div class="row">
+                    <img src="~/images/JasonLogo.png" height="70px" width="150px" />
+                    <h5 id="brand-title-id"><b>International Federation <br /> of Red Cross and Red Crescent Societies</b></h5>
+                </div>
+            </div>
+        </div>*@
+        <div class="body-section">
+            <div class="container-fluid">
+                <form asp-area="HRPMSEmployee" asp-controller="EmployeeExitInterview" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                    <div class="card">
+                        <div class="card-header heading-cls">
+                            <h4><b>EMPLOYEE EXIT INTERVIEW FORM</b></h4>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <b>STAFF DETAILS</b>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4">
+                                        <input type="hidden" class="form-control" name="employeeId" id="employeeId" value="@Model.employeeInfo.Id" />
+                                        <div class="from-group row">
+                                            <label class="col-sm-4 col-form-label">Name : </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="employeeName" id="employeeName" value="@Model.employeeInfo.nameEnglish" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="from-group row">
+                                            <label class="col-sm-4 col-form-label">Designation : </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="designation" id="designation" value="@Model.employeeInfo.designation" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="from-group row">
+                                            <label class="col-sm-4 col-form-label">Unit : </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="unit" id="unit" value="@Model.employeeProjectActivities?.FirstOrDefault()?.hRProject?.name" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="from-group row">
+                                            <label class="col-sm-4 col-form-label">Line manager : </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="lineManager" id="lineManager" value="@Model.supervisor?.supervisor?.nameEnglish" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="from-group row">
+                                            <label class="col-sm-4 col-form-label">Start date : </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="startDate" id="startDate" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="from-group row">
+                                            <label class="col-sm-4 col-form-label">Last withdrawn salary : </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="lastWithdrawBlance" id="lastWithdrawBlance" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <b>REASON FOR LEAVING</b>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    @foreach (var item in Model.reasonForLeavings)
+                                    {
+                                        <div class="col-md-4 col-sm-4">
+                                            <div class="form-group">
+                                                <input type="checkbox" name="reason" value="@item.Id" />
+                                                @item.reasonName
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <b>Plans after leaving : SOHO</b>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <b>COMMENTS/SUGGESTION FOR IMPROVEMENT </b> (We are interested in what our employees have to say about their work experience with the Federation. Please complete this form.)
+                            </div>
+                            <div class="card-body">
+                                @foreach (var item in Model.commentORSuggestions)
+                                {
+                                    <div class="form-group">
+                                        <label class="col-form-label">@item.commentORSuggestionName</label>
+                                        <input type="hidden" class="form-control" name="suggestionId" value="@item.Id" />
+                                        <input type="text" class="form-control" name="suggestion" value="N/A" required/>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <b>How did you feel about the pay and benefits?</b>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-3">Excellent</div>
+                                            <div class="col-md-3 col-sm-3">Good</div>
+                                            <div class="col-md-3 col-sm-3">Fair</div>
+                                            <div class="col-md-3 col-sm-3">Poor</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @foreach (var item in Model.payAndBenefits)
+                                {
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <p> @item.payAndBenefitsName </p>
+                                        <input type="hidden" class="form-control" name="payAndBenefitsId" value="@item.Id" />
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="row" onclick="payRowFunction(this)">
+                                            <div class="col-md-3 col-sm-3">
+                                                <div class="form-group">
+                                                    <input type="checkbox" value="Excellent" name="payAndBenefitsAns" class="pay_@item.Id" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3">
+                                                <div class="form-group">
+                                                    <input type="checkbox" value="Good" name="payAndBenefitsAns" class="pay_@item.Id" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3">
+                                                <div class="form-group">
+                                                    <input type="checkbox" value="Fair" name="payAndBenefitsAns" class="pay_@item.Id" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3">
+                                                <div class="form-group">
+                                                    <input type="checkbox" checked="checked" value="Poor" name="payAndBenefitsAns" class="pay_@item.Id" onclick="payClickFunction(this)" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <b>How did you feel about the following:</b>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-3">Very Satisfied</div>
+                                            <div class="col-md-3 col-sm-3">Slightly Satisfied</div>
+                                            <div class="col-md-2 col-sm-2">Neutral</div>
+                                            <div class="col-md-2 col-sm-2">Slightly Dissatisfied</div>
+                                            <div class="col-md-2 col-sm-2">Very Dis-Satisfied</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @foreach (var item in Model.feelAboutTheFollowings)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-6">
+                                            <p>@item.feelAboutTheFollowingName </p>
+                                            <input type="hidden" class="form-control" name="feelAboutFollowingId" value="@item.Id" />
+                                        </div>
+                                        <div class="col-md-6 col-sm-6">
+                                            <div class="row" id="followingGroup_@item.Id">
+                                                <div class="col-md-3 col-sm-3">
+                                                    <div class="form-group">
+                                                        <input type="checkbox" value="Very Satisfied" name="feelAboutFollowingAns" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-3">
+                                                    <div class="form-group">
+                                                        <input type="checkbox" value="Slightly Satisfied" name="feelAboutFollowingAns" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                    <div class="form-group">
+                                                        <input type="checkbox" value="Neutral" name="feelAboutFollowingAns" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                    <div class="form-group">
+                                                        <input type="checkbox" value="Slightly Dissatisfied" name="feelAboutFollowingAns" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 col-sm-2">
+                                                    <div class="form-group">
+                                                        <input type="checkbox"  checked="checked" value="Very Dis-Satisfied" name="feelAboutFollowingAns" onclick="feelClickFunction(this)" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <b>Comments :</b>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var item in Model.interviewComments)
+                                {
+                                <div class="form-group">
+                                    <label class="col-form-label">@item.commentText</label>
+                                    <input type="hidden" class="form-control" name="interviewCommentId" value="@item.Id" />
+                                    <input type="text" class="form-control" name="interviewComment" value="N/A" required />
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <br /><br /><br />
+                                <p class="signature-cls">Employee's signature</p>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <br /><br /><br />
+                                <p>Date</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <br /><br /><br />
+                                <p class="signature-cls"> Interviewer's signature</p>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <br /><br /><br />
+                                <p>Date</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2">
+                                <p class="signature-cls">Interviewer's comments:</p>
+                            </div>
+                            <div class="col-md-10 col-sm-10">
+                                <hr />
+                            </div>
+
+                        </div>
+                        <div class="card-footer">
+                            <p>APZHR - Exit Interview form - @DateTime.Now.Year</p>
+                        </div>
+                    </div>
+                    <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#startDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+
+
+        });
+
+        function clickFunction(value) {
+
+            if (value.checked == false) {
+                alert("you must be check an option");
+            }
+
+        }
+        function feelClickFunction(value) {
+
+            if (value.checked == false) {
+                alert("you must be check an option");
+            }
+
+        }
+
+    </script>
+}

@@ -1,0 +1,17 @@
+﻿{
+  "create": "ইভেন্ট তৈরী",
+  "edit": "ইভেন্ট এডিট",
+  "eventTitle": "ইভেন্ট শিরোনাম",
+  "evtPic": "ইভেন্টের ছবি",
+  "description": "বিবরণ",
+  "participant": "অংশগ্রহণকারী",
+  "venue": "ভেন্যু",
+  "evtDate": "ইভেন্টের তারিখ",
+  "evtRegDeadline": "ইভেন্ট নিবন্ধনের শেষ তারিখ",
+  "daylong": "সারাদিনব্যাপী",
+  "evtStatrtTime": "ইভেন্ট শুরু সময়",
+  "evtEndTime": "ইভেন্ট শেষের সময়",
+  "evtType": "ধরণ",
+  "evtRegAmount": "নিবন্ধন ফি",
+  "action": "প্রক্রিয়া"
+}

@@ -1,0 +1,839 @@
+﻿@model ItemSpecificationDepartmentModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    /* Top Counter */
+    .leftImgBox {
+        width: 20%;
+        height: 100%;
+        float: left;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .leftImgBox img {
+            width: 100%;
+        }
+
+    .counterBox {
+        float: right;
+        text-align: center;
+    }
+
+    .counter {
+        font-size: 33px;
+        margin-bottom: 0;
+    }
+
+    .title {
+        font-size: 17px;
+    }
+
+    a {
+        color: white !important;
+    }
+
+        a:hover {
+            color: white;
+        }
+
+    /* Searching */
+    input[type="text"] {
+        box-shadow: none !important;
+        border: 1px solid #6C757D;
+    }
+
+    /* Filtered Items */
+    .card {
+        display: flex;
+        align-items: center;
+        border: none;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease-in-out;
+    }
+
+        .card img {
+            padding: 10px;
+            width: 46%;
+        }
+
+    #filtered-items {
+        overflow-y: scroll;
+        height: 264px;
+    }
+
+    .card:hover {
+        /* box-shadow: 0 0 11px rgba(33, 33, 33, .2); */
+        transform: scale(0.9, 0.9);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+        .card:hover::after {
+            opacity: 1;
+        }
+
+    /* Add to Cart */
+    .addtocart {
+        padding: 5px;
+    }
+
+    .fa-minus {
+        color: #FB4C5D;
+    }
+
+    .fa-plus {
+        color: #F0BA02;
+    }
+
+    #addtocart {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        background-color: #00A75A;
+        border: none;
+        padding: 2px;
+        text-align: center;
+        font-size: 20px;
+        color: white;
+    }
+
+    .list-item-cart img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .list-item-cart span {
+        color: black;
+        font-size: 15px;
+    }
+
+    .list-item-cart a:first-child {
+        color: #EF5160;
+    }
+
+    .list-item-cart a:last-child {
+        color: #EEB907;
+    }
+
+    .list-item-cart input {
+        width: 25px;
+        text-align: center;
+        font-size: 15px;
+        outline: none;
+    }
+
+    /* Bottom List Group */
+    .list-item-bottom {
+        display: flex;
+        align-items: center;
+    }
+
+    .list-group .list-group-item {
+        border-top: none;
+        padding: 5px !important;
+        border-bottom: none;
+        border-left: 1px solid #949494;
+        border-right: 1px solid #949494;
+    }
+
+        .list-group .list-group-item:first-child {
+            border-top: 1px solid #949494;
+        }
+
+        .list-group .list-group-item:last-child {
+            border-bottom: 1px solid #949494;
+        }
+
+    .list-img {
+        width: 40px;
+    }
+
+    .list-text {
+        padding-left: 6px;
+        font-size: 22px;
+    }
+
+    .list-num {
+        font-size: 20px;
+        text-align: right;
+    }
+</style>
+
+
+<div class="container">
+    <!-- Top Counter -->
+    <div style="height:5px;"></div>
+    <div class="row">
+        <div class="col-3 py-1 box" style="background-color: #012350; color: white; border: 5px solid white;" onclick="DataLoad(2)">
+            <a id="department-btn">
+                <div class="leftImgBox">
+                    <img src="~/Assets/RequisitionNew/~/Assets/RequisitionNew/shopping-bag.png" alt="">
+                </div>
+                <div class="counterBox">
+                    <p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 2).FirstOrDefault()?.qty</p>
+                    <p class="title">Departmental Store</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-3 py-1 box" style="background-color: #68B902; color: white; border: 5px solid white;" onclick="DataLoad(3)">
+            <a href="#" id="computer-btn">
+                <div class="leftImgBox">
+                    <img src="~/Assets/RequisitionNew/desktop.png" alt="">
+                </div>
+                <div class="counterBox">
+                    <p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 3).FirstOrDefault()?.qty</p>
+                    <p class="title">Computer Store</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-3 py-1 box" style="background-color: #F84D5D; color: white; border: 5px solid white;" onclick="DataLoad(4)">
+            <a href="#" id="clothing-btn">
+                <div class="leftImgBox">
+                    <img src="~/Assets/RequisitionNew/clothing.png" alt="">
+                </div>
+                <div class="counterBox">
+                    <p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 4).FirstOrDefault()?.qty</p>
+                    <p class="title">Clothing Store</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-3 py-1 box" style="background-color: #F0B801; color: white; border: 5px solid white;" onclick="DataLoad(5)">
+            <a href="#" id="stationary-btn">
+                <div class="leftImgBox">
+                    <img src="~/Assets/RequisitionNew/stationary.png" alt="">
+                </div>
+                <div class="counterBox">
+                    <p class="counter">@Model.itemSpecificationDepartmentModels.Where(x => x.storeDepartmentId == 5).FirstOrDefault()?.qty</p>
+                    <p class="title">Stationary Store</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    @*<form>*@
+        <div class="row">
+            <div class="col-9">
+                <!-- Search -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group mb-3" style="width: 100%;">
+                            <input type="text" class="form-control"
+                                   style="border-top-left-radius: 50px; border-bottom-left-radius: 50px;">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" style="color: #FBAD63;" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Filtered Items -->
+                <div id="filtered-items">
+                    <!-- Filtered Items (Departmental) -->
+                    <div id="department">
+                        <!-- First Row -->
+                        <div class="row" id="AllItemLists">
+
+
+                        </div>
+                        <!-- Second Row -->
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <!-- Add to Cart -->
+                    <div class="col-12 px-1">
+                        <p id="addtocart">Add to Cart</p>
+                        <div class="row" style="max-height:300px;overflow-x:scroll;">
+                            <div class="col-12">
+                                <ul class="list-group" id="itemDetails">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height:5px;"></div>
+        <div class="row">
+            <div class="col-5">
+                <div class="form-group row">
+                    <label for="reqNo" class="col-sm-4 col-form-label">Req No</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="reqNo" name="reqNo" value="" readonly />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="reqDate" class="col-sm-4 col-form-label">Req Date</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="reqDate" name="reqDate" disabled />
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-4">
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-3 col-form-label">Subject<span style="color:red;">*</span></label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" id="subject" name="subject"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-3 col-form-label">Status</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="reqType">
+                            <option value="Final">Final</option>
+                            <option value="Draft">Draft</option>
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group row" style="padding-top:20px;">
+                    <div class="col-sm-4">
+
+                    </div>
+                    <div class="col-sm-8">
+                        <a href="javascript:void(0)" onclick="refresh()" class="btn btn-success btn-sm">Refresh</a>&nbsp;&nbsp;
+                        <button id="btnSave" onclick="SaveMasterDetails()" class="btn btn-info btn-sm">Submit</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height:5px;"></div>
+    @*</form>*@
+   
+    <!-- Bottom List Items -->
+    <div class="row">
+        <!-- Most Recent Items -->
+
+        <div class="col-4">
+            <div class="row">
+                <div class="col-12 text-left"
+                     style="background-color: #DD4C39; color: white; border: 5px solid white;">
+                    <p style="margin-bottom: 0; font-size: 20px;" class="py-1">Most recent items</p>
+                </div>
+                <div class="col-12" style="max-height:300px;overflow-x:scroll;">
+                    <div class="row">
+                        <div class="col-12" style="padding: 5px;">
+                            <ul class="list-group">
+                                @foreach (var item in Model.MostRecent)
+                                {
+                                    <li class="pt-3"><img src="../../SKUImages/@item.specImageUrl" width="40" /> <span class="pt-1 pr-2"> @item.specificationName</span> </li>
+                                }
+                                @*<li class="list-group-item list-item-bottom" onclick="clickResent(event)">
+                                    <img src="~/Assets/RequisitionNew/tissue-box.png" alt="" class="list-img">
+                                    <span class="list-text">Tissue Box</span>
+                                </li>
+
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/usb-drive.png" alt="" class="list-img">
+                                    <span class="list-text">Pen Drive</span>
+                                </li>
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/tissues.png" alt="" class="list-img">
+                                    <span class="list-text">Tissue Box</span>
+                                </li>
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/toner.png" alt="" class="list-img">
+                                    <span class="list-text">Laser Toner</span>
+                                </li>*@
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Top 10 Items -->
+        <div class="col-4">
+            <div class="row">
+                <div class="col-12 text-left"
+                     style="background-color: #00A65A; color: white; border: 5px solid white;">
+                    <p style="margin-bottom: 0; font-size: 20px;" class="py-1">Top 10 items</p>
+                </div>
+                <div class="col-12" style="max-height:300px;overflow-x:scroll;">
+                    <div class="row">
+                        <div class="col-12" style="padding: 5px;">
+                            <ul class="list-group">
+                                @foreach (var item in Model.TopTen)
+                                {
+                                    <li class="pt-3"><img src="../../SKUImages/@item.specImageUrl" width="40" /> <span class="pt-1 pr-2"> @item.specificationName (@item.total.ToString("#"))</span> </li>
+                                }
+
+
+                                @*<li class="list-group-item list-item-bottom" onclick="clickTop(event)">
+                                    <img src="~/Assets/RequisitionNew/drink-water.png" alt="" class="list-img">
+                                    <span class="list-text">Mineral Water (80)</span>
+                                </li>
+
+
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/air-freshener.png" alt="" class="list-img">
+                                    <span class="list-text">Air Freshner (45)</span>
+                                </li>
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/tissue-box.png" alt="" class="list-img">
+                                    <span class="list-text">Tissue Box (60)</span>
+                                </li>
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/glue.png" alt="" class="list-img">
+                                    <span class="list-text">Try Glue Stick (12)</span>
+                                </li>*@
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+        <!-- Featured Items -->
+        <div class="col-4">
+            <div class="row">
+                <div class="col-12 text-left"
+                     style="background-color: #0073B6; color: white; border: 5px solid white;">
+                    <p style="margin-bottom: 0; font-size: 20px;" class="py-1">Featured items</p>
+                </div>
+                <div class="col-12" style="max-height:300px;overflow-x:scroll;">
+                    <div class="row">
+                        <div class="col-12" style="padding: 5px;">
+                            <ul class="list-group">
+                                @foreach (var item in Model.Featured)
+                                {
+                                    <li class="pt-3"><img src="../../SKUImages/@item.specImageUrl" width="40" onclick="clickFeature(event,@item.itemSpecificationId,'@item.specImageUrl')" /> <span class="pt-1 pr-2"> @item.specificationName</span> </li>
+                                }
+                                @*<li class="list-group-item list-item-bottom" onclick="clickFeature(event)">
+                                    <img src="~/Assets/RequisitionNew/tissue-box.png" alt="" class="list-img">
+                                    <span class="list-text ">Tissue Box</span>
+                                </li>
+
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/drink-water.png" alt="" class="list-img">
+                                    <span class="list-text">Mineral Water</span>
+                                </li>
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/tissues.png" alt="" class="list-img">
+                                    <span class="list-text">Tissue Box</span>
+                                </li>
+                                <li class="list-group-item list-item-bottom">
+                                    <img src="~/Assets/RequisitionNew/toner.png" alt="" class="list-img">
+                                    <span class="list-text">Laser Toner</span>
+                                </li>*@
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+
+        function SaveMasterDetails() {
+            $('#btnSave').prop('disabled', true);
+            var tablelength = $(".totalItem").length;
+            var reqMasterId = $("#reqMasterId").val();
+            var reqNo = $("#reqNo").val();
+            var reqDate = $("#reqDate").val();
+            var subject = $("#subject").val();
+            var reqType = $("#reqType").val();
+            var isPostPR = 1;
+            var reqDept = 1;
+            var fundsourceId =1;
+            var deliveryaddress = "";
+            var employeeId = $("#employeeId").val();
+
+            var id = parseInt($("#id").val()) ? parseInt($("#id").val()):0;
+
+            if (reqDate == '') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Requisition Date")
+                return false;
+            } else if (reqNo=='') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Requisition No")
+                return false;
+            }else if (subject == '') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Subject")
+                return false;
+            } else if (reqType == '' || reqType == null || reqType == 'undifined') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Requisition Status")
+                return false;
+            }else if (tablelength < 1) {
+                $('#btnSave').prop('disabled', false);
+                alert("there is no data in the table")
+                return false;
+            }
+
+            var itemDetails = [];
+            $("#itemDetails").find('li').each(function () {
+                console.log(this);
+                itemDetails.push({
+                    itemSpecificationId: $(this).find(".totalItem").val(),
+                    itemSpecificationName: $(this).find(".validItem").html(),
+                    reqQty: $(this).find(".clsreqQty").val()
+                });
+            });
+            //$("#itemDetails .clsLI").each(function () {
+            //    itemDetails.push({
+            //        itemSpecificationId: $(this).find(".totalItem").val(),
+            //        itemSpecificationName: $(this).find(".validItem").val(),
+            //        reqQty: $(this).find(".clsreqQty").val()
+            //    });
+            //});
+
+            //var appPanel = [];
+            //$("#divPanel > #divChieldPanel").each(function () {
+            //    appPanel.push({
+            //        sequenceNo: $(this).find(".clsSequenceNo").val(),
+            //        userId: $(this).find(".clsUserId").val(),
+            //    });
+            //});
+
+            //var supplierDetails = [];
+            //$("#tblSupplier tbody>tr").each(function () {
+            //    supplierDetails.push({
+            //        Id: $(this).find(".clsIdSupplier").val(),
+            //        itemId: $(this).find(".clsItemIdSupplier").val(),
+            //        itemSpecificationId: $(this).find(".clsitemSpecificationIdSupplier").val(),
+            //        supplierId: $(this).find(".clssupplier").val(),
+            //    });
+            //});
+
+            var allTrx = new Object();
+            allTrx.reqMasterId = reqMasterId;
+            allTrx.projectId = 2;
+            allTrx.reqNo = reqNo;
+            allTrx.reqDate = reqDate;
+            allTrx.subject = subject;
+            allTrx.reqType = reqType;
+            allTrx.isPostPR = isPostPR;
+            allTrx.foundsourceId = fundsourceId;
+            allTrx.deliveryaddress = deliveryaddress;
+            allTrx.employeeId = employeeId;
+            allTrx.reqDept = reqDept;
+            allTrx.Details = itemDetails;
+            //allTrx.panels = appPanel;
+            //allTrx.preferableVendors = supplierDetails;
+
+            $('#progress').show();
+            $.ajax({
+                url: '@Url.Action("SaveMasterDetailsNew", "RequisitionMaster")',
+                type: 'Post',
+                data: allTrx
+            })
+                .done(function (data) {
+                    alert("Save Successfully");
+                    
+                        $('#btnSave').prop('disabled', false);
+                        $('#progress').hide();
+                     var link = '@Url.Action("Index", "RequisitionMaster", "http")'
+                        window.location.href = link;
+                    
+                    
+                })
+                .fail(function () {
+                    $('#btnSave').prop('disabled', false);
+                    $('#progress').hide();
+                    alert("Unable to Save. Please Try Again");
+                });
+        }
+
+        function GetReqNo(response) {
+            //$('#reqNo').val(response.AutoNumber);
+            $('#reqNo').val(response);
+        }
+        //add product
+        function clickNow(event,itemSpecId,imgUrl) {
+            var addbutton = event.target
+            var items = addbutton.parentElement.parentElement
+            var cardImage = items.getElementsByClassName('card-img-top')[0].src
+            var cardBody = items.getElementsByClassName('card-body')[0].innerText
+            addItems(cardImage, cardBody, itemSpecId, imgUrl);
+        }
+
+        function addItems(cardImage, cardBody, itemSpecId, imgUrl) {
+            var addRow = document.createElement('div')
+            addRow.classList.add('list-group')
+            addRow.innerText = cardBody
+            var cartItem = document.getElementsByClassName('list-group')[0]
+            var cartrowitem = `
+                <li class="list-group-item list-item-cart clsLI">
+
+                    <div class="div" style="float: left;">
+                         <span><i class="fa fa-trash del text-danger mr-1 ml-0 pl-0" id="del"></i></span>
+                        <img src="/../../SKUImages/${imgUrl}" alt="">
+                        <span class="validItem" name="validItems" style="font-size:12px">${cardBody}</span>
+                        <input type="hidden" class="totalItem" value="${itemSpecId}" name="itemSpecificationId" />
+                    </div>
+
+                    <div style="float: right;">
+                        <i class="fa fa-minus pr-2 altera decrescimo" aria-hidden="true" id="subs${itemSpecId}" onclick="subst(${itemSpecId})"></i>
+                        <input type="text" id="reqQty${itemSpecId}" class="clsreqQty" name="reqQty"value="1">
+                        <i class="fa fa-plus pl-2 altera  acrescimo" aria-hidden="true" id="adds${itemSpecId}" onclick="add(${itemSpecId})"></i>
+                    </div>
+
+                </li>         `
+
+            //alert($('.div span').hasClass('validItem'));
+
+            if ($('.div span').hasClass("validItem") == false) {
+                addRow.innerHTML = cartrowitem
+                cartItem.append(addRow);
+            } else {
+                $('.validItem').each(function () {
+                    var name = $(this).text();
+                    if (name === cardBody) {
+                        alert("Product Is already in Cart");
+                        return false;
+                    }
+                });
+                addRow.innerHTML = cartrowitem
+                cartItem.append(addRow);
+            }
+
+            //addRow.innerHTML = cartrowitem
+            //cartItem.append(addRow);
+        }
+        //end
+
+
+
+        //delete
+        $(document).on('click', ' #del', function () {
+            $(this).closest('li').toggleClass('strike').fadeOut('slow', function () { $(this).remove(); });
+        });
+        //end
+        //increment
+        function add(specId) {
+            var a = $("#reqQty" + specId).val();
+            a++;
+            if (a => 1) {
+                $("#subs" + specId).removeAttr("disabled");
+            }
+            $("#reqQty" + specId).val(a);
+        };
+
+        function subst(specId) {
+            var b = $("#reqQty" + specId).val();
+            if (b.length > 0 && b >= 1) {
+                b--;
+                $("#reqQty" + specId).val(b);
+            }
+            else {
+                $("#subs" + specId).attr("disabled", "disabled");
+            }
+        };
+
+        //end
+
+
+        //addResent
+
+        function clickResent(event) {
+            var addbtn = event.target
+            var items = addbtn.parentElement.parentElement
+            var imgSrc = items.getElementsByClassName('list-img')[0].src
+            var productName = items.getElementsByClassName('list-text')[0].innerText
+            addItemsR(imgSrc, productName)
+        }
+
+        function addItemsR(imgSrc, productName) {
+            var addRowR = document.createElement('div')
+            addRowR.classList.add('list-group')
+            addRowR.innerText = productName
+            var cartItem = document.getElementsByClassName('list-group')[0]
+
+            var cartRowItem = `
+                     <li class="list-group-item list-item-cart">
+
+                                <div class="div" style="float: left;">
+                                     <span><i class="fa fa-trash del text-danger mr-1 ml-0 pl-0" id="del"></i></span>
+                                    <img src="/Assets/RequisitionNew/tissue-box.png" alt="">
+                                    <span  class="validItem" style="font-size:12px">${productName}</span>
+                                </div>
+
+                                <div style="float: right;">
+                                    <i class="fa fa-minus pr-2 altera decrescimo" aria-hidden="true" id="subs" onclick="subst()"></i>
+                                    <input type="text" id="noOfRoom" name="noOfRoom"value="0">
+                                    <i class="fa fa-plus pl-2 altera  acrescimo" aria-hidden="true" id="adds" onclick="add()"></i>
+                                </div>
+
+                            </li>
+                    `
+            if ($('.div span').hasClass("validItem") == false) {
+                addRowR.innerHTML = cartRowItem
+                cartItem.append(addRowR);
+            } else {
+                alert("true");
+                $('.validItem').each(function () {
+                    var names = $(this).text();
+                    if (names === productName) {
+                        alert(2);
+                        alert("Product Is already in Cart");
+                        return false;
+                    }
+                });
+                addRow.innerHTML = cartrowitem
+                cartItem.append(addRow);
+            }
+        };
+
+        //end
+
+        function clickTop(event) {
+            var addbtnT = event.target
+            var itemsT = addbtnT.parentElement.parentElement
+            var imgSrcT = itemsT.getElementsByClassName('list-img')[0].src
+            var ProductName = itemsT.getElementsByClassName('list-text')[0].innerText
+
+            addTopItems(imgSrcT, ProductName);
+        }
+
+
+        function addTopItems(imgSrcT, ProductName) {
+            var addRowT = document.createElement('div')
+            addRowT.classList.add('list-group')
+            addRowT.innerText = ProductName
+            var cartItemsT = document.getElementsByClassName('list-group')[0]
+            var cartRowItemT = `
+                     <li class="list-group-item list-item-cart">
+
+                        <div style="float: left;">
+                                <span><i class="fa fa-trash del text-danger mr-1 ml-0 pl-0" id="del"></i></span>
+                            <img src="/Assets/RequisitionNew/drink-water.png" alt="">
+                            <span class="validItem" style="font-size:12px">${ProductName}</span>
+                        </div>
+
+                        <div style="float: right;">
+                            <i class="fa fa-minus pr-2 altera decrescimo" aria-hidden="true" id="subs" onclick="subst()"></i>
+                            <input type="text" id="noOfRoom" name="noOfRoom"value="0">
+                            <i class="fa fa-plus pl-2 altera  acrescimo" aria-hidden="true" id="adds" onclick="add()"></i>
+                        </div>
+
+                    </li>
+                    `
+            addRowT.innerHTML = cartRowItemT
+            cartItemsT.append(addRowT)
+
+        }
+
+
+        function clickFeature(event, itemSpecId, imgUrl) {
+            var addbtnF = event.target
+            var itemsF = addbtnF.parentElement.parentElement
+            var imgSrcF = itemsF.getElementsByClassName('list-img')[0].src
+            var Product = itemsF.getElementsByClassName('list-text')[0].innerText
+            addItems(imgSrcF, Product, itemSpecId, imgUrl);
+            //addFeatureItems(imgSrcF, Product);
+        }
+
+
+        function addFeatureItems(imgSrcF, Product) {
+            var addRowT = document.createElement('div')
+            addRowT.classList.add('list-group')
+            addRowT.innerText = Product
+            var cartItemsT = document.getElementsByClassName('list-group')[0]
+            var cartRowItemT = `
+                     <li class="list-group-item list-item-cart">
+
+                        <div style="float: left;">
+                                <span><i class="fa fa-trash del text-danger mr-1 ml-0 pl-0" id="del"></i></span>
+                            <img src="/Assets/RequisitionNew/tissue-box.png" alt="">
+                            <span class="validItem" style="font-size:12px">${Product}</span>
+                        </div>
+
+                        <div style="float: right;">
+                            <i class="fa fa-minus pr-2 altera decrescimo" aria-hidden="true" id="subs" onclick="subst()"></i>
+                            <input type="text" id="noOfRoom" name="noOfRoom"value="0">
+                            <i class="fa fa-plus pl-2 altera  acrescimo" aria-hidden="true" id="adds" onclick="add()"></i>
+                        </div>
+
+                    </li>
+
+                    `
+            addRowT.innerHTML = cartRowItemT
+            cartItemsT.append(addRowT)
+
+        }
+
+
+
+
+
+
+
+
+        $(document).ready(function () {
+            $("#reqDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            Common.Ajax('GET', '/api/RequisitionMaster/GetRequisitionNo/' + 1, [], 'json', GetReqNo);
+        })
+
+
+        $('.fa-minus').click(function () {
+            console.log($(this).closest(".input").find("input[name=input]").val());
+        })
+
+        function DataLoad(id) {
+            Common.Ajax('GET', '/SCMMasterData/Item/GetItemSpecificationsByDepartmentId/' + id, [], 'json', ajaxPermanentThana, false);
+        }
+
+        function ajaxPermanentThana(response) {
+            console.log(response);
+            var option = "";
+            $.each(response, function (i, item) {
+                option += `
+                           <div class="col-3">
+
+                                <div class="card" onclick="clickNow(event,${item.itemSpecificationId},'${item.specImageUrl}')">
+                                    <div class="raw" style="padding-left:0px;padding-right:0px;">
+                                    <img class="card-img-top" src="/../../SKUImages/${item.specImageUrl}" alt="Card image">&nbsp;&nbsp;
+                                    <span style="text-allign:right;">${item.qty}<span/>
+
+                                    </div>
+
+                                    <div class="card-body text-center px-0 pt-0" style="font-size: 14px;">
+                                        ${item.specificationName}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+        `
+            });
+
+            $('#AllItemLists').empty();
+            $('#AllItemLists').append(option);
+
+        }
+
+    </script>
+}

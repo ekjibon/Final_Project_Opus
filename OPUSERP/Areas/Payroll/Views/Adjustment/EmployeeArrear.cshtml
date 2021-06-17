@@ -1,0 +1,261 @@
+﻿@model EmployeeArrearViewModel
+@{
+    ViewData["Title"] = "EmployeeArrear";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Employee's Arrear Calculation</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="Adjustment" asp-action="EmployeeArrear" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="employeeArrearId" name="employeeArrearId" value=0>
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="employeeInfoId" class="col-sm-4 col-form-label">Employee's Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Designation </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="department" class="col-sm-4 col-form-label">Department</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="department" value="" name="department" readonly>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="salaryPeriodId" class="col-sm-4 col-form-label">Salary Period <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select name="salaryPeriodId" id="salaryPeriodId" class="form-control" data-parsley-required="true">
+                                    <option value="">Select Salary Period</option>
+                                    @foreach (var data in Model.salaryPeriods)
+                                    {
+                                        <option value="@data.Id">@data.periodName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="txtArrear" class="col-sm-4 col-form-label">Arrear Amount <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="txtArrear" name="txtArrear" data-parsley-required="true" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="txtBonus" class="col-sm-4 col-form-label">Bonus Arrear </label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="txtBonus" name="txtBonus" style="text-align:right">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="arrearAmount" class="col-sm-4 col-form-label">Total <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="arrearAmount" name="arrearAmount" data-parsley-required="true" style="text-align:right" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>               
+                <button type="button" onclick="LoadData()" class="btn btn-success btn-md" style="float:right; margin-top:5px;">Calculate</button>
+                <br />
+                <div>
+                    <table class="table table-striped table-bordered" id="leaveTable">
+                        <thead>
+                            <tr>
+                                <th width="5%">SL#</th>
+                                <th>Salary Head</th>
+                                <th>Amount</th>
+                                <th>Ratio</th>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button type="submit" value="Submit" title="Save" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Arrear</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="arrearTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>Employee Name</th>
+                            <th>Salary Period</th>
+                            <th>Salary Head</th>
+                            <th>Amount</th>
+                            <th>Ratio</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.employeeArrears)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td>@data.employeeInfo.employeeCode</td>
+                                    <td>@data.employeeInfo.nameEnglish</td>
+                                    <td>@data.salaryPeriod.periodName</td>
+                                    <td>@data.salaryHead.salaryHeadName</td>
+                                    <td>@data.arrearAmount</td>
+                                    <td>@data.ratio</td>
+                                    @*<td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id,@data.employeeInfoId,'@data.employeeInfo.nameEnglish','@data.employeeInfo.employeeCode','@data.employeeInfo.designation',@data.salaryPeriodId,@data.arrearAmount)" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                        </td>*@
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#arrearTable').DataTable();
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+
+            $("#txtArrear").keyup(function () {
+                GetTotalAmount();
+            });
+
+            $("#txtBonus").keyup(function () {
+                GetTotalAmount();
+            });
+
+        });
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#Designation").val(ui.item.designation);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+        //function Edit(Id, employeeInfoId, nameEnglish, employeeCode, designation, salaryPeriodId, arrearAmount) {
+        //    $('#employeeArrearId').val(Id);
+        //    $('#employeeInfoId').val(employeeInfoId);
+        //    $('#employeeName').val(nameEnglish + '(' + (employeeCode) + ')');
+        //    $('#Designation').val(designation);
+        //    $('#salaryPeriodId').val(salaryPeriodId);
+        //    $('#arrearAmount').val(arrearAmount);
+        //}
+
+        function GetTotalAmount() {
+
+            var arAmount = parseFloat($("#txtArrear").val());
+            var bnAmount = parseFloat($("#txtBonus").val());
+            if ($("#txtArrear").val() == '') {
+                arAmount = 0
+            }
+            if ($("#txtBonus").val() == '') {
+                bnAmount = 0
+            }
+
+            $("#arrearAmount").val((parseFloat(arAmount) + parseFloat(bnAmount)).toFixed(2));
+        }
+
+        function LoadData() {
+
+            if ($('#employeeInfoId').val() == "") {
+                swal('Warning', 'Please Select Employee', 'warning');
+                return false;
+            }
+            else if ($('#salaryPeriodId').val() == "") {
+                swal('Warning', 'Please Select Salary Period', 'warning');
+                return false;
+            }
+            else if ($('#arrearAmount').val() == "") {
+                swal('Warning', 'Please Enter Amount', 'warning');
+                return false;
+            }
+
+            Common.Ajax('GET', '/Payroll/Adjustment/GetEmployeeArrearCalculation/?empId=' + parseInt($('#employeeInfoId').val()) + '&periodId=' + parseInt($('#salaryPeriodId').val()) + '&totalAmount=' + parseFloat($('#arrearAmount').val()) + '&bonusAmount=' + parseFloat($('#txtBonus').val()), [], 'json', ajaxGetEmployeeArrearCalculation);
+        }
+
+        function ajaxGetEmployeeArrearCalculation(response) {
+            $('#leaveTable').DataTable().destroy();
+            var dtTable = $("#leaveTable");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            var i = 1;
+            $.each(response, function (key, value) {
+                var trHtml = '<tr><td>' + i + '</td><td>' + value.salaryHeadName + '</td><td>' + value.arrearAmount.toFixed(2) + '</td><td>' + value.ratio.toFixed(2) + '</td></tr>';
+                tableBody.append(trHtml);
+                i++;
+            });
+            $('#leaveTable').DataTable();
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

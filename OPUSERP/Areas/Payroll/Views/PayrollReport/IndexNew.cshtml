@@ -1,0 +1,605 @@
+﻿@model PayrollReportViewModel
+@{
+    ViewData["Title"] = "IndexNew";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+
+        .right {
+            text-align: right;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black;text-align:center;">Payroll Report</h5>
+        <hr>
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="form-group row" id="forReportType">
+                        <label for="reportTypeId" class="col-sm-3 col-form-label">Report Type <span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="reportTypeId" id="reportTypeId">
+                                <option class="form-control" value="">Please Select</option>
+                                <option class="form-control" value="PSLIP">Pay Slip</option>
+                                <option class="form-control" value="MWSS">Month Wise Salary Sheet</option>
+                                <option class="form-control" value="MWSSBWC">Month Wise Salary Disburse Sheet</option>
+                                <option class="form-control" value="MWBS">Bonus Sheet</option>
+                                <option class="form-control" value="BNKSTMNT">Bank Statement With Pad</option>
+                                <option class="form-control" value="BNKSTMNTWTHOUTPAD">Bank Statement Without Pad</option>
+                                <option class="form-control" value="BNKAPP">Bank Application</option>
+                                <option class="form-control" value="WALLSTMNT">Wallet Statement</option>
+                                <option class="form-control" value="CASHSTMNT">Cash Statement</option>
+                                <option class="form-control" value="FTAXCERT">Final Tax Certificate</option>
+                                @*<option class="form-control" value="TAXCAL">Tax Calculation Report</option>*@
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forPeriod" style="display:none;">
+                        <label for="salaryPeriodId" class="col-sm-3 col-form-label">Period Name <span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select name="salaryPeriodId" id="salaryPeriodId" class="form-control">
+                                <option value="">Select Salary Period</option>
+                                @foreach (var data in Model.salaryPeriods)
+                                {
+                                    <option value="@data.Id">@data.periodName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forSbu" style="display:none;">
+                        <label for="sbu" class="col-sm-3 col-form-label">SBU Name </label>
+                        <div class="col-sm-9">
+                            <select name="sbu" id="sbu" class="form-control">
+                                <option value="">Select SBU</option>
+                                @foreach (var data in Model.specialBranchUnits)
+                                {
+                                    <option value="@data.Id">@data.branchUnitName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forPns" style="display:none;">
+                        <label for="pns" class="col-sm-3 col-form-label">Department</label>
+                        <div class="col-sm-9">
+                            <select name="dprt" id="dprt" class="form-control">
+                                <option value="">Select Department</option>
+                                @foreach (var data in Model.Departments)
+                                {
+                                    <option value="@data.Id">@data.deptName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forEmployee" style="display:none;">
+                        <label for="employeeInfoId" class="col-sm-3 col-form-label">Employee's Name <span style="color:red;">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup">
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forTaxYear" style="display:none;">
+                        <label for="taxYearId" class="col-sm-3 col-form-label">Tax Year<span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select name="taxYearId" id="taxYearId" class="form-control">
+                                <option value="">Select Tax Year</option>
+                                @foreach (var data in Model.taxYears)
+                                {
+                                    <option value="@data.Id">@data.taxYearName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forButton" style="display:none;">
+                        <label class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input type="button" value="Export To PDF" id="btnPrint" class="btn btn-facebook btn-sm" style="width:120px;" />
+                            &nbsp;&nbsp;&nbsp;
+                            @*<input type="button" value="Load" id="btnExcel" class="btn btn-warning btn-sm" style="width:120px;display:none" />*@
+                            <button id="btnExcel" class="btn btn-facebook btn-sm" title="Excel" style="width:140px;display:none">Load</button>
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" id="btnRefresh" value="Refresh" class="btn btn-info btn-sm" style="width:80px;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="BankTableShow">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblBank" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:30%;vertical-align:middle;">Name of the Company's Employee</th>
+                            <th style="width:20%;vertical-align:middle;">Designation</th>
+                            <th style="width:20%;vertical-align:middle;">Account Number</th>
+                            <th style="width:20%;vertical-align:middle;">Amount to be transferred</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="CashTableShow">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblCash" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:40%;vertical-align:middle;">Name of the Company's Employee</th>
+                            <th style="width:30%;vertical-align:middle;">Designation</th>
+                            <th style="width:20%;vertical-align:middle;">Cash Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="WalletTableShow">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblWallet" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:25%;vertical-align:middle;">Name of the Company's Employee</th>
+                            <th style="width:25%;vertical-align:middle;">Designation</th>
+                            <th style="width:10%;vertical-align:middle;">Wallet Type</th>
+                            <th style="width:15%;vertical-align:middle;">Account Number</th>
+                            <th style="width:15%;vertical-align:middle;">Amount to be transferred</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    tr.cls-4 {
+        border-bottom: 4px solid black !important;
+        border-collapse: collapse !important;
+    }
+</style>
+
+@section Scripts{
+    <script>
+        function GetBankStatementByPeriodId(salaryPeriodId, sbuId, pnsId) {
+            table = $('#tblBank').DataTable({
+                ajax: {
+                    url: "/global/api/GetBankStatementByPeriodId/" + salaryPeriodId + "/" + sbuId + "/" + pnsId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "bankAccountNo" },
+                    {
+                        data: "bankPayable",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol",
+                        className: "right"
+                    }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        title: "Bank Statement",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        title: "Bank Statement",
+                    }
+                ]
+            });
+        }
+
+        function GetCashStatementByPeriodId(salaryPeriodId, sbuId, pnsId) {
+            table = $('#tblCash').DataTable({
+                ajax: {
+                    url: "/global/api/GetCashStatementByPeriodId/" + salaryPeriodId + "/" + sbuId + "/" + pnsId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    {
+                        data: "cashPayable",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol",
+                        className: "right"
+                    }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "Cash Statement",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: "Cash Statement",
+                    }
+                ]
+            });
+        }
+
+        function GetWalletStatementByPeriodId(salaryPeriodId, sbuId, pnsId) {
+            table = $('#tblWallet').DataTable({
+                ajax: {
+                    url: "/global/api/GetWalletStatementByPeriodId/" + salaryPeriodId + "/" + sbuId + "/" + pnsId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "walletType" },
+                    { data: "walletNo" },
+                    {
+                        data: "walletPayable",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol",
+                        className: "right"
+                    }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "Wallet Statement",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "Wallet Statement",
+                    }
+                ]
+            });
+        }
+
+        $(document).ready(function () {
+            Common.Ajax('GET', '/global/api/GetActiveAllEmployeeInfo', [], 'json', ajaxGetEmployees);
+            $('#BankTableShow').hide();
+            $('#CashTableShow').hide();
+            $('#WalletTableShow').hide();
+            $("#sbu").change(function () {
+                var id = $(this).val();
+                if (id != '') {
+                    Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', ajaxPNS, false);
+                }
+                else {
+                    var options = '<option value="">Select</option>';
+                    $('#pns').empty();
+                    $('#pns').append(options);
+                }
+            });
+
+            $("#reportTypeId").change(function () {
+                let rptType = $('#reportTypeId').val();
+                if ($("#reportTypeId").val() == "PSLIP") {
+                    $("#forEmployee").show();
+                    $("#forPeriod").show();
+                    $("#forButton").show();
+                    $("#btnExcel").hide();
+                    $("#forSbu").hide();
+                    $("#forTaxYear").hide();
+                    $("#forPns").hide();
+                    $('#BankTableShow').hide();
+                    $('#CashTableShow').hide();
+                    $('#WalletTableShow').hide();
+                }
+                else if (rptType == 'MWSS' || rptType == 'MWSSBWC' || rptType == 'MWBS') {
+                    $("#forPeriod").show();
+                    $("#forButton").show();
+                    $("#forSbu").show();
+                    $("#forPns").show();
+                    $("#btnExcel").hide();
+                    $("#forEmployee").hide();
+                    $("#forTaxYear").hide();
+                    $('#BankTableShow').hide();
+                    $('#CashTableShow').hide();
+                    $('#WalletTableShow').hide();
+                }
+                else if (rptType == 'BNKSTMNT' || rptType == 'BNKSTMNTWTHOUTPAD') {
+                    $("#forPeriod").show();
+                    $("#forButton").show();
+                    $("#btnExcel").show();
+                    $("#forSbu").show();
+                    $("#forPns").show();
+                    $('#BankTableShow').show();
+                    $('#CashTableShow').hide();
+                    $('#WalletTableShow').hide();
+                    $("#forEmployee").hide();
+                    $("#forTaxYear").hide();
+                }
+                else if (rptType == 'WALLSTMNT') {
+                    $("#forPeriod").show();
+                    $("#forButton").show();
+                    $("#btnExcel").show();
+                    $("#forSbu").show();
+                    $("#forPns").show();
+                    $('#BankTableShow').hide();
+                    $('#CashTableShow').hide();
+                    $('#WalletTableShow').show();
+                    $("#forEmployee").hide();
+                    $("#forTaxYear").hide();
+                }
+                else if (rptType == 'CASHSTMNT') {
+                    $("#forPeriod").show();
+                    $("#forButton").show();
+                    $("#btnExcel").show();
+                    $("#forSbu").show();
+                    $("#forPns").show();
+                    $('#BankTableShow').hide();
+                    $('#CashTableShow').show();
+                    $('#WalletTableShow').hide();
+                    $("#forEmployee").hide();
+                    $("#forTaxYear").hide();
+                }
+                else if ($("#reportTypeId").val() == 'BNKAPP') {
+                    $("#forPeriod").show();
+                    $("#forButton").show();
+                    $("#btnExcel").hide();
+                    $("#forSbu").show();
+                    $("#forPns").show();
+                    $('#BankTableShow').hide();
+                    $('#CashTableShow').hide();
+                    $('#WalletTableShow').hide();
+                    $("#forEmployee").hide();
+                    $("#forTaxYear").hide();
+                }
+                else if ($("#reportTypeId").val() == "FTAXCERT") {
+                    $("#forEmployee").show();
+                    $("#forPeriod").hide();
+                    $("#forButton").show();
+                    $("#btnExcel").hide();
+                    $("#forPns").hide();
+                    $("#forSbu").hide();
+                    $('#BankTableShow').hide();
+                    $('#CashTableShow').hide();
+                    $('#WalletTableShow').hide();
+                    $("#forTaxYear").show();
+                }
+                else if ($("#reportTypeId").val() == "TAXCAL") {
+                    $("#forEmployee").show();
+                    $("#forPeriod").hide();
+                    $("#forButton").show();
+                    $("#btnExcel").hide();
+                    $("#forPns").hide();
+                    $('#BankTableShow').hide();
+                    $('#CashTableShow').hide();
+                    $('#WalletTableShow').hide();
+                    $("#forSbu").hide();
+                    $("#forTaxYear").show();
+                }
+            });
+
+            $("#btnExcel").click(function (e) {
+                let rptType = $('#reportTypeId').val();
+                let salaryPeriodId = $('#salaryPeriodId').val();
+                let sbuId = parseInt($('#sbu').val()) ? parseInt($('#sbu').val()) : 0;
+                let pnsId = parseInt($('#pns').val()) ? parseInt($('#sbu').val()) : 0;
+                if (salaryPeriodId == 0) {
+                    swal('Warning', 'Select Salary Period', 'warning');
+                    return false;
+                }
+                if (sbuId == 0) {
+                    sbuId = 0;
+                }
+                if (pnsId == 0) {
+                    pnsId = 0;
+                }
+                if (rptType == "BNKSTMNT" || rptType == 'BNKSTMNTWTHOUTPAD') {
+                    //Common.Ajax('GET', '/Payroll/PayrollReport/BankStatementReportExcel?rptType=' + rptType + '&sbuId=' + sbuId + '&pnsId=' + pnsId + '&salaryPeriodId=' + salaryPeriodId, [], 'json', normalword);
+                    GetBankStatementByPeriodId(salaryPeriodId, sbuId, pnsId);
+                }
+                else if (rptType == 'WALLSTMNT') {
+                    GetWalletStatementByPeriodId(salaryPeriodId, sbuId, pnsId);
+                }
+                else if (rptType == 'CASHSTMNT') {
+                    GetCashStatementByPeriodId(salaryPeriodId, sbuId, pnsId);
+                }
+            });
+
+            $("#btnPrint").click(function (e) {
+                let rptType = $('#reportTypeId').val();
+                let employeeInfoId = $('#employeeInfoId').val();
+                let salaryPeriodId = $('#salaryPeriodId').val();
+                let taxYearId = $('#taxYearId').val();
+                let sbuId = $('#sbu').val();
+                let pnsId = $('#dprt').val();
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }
+                if (rptType == 'PSLIP') {
+                    if (employeeInfoId == 0) {
+                        swal('Warning', 'Select Employee', 'warning');
+                        return false;
+                    }
+                    if (salaryPeriodId == 0) {
+                        swal('Warning', 'Select Salary Period', 'warning');
+                        return false;
+                    }
+                    window.open('/Payroll/PayrollReport/SalaryReport?rptType=' + rptType + '&employeeInfoId=' + employeeInfoId + '&salaryPeriodId=' + salaryPeriodId, '_blank');
+                }
+                if (rptType == 'MWSS' || rptType == 'MWSSBWC' || rptType == 'MWBS') {
+                    if (salaryPeriodId == 0) {
+                        swal('Warning', 'Select Salary Period', 'warning');
+                        return false;
+                    }
+                    if (sbuId == 0) {
+                        sbuId = 0;
+                    }
+                    if (pnsId == 0) {
+                        pnsId = 0;
+                    }
+                    //if (sbuId == 6) {
+                    //    window.open('/Payroll/PayrollReport/SubMonthlySalaryReportPdf?rptType=' + 'MWSS789' + '&sbuId=' + sbuId + '&pnsId=' + pnsId + '&salaryPeriodId=' + salaryPeriodId, '_blank');
+
+                    //}
+                    //else {
+                    window.open('/Payroll/PayrollReport/DepartamentWiseReport?rptType=' + rptType + '&sbuId=' + sbuId + '&pnsId=' + pnsId + '&salaryPeriodId=' + salaryPeriodId, '_blank');
+                    //}
+                }
+                if (rptType == 'BNKSTMNT' || rptType == 'WALLSTMNT' || rptType == 'CASHSTMNT') {
+                    if (salaryPeriodId == 0) {
+                        swal('Warning', 'Select Salary Period', 'warning');
+                        return false;
+                    }
+                    if (sbuId == 0) {
+                        sbuId = 0;
+                    }
+                    if (pnsId == 0) {
+                        pnsId = 0;
+                    }
+                    window.open('/Payroll/PayrollReport/BankStatementReport?rptType=' + rptType + '&sbuId=' + sbuId + '&pnsId=' + pnsId + '&salaryPeriodId=' + salaryPeriodId, '_blank');
+                }
+                if (rptType == 'BNKSTMNTWTHOUTPAD' || rptType == 'BNKAPP') {
+                    if (salaryPeriodId == 0) {
+                        swal('Warning', 'Select Salary Period', 'warning');
+                        return false;
+                    }
+                    if (sbuId == 0) {
+                        sbuId = 0;
+                    }
+                    if (pnsId == 0) {
+                        pnsId = 0;
+                    }
+                    window.open('/Payroll/PayrollReport/BankStatementReport_PAD?rptType=' + rptType + '&sbuId=' + sbuId + '&pnsId=' + pnsId + '&salaryPeriodId=' + salaryPeriodId, '_blank');
+                }
+
+                if (rptType == 'FTAXCERT') {
+                    if (employeeInfoId == 0) {
+                        swal('Warning', 'Select Employee', 'warning');
+                        return false;
+                    }
+                    if (taxYearId == 0) {
+                        swal('Warning', 'Select Tax Year', 'warning');
+                        return false;
+                    }
+                    window.open('/Payroll/PayrollReport/FinalTaxCertificateReportPdfAction?rptType=' + rptType + '&employeeInfoId=' + employeeInfoId + '&taxYearId=' + taxYearId, '_blank');
+                }
+                if (rptType == 'TAXCAL') {
+                    if (employeeInfoId == 0) {
+                        swal('Warning', 'Select Employee', 'warning');
+                        return false;
+                    }
+                    if (taxYearId == 0) {
+                        swal('Warning', 'Select Tax Year', 'warning');
+                        return false;
+                    }
+                    window.open('/Payroll/PayrollReport/FinalTaxCertificateReportPdfAction?rptType=' + rptType + '&employeeInfoId=' + employeeInfoId + '&taxYearId=' + taxYearId, '_blank');
+                }
+            });
+        });
+
+        function normalword(response) {
+            console.log(response);
+            window.open('/pdf/' + response);
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#employeeInfoId").val(ui.item.key);
+                }
+            });
+        }
+
+        function ajaxPNS(response) {
+            console.log(response);
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+            });
+            $('#pns').empty();
+            $('#pns').append(options);
+        }
+
+    </script>
+}
+

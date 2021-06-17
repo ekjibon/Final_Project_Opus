@@ -1,0 +1,263 @@
+﻿@model ProgramMasterView
+@{
+    ViewData["Title"] = "IndexAction";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <a class="btn btn-success btn-sm " id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+        <h5 class="card-title" style="color: black; font-weight:bold;text-align:center;">Program Report</h5>
+        <hr>
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="form-group row" id="forReportType">
+                        <label for="reportTypeId" class="col-sm-3 col-form-label">Report Type<span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="reportTypeId" id="reportTypeId">
+                                <option class="form-control" value="">Please Select</option>
+                                <option class="form-control" value="1">Program List</option>
+                                <option class="form-control" value="2">Program Detail</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="forTransfer">
+                        <label for="forTransferId" class="col-sm-3 col-form-label">
+                            Name of the activity<span style="color:red">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="maincategoryId" id="maincategoryId">
+                                <option class="form-control" value="">Please Select</option>
+                                @foreach (var data in Model.programMainCategories)
+                                {
+                                    <option class="form-control" value="@data.Id">@data.name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forTransfer">
+                        <label for="forTransferId" class="col-sm-3 col-form-label">
+                            Name of the report<span style="color:red">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="subcategoryId" name="subcategoryId" value=""></select>
+                            @*<input type="hidden" id="distId" />*@
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forfromDate">
+                        <label for="fromDate" class="col-sm-3  col-form-label">From Date<span style="color:red">*</span></label>
+                        <div class="col-sm-8 input-group">
+                            <input name="fromDate" id="fromDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="fromDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="fortoDate">
+                        <label for="toDate" class="col-sm-3  col-form-label">To Date<span style="color:red">*</span></label>
+                        <div class="col-sm-8 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="toDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row" id="forButton">
+                        <label class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input type="button" value="Export To PDF" id="btnPrint" class="btn btn-success btn-sm" style="width:120px;" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" value="Export To Excel" id="btnExcel" class="btn btn-success btn-sm" style="width:120px;display:none" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" id="btnRefresh" value="Refresh" class="btn btn-info btn-sm" style="width:80px;" />
+                            @*&nbsp;&nbsp;&nbsp;
+                            <input type="button" value="Export To Excel" id="btnExcel" class="btn btn-success btn-sm" tyle="width: 80px;" />*@
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+
+            //Common.Ajax('GET', '/global/api/GetAllItemForRequisition', [], 'json', ajaxGetAllItem);
+            //Common.Ajax('GET', '/global/api/getAllSalesInvoiceMaster', [], 'json', ajaxGetAllInvoice);
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            //$("#forTransfer").hide();
+            //$("#forMonth").hide();
+            //$("#forYear").hide();
+            //$("#forItem").hide();
+            //$("#forItemSpecification").hide();
+            //$("#forfromDate").hide();
+            //$("#fortoDate").hide();
+            //$("#forInvoiceNumber").hide();
+
+            $("#reportTypeId").change(function () {
+                let rptType = $('#reportTypeId').val();
+               
+            });
+            $("#maincategoryId").change(function () {
+                let rptType = $('#maincategoryId').val();
+                Common.Ajax('GET', '/global/api/getsubcategory/' + rptType, [], 'json', orgSub);
+               
+            });
+            function orgSub(response) {
+
+                var options = '<option value="">Select</option>';
+                $.each(response, function (i, item) {
+                    options += '<option value="' + item.Id + '">' + item.name + '</option>';
+                });
+                $('#subcategoryId').empty();
+                $('#subcategoryId').append(options);
+                
+            }
+            $("#btnPrint").click(function (e) {
+
+                let rptType = $('#reportTypeId').val();
+                let maincategoryId = $('#maincategoryId').val();
+                let subcategoryId = $('#subcategoryId').val();
+               
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+          
+
+
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }
+
+                if (maincategoryId == "") {
+                    swal('Warning', 'Select name of the activity', 'warning');
+                    return false;
+                }
+
+                if (subcategoryId == "") {
+                    swal('Warning', 'Select name of the report', 'warning');
+                    return false;
+                }
+
+                if (fromDate == "") {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                }
+                if (toDate == "") {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+
+                if (rptType == '1') {
+                    //window.open('/Report/VATReport/PurchaseBookletpdf', '_blank');
+                    
+                    window.open('/Program/ProgramReport/IndexPdf?main=' + maincategoryId + '&cat=' + subcategoryId + '&from=' + fromDate + '&to=' + toDate, '_blank');
+                }
+                else if (rptType == '2') {
+                   
+                    window.open('/Program/ProgramReport/ProgramImagePdf?main=' + maincategoryId + '&cat=' + subcategoryId + '&from=' + fromDate + '&to=' + toDate, '_blank');
+                }
+              
+            });
+
+        });
+
+        function ajaxGetAllItem(response) {
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                obj.unitName = option.unit.unitName;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#itemsId").val(ui.item.key);
+                    $("#itemSpecificationId").val('');
+                    $("#itemSpecificationName").val('');
+                    Common.Ajax('GET', '/global/api/ItemSpec/' + ui.item.key, [], 'json', ajaxGetItemSpacification);
+                }
+            });
+        }
+
+        function ajaxGetAllInvoice(response) {
+            console.log(response);
+            var GetInStockItemList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.invoiceNumber;
+                GetInStockItemList[GetInStockItemList.length] = obj;
+            });
+            $('#invoiceNo').autocomplete({
+                source: GetInStockItemList,
+                select: function (event, ui) {
+                    $("#invoiceNo").val(ui.item.value);
+                }
+            });
+        }
+
+        function ajaxGetItemSpacification(response) {
+
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                console.log(option);
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecificationName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecificationId").val(ui.item.key);
+
+                }
+            });
+        }
+
+
+
+    </script>
+}
+
+

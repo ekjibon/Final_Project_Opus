@@ -1,0 +1,183 @@
+﻿@model SalesInvoiceViewModel
+@{
+    ViewData["Title"] = "POS Invoice List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Sales Invoice List</h6>
+                <a href="/OtherSales/SalesInvoice/PosIndex?id=0" class="btn btn-success btn-sm pull-right">Add Sales</a>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-2 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-2 input-group">
+                            <input name="fromDate" id="fromDate" class="form-control input-group-sm" />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-2 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" />
+                        </div>
+                        <div class="col-sm-4 input-group">
+                            <button type="button" id="btnLoad" title="Load" class="btn btn-facebook btn-sm" style="width:80px;">Load</button>&nbsp;
+                            @*<button id="SubmitButton" class="btn btn-success btn-lg" title="Preview"><i class="fas fa-print"></i></button>&nbsp;*@
+                            <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-info btn-sm" style="width:80px;">Refresh</button>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div style="text-align:center;" id="loaderr">
+                    <img src="~/images/loader-64x/Preloader_3.gif" />
+                </div>
+
+                <table class="table table-striped table-bordered table-responsive" id="voucherList" width="100%">
+                    <thead>
+                        <tr>
+                            <th style="width:5%;">SL#</th>
+                            <th style="width:17%;">Customer Name</th>
+                            <th style="width:10%;">Mobile No</th>
+                            <th style="width:20%;">Invoice No</th>
+                            <th style="width:10%;">Invoice Date</th>
+                            <th style="width:10%;">Gross</th>                            
+                            <th style="width:8%;">Discount</th>
+                            <th style="width:10%;">Net</th>
+                            <th style="width:10%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div class="col-md-12">
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-8 col-form-label text-left"></label>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">Grand Net Total:</label>
+                        <div class="col-sm-2 input-group">
+                            <input name="" id="grandtotal" class="form-control input-group-sm" style="text-align:right" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {      
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+
+            let fromDate = getPurchaseDate(new Date());
+            let toDate = getPurchaseDate(new Date());
+            Common.Ajax('GET', '/OtherSales/SalesInvoice/GetPosInvoiceList/?FDate=' + fromDate + '&TDate=' + toDate, [], 'json', ajaxGetPosInvoiceList);
+
+            $("#loaderr").hide();
+
+            $("#btnLoad").click(function (e) {
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                Common.Ajax('GET', '/OtherSales/SalesInvoice/GetPosInvoiceList/?FDate=' + fromDate + '&TDate=' + toDate, [], 'json', ajaxGetPosInvoiceList);
+            });
+        });
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function ajaxGetPosInvoiceList(response) {
+            $("#loaderr").show();
+            if (response == null) {
+                return false;
+            }
+            $("#voucherList").DataTable().destroy();
+            var table = $("#voucherList tbody");
+            table.empty();
+            var index = 0;
+            var total = 0;
+            for (var i = 0; i < response.length; i++) {
+                index = i + 1;
+                total = total + response[i].NetTotal;
+                table.append('<tr><td>' + index + '</td>'
+                    + '<td>' + response[i].resourceName + '</td>'
+                    + '<td>' + response[i].mobile + '</td>'
+                    + '<td>' + response[i].InvoiceNumber + '</td>'
+                    + '<td>' + response[i].InvoiceDate + '</td>'
+                    + '<td align="right">' + addCommas(response[i].TotalAmount) + '</td>'
+                    + '<td align="right">' + addCommas(response[i].VATOnTotal) + '</td>'                    
+                    + '<td align="right">' + addCommas(response[i].NetTotal) + '</td>'
+                    + '<td><a class="btn btn-info" title="Print" onclick="AddParticularWithCostCentre(' + response[i].Id + ')" ><i class="fa fa-print"></i></a></td>' +
+                    + '</tr >');
+            }
+            $("#voucherList").DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "Sales Invoice List",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "Sales Invoice List",
+                    }
+                ]
+            });
+            $("#grandtotal").val(addCommas(total.toFixed(2)));
+            $("#loaderr").hide();
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        function AddParticularWithCostCentre(id) {
+            window.open('/OtherSales/SalesInvoice/POSInvoicePDFData?id=' + id, '_blank');
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+    </script>
+}

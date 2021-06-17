@@ -1,0 +1,231 @@
+﻿@model EmployeeInsuranceViewModel
+@{
+    ViewData["Title"] = "Employee Insurance";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo.activityStatus == 1 ? "Active" : "Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">Insurance Information</u></h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="Nominee" asp-action="EmployeeInsurance" method="post" data-parsley-validate="parsley" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-4 col-form-label">Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="name" name="name" data-parsley-required="true">
+                                <input type="hidden" id="employeeID" name="employeeID" value="@Model.employeeID">
+                                <input type="hidden" id="insuranceID" name="insuranceID" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="relation" class="col-sm-4 col-form-label">Relation <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="relation" name="relation" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="NID" class="col-sm-4 col-form-label">NID </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="NID" name="NID">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="gender" class="col-sm-4 col-form-label">Gender </label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="dateOfBirth" class="col-sm-4 col-form-label">Date of Birth <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="dateOfBirth" name="dateOfBirth" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="insuranceDate" class="col-sm-4 col-form-label">Insurance Date</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="insuranceDate" name="insuranceDate" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <h6 style="color: black;">Picture</h6>
+                    <div class="row col-sm-12">
+                        <label for="imagePath_Challan" class="col-sm-4 col-form-label" style="padding-left: 80px;"></label>
+                    </div>
+                    <div class="col-sm-4">
+                        <img id="user_img_Challan" style="width:200px;height:200px" src="~/images/upload.jpg" alt="" class="img-thumbnail float-left">
+                        <input type="file" title="Document Upload" id="imagePath_Challan" name="imagePath_Challan" class="img-thumbnail float-left" />
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">Insurance Information List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="NomineeTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Relation</th>
+                            <th>DOB</th>
+                            <th>Gender</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.employeeInsurances)
+                        {
+                            <tr>
+                                <td>@data.name</td>
+                                <td>@data.relation</td>
+                                <td>@data.dateOfBirth?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.gender</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.name', '@data.relation', '@data.gender','@data.NID', '@data.dateOfBirth?.ToString("dd-MMM-yyyy")', '@data.insuranceDate?.ToString("dd-MMM-yyyy")')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" onclick="Remove(@data.Id, @data.employeeInfoId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+
+            $('#NomineeTable').DataTable();
+            $('#dateOfBirth').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#insuranceDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+
+            $("#imagePath_Challan").change(function () {
+                readURLChallan(this);
+            });
+
+        });
+
+        function readURLChallan(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_img_Challan').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function Edit(Id, name, relation, gender, NID, dateOfBirth, insuranceDate) {
+            $("#insuranceID").val(Id);
+            $("#name").val(name);
+            $("#relation").val(relation);
+            $("#gender").val(gender);
+            $("#NID").val(NID);
+            $("#dateOfBirth").val(dateOfBirth);
+            $("#insuranceDate").val(insuranceDate);
+
+            Common.Ajax('GET', '/HRPMSEmployee/Nominee/GetInsurancePhotoById/?Id=' + Id, [], 'json', ajaxGetInsurancePhotoById);
+        }
+
+        function ajaxGetInsurancePhotoById(response) {
+            var baseUrl = 'http://' + location.host + '/Upload/Photo/' + response.fileName;
+            var image = document.getElementById('user_img_Challan');
+            image.setAttribute('src', baseUrl);
+        }
+
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/HRPMSEmployee/Nominee/DeleteEmployeeInsuranceById/" + Id + "?empId=" + employeeId);
+                swal('', 'Deleted Successfully!', 'success');
+            } else {
+                return false;
+            }
+        }
+
+
+
+    </script>
+}
+
+
+

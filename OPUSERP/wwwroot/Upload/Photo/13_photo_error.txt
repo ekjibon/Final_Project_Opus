@@ -1,0 +1,33 @@
+Areas\Budget\Controllers\HOBudgetRequisitionController.cs(166,24,166,29): warning CS0219: The variable 'notes' is assigned but its value is never used
+Areas\Budget\Controllers\BudgetRequisitionController.cs(382,17,382,18): warning CS0219: The variable 'a' is assigned but its value is never used
+Accounting\Services\Voucher\DailyBillReceiveService.cs(187,21,187,37): warning CS0219: The variable 'VATCurrentAmount' is assigned but its value is never used
+Accounting\Services\Voucher\DailyBillReceiveService.cs(188,21,188,30): warning CS0219: The variable 'VATAmount' is assigned but its value is never used
+Accounting\Services\Voucher\DailyBillReceiveService.cs(189,21,189,36): warning CS0219: The variable 'VATPaybleAmount' is assigned but its value is never used
+1>Areas\OtherSales\Controllers\SalesCollectionController.cs(38,48,38,68): warning CS0169: The field 'SalesCollectionController.purchaseOrderService' is never used
+1>Areas\CRMLead\Controllers\AgreementController.cs(40,47,40,66): warning CS0169: The field 'AgreementController.personalInfoService' is never used
+1>Areas\Accounting\Views\AccountingReport\CFSReportDataBrac.cshtml(57,14,57,25): warning CS0219: The variable 'GrossProfit' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\CFSReportDataBrac.cshtml(58,14,58,33): warning CS0219: The variable 'GrossProfitPrevious' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\CFSReportDataBrac.cshtml(60,14,60,26): warning CS0219: The variable 'TotalExpense' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\CFSReportDataBrac.cshtml(61,14,61,34): warning CS0219: The variable 'TotalExpensePrevious' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\CFSReportDataBrac.cshtml(64,10,64,11): warning CS0219: The variable 'p' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BEReportDataBrac.cshtml(57,14,57,25): warning CS0219: The variable 'GrossProfit' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BEReportDataBrac.cshtml(58,14,58,33): warning CS0219: The variable 'GrossProfitPrevious' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BEReportDataBrac.cshtml(60,14,60,26): warning CS0219: The variable 'TotalExpense' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BEReportDataBrac.cshtml(61,14,61,34): warning CS0219: The variable 'TotalExpensePrevious' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BEReportDataBrac.cshtml(62,10,62,11): warning CS0219: The variable 'i' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BEReportDataBrac.cshtml(63,10,63,11): warning CS0219: The variable 'n' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BEReportDataBrac.cshtml(64,10,64,11): warning CS0219: The variable 'p' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\DayBookReportDataView.cshtml(59,14,59,22): warning CS0219: The variable 'TClosing' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BalanceSheetReportDataBrac.cshtml(59,14,59,23): warning CS0219: The variable 'NetProfit' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BalanceSheetReportDataBrac.cshtml(60,14,60,31): warning CS0219: The variable 'NetProfitPrevious' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BalanceSheetReportDataBrac.cshtml(62,14,62,25): warning CS0219: The variable 'TotalEquity' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BalanceSheetReportDataBrac.cshtml(63,14,63,33): warning CS0219: The variable 'TotalEquityPrevious' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BalanceSheetReportDataBrac.cshtml(65,14,65,37): warning CS0219: The variable 'TotalLiabilityNetAssets' is assigned but its value is never used
+1>Areas\Accounting\Views\AccountingReport\BalanceSheetReportDataBrac.cshtml(66,14,66,45): warning CS0219: The variable 'TotalLiabilityNetAssetsPrevious' is assigned but its value is never used
+1>Areas\CRMLead\Views\Activity\ActivityMasterView.cshtml(39,21,39,26): warning CS0219: The variable 'count' is assigned but its value is never used
+1>Areas\CRMLead\Views\Activity\ActivityMasterViewAll.cshtml(39,21,39,26): warning CS0219: The variable 'count' is assigned but its value is never used
+1>Areas\CRMLead\Views\Activity\ColdActivityMasterView.cshtml(31,21,31,26): warning CS0219: The variable 'count' is assigned but its value is never used
+1>Areas\CRMLead\Views\Activity\ColdVisitActivityMasterView.cshtml(31,21,31,26): warning CS0219: The variable 'count' is assigned but its value is never used
+1>Areas\HRPMSEmployee\Views\EmployeeExitInterview\ExitInterViewReport.cshtml(9,9,9,10): warning CS0219: The variable 'i' is assigned but its value is never used
+1>Areas\Patient\Views\PatientActivity\PatientActivityMasterViewAll.cshtml(35,21,35,26): warning CS0219: The variable 'count' is assigned but its value is never used
+1>Areas\Patient\Views\PatientActivity\PatientActivityMasterViews.cshtml(34,21,34,26): warning CS0219: The variable 'count' is assigned but its value is never used

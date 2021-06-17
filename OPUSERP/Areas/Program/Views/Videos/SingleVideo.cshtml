@@ -1,0 +1,56 @@
+﻿@model ProgramVideoViewModel
+@{
+    ViewData["Title"] = "Video";
+}
+
+@section Style{
+    <link href="~/videos/css/video-js.css" rel="stylesheet" />
+    <link href="~/videos/js/videojs-ie8.min.js" rel="text/script" />
+}
+
+<div class="row">
+    <div class="container-fluid">
+        <div class="card">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h5 class="card-title" style="color: black!important;font-weight:bold">Program Videos</h5>
+                <a class="btn btn-success btn-sm" id="backBtn" style="float:right;color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                    <center>
+                        <h5 class="text-center text-primary">@Model.programVideo.title</h5>
+                        <video id="my-video"
+                               class="video-js"
+                               controls
+                               preload="auto"
+                               width="800"
+                               height="450"
+                               poster=""
+                               data-setup="{}">
+                            <source src="~/@Model.programVideo.url" type="video/mp4" />
+                            <source src="~/@Model.programVideo.url" type="video/webm" />
+
+                        </video>
+                    </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <link href="~/videos/js/video-js.js" rel="text/script" />
+
+    <script>
+        $(document).ready(function () {
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+        });
+    </script>
+}

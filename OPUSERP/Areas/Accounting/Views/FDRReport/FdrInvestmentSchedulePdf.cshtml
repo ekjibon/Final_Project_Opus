@@ -1,0 +1,138 @@
+﻿@model FDRRenewalViewModel
+@{
+    ViewData["Title"] = "Fdr Schedule Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+    <style>
+
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+        h6 {
+            font-size: 14px;
+            background-color: gray;
+            color: white !important;
+            padding: 3px;
+        }
+    </style>
+}
+
+<div class="print-card" style="width: 100%;">
+    <div class="print-card-body">
+        <div class="container-fluid">
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2">
+                    <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                </div>
+                <div class="col-8">
+                    <div style="color:black;text-align:center;">                        
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                        <h5>Investment Schedule</h5>
+                        <h5>For the period of @ViewBag.FromDate to @ViewBag.ToDate</h5>
+                        <br />
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+
+        <div class="container-fluid" style="color:black;">
+            <div class="row" style="padding: 0px 15px 0px 15px;">
+                <table class="table table-bordered">
+                    <thead>                        
+                        <tr style="background-color:lightgray;">
+                            <th style="text-align:center;width:5%;vertical-align:middle;">Sl#</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Date of Investment</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Date of Maturity</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Rate of interest %</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Particulars</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Investment Ref. No.</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Amount as on @ViewBag.FromDate</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Investment during the year</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Encashment/Adjustment for the year</th>
+                            <th style="text-align:center;width:10%;vertical-align:middle;">Balance as on @ViewBag.ToDate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int a = 1;
+                            @foreach (var data in @Model.fDRScheduleReportViewModels)
+                            {
+                        <tr>
+                            <td style="text-align:center;">@a</td>
+                            <td style="text-align:center;">@data.openDate</td>
+                            <td style="text-align:center;">@data.maturityDate</td>
+                            <td style="text-align:right;">@data.rate</td>
+                            <td>@data.accountName</td>
+                            <td>@data.refNo</td>
+                            <td style="text-align:right;">@data.openingAmount?.ToString("0,0.00")</td>
+                            <td style="text-align:right;">@data.investAmount?.ToString("0,0.00")</td>
+                            <td style="text-align:right;">@data.encashAmount?.ToString("0,0.00")</td>
+                            <td style="text-align:right;">@data.balanceAmount?.ToString("0,0.00")</td>                            
+                        </tr>
+                                a++;
+                            }
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="6" style="text-align:right;">Total</th>
+                            <th style="text-align:right;">@Model.fDRScheduleReportViewModels.Sum(x => x.openingAmount)?.ToString("0,0.00")</th>
+                            <th style="text-align:right;">@Model.fDRScheduleReportViewModels.Sum(x => x.investAmount)?.ToString("0,0.00")</th>
+                            <th style="text-align:right;">@Model.fDRScheduleReportViewModels.Sum(x => x.encashAmount)?.ToString("0,0.00")</th>
+                            <th style="text-align:right;">@Model.fDRScheduleReportViewModels.Sum(x => x.balanceAmount)?.ToString("0,0.00")</th>
+                            
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+}
+
+
+

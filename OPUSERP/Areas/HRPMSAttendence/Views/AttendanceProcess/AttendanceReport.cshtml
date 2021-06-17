@@ -1,0 +1,292 @@
+﻿@model EmployeePunchCardInfoViewModel
+@{
+    ViewData["Title"] = "AttendanceReport";
+    //Layout = "~/Areas/HRPMSAttendence/Views/Shared/_AttendanceForm.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black;text-align:center;">Attendance Report</h5>
+        <hr>
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="form-group row" id="forReportType">
+                        <label for="reportTypeId" class="col-sm-3 col-form-label">Report Type<span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="reportTypeId" id="reportTypeId">
+                                <option class="form-control" value="">Please Select</option>
+                                <option class="form-control" value="ATTNDTWISE">Date Wise Attendance Report</option>
+                                <option class="form-control" value="ATTNDEPT">Department Wise Attendance Report</option>
+                                <option class="form-control" value="ATTNSHIFT">Shift Group Wise Attendance Report</option>
+                                <option class="form-control" value="ATTNINDV">Individual Attendance Report</option>
+                                <option class="form-control" value="ATTNLATE">Late Report</option>
+                                <option class="form-control" value="ATTNCONSIDER">Consider Report</option>
+                                <option class="form-control" value="ATTNABSENT">Absent Report</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="fordepartment">
+                        <label for="department" class="col-sm-3 col-form-label">Department</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="department" name="department">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.departments)
+                                {
+                                    <option value="@data.Id">@data.deptName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row"  id="forShift">
+                        <label for="sbu" class="col-sm-3 col-form-label">Shift Group</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="shiftGroup" name="shiftGroup">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.shiftGroupMasterlist)
+                                {
+                                    <option value="@data.Id">@data.shiftName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forTransfer">
+                        <label for="employeeName" class="col-sm-3 col-form-label">
+                            Employee Name<span style="color:red">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="hidden" id="employeeId" name="employeeId" value="0">
+                            <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-trigger="keyup">
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forfromDate">
+                        <label for="fromDate" class="col-sm-3  col-form-label">From Date<span style="color:red">*</span></label>
+                        <div class="col-sm-9 input-group">
+                            <input name="fromDate" id="fromDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="fromDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="fortoDate">
+                        <label for="toDate" class="col-sm-3  col-form-label">To Date<span style="color:red">*</span></label>
+                        <div class="col-sm-9 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="toDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row" id="forButton">
+                        <label class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input type="button" value="Export To PDF" id="btnPrint" class="btn btn-success btn-sm" style="width:120px;" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" value="Export To Excel" id="btnExcel" class="btn btn-success btn-sm" style="width:120px;" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" id="btnRefresh" value="Refresh" class="btn btn-info btn-sm" style="width:80px;" />
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            Common.Ajax('GET', '/global/api/GetAllEmployess', [], 'json', ajaxGetEmployees);
+
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+          
+            $("#forTransfer").hide();
+            $("#fordepartment").hide();
+            $("#forShift").hide(); 
+
+            $("#reportTypeId").change(function () {
+                let rptType = $('#reportTypeId').val();
+                if (rptType == "ATTNDTWISE") {
+                    $("#forTransfer").show();
+                    $("#fordepartment").hide();
+                    $("#forShift").hide(); 
+                }
+                else if (rptType == "ATTNDEPT") {
+                    $("#forTransfer").hide();
+                    $("#fordepartment").show();
+                    $("#forShift").hide(); 
+                }
+                else if (rptType == "ATTNSHIFT") {
+                    $("#forTransfer").hide();
+                    $("#fordepartment").hide();
+                    $("#forShift").show();
+                }
+                else
+                {
+                    $("#forTransfer").show();
+                    $("#fordepartment").hide();
+                    $("#forShift").hide(); 
+                }
+            });
+
+            $("#btnRefresh").click(function (e) {
+                $('#employeeId').val('0');
+                $("#employeeName").val('');
+            });
+     
+            $("#btnPrint").click(function (e) {
+                let rptType = $('#reportTypeId').val();            
+                let employeeId = $('#employeeId').val();
+                let deptId = $('#department').val();
+                let shiftId = $('#shiftGroup').val();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }               
+                if (rptType == "ATTNINDV") {
+                    if (employeeId == "") {
+                        swal('Warning', 'Select Employee Name', 'warning');
+                        return false;
+                    }
+                }
+                else if (rptType == "ATTNDTWISE" || rptType == "ATTNLATE" || rptType == "ATTNCONSIDER" || rptType == "ATTNABSENT") {
+                    if (fromDate == "") {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    if (toDate == "") {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                }
+
+                if (rptType == "ATTNDTWISE") {
+                    window.open('/HRPMSAttendence/AttendanceProcess/DailyReportPdf?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, '_blank');
+                }
+                else if (rptType == "ATTNLATE") {
+                    window.open('/HRPMSAttendence/AttendanceProcess/DailyReportPdf?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + 0 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, '_blank');
+                }
+                else if (rptType == "ATTNCONSIDER") {
+                    window.open('/HRPMSAttendence/AttendanceProcess/DailyReportPdf?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + 2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, '_blank');
+                }
+                else if (rptType == "ATTNABSENT") {
+                    window.open('/HRPMSAttendence/AttendanceProcess/DailyReportPdf?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + 3 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, '_blank');
+                }
+                else if (rptType == "ATTNDEPT") {
+                    window.open('/HRPMSAttendence/AttendanceProcess/DailyReportPdf?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + deptId + '&shiftId=' + 0, '_blank');
+                }
+                else if (rptType == "ATTNSHIFT") {
+                    window.open('/HRPMSAttendence/AttendanceProcess/DailyReportPdf?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + shiftId, '_blank');
+                }
+                else if (rptType == "ATTNINDV") {
+                    window.open('/HRPMSAttendence/AttendanceProcess/IndividualJobCardReportPdf?rptType=' + rptType +'&startDate=' + fromDate + '&endDate=' + toDate + '&EmployeeId=' + employeeId, '_blank');
+                }
+            });
+
+            $("#btnExcel").click(function (e) {
+                let rptType = $('#reportTypeId').val();
+                let employeeId = $('#employeeId').val();
+                let deptId = $('#department').val();
+                let shiftId = $('#shiftGroup').val();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }
+                if (rptType == "ATTNINDV") {
+                    if (employeeId == "") {
+                        swal('Warning', 'Select Employee Name', 'warning');
+                        return false;
+                    }
+                }
+                else if (rptType == "ATTNDTWISE" || rptType == "ATTNLATE" || rptType == "ATTNCONSIDER" || rptType == "ATTNABSENT") {
+                    if (fromDate == "") {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    }
+                    if (toDate == "") {
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                }
+
+                if (rptType == "ATTNDTWISE") {                   
+                    Common.Ajax('GET', '/HRPMSAttendence/AttendanceProcess/DailyReportExcel?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, [], 'json', normalword);
+                }
+                else if (rptType == "ATTNLATE") {                   
+                    Common.Ajax('GET', '/HRPMSAttendence/AttendanceProcess/DailyReportExcel?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, [], 'json', normalword);
+                }
+                else if (rptType == "ATTNCONSIDER") {
+                    Common.Ajax('GET', '/HRPMSAttendence/AttendanceProcess/DailyReportExcel?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, [], 'json', normalword);
+                }
+                else if (rptType == "ATTNABSENT") {
+                    Common.Ajax('GET', '/HRPMSAttendence/AttendanceProcess/DailyReportExcel?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + 0, [], 'json', normalword);
+                }
+                else if (rptType == "ATTNDEPT") {
+                    Common.Ajax('GET', '/HRPMSAttendence/AttendanceProcess/DailyReportExcel?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + deptId + '&shiftId=' + 0, [], 'json', normalword);
+                }
+                else if (rptType == "ATTNSHIFT") {
+                    Common.Ajax('GET', '/HRPMSAttendence/AttendanceProcess/DailyReportExcel?rptType=' + rptType + '&startDate=' + fromDate + '&endDate=' + toDate + '&summaryId=' + -2 + '&empId=' + employeeId + '&deptId=' + 0 + '&shiftId=' + shiftId, [], 'json', normalword);
+                }
+                else if (rptType == "ATTNINDV") {                   
+                    Common.Ajax('GET', '/HRPMSAttendence/AttendanceProcess/IndividualJobCardReportExcel?startDate=' + fromDate + '&endDate=' + toDate + '&EmployeeId=' + employeeId, [], 'json', normalword);
+                }                
+            });
+        });
+
+        function normalword(response) {
+            console.log(response);
+            window.open('/pdf/' + response);
+        }
+
+        function ajaxGetEmployees(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.nameEnglish + "(" + option.employeeCode + ")";
+                obj.designation = option.designation;
+                obj.employeeCode = option.employeeCode;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+
+            $('#employeeName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#employeeName").val(ui.item.value);
+                    $("#employeeId").val(ui.item.key);
+                }
+            });
+        }  
+
+    </script>
+}

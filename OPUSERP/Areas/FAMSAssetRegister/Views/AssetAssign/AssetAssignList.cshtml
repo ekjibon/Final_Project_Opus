@@ -1,0 +1,88 @@
+﻿@model AssetAssignViewModel
+@{
+    ViewData["Title"] = "Asset Assign List";
+}
+
+@section Style{
+    <style>
+        #assetAssignTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Asset Assigned List</h4>
+                <a href="/FAMSAssetRegister/AssetAssign/AssetUnAssignedListO?assetId=0" class="btn btn-success btn-sm pull-right">New Asset Assign</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="assetAssignTable">
+                    <thead>
+                        <tr>
+                            <th>Asset No</th>
+                            <th>Asset Value</th>
+                            <th>Assign Date</th>
+                            <th>Dept. Name</th>
+                            <th>Location</th>
+                            <th>Remarks</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.assetAssigns)
+                        {
+                            <tr>
+
+                                <td><span style="display:none">-@data.Id-</span>@data?.assetRegistration?.assetNo</td>
+                                <td>@data?.assetRegistration?.assetValue</td>
+                                <td>@data?.assignDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data?.department?.deptName</td>
+                                <td>@data?.deliveryLocation?.locationName</td>
+                                <td>@data?.remarks</td>
+                                <td>
+                                    <a class="btn btn-success" data-toggle="tooltip" title="Edit" href="/FAMSAssetRegister/AssetAssign/AssetAssign/?id=@data.Id&assetId=@data.assetRegistrationId"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#assetAssignTable').DataTable();
+
+            //var table = $('#assetAssignTable').DataTable();
+            //$('#assetAssignTable tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var assetid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/FAMSAssetRegister/AssetRegister/AssetRegisterDetails/?id=" + assetid;
+            //});
+            //$('#assetAssignTable tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+        });
+
+    </script>
+}
+
+
+
+
+
+
+

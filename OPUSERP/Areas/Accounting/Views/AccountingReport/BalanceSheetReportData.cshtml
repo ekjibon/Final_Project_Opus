@@ -1,0 +1,414 @@
+﻿
+@model FinancialReportViewModel
+@{
+    ViewData["Title"] = "Balance Sheet";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+@section Style{
+    <style>
+
+        .print-card-body {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .vartical-table th {
+            width: 25%;
+        }
+
+        .vartical-table td {
+            width: 25%;
+        }
+
+        .horizontal-table {
+            /*width: 100%;*/
+        }
+
+        .table td, .table th {
+            padding: .3rem;
+            font-size: 15px;
+        }
+
+        table {
+            page-break-inside: auto
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tfoot {
+            display: table-footer-group
+        }
+
+      
+    </style>
+}
+@{
+    decimal? TotalAsset = 0;
+    decimal? TotalAssetPrevious = 0;
+
+    //decimal? SubTotalAsset = 0;
+    //decimal? SubTotalAssetPrevious = 0;
+
+    decimal? TotalLiability = 0;
+    decimal? TotalLiabilityPrevious = 0;
+
+    decimal? NetProfit = 0;
+    decimal? NetProfitPrevious = 0;
+
+    decimal? TotalEquity = 0;
+    decimal? TotalEquityPrevious = 0;
+
+    <div class="print-card" style="width: 100%;">
+        <div class="print-card-body">
+            <div class="container-fluid">
+                <div class="row" style="padding-top:0px;">
+                    <div class="col-3">
+                        @*<div style="float:left">
+                                <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+                            </div>*@
+                    </div>
+                    <div class="col-6">                       
+                        <div style="color:black">
+                            <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:60px;margin-left:130px;" />
+                            <h4 style="text-align:center;">@Model.companies.FirstOrDefault().companyName</h4>
+                            <p style="text-align:center;">@Model.companies.FirstOrDefault().addressLine</p>
+                            <h5 style="text-align:center;">
+                                Statement of Financial Position
+                            </h5>
+                           
+                        </div>
+                    </div>
+                    <div class="col-3"></div>
+
+                </div>
+            </div>
+
+            <div class="container-fluid" style="color:black;">
+                @*<hr style="border:1px solid grey;">
+        <div class="row" style="padding: 5px 0px 5px 0px;">
+            <div class="col-10">
+                <span style="font-weight:bold;font-size: 15px;">Date: <i>@ViewBag.toDate</i>&nbsp; to <i>@ViewBag.lasttoDate</i></span>
+            </div>
+
+        </div>*@
+                <h5>Assets</h5>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr>
+                                <th width="40%">Particulars</th>
+                                <th width="10%">Note No</th>
+                                <th width="25%" style="text-align:right">Current Year Amount</th>
+                                <th width="25%" style="text-align:right">Previous Year Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.balanceSheetViewModels.Where(a => a.natureName == "Assets"))
+                            {
+                                <tr>
+                                    <td>@data.fsLineName</td>
+                                    <td>@data.noteNo</td>
+                                    @if (data.currentAmount < 0)
+                                    {
+                                        var negative = data.currentAmount * -1;
+                                        <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;">@data.currentAmount?.ToString("0,0.00")</td>
+                                    }
+                                    @if (data.previousAmount < 0)
+                                    {
+                                        var negative = data.previousAmount * -1;
+                                        <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;">@data.previousAmount?.ToString("0,0.00")</td>
+                                    }
+
+                                </tr>
+
+                                @*@foreach (var datag in Model.balanceSheetViewModels.Where(x => x.natureName == data.natureName).GroupBy(a => a.natureName))
+                        {
+                            SubTotalAsset = data.currentAmount;
+                            SubTotalAssetPrevious = data.previousAmount;
+                        }
+                        <tr>
+                            <td colspan="2" style="font-weight:bolder;">Total @data.groupName</td>
+                            <td style="text-align:right;font-weight:bolder;">@SubTotalAsset?.ToString("0,0.00")</td>
+                            <td style="text-align:right;font-weight:bolder;">@SubTotalAssetPrevious?.ToString("0,0.00")</td>
+                        </tr>*@
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.balanceSheetViewModels.Where(a => a.natureName == "Assets").GroupBy(a => a.natureName))
+                            {
+                                TotalAsset = data.Sum(a => a.currentAmount);
+                                TotalAssetPrevious = data.Sum(a => a.previousAmount);
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Total Assets</td>
+                                    @if (TotalAsset < 0)
+                                    {
+                                        var negative = TotalAsset * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalAsset?.ToString("0,0.00")</td>
+                                    }
+                                    @if (TotalAssetPrevious < 0)
+                                    {
+                                        var negative = TotalAssetPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalAssetPrevious?.ToString("0,0.00")</td>
+                                    }
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <h5>Liabilities</h5>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr>
+                                <th width="40%">Particulars</th>
+                                <th width="10%">Note No</th>
+                                <th width="25%" style="text-align:right">Current Year Amount</th>
+                                <th width="25%" style="text-align:right">Previous Year Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.balanceSheetViewModels.Where(a => a.natureName == "Liabilities"))
+                            {
+                                <tr>
+                                    <td>@data.fsLineName</td>
+                                    <td>@data.noteNo</td>
+                                    @if (data.currentAmount < 0)
+                                    {
+                                        var negative = data.currentAmount * -1;
+                                        <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;">@data.currentAmount?.ToString("0,0.00")</td>
+                                    }
+                                    @if (data.previousAmount < 0)
+                                    {
+                                        var negative = data.previousAmount * -1;
+                                        <td style="text-align:right;">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;">@data.previousAmount?.ToString("0,0.00")</td>
+                                    }
+
+                                </tr>
+
+                                @*@foreach (var datag in Model.balanceSheetViewModels.Where(x => x.natureName == data.natureName).GroupBy(a => a.natureName))
+                        {
+                            SubTotalLiability = data.currentAmount;
+                            SubTotalLiabilityPrevious = data.previousAmount;
+
+                        }
+                        <tr>
+                            <td colspan="2" style="font-weight:bolder;">Total @data.groupName</td>
+                            <td style="text-align:right;font-weight:bolder;">@SubTotalLiability?.ToString("0,0.00")</td>
+                            <td style="text-align:right;font-weight:bolder;">@SubTotalLiabilityPrevious?.ToString("0,0.00")</td>
+                        </tr>*@
+                            }
+
+                        </tbody>
+
+                    </table>
+                </div>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.balanceSheetViewModels.Where(a => a.natureName == "Liabilities").GroupBy(a => a.natureName))
+                            {
+                                TotalLiability = data.Sum(a => a.currentAmount);
+                                TotalLiabilityPrevious = data.Sum(a => a.previousAmount);
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Total Liabilities</td>
+                                    @if (TotalLiability < 0)
+                                    {
+                                        var negative = TotalLiability * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalLiability?.ToString("0,0.00")</td>
+                                    }
+                                    @if (TotalLiabilityPrevious < 0)
+                                    {
+                                        var negative = TotalLiabilityPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalLiabilityPrevious?.ToString("0,0.00")</td>
+                                    }
+
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <h5>Equity</h5>
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.balanceSheetViewModels.Where(a => a.natureName == "Liabilities").GroupBy(a => a.natureName))
+                            {
+
+
+                                @foreach (var pldata in Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").GroupBy(a => a.fsLineName))
+                                {
+                                    decimal? totalRevenue = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").Sum(x => x.currentAmount);
+                                    decimal? totalCOS = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Cost of services").Sum(x => x.currentAmount);
+
+                                    decimal? totalRevenuePrevious = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Revenue").Sum(x => x.previousAmount);
+                                    decimal? totalCOSPrevious = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName == "Cost of services").Sum(x => x.previousAmount);
+
+                                    decimal? GrossProfit = totalRevenue - totalCOS;
+                                    decimal? GrossProfitPrevious = totalRevenuePrevious - totalCOSPrevious;
+
+                                    decimal? TotalExpense = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName != "Revenue" && a.fsLineName != "Cost of services").Sum(x => x.currentAmount);
+
+                                    decimal? TotalExpensePrevious = @Model.profitAndLossAccountViewModels.Where(a => a.fsLineName != "Revenue" && a.fsLineName != "Cost of services").Sum(x => x.previousAmount);
+
+                                    NetProfit = GrossProfit - TotalExpense;
+                                    NetProfitPrevious = GrossProfitPrevious - TotalExpensePrevious;
+
+                                    <tr>
+                                        <td colspan="2" style="font-weight:bolder;" width="50%">Net Profit/Loss</td>
+                                        @if (NetProfit < 0)
+                                        {
+                                            var negative = NetProfit * -1;
+                                            <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                        }
+                                        else
+                                        {
+                                            <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfit?.ToString("0,0.00")</td>
+                                        }
+                                        @if (NetProfitPrevious < 0)
+                                        {
+                                            var negative = NetProfitPrevious * -1;
+                                            <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                        }
+                                        else
+                                        {
+                                            <td style="text-align:right;font-weight:bolder;" width="25%">@NetProfitPrevious?.ToString("0,0.00")</td>
+                                        }
+                                    </tr>
+                                }
+
+                                TotalEquity = TotalAsset - (TotalLiability + NetProfit);
+                                TotalEquityPrevious = TotalAssetPrevious - (TotalLiabilityPrevious + NetProfitPrevious);
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Total Equity</td>
+                                    @if (TotalEquity < 0)
+                                    {
+                                        var negative = TotalEquity * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalEquity?.ToString("0,0.00")</td>
+                                    }
+                                    @if (TotalEquityPrevious < 0)
+                                    {
+                                        var negative = TotalEquityPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalEquityPrevious?.ToString("0,0.00")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row" style="padding: 0px 15px 0px 15px;">
+                    <table class="table table-bordered">
+                        <thead style="background-color:lightgray;border-bottom:groove;">
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.balanceSheetViewModels.Where(a => a.natureName == "Liabilities").GroupBy(a => a.natureName))
+                            {
+                                TotalEquity = TotalEquity + TotalLiability + NetProfit;
+                                TotalEquityPrevious = TotalEquityPrevious + TotalLiabilityPrevious+ NetProfitPrevious;
+                                <tr>
+                                    <td colspan="2" style="font-weight:bolder;" width="50%">Total Equity and Liabilities</td>
+                                    @if (TotalEquity < 0)
+                                    {
+                                        var negative = TotalEquity * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalEquity?.ToString("0,0.00")</td>
+                                    }
+                                    @if (TotalEquityPrevious < 0)
+                                    {
+                                        var negative = TotalEquityPrevious * -1;
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">(@negative?.ToString("0,0.00"))</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align:right;font-weight:bolder;" width="25%">@TotalEquityPrevious?.ToString("0,0.00")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+
+
+
+}
+
+

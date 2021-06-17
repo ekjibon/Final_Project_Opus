@@ -1,0 +1,257 @@
+﻿@model SalaryProcessViewModel
+@{
+    ViewData["Title"] = "Salary Period UnLock";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">UnLock Period List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Period Name</th>
+                            <th>Year</th>
+                            <th>Month Name</th>
+                            <th>Tax Year</th>
+                            <th>Salary Type</th>
+                            <th>Lock Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.salaryPeriods.Where(a => a.lockLabel != 5))
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.periodName</td>
+                                    <td>@data.salaryYear.yearName</td>
+                                    <td>@data.monthName</td>
+                                    <td>@data.taxYear.taxYearName</td>
+                                    <td>@data.salaryType.salaryTypeName</td>
+                                    @if (@data.lockLabel == 5)
+                                    {
+                                        <td>Locked</td>
+                                    }
+                                    else if (@data.lockLabel == 4)
+                                    {
+                                        <td>In Disburse</td>
+                                    }
+                                    else if (@data.lockLabel == 3)
+                                    {
+                                        <td>In Approve</td>
+                                    }
+                                    else if (@data.lockLabel == 2)
+                                    {
+                                        <td>Ongoing</td>
+                                    }
+                                    else if (@data.lockLabel == 0)
+                                    {
+                                        <td>In Process</td>
+                                    }
+                                    <td>
+                                        <a class="btn btn-success" title="Change Status" onclick="Edit(@data.Id,'@data.periodName')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Salary Log </h6>
+            </div>
+            <hr />
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-responsive" id="statusTable" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th width="25%">Period Name</th>
+                            <th width="15%">Status</th>
+                            <th width="10%">Remarks</th>
+                            <th width="10%">Created By</th>
+                            <th width="25%">Created At</th>
+                            <th width="15%">IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="container">
+            <form id="frmDraft" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="statusType" name="statusType" value="" />
+                    <input type="hidden" id="salaryPeriodLoadId" name="salaryPeriodLoadId" value="0" />
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="periodName" class="col-md-3 col-form-label">Period Name <span style="color:red;">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" name="periodName" id="periodName" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-3 col-form-label">Remarks</label>
+                            <div class="col-sm-9">
+                                <textarea name="remarks" id="remarks" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                        <div class="form-group row">
+                            <label for="lockLabel" class="col-md-4 col-form-label">Status <span style="color:red;">*</span></label>
+                            <div class="col-md-8">
+                                <select class="form-control" id="lockLabel" name="lockLabel" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="0">Send To Process</option>
+                                    <option value="2">Send To Ongoing</option>
+                                    <option value="3">Send To Approve</option>
+                                    <option value="4">Send To Disburse</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="salaryPeriodId" class="col-md-4 col-form-label"></label>
+                            <div class="col-md-8">
+                                <button type="button" id="btnSalarySheetFinal" onclick="SaveDraft()" class="btn btn-success btn-sm" style="width:80px;">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#educationalTable').DataTable();
+
+            $("#lockLabel").change(function () {
+                let stype = $('#lockLabel option:selected').text();
+                $('#statusType').val(stype);
+            });
+
+        });
+
+        //function SalarySheetFinal() {
+        //    if ($('#salaryPeriodId').val() == "") {
+        //        swal("Please Select Salary Period");
+        //        return false;
+        //    }
+        //    swal({
+        //        title: 'Are you sure?', text: 'Do you want to UnLock this period!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, UnLock!'
+        //    }).then(function () {
+        //        window.location.href = "/Payroll/SalaryProcess/SalaryPeriodUnLock?Id=" + $('#salaryPeriodId').val() + '&lockLabel=' + 0;
+        //        swal('', 'Salary Period UnLocked Successfully!', 'success');
+        //    });
+        //}
+
+        function Edit(id, periodName) {
+            $('#salaryPeriodLoadId').val(id);
+            $('#periodName').val(periodName);            
+
+            GetStatusLog(id);
+        }
+
+        function GetStatusLog(salaryPeriodId) {
+            $('#statusTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetSalaryStatusLogByPeriodId", "SalaryProcess")',
+                    dataSrc: "",
+                    data: { salaryPeriodId: salaryPeriodId }
+                },
+                processing: true,
+                destroy: true,
+                columns: [
+                    { data: "salaryPeriod.periodName" },
+                    { data: "statusType" },
+                    { data: "remarks" },
+                    { data: "createdBy" },
+                    { data: "createdAt" },
+                    { data: "ipAddress" }
+                ],
+                stateSave: true,
+            });
+        }
+
+        function SaveDraft() {           
+
+            let salperId = $('#salaryPeriodLoadId').val();
+            let lockLable = $('#lockLabel').val();
+            if (salperId == "") {
+                swal("Please Select Salary Period");
+                return false;
+            }
+            swal({
+                title: 'Are you sure?', text: 'Do you want to change status of this period?', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Change!'
+            }).then(function () {
+
+            var form = $("#frmDraft");
+                $.ajax({
+                    url: '@Url.Action("SaveSalaryStatusLog", "SalaryProcess")',
+                    data: form.serialize(),
+                    type: 'POST',
+                    success: function (records) {
+                        swal({
+                            title: '', text: 'Status save successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                        }).then(function () {
+                            window.location.href = "/Payroll/SalaryProcess/SalaryPeriodUnLock?Id=" + salperId + '&lockLabel=' + lockLable;
+                        });
+                    }
+                });
+
+            });
+        }
+
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

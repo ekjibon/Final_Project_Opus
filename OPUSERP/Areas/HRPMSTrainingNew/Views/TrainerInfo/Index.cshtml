@@ -1,0 +1,185 @@
+﻿@model TrainerInfoViewModel
+@{
+    ViewData["Title"] = "Trainer Information";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSTrainingNew" asp-controller="TrainerInfo" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">@Model.fLang.name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="name" id="name">
+                        <input type="hidden" name="trainerId" id="trainerId" value="0">
+                    </div>
+
+                    <label for="designation" class="col-sm-2 col-form-label">@Model.fLang.designation <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="designation" id="designation">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="workPlace" class="col-sm-2 col-form-label">@Model.fLang.workPlace <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="workPlace" id="workPlace">
+                    </div>
+
+                    <label for="contactNumber" class="col-sm-2 col-form-label">@Model.fLang.contactNumber <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="contactNumber" id="contactNumber">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="Specialization" class="col-sm-2 col-form-label">@Model.fLang.Specialization <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="Specialization" id="Specialization">
+                    </div>
+
+                    <label for="Performance" class="col-sm-2 col-form-label">@Model.fLang.Performance <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <select type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="Performance" id="Performance">
+                            <option value="">Select One</option>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Very Good">Very Good</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">@Model.fLang.email <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="email" id="email">
+                    </div>
+
+                    <label for="Remarks" class="col-sm-2 col-form-label">@Model.fLang.Remarks</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="Remarks" id="Remarks">
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="trainingPlaneTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.name</th>
+                            <th>@Model.fLang.designation</th>
+                            <th>@Model.fLang.workPlace</th>
+                            <th>@Model.fLang.Specialization</th>
+                            <th>@Model.fLang.contactNumber</th>
+                            <th>@Model.fLang.Performance</th>
+                            <th>@Model.fLang.Remarks</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.resourcePeople)
+                        {
+                            <tr>
+                                <td>@data.name</td>
+                                <td>@data.designation</td>
+                                <td>@data.workPlace</td>
+                                <td>@data.specialization</td>
+                                <td>@data.contactNumber</td>
+                                <td>@data.performance</td>
+                                <td>@data.remarks</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.name', '@data.designation', '@data.workPlace', '@data.specialization', '@data.contactNumber', '@data.performance', '@data.remarks', '@data.email')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //$("#award").addClass("active");
+            $('#trainingPlaneTable').DataTable({
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        title: 'Department of Disaster Management',
+                        messageTop: 'List Of Trainer',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: 'Department of Disaster Management',
+                        messageTop: 'List Of Trainer',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+            $('#planeStartDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#planeEndDate').datepicker({ uiLibrary: 'bootstrap4' });
+        });
+
+        function Edit(Id, name, designation, workPlace, specialization, contactNumber, performance, remarks, email) {
+            $("#trainerId").val(Id);
+            $("#name").val(name);
+            $("#designation").val(designation);
+            $("#workPlace").val(workPlace);
+            $("#Specialization").val(specialization);
+            $("#contactNumber").val(contactNumber);
+            $("#Performance").val(performance);
+            $("#Remarks").val(remarks);
+            $("#email").val(email);
+        }
+    </script>
+}

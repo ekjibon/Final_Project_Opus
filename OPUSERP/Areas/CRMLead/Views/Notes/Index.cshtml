@@ -1,0 +1,142 @@
+﻿@model CRMNoteMasterViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/CRMLead/Views/Shared/_LeadForm.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary" style="text-align:center;">Lead Name: @ViewBag.leadName</h6>
+                @*<a href="/CRMLead/Proposal/ProposalList" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Back to List</a>*@
+            </div>
+            <div class="card-body">
+                <div class="container" id="entrydata">
+                    <form asp-area="CRMLead" asp-controller="Notes" asp-action="Index" method="post" data-parsley-validate="parsley">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <input type="hidden" name="noteMasterId" id="noteMasterId" value="0" />
+                                    <input type="hidden" id="leadsId" name="leadsId" value="@ViewBag.leadId">
+                                    <input type="hidden" id="leadName" name="leadName" value="@ViewBag.leadName">
+                                    <label for="proposalNo" class="col-sm-3 col-form-label">Title  <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" data-parsley-required="true" class="form-control" name="title" id="title">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="proposalNo" class="col-sm-3 col-form-label">Notes <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <textarea type="text" data-parsley-required="true" class="form-control" name="notesdescription" id="notesdescription"></textarea>
+                                    </div>
+                                </div>
+
+                               
+                            </div>
+
+                        
+                        </div>
+
+                     
+
+
+                        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Proposal</h6>
+                @*<a href="/CRMLead/Proposal/Index?id=0" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Add New</a>*@
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="statusTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Title</th>
+                            <th>Notes</th>
+                            
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.cRMNoteMasters)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.title</td>
+                                    <td>@data.notesdescription</td>
+                                    
+                                    <td>
+                                        <a class="btn btn-success" onclick="Edit(@data.Id,'@data.title','@data.notesdescription')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsLead{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#noteList").addClass("active");
+
+          
+            $('#statusTable').DataTable();
+
+            var table = $('#statusTable').DataTable();
+           
+
+        });
+
+        function Edit(Id, title, description) {
+
+            $("#noteMasterId").val(Id);
+            $("#title").val(title);
+            $("#notesdescription").val(description);
+           
+
+           
+        }
+
+        function RefreshAll() {
+            location.reload();
+        }
+   
+
+    </script>
+}
+
+
+@section StyleLead{
+    <style>
+
+        .redStar {
+            color: red;
+        }
+
+        #statusTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+
+

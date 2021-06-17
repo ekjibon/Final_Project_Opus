@@ -1,0 +1,205 @@
+﻿@model GridViewViewModel
+@{
+    ViewData["Title"] = "Grid View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .forEmpIdCard {
+            padding: 10px 15px;
+            margin: 10px 0;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="container">
+            <form>
+                <h6 class="identity-box-center">(@Model.employeeNameCode)</h6>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "info"})">
+                                <img src="~/Icon/Employee.ico" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.employeeName</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "address" })">
+                                <img src="~/Icon/Adderss.jpg" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.addressInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "education"})">
+                                <img src="~/Icon/Education.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.educational</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "spouse"})">
+                                <img src="~/Icon/Spouse.jpg" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.spouseInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "children"})">
+                                <img src="~/Icon/Child.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.childrenInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "license"})">
+                                <img src="~/Icon/Licence.jpg" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.drivingInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "passport"})">
+                                <img src="~/Icon/Passport.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.passportInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "travel"})">
+                                <img src="~/Icon/Travel.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.foreignTour</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "traning"})">
+                                <img src="~/Icon/Training.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.trainingInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "disciplinary"})">
+                                <img src="~/Icon/Disciplinary.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.disciplinaryInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "language"})">
+                                <img src="~/Icon/Language.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.languageInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "photo"})">
+                                <img src="~/Icon/Photo.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.empPhotograph</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "award"})">
+                                <img src="~/Icon/Award.jpg" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.awardInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "publication"})">
+                                <img src="~/Icon/Publication.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.publicationInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "promotion"})">
+                                <img src="~/Icon/Promotion.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.promotionInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID,section = "transfer" })">
+                                <img src="~/Icon/Transfar.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.transferInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "book"})">
+                                <img src="~/Icon/Book.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.bookInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "bank"})">
+                                <img src="~/Icon/Bank.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.bankInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "acr"})">
+                                <img src="~/Icon/ACR.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.acrInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group text-center">
+                            <a class="text-center" target="_blank" style="text-decoration:none; padding-left: 10%;" href="@Url.Action("View", "InfoView", new { id = @ViewBag.employeeID ,section = "leave"})">
+                                <img src="~/Icon/Leave.png" height="100" width="100" />
+                                <br /><span style="color: black; font-size: 10pt; font-weight: 800;">@Model.fLang.leaveInfo</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+    </script>
+}

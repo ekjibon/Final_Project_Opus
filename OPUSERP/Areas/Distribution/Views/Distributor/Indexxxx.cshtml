@@ -1,0 +1,98 @@
+﻿@model CustomerViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/MasterData/Views/Shared/_CustomerDataForm.cshtml";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Add Customer</h6>
+        <a class="btn btn-outline-warning btn-sm" data-toggle="tooltip" title="Back" href="@Url.Action("CustomerList", "Customer")" style="color:midnightblue;"><i class="fa fa-backward"> Back To List</i></a>
+    </div>
+    <div class="card-body">
+        @*<h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+            <hr>*@
+        <div class="container">
+            <form asp-area="MasterData" asp-controller="Customer" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="nameEnglish" class="col-sm-4 col-form-label">Customer Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="nameEnglish" value="" name="nameEnglish" data-parsley-required="true">
+                                <input type="hidden" id="resourceId" name="resourceId" value=0>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="phone" class="col-sm-4 col-form-label">phone </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="phone" value="" name="phone">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="pabx" class="col-sm-4 col-form-label">pabx</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="pabx" value="" name="pabx" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nationality" class="col-sm-4 col-form-label">nationality</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="nationality" value="" name="nationality" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="organizationId" class="col-sm-4 col-form-label">Organization</label>
+                            <div class="col-sm-8">
+                                <select name="organizationId" id="organizationId" class="form-control">
+                                    <option value="">Select Organization</option>
+                                    @foreach (var data in Model.organizations)
+                                    {
+                                        <option value="@data.Id">@data.organizationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mobile" class="col-sm-4 col-form-label">mobile</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="mobile" value="" name="mobile" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-4 col-form-label">email</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="email" value="" name="email" >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nationalID" class="col-sm-4 col-form-label">nationalID</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="nationalID" value="" name="nationalID" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#education").addClass("active");
+            $('#educationalTable').DataTable();
+        });       
+
+    </script>
+}
+
+

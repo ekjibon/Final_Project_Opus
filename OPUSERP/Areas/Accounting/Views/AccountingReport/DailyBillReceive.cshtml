@@ -1,0 +1,224 @@
+﻿@{
+    ViewData["Title"] = "DailyBillReceive";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Daily Bill Receive</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row" id="SBUSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">SBU</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="sbuId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LedgerProject">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Project</label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="projectId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="supplierSelect">
+                        <label for="supplier" class="col-sm-3 col-form-label">Select Supplier<span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="vendorName" id="vendorName" />
+                            <input type="hidden" class="form-control" name="supplierId" id="supplierId" value="0" />
+                        </div>
+                    </div>
+                    <div class="form-group row" id="DateRangeSelect">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" readonly />
+                        </div>
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <br />                           
+                            <button type="button" onclick="Refresh()" title="Load" style="float:right" class="btn btn-info btn-xs">Load</button>&nbsp;&nbsp;&nbsp;
+                            <button id="SubmitButton" style="margin-left: 160px;" class="btn btn-success btn-xs" title="Preview">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row" id="BillReceiveTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblBillReceive">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Bill Receive Date</th>
+                            <th>Process No</th>
+                            <th>Invoice No</th>
+                            <th>Supplier Name</th>
+                            <th>Amount</th>
+                            <th>VAT</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#toDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+            $('#fromDate').flatpickr({ dateFormat: "m-d-Y", maxDate: "@DateTime.Now.ToString("MM-dd-yyyy")" });
+            Common.Ajax('GET', '/global/api/GetSupplier', [], 'json', GetSupplier);
+            
+            Common.Ajax('GET', '/global/api/GetSBU/', [], 'json', GetSBU);
+            $("#sbuId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/GetProject/' + id, [], 'json', GetProject, false);
+            });            
+
+            $("#SubmitButton").click(function (e) {
+                let supplierId = $('#supplierId').val();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                    if (fromDate == '') {
+                        swal('Warning', 'Select From Date', 'warning');
+                        return false;
+                    } else if (toDate == '') {
+
+                        swal('Warning', 'Select To Date', 'warning');
+                        return false;
+                    }
+                    window.open('/Accounting/NonPOTransaction/DailyBillReceivePdf?supplierId=' + supplierId + "&fromDate=" + fromDate + "&toDate=" + toDate, '_blank');
+            });
+        });
+
+        function Refresh() {            
+            let supplierId = $('#supplierId').val();
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();            
+                if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                GetDailyBillReceiveReportDataEx(supplierId, fromDate, toDate);            
+        }
+
+        function GetDailyBillReceiveReportDataEx(supplierId, fromDate, toDate) {
+            $('#tblBillReceive').DataTable().destroy();
+            table = $('#tblBillReceive').DataTable({
+                ajax: {
+                    url: "/global/api/GetdailyBillReceive/" + supplierId + "/" + fromDate + "/" + toDate,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "billReceiveId" },
+                    { data: "BillReceiveDate" },
+                    { data: "ProcessNo" },
+                    { data: "InvoiceNo" },
+                    { data: "supplierName" },
+                    { data: "GBamount" },
+                    { data: "Vat" },
+                    { data: "Total" },
+                    { data: "billStatus" },
+                    { data: "action" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report'
+                    }
+                ]
+            });
+        }
+
+        function GetSupplier(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.organizationName;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#vendorName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#supplierId').val(ui.item.key);
+                    $("#vendorName").val(ui.item.value);
+                }
+            });
+        }
+
+        function GetSBU(response) {
+            $('#sbuId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.branchUnitName + '</option>';
+            });
+            $('#sbuId').append(options);
+        }
+
+        function GetProject(response) {
+            $('#projectId').empty();
+            var options = '<option value="0">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.projectName + '</option>';
+            });
+            $('#projectId').append(options);
+        }       
+    </script>
+}

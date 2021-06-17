@@ -1,0 +1,338 @@
+﻿@model LeadPreviewViewModel
+@{
+    ViewData["Title"] = "Info";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+@section Style{
+
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row" style="padding-top:0px;">
+                <div class="col-2">
+                    @*<img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />*@
+                </div>
+                <div class="col-8">
+                    <div style="color:black;text-align:center;">
+                        <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:80px;" />
+                        <h3>@Model.companies.FirstOrDefault().companyName</h3>
+                        <label>@Model.companies.FirstOrDefault().addressLine</label>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    @*<img src="~/images/Bangladesh-Govt-Logo.jpg" style="height:85px" />*@
+                </div>
+                <div class="col-6 text-center">
+                    <h3 class="card-title" style="color: black;margin-top: 25px;"><b>LEAD INFORMATION</b></h3>
+                    @*<h6 class="identity-box-center">(@Model.pIMSVisitor.name)</h6>*@
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-info" data-toggle='tooltip' title='Print' target='_blank' href='/CRMLead/LeadManagement/LeadViewPdf/@Model.leads.Id' style="float:right;margin-top: 25px;"><i class="fa fa-print"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">LEAD INFORMATION</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Lead Name</th>
+                                <td colspan="2">@Model.leads.leadName</td>
+                                <td colspan="2">Organization Type</td>
+                                <td colspan="2">@Model.leads.fIType?.fiTypeName</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Lead Short Name</th>
+                                <td colspan="2">@Model.leads.leadShortName</td>
+                                <td colspan="2">Ownership Type</td>
+                                <td colspan="2">@Model.leads.ownerShipType?.ownerShipTypeName</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Lead Number</th>
+                                <td colspan="2">@Model.leads.leadNumber</td>
+                                <td colspan="2">Lead Source</td>
+                                <td colspan="2">@Model.leads.source?.sourceName</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Group Name</th>
+                                <td colspan="2">@Model.leads.companyGroup?.groupName</td>
+                                <td colspan="2">Source Description</td>
+                                <td colspan="2">@Model.leads.sourceDescription</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Sector</th>
+                                <td colspan="2">@Model.leads.sector?.sectorName</td>
+                                <td colspan="2">Total Employees</td>
+                                <td colspan="2">@Model.leads.totalemployee</td>
+                            </tr>
+
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">ADDRESS INFO</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th colspan="2">Mailing Address</th>                                
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Thana</th>
+                                <td>Email</td>
+                                <td>Phone</td>
+                                <td>Address Type</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.Addresses)
+                            {
+                                <tr>
+                                    <td colspan="2">@data.maillingAddress</td>
+                                    <td>@data.division.divisionName</td>
+                                    <td>@data.district.districtName</td>
+                                    <td>@data.thana.thanaName</td>
+                                    <td>@data.email</td>
+                                    <td>@data.mobile</td>
+                                    <td>@data.addressType?.typeName</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">CONTACT INFO</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Contact Owner</th>
+                                <th>Email</th>
+                                <th colspan="2">Resource Name</th>
+                                <th>Designation</th>
+                                <th>Phone</th>
+                                <th>Mobile</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var data in Model.contacts)
+                            {
+                                <tr>
+                                    <td colspan="2">@data.contactOwner</td>
+                                    <td>@data.resource.email</td>
+                                    <td colspan="2">@data.resource.resourceName</td>
+                                    <td>@data.resource.designations?.designationName</td>
+                                    <td>@data.resource.phone</td>
+                                    <td>@data.resource.mobile</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">ACTIVITIES INFO</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Lead Name</th>
+                                <th colspan="2">Subject</th>
+                                <th colspan="2">Category</th>
+                                <th colspan="2">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.activityMasterCViewModels.Where(x => x.activityMasters.activityMasterId == null))
+                            {
+                            <tr>
+                                <td>@data.activityMasters.leads.leadName</td>
+                                <td>@data.activityMasters.subject</td>
+                                <td>@data.activityMasters.activityCategory.activityCategoryName</td>
+                                <td>@data.activityMasters.description</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">PROPOSAL INFO</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th>Proposal No</th>
+                                <th colspan="2">Proposal Type</th>
+                                <th colspan="2">Leads Name</th>
+                                <th>Proposal Date</th>
+                                <th colspan="2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var data in Model.proposalMasters)
+                            {
+                            <tr>
+                                <td>@data.proposalNo</td>
+                                <td>@data.proposalType.proposalTypeName</td>
+                                <td>@data.leads.leadName</td>
+                                <td>@data.proposalDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data?.proposalStatus?.proposalStatusName</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">BANK INFO</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th>Lead Name</th>
+
+                                <th>Bank Name</th>
+                                <th>Branch Name</th>
+                                <th>Type</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var data in Model.leadsBankInfos)
+                            {
+                            <tr>
+                                <td>@data?.leads?.leadName</td>
+                                <td><span style="display:none">-@data.Id-</span>@data.bankBranchDetails.bank.bankName</td>
+
+                                <td>@data.bankBranchDetails.bankBranch.branchName</td>
+                                <td>@data.bankType</td>
+                                <td>@data.bankBranchDetails.maillingAddress</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">AGREEMENT INFO</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th >Lead Name</th>
+                                <th>Agreement No</th>
+                                <th>Agreement Type</th>
+                                <th>Agreement Date</th>
+                                <th>Expired Date</th>
+                                <th colspan="2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var data in Model.agreements)
+                            {
+                                <tr>
+                                    <td><span style="display:none">-@data.Id-</span>@data.leads.leadName</td>
+                                    <td>@data.agreementNo</td>
+                                    <td>@data.agreementType?.agreementTypeName</td>
+                                    <td>@data.agreementDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.expiredDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.agreementStatus?.agreementStatusName</td>
+                                    
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-12">
+                    <h6 class="m-0 font-weight-bold text-primary" id="personal">HISTORY</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+
+                            <tr>
+                                <th width="5%">SL#</th>
+                                <th>Action Name</th>
+                                <th>Action Details</th>
+                                <th>Date & Time</th>
+                                <th colspan="2">User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                                @foreach (var data in Model.leadsHistories)
+                                {
+                                    <tr>
+                                        <td width="5%">@i</td>
+                                        <td>@data.actionName</td>
+                                        <td>@data.actionDetails</td>
+                                        <td>@data.createdAt?.ToString("dd-MMM-yyyy hh:mm:ss tt")</td>
+                                        <td>@data.createdBy</td>
+
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>

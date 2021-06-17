@@ -1,0 +1,99 @@
+﻿@using System.Collections.Generic
+@using System.Linq
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Http.Authentication
+@using OPUSERP.ERPServices.MasterData.Interfaces
+@using OPUSERP.ERPService.AuthService.Interfaces
+@using System
+@model LogInViewModel
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IERPCompanyService eRPCompanyService
+@{
+    Layout = null;
+}
+@{
+    var companies = await eRPCompanyService.GetAllCompany();
+    var company = companies.FirstOrDefault()?.filePath;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<body style="background-color:#333333">
+    <div class="container">
+        <!-- Outer Row -->
+        <div class="row justify-content-center ">
+            <div class="col-xl-6 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            @*<div style="background-image:url(/images/Cover.jpg);background-repeat:no-repeat;background-size:contain;" class="col-lg-6 d-none d-lg-block text-center"></div>*@
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+
+                                        <img src="@companies.FirstOrDefault()?.filePath" height=@companies.FirstOrDefault().height width=@companies.FirstOrDefault().width /> <br /><br />
+                                        @*<img src="@company" style="margin:0px 0px 10px 0px;" height="90" width="150" />*@
+                                        @*<img src="@company" style="margin:0px 0px 10px 0px;" height="80" width="80" />*@
+
+                                    <h5 style="color:black;margin-bottom: 12px; font-weight: 700;">WELCOME TO ERP</h5>
+                                        @*<h5 style="color:black;margin-bottom: 12px; font-weight: 700;">Ministry of Disaster Management and Relief</h5>
+                                                <h5 style="color:black;margin-bottom: 12px; font-weight: 700;">Department of Disaster Management</h5>
+                                                <h5 style="color:black;margin-bottom: 12px; font-weight: 700;">HR Performance Management System</h5>
+                                            </div>*@
+                                        <form class="user" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                                            <div asp-validation-summary="All" class="text-danger"></div>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-user" id="exampleInputEmail" name="Name" aria-describedby="emailHelp" placeholder="Enter ID">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" class="form-control form-control-user" name="Password" id="exampleInputPassword" placeholder="Password">
+                                            </div>
+                                            @*<div class="form-group">
+                                                    <div class="custom-control custom-checkbox small">
+                                                        <input type="checkbox" name="RememberMe" onclick="handleClick(this)" class="custom-control-input" id="customCheck">
+                                                        <label class="custom-control-label" for="customCheck">Remember Me</label>
+                                                        <a class="collapse-item" asp-area="Auth" asp-controller="Account" asp-action="Register">New User? Click here!</a>
+                                                    </div>
+                                                </div>*@
+                                            <button type="submit" class="btn btn-danger btn-user btn-block">
+                                                Login
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <footer class="sticky-footer bg-white">
+                                        <div class="container my-auto">
+                                            <div class="copyright text-center my-auto">
+                                                <span><b><a href="https://www.opus-bd.com/" target="_blank" style="text-decoration:none;color:#5c97be"> OPUS TECHNOLOGY LTD </a>&copy; @DateTime.Now.Year</b></span>
+                                            </div>
+                                        </div>
+                                    </footer>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function handleClick(cb) {
+            if (cb.checked == true) {
+                $('#customCheck').val(true);
+            } else {
+                $('#customCheck').val(false);
+            }
+        }
+    </script>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/js/sb-admin-2.min.js"></script>
+</body>
+</html>

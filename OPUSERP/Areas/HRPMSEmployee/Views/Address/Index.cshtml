@@ -1,0 +1,333 @@
+﻿@model AddressViewModel
+
+@{
+    ViewData["Title"] = "Address";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo?.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo?.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo?.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo?.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo?.activityStatus==1?"Active":"Inactive")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">@Model.fLang.title</u></h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="Address" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="employeeID" name="employeeID" value="@Model.employeeID" />
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="m-0 font-weight-bold">@Model.fLang.present</h6>
+                                <input type="hidden" id="presentAddressID" name="presentAddressID" value="@Model.present.Id" />
+                                <hr />
+                                <div class="form-group row">
+                                    <label for="presentRoadNo" class="col-sm-3 col-form-label">@Model.fLang.roadNo</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="presentRoadNo" value="@Model.present.roadNumber" name="presentRoadNo">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="presentHouseVillage" class="col-sm-3 col-form-label">@Model.fLang.HouseVillage</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="presentHouseVillage" value="@Model.present.houseVillage" name="presentHouseVillage">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="presentBlockSector" class="col-sm-3 col-form-label">@Model.fLang.BlockSector</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="presentBlockSector" value="@Model.present.blockSector" name="presentBlockSector">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="presentPostCode" class="col-sm-3 col-form-label">@Model.fLang.PostCode</label>
+                                    <div class="col-sm-9">
+                                        <input data-parsley-type="number" data-parsley-length="[4, 6]" data-parsley-trigger="keyup" class="form-control" id="presentPostCode" value="@Model.present.postCode" name="presentPostCode">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="presentPostOffice" class="col-sm-3 col-form-label">@Model.fLang.PostOffice</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="presentPostOffice" value="@Model.present.postOffice" name="presentPostOffice">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="presentDivision" class="col-sm-3 col-form-label">@Model.fLang.Division <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="presentDivision" name="presentDivision" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="presentDistrict" class="col-sm-3 col-form-label">@Model.fLang.District <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="presentDistrict" value="" name="presentDistrict" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="presentUpazila" class="col-sm-3 col-form-label">@Model.fLang.Upazila <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="presentUpazila" value="" name="presentUpazila" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row" style="display:none;">
+                                    <label for="presentUnion" class="col-sm-3 col-form-label">@Model.fLang.Union <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="presentUnion" value="@Model.present.union" name="presentUnion" data-parsley-required="false">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <h6 class="m-0 font-weight-bold col-5">@Model.fLang.permanent</h6>
+                                    <input type="hidden" id="permanentAddressID" name="permanentAddressID" value="@Model.permanent.Id" />
+                                    <label for="copyAs" onclick="CopyAddress()" class="col-7 col-form-label"><input type="checkbox" class="form-check-inline" style="margin-right:5px;" id="copyAs" name="copyAs" />@Model.fLang.sameAddress</label>
+                                </div>
+                                <hr />
+                                <div class="form-group row">
+                                    <label for="permanentRoadNo" class="col-sm-3 col-form-label">@Model.fLang.roadNo</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="permanentRoadNo" value="@Model.permanent.roadNumber" name="permanentRoadNo">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="permanentHouseVillage" class="col-sm-3 col-form-label">@Model.fLang.HouseVillage</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="permanentHouseVillage" value="@Model.permanent.houseVillage" name="permanentHouseVillage">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="permanentBlockSector" class="col-sm-3 col-form-label">@Model.fLang.BlockSector</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="permanentBlockSector" value="@Model.permanent.blockSector" name="permanentBlockSector">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="permanentPostCode" class="col-sm-3 col-form-label">@Model.fLang.PostCode</label>
+                                    <div class="col-sm-9">
+                                        <input data-parsley-type="number" data-parsley-length="[4, 6]" data-parsley-trigger="keyup" class="form-control" id="permanentPostCode" value="@Model.permanent.postCode" name="permanentPostCode">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="permanentPostOffice" class="col-sm-3 col-form-label">@Model.fLang.PostOffice</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="permanentPostOffice" value="@Model.permanent.postOffice" name="permanentPostOffice">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="permanentDivision" class="col-sm-3 col-form-label">@Model.fLang.Division <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="permanentDivision" value="" name="permanentDivision" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="permanentDistrict" class="col-sm-3 col-form-label">@Model.fLang.District <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="permanentDistrict" value="" name="permanentDistrict" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="permanentUpazila" class="col-sm-3 col-form-label">@Model.fLang.Upazila <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <select type="text" class="form-control" id="permanentUpazila" value="" name="permanentUpazila" data-parsley-required="true"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row" style="display:none;">
+                                    <label for="permanentUnion" class="col-sm-3 col-form-label">@Model.fLang.Union <span style="color:red">*</span></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="permanentUnion" value="@Model.permanent.union" name="permanentUnion" data-parsley-required="false">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+<script>
+        $(document).ready(function () {
+            $("#address").addClass("active");
+
+            Common.Ajax('GET', '/global/api/divisions/1', [], 'json', ajaxDivision, false);
+            Common.Ajax('GET', '/global/api/divisions/1', [], 'json', ajaxPermanentDivision, false);
+
+            $("#presentDivision").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', ajaxDistrict, false);
+            });
+
+            $("#permanentDivision").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', ajaxPermanentDistrict, false);
+            });
+
+            $("#presentDistrict").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', ajaxThana, false);
+            });
+
+            $("#permanentDistrict").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', ajaxPermanentThana, false);
+            });
+
+            //Present
+            if (@Model.present.divisionId > 0) {
+                $('#presentDivision').val(@Model.present.divisionId);
+                var divisionId = @Model.present.divisionId;
+                Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', ajaxDistrict, false);
+
+                $('#presentDistrict').val(@Model.present.districtId);
+                var districtId = @Model.present.districtId;
+                Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', ajaxThana, false);
+
+                $('#presentUpazila').val(@Model.present.thanaId);
+            }
+
+        //Permanent
+            if (@Model.permanent.divisionId > 0) {
+                $('#permanentDivision').val(@Model.permanent.divisionId);
+                var divisionId = @Model.permanent.divisionId;
+                Common.Ajax('GET', '/global/api/districts/' + divisionId, [], 'json', ajaxPermanentDistrict, false);
+
+                $('#permanentDistrict').val(@Model.permanent.districtId);
+                var districtId = @Model.permanent.districtId;
+                Common.Ajax('GET', '/global/api/thanas/' + districtId, [], 'json', ajaxPermanentThana, false);
+
+                $('#permanentUpazila').val(@Model.permanent.thanaId);
+            }
+        });
+
+        function CopyAddress(){
+            if ($('#copyAs').is(":checked")) {
+                $('#permanentRoadNo').val($('#presentRoadNo').val());
+                $('#permanentHouseVillage').val($('#presentHouseVillage').val());
+                $('#permanentBlockSector').val($('#presentBlockSector').val());
+                $('#permanentPostCode').val($('#presentPostCode').val());
+                $('#permanentPostOffice').val($('#presentPostOffice').val());
+                $('#permanentDivision').val($('#presentDivision').val());
+
+                var divId = $('#presentDivision').val();
+                Common.Ajax('GET', '/global/api/districts/' + divId, [], 'json', ajaxPermanentDistrict, false);
+                $('#permanentDistrict').val($('#presentDistrict').val());
+
+                var disId = $('#presentDistrict').val();
+                Common.Ajax('GET', '/global/api/thanas/' + disId, [], 'json', ajaxPermanentThana, false);
+                $('#permanentUpazila').val($('#presentUpazila').val());
+
+                $('#permanentUnion').val($('#presentUnion').val());
+            }
+
+        }
+
+        function ajaxDivision(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#presentDivision').empty();
+            $('#presentDivision').append(options);
+        }
+
+        function ajaxPermanentDivision(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#permanentDivision').empty();
+            $('#permanentDivision').append(options);
+        }
+
+        function ajaxDistrict(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#presentDistrict').empty();
+            $('#presentDistrict').append(options);
+        }
+
+        function ajaxPermanentDistrict(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#permanentDistrict').empty();
+            $('#permanentDistrict').append(options);
+        }
+
+        function ajaxThana(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#presentUpazila').empty();
+            $('#presentUpazila').append(options);
+        }
+
+        function ajaxPermanentThana(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#permanentUpazila').empty();
+            $('#permanentUpazila').append(options);
+        }
+
+</script>
+}

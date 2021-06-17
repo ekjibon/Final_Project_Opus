@@ -1,0 +1,162 @@
+﻿@model BudgetBranchAddressViewModel
+@{
+    ViewData["TitleMD"] = "Budget Branch Address";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Budget Branch Address</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Budget" asp-controller="BudgetBranchAddress" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="addressTypeId" class="col-sm-3 col-form-label text-right">Address Type <i style="color:red">*</i></label>
+                    <div class="col-sm-9">
+                        <select type="text" class="form-control" id="addressTypeId" name="addressTypeId">
+                            <option value="0">Select Category</option>
+                            @foreach (var data in Model.addressTypes)
+                            {
+                                <option value="@data.Id">@data.typeName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="union" class="col-sm-3 col-form-label text-right">Road <i style="color:red">*</i></label>
+                    <div class="col-sm-9">
+                        <input type="text" maxlength="100" class="form-control" id="union" name="union" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="houseVillage" class="col-sm-3 col-form-label text-right">House/Village</label>
+                    <div class="col-sm-9">
+                        <input type="text" maxlength="100" class="form-control" id="houseVillage" name="houseVillage" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="blockSector" class="col-sm-3 col-form-label text-right">Block/Sector</label>
+                    <div class="col-sm-9">
+                        <input type="text" maxlength="100" class="form-control" id="blockSector" name="blockSector" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="postCode" class="col-sm-3 col-form-label text-right">Post Code <i style="color:red">*</i></label>
+                    <div class="col-sm-9">
+                        <input data-parsley-type="number" data-parsley-length="[4, 6]" data-parsley-trigger="keyup" class="form-control" id="postCode" name="postCode" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="postOffice" class="col-sm-3 col-form-label text-right">Post Office</label>
+                    <div class="col-sm-9">
+                        <input type="text" maxlength="100" class="form-control" id="postOffice" name="postOffice" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="divisionId" class="col-sm-3 col-form-label text-right">Division</label>
+                    <div class="col-sm-9">
+                        <select type="text" class="form-control" id="divisionId" name="divisionId"></select>
+                        <input type="hidden" id="addressId" name="addressId" value="" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="districtId" class="col-sm-3 col-form-label text-right">District</label>
+                    <div class="col-sm-9">
+                        <select type="text" class="form-control" id="districtId" name="districtId"></select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="thanaId" class="col-sm-3 col-form-label text-right">Upazila <i style="color:red">*</i></label>
+                    <div class="col-sm-9">
+                        <select type="text" class="form-control" id="thanaId" name="thanaId"></select>
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br /><hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Budget Branch Address</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="budgetBranchAddressTable">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Road</th>
+                            <th>House/Village</th>
+                            <th>Block/Sector</th>
+                            <th>Post Code</th>
+                            <th>Upazila</th>
+                            <th>District</th>
+                            <th>Division</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody> </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#budgetBranchAddressTable').DataTable();
+            Common.Ajax('GET', '/global/api/divisions/1', [], 'json', orgDivision, false);
+            $("#divisionId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/districts/' + id, [], 'json', orgDistrict);
+            });
+            $("#districtId").change(function () {
+                var id = $(this).val();
+                Common.Ajax('GET', '/global/api/thanas/' + id, [], 'json', orgThana);
+            });
+        });
+
+        function orgDivision(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.divisionName + '</option>';
+            });
+            $('#divisionId').empty();
+            $('#divisionId').append(options);
+        }
+
+        function orgDistrict(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.districtName + '</option>';
+            });
+            $('#districtId').empty();
+            $('#districtId').append(options);
+        }
+
+        function orgThana(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.thanaName + '</option>';
+            });
+            $('#thanaId').empty();
+            $('#thanaId').append(options);
+        }
+        function Edit(Id, code, name) {
+            $("#branchId").val(Id);
+            $("#code").val(code);
+            $("#name").val(name);
+        }
+    </script>
+}

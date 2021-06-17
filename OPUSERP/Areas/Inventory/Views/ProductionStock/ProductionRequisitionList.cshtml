@@ -1,0 +1,87 @@
+﻿@model ProductionStockOutModel
+@{
+    ViewData["Title"] = "Stock In";
+    //Layout = "~/Areas/Inventory/Views/shared/_InventoryLayout.cshtml";
+}
+@*@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor*@
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Requisition List For Stock Out</h4>
+                <a href="/Inventory/ProductionStock/ProductionStockOutList" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Stock Out List</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="PurchaseList">
+                    <thead>
+                        <tr>
+                            <th width="15%">Requisition  No</th>
+                            <th width="15%">Requisition Date</th>
+                            <th width="25%">Requisition QTY</th>
+                            <th width="25%">Requisition By</th>
+                            <th width="25%">BoM No</th>
+                            <th width="10%">Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.productionRequsitionMasters)
+                        {
+                            <tr>
+                                <td><span style="display:none">-@data.Id-</span>@data.requsitionNumber</td>
+                                <td>@data.date?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.requisitionQty</td>
+                                <td>@data.createdBy</td>
+                                <td>@data.productionPlan.bOMMaster.bomNo</td>
+                                <td>
+                                    <a class="btn btn-success" href="/Inventory/ProductionStock/ProdReqDetailsForStockOut?id=@data.Id" title="Stock Out"><i class="fa fa-cart-arrow-down"></i></a>
+                                    @*<a class="btn btn-success" href="/Purchase/Purchase/PurchasePdfAction?MasterId=@data.Id" target="_blank" title="GR Report"><i class="fa fa-eye-dropper"></i></a>*@
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#PurchaseList').DataTable();
+
+
+            var table = $('#PurchaseList').DataTable();
+
+            //$('#PurchaseList tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[0];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var vid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/Purchase/PurchaseOrder/PurchaseDetail/?id=" + vid;
+            //});
+            //$('#PurchaseList tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+
+        });
+    </script>
+}
+
+
+@section Style{
+    <style>
+        #PurchaseList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+

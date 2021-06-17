@@ -1,0 +1,92 @@
+﻿@model BOMViewModel
+@{
+    ViewData["Title"] = "BOM List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">BOM List</h4>
+                <a href="/Production/BOM/Index?id=0" style="background-color:#024972;" class="btn btn-info btn-sm pull-right">Add New</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="BOMList">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th width="15%">BOM No</th>
+                            <th width="10%">BOM Item Name</th>
+                            <th width="25%">BOM Item Description</th>
+                            <th width="10%">Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+
+
+                            @foreach (var data in Model.bOMMasters.Where(x=>x.operationType== "BOM"&&x.isactive==1))
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td><span style="display:none">-@data.Id-</span>@data.bomNo</td>
+                                    <td>@data.itemSpecification.Item.itemName</td>
+                                    <td>@data.bomItemDescription</td>
+                                    <td>
+                                        <a class="btn btn-success" href="/Production/BOM/Index?id=@data.Id" title="Edit"><i class="fa fa-edit"></i></a>
+                                        @*<a class="btn btn-success" href="/Purchase/PurchaseOrder/PurchaseOrderPdfAction?MasterId=@data.Id" target="_blank" title="Purchase Invoice"><i class="fa fa-print"></i></a>*@
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#BOMList').DataTable();
+
+
+            //var table = $('#BOMList').DataTable();
+
+            //$('#BOMList tbody').on('click', 'tr', function () {
+            //    var data = table.row(this).data();
+            //    var iddata = data[1];
+            //    let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+            //    var vid = parseInt(id.split('-')[1]);
+            //    window.location.href = "/Production/BOM/BOMDetail/?id=" + vid;
+            //});
+            //$('#BOMList tbody').on('click', 'td:last-child', function (e) {
+            //    e.stopPropagation();
+            //});
+
+        });
+    </script>
+}
+
+
+@section Style{
+    <style>
+        /*#BOMList tbody tr {
+            cursor: pointer;
+        }*/
+    </style>
+}
+

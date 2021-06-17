@@ -1,0 +1,151 @@
+﻿@model VoucherApproveLogViewModel
+@{
+    ViewData["Title"] = "Re Back Voucher List";
+    Layout = "~/Areas/Accounting/Views/Shared/_VoucherLayout.cshtml";
+}
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">Voucher List</h4>
+            </div>
+            <div class="row" style="margin-top:5px;margin-left:2px;">
+                <div class="col-lg-4 col-md-4 col-sm-4" style="padding:0;">
+                    <div class="form-group row">
+                        <div class="col-sm-4 col-md-4 col-lg-4" style="overflow:hidden;padding:0;">
+                            <label class="control-label input-sm" style="margin-right:0;margin-left: 26px;">Voucher No</label>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8" style="padding:0;">
+                            <span style="float:left;padding-right: 1%;"> : </span>
+                            <input type="text" class="form-control input-sm" id="voucherNo" name="voucherNo" placeholder="" style="width:96%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <div class="form-group row">
+                        <div class="col-sm-4 col-md-4 col-lg-4" style="overflow:hidden;padding:0;">
+                            <label class="control-label input-sm" style="margin-left: 26px;">FROM</label>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8" style="padding:0;">
+                            <span style="float:left;padding-right: 1%;"> : </span>
+                            <input type="text" class="form-control input-sm" id="fdate" name="" placeholder="" style="width:96%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <div class="form-group row">
+                        <div class="col-sm-4 col-md-4 col-lg-4" style="overflow:hidden;padding:0;">
+                            <label class="control-label input-sm" style="float:left;margin-right:0">TO</label>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8" style="padding:0;">
+                            <span style="float:left;padding-right: 1%;"> : </span>
+                            <input type="text" class="form-control input-sm" id="tdate" name="" placeholder="" style="width:96%;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <input type="button" class="btn-sm btn btn-info" id="btnSearch" onclick="GetVoucherList()" value="Search" />
+                </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="voucherList">
+                    <thead>
+                        <tr>
+                            <th width="15%">Voucher No</th>
+                            <th width="15%">Voucher Date</th>
+                            <th width="25%">Particular</th>
+                            <th width="25%">Narration</th>
+                            <th width="10%">Voucher Amount</th>
+                            <th width="10%">Action</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsV{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#voucherList').DataTable();
+            $("#fdate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#tdate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+        });
+        function GetVoucherList() {
+            Common.Ajax('GET', '/Accounting/VoucherApprove/GetVoucherListForReBack/?FDate=' + $('#fdate').val() + '&TDate=' + $('#tdate').val() + '&voucherNo=' + $('#voucherNo').val(), [], 'json', ajaxGetVoucherListForReBack);
+        }
+        function ajaxGetVoucherListForReBack(response) {
+            console.log(response);
+            var ifExistIndex = window.localStorage.getItem("holdIndex1");
+            $('#voucherList').DataTable().destroy();
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#voucherList tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#voucherList tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsId").val();
+            }
+            $("#voucherList tbody>tr").empty();
+            $.each(response, function (key, value) {
+                index = $("#voucherList tbody>tr").length;
+                var dtTable = $("#voucherList");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.voucherNo + '<input type="hidden" name="id"class="clsId" value="' + value.Id + '"></td>' +
+                    '<td>' + getPurchaseDate(value.voucherDate.toString("dd-MMM-yyyy")) + '</td>' +
+                    '<td>' + value.accountName + '</td>' +
+                    '<td>' + value.remarks + '</td>' +
+                    '<td>' + value.voucherAmount + '</td>' +
+                    '<td><a onclick="ViewDelete(' + index + "," + value.Id + ", " + value.voucherTypeId +  ')"  title="View" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+                    '</tr>';
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#voucherList tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex1", null);
+                    ifExistIndex = null;
+                }
+            })
+            index = index + 1;
+            $('#voucherList').DataTable();
+        }
+        function ViewDelete(index, Id, voucherTypeId, ) {
+            if (voucherTypeId==6) {
+                window.location.href = "/Accounting/VoucherApprove/PaymentReBackDetails?id=" + Id;
+            }
+            if (voucherTypeId == 8) {
+                window.location.href = "/Accounting/VoucherApprove/ReceiptReBackDetails?id=" + Id;
+            }
+            if (voucherTypeId == 7) {
+                window.location.href = "/Accounting/VoucherApprove/JournalReBackDetails?id=" + Id;
+            }
+            if (voucherTypeId == 1) {
+                window.location.href = "/Accounting/VoucherApprove/ContraReBackDetails?id=" + Id;
+            }
+        }
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+    </script>
+}
+@section StyleV{
+    <style>       
+    </style>
+}

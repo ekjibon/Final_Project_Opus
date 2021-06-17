@@ -1,0 +1,176 @@
+﻿@model PromotionViewModel
+
+@{
+    ViewData["Title"] = "Promotion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+            </div>
+            <div class="col-4">
+                @*<a href='/HRPMSEmployee/Photograph/EditGrid/@Model.employeeID' style="text-decoration:none;"><h6 class="identity-box">@Model.employeeNameCode</h6></a>*@
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="Promotion" asp-action="Index" method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group row">
+                            <label for="promotionType" class="col-sm-4 col-form-label">@Model.fLang.promotionType</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="promotionType" name="promotionType">
+                                    <option value="General">General</option>
+                                    <option value="Cut">Cut Promotion</option>
+                                    <option value="Time Scale">Time Scale</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="designationId" class="col-sm-4 col-form-label">@Model.fLang.designation</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="designationId" name="designationId">
+                                    @foreach (var data in Model.designations)
+                                    {
+                                        <option value="@data.Id">@data.designationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="ID" name="ID" />
+                        <input type="hidden" id="employeeId" name="employeeId" value="@ViewBag.employeeID" />
+                        <div class="form-group row">
+                            <label for="promotionDate" class="col-sm-4 col-form-label">@Model.fLang.promotionDate</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="promotionDate" name="promotionDate" autocomplete="off">
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-5">
+                        <div class="form-group row">
+                            <label for="salaryGradeId" class="col-sm-4 col-form-label">@Model.fLang.salaryGrade</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="salaryGradeId" name="salaryGradeId">
+                                    @foreach (var data in Model.salaryGrades)
+                                    {
+                                        <option value="@data.Id">@data.gradeName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Basic" class="col-sm-4 col-form-label">@Model.fLang.basic</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Basic" name="Basic">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="Remarks" class="col-sm-4 col-form-label">@Model.fLang.remarks</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Remarks" name="Remarks">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="promotionTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.designation</th>
+                            <th>@Model.fLang.promotionDate</th>
+                            <th>@Model.fLang.salaryGrade</th>
+                            <th>@Model.fLang.basic</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.promotions)
+                        {
+                            <tr>
+                                <td>@data.designation.designationName</td>
+                                <td>@data.promotionDate</td>
+                                <td>@data.salaryGrade.gradeName</td>
+                                <td>@data.Basic</td>
+                                <td>@data.Remarks</td>
+                                <td>
+                                    <a class="btn btn-info" href="#" onclick="EditPromotion(@data.Id,'@data.promotionType','@data.designationId','@data.promotionDate','@data.salaryGradeId',@data.Basic,'@data.Remarks')"><i class="fa fa-edit"></i>Edit</a>
+                                    <a class="btn btn-danger" onclick="DeleteAssign(@data.Id)" href="#"><i class="fa fa-trash-alt"></i>Delete</a>
+                                </td>
+                            </tr>
+                        }
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        function EditPromotion(...params) {
+            $('#ID').val(params[0]);
+            $('#promotionType').val(params[1]);
+            $('#designationId').val(params[2]);
+            $('#promotionDate').val(params[3]);
+            $('#salaryGradeId').val(params[4]);
+            $('#Basic').val(params[5]);
+            $('#Remarks').val(params[6]);
+        }
+
+        function DeleteAssign(id) {
+            Common.Ajax('Delete', '/global/api/assignment/' + id, [], 'json', Result, false);
+        }
+
+        function Result(response) {
+            @*@Url.Action("Index", "Assignment") *@
+            }
+
+        $(document).ready(function () {
+            $("#promotion").addClass("active");
+            $('#promotionTable').DataTable();
+            $('#promotionDate').datepicker({ uiLibrary: 'bootstrap4' });
+
+           
+            
+
+        });
+    </script>
+}

@@ -1,0 +1,162 @@
+﻿@model LicenseViewModel
+
+@{
+    ViewData["Title"] = "License Information";
+    Layout = "~/Areas/MemberInfo/Views/Shared/_EmployeeForm.cshtml";
+}
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+            </div>
+            <div class="col-4">
+                <h6 class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="MemberInfo" asp-controller="License" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="licenseNumber" class="col-sm-2 col-form-label"><span style="color:red;float:right;">*</span>@Model.fLang.licenseNumber </label>                   
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="licenseNumber" value="" name="licenseNumber" data-parsley-required="true">
+                        <input type="hidden" name="employeeID" id="employeeID" value="@Model.employeeID" />
+                        <input type="hidden" name="licenseId" id="licenseId" value="0" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="licenseCategory" class="col-sm-4 col-form-label"><span style="color:red;float:right;">*</span>@Model.fLang.licenseCategory</label>                            
+                            <div class="col-sm-8">
+                                <select class="form-control" name="licenseCategory" id="licenseCategory" data-parsley-required="true">
+                                    <option>Select One</option>
+                                    <option>Light</option>
+                                    <option>Medium</option>
+                                    <option>Heavy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="place" class="col-sm-4 col-form-label"><span style="color:red;float:right;">*</span>@Model.fLang.place</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="place" value="" name="place" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="dateOfIssue" class="col-sm-4 col-form-label"><span style="color:red;float:right;">*</span>@Model.fLang.dateOfIssue </label>                            
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="dateOfIssue" value="" name="dateOfIssue" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="dateOfExpair" class="col-sm-4 col-form-label"><span style="color:red;float:right;">*</span>@Model.fLang.dateOfExpair </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="dateOfExpair" value="" name="dateOfExpair" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="licenseTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang.licenseNumber</th>
+                            <th>@Model.fLang.place</th>
+                            <th>@Model.fLang.licenseCategory</th>
+                            <th>@Model.fLang.dateOfIssue</th>
+                            <th>@Model.fLang.dateOfExpair</th>
+                            <th>@Model.fLang.action</th>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var data in Model.licenses)
+                        {
+                            <tr>
+                                <td>@data.licenseNumber</td>
+                                <td>@data.placeOfIssue</td>
+                                <td>@data.category</td>
+                                <td>@data.dateOfIssue?.ToString("MM/dd/yyyy")</td>
+                                <td>@data.dateOfExpair?.ToString("MM/dd/yyyy")</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id, '@data.licenseNumber', '@data.placeOfIssue', '@data.dateOfIssue?.ToString("MM/dd/yyyy")','@data.dateOfExpair?.ToString("MM/dd/yyyy")','@data.category')" href="#"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btn-danger" href="#"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+
+            $("#license").addClass("active");
+            $('#licenseTable').DataTable();
+            $(function () {
+                $('#dateOfIssue').datepicker({
+                    uiLibrary: 'bootstrap4'
+                });
+                $('#dateOfExpair').datepicker({
+                    uiLibrary: 'bootstrap4'
+                });
+            });
+        });
+
+        function Edit(Id, licenseNumber, placeOfIssue, dateOfIssue, dateOfExpair, category) {
+            $("#licenseId").val(Id);
+            $("#licenseNumber").val(licenseNumber);
+            $("#place").val(placeOfIssue);
+            $("#dateOfIssue").val(dateOfIssue);
+            $("#dateOfExpair").val(dateOfExpair);
+            $("#licenseCategory").val(category);
+        }
+
+    </script>
+}
+
+

@@ -1,0 +1,207 @@
+﻿@model AttendanceUpdateApplyViewModel
+@{
+    ViewData["Title"] = "Attendance Application";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Attendance Application</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSAttendence" asp-controller="AttendanceProcess" asp-action="AttendanceApply" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <input type="hidden" id="editId" name="editId" value=0>
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="col-sm-6">
+
+                        <div class="form-group row">
+                            <label for="employeeCode" class="col-sm-4 col-form-label">@Model.visualEmpCodeName</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeCode" name="employeeCode" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="employeeName" class="col-sm-4 col-form-label">Employee's Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="employeeName" name="employeeName" data-parsley-required="true" data-parsley-trigger="keyup" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="Designation" class="col-sm-4 col-form-label">Designation </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="Designation" name="Designation" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="applicationNo" class="col-sm-4 col-form-label">Application No </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="applicationNo" name="applicationNo" value="@ViewBag.applicationNo" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="applyDateTime" class="col-sm-4 col-form-label">Apply Date <span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="applyDateTime" autocomplete="off" name="applyDateTime" data-date-format="yyyy-mm-dd hh:ii">
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="approverDesignation" class="col-sm-4 col-form-label">Approver's PIN</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="@Model.approvalDetail?.approver?.employeeCode" name="approverDesignation" id="approverDesignation" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="subsEmpName" class="col-sm-4 col-form-label">Approver's Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="subsEmpName" value="@Model.approvalDetail?.approver?.nameEnglish" id="subsEmpName" required readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="approverDesignation" class="col-sm-4 col-form-label">Approver's Desig.</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="@Model.approvalDetail?.approver?.designation" name="approverDesignation" id="approverDesignation" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="notes" class="col-sm-4 col-form-label">Notes</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="notes" name="notes">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" title="Save" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Application</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="leaveTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>@Model.visualEmpCodeName</th>
+                            <th>Employee Name</th>
+                            <th>Designation</th>
+                            <th>Date & Time</th>
+                            <th>Notes</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.attendanceUpdateApplies)
+                            {
+                                <tr>
+                                    <td width="5%">@i</td>
+                                    <td>@data.employeeInfo.employeeCode</td>
+                                    <td>@data.employeeInfo.nameEnglish</td>
+                                    <td>@data.employeeInfo.designation</td>
+                                    <td>@data.applyDateTime?.ToString("dd-MMM-yyyy hh:mm")</td>
+                                    <td>@data.notes</td>
+                                    @if (@data.approvalStatus == 0)
+                                    {
+                                        <td>Under processing</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Approved</td>
+                                    }
+
+                                    @if (data.approvalStatus == 1)
+                                    {
+                                        <td></td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <a class="btn btn-success" onclick="Edit(@data.Id, '@data.applicationNo', '@data.applyDateTime', '@data.notes')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;<a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                        </td>
+                                    }
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#leaveTable').DataTable();
+
+            //$('#date').datetimepicker({
+            //    format: 'DD/MM/YYYY hh:mm',
+            //});
+            //$("#date").datetimepicker({ dateFormat: "dd-M-yy hh:mm:ss", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datetimepicker("setDate", new Date());
+
+            //$("#date").datetimepicker({ format: "dd-M-yy H:i", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030", timepicker: true });
+
+            $('#applyDateTime').datetimepicker({ uiLibrary: 'bootstrap4' });
+
+            Common.Ajax('GET', '/Payroll/Adjustment/GetEmployeeInfoByCode', [], 'json', ajaxGetEmployeeInfoByCode);
+
+        });
+
+        function ajaxGetEmployeeInfoByCode(response) {
+            $("#employeeInfoId").val(response.Id);
+            $("#employeeName").val(response.nameEnglish);
+            $("#employeeCode").val(response.employeeCode);
+            $("#Designation").val(response.designation);
+        }
+
+        function Edit(Id, applicationNo, applyDateTime, notes) {
+            $("#editId").val(Id);
+            $("#applicationNo").val(applicationNo);
+            $("#applyDateTime").val(applyDateTime);
+            $("#notes").val(notes);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteAttendanceUpdateApplyById", "AttendanceProcess")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/HRPMSAttendence/AttendanceProcess/AttendanceApply";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}

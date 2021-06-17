@@ -1,0 +1,349 @@
+﻿@model SalesCollectionViewModel
+
+@{
+    ViewData["Title"] = " Sales Collection";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Bill Collection</h6>
+                <div class="col-sm-4 row"> <input type="radio" class="col-sm-1 form-control" id="cust" value="1" name="custinv" /><label class="col-sm-11 col-form-label">By Customer</label></div>
+                <div class="col-sm-4 row"> <input type="radio" id="inv" class="col-sm-1 form-control" value="2" name="custinv" /><label class="col-sm-11 col-form-label">By Invoice</label></div>
+               
+                <a class="btn btn-dark" href="~/OtherSales/SalesCollection/CustomerList/" style="float:right;">Back</a>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="container">
+                    <form asp- method="post" asp-area="OtherSales" asp-controller="SalesCollection" asp-action="IndexNew" id="logoutForm" class="navbar-right" data-parsley-validate="parsley" enctype="multipart/form-data">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group row" id="divinvoice" style="display:none">
+                            <label for="customerName" class="col-sm-3 col-form-label">Invoice Number<span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text"  data-parsley-trigger="keyup" class="form-control" name="invoiceNo" id="invoiceNo" value="">
+                                <input type="hidden" name="invoicemasterId" id="invoicemasterId" value="" />
+                            </div>
+                        </div>
+                        <div class="form-group row" id="divcust" style="display:none">
+                            <label for="customerName" class="col-sm-3 col-form-label">Customer Name<span style="float:right;" class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text"  data-parsley-trigger="keyup" class="form-control" name="customerName" id="customerName" value="">
+                                <input type="hidden" name="customerId" id="customerId" value="" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label">Bill Collection Date <span class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="date" value="" name="date" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label">Payment Mode <span class="redStar">*</span></label>
+                            <div class="col-sm-9">
+                                <select type="text" class="form-control" id="paymentModeId" name="paymentModeId">
+                                    @*<option value="1">Cash</option>
+                    <option value="2">Bank</option>*@
+                                    @foreach (var data in Model.paymentModes)
+                                    {
+                                        <option value="@data.Id">@data.paymentModeName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-9 row">
+                                @*<div class="col-sm-6 row" id="cash">
+                    <label class="col-sm-6 col-form-label">Cash Amount</label>
+                    <input data-parsley-type="number" class="col-sm-6 form-control" id="cashAmount" value="" name="cashAmount">
+                </div>
+                <div class="col-sm-6 row" id="bank" style="display:none">
+
+                    <label class="col-sm-6 col-form-label">Bank Amount</label>
+                    <input data-parsley-type="number" class="col-sm-6 form-control" id="bankAmount" value="" name="bankAmount">
+                </div>*@
+                                <div class="col-sm-6 row" id="SbankName">
+                                    <label class="col-sm-5 col-form-label">Bank Name</label>
+                                    <input type="text" class="col-sm-7 form-control" id="bankName" value="" name="bankName">
+                                </div>
+                                <div class="col-sm-6 row" id="SchecqueNo">
+
+                                    <label class="col-sm-5 col-form-label">Cheque No</label>
+                                    <input type="text" class="col-sm-7 form-control" id="checqueNo" value="" name="checqueNo">
+                                </div>
+                                <div class="col-sm-6 row" id="StrxNo" style="display:none">
+
+                                    <label class="col-sm-5 col-form-label">Ref/Trx No</label>
+                                    <input type="text" class="col-sm-7 form-control" id="trxNo" value="" name="trxNo">
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-9 row">
+
+
+
+                                <div class="col-sm-6 row">
+                                    <label class="col-sm-5 col-form-label">Amount</label>
+                                    <input data-parsley-type="number" class="col-sm-7 form-control" id="Amount" value="" name="Amount">
+                                </div>
+
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+            <label for="accountLedgerId" class="col-sm-3 col-form-label">Store Name</label>
+            <div class="col-sm-9">
+                <select class="form-control" name="storeId" id="storeId">
+
+                    @foreach (var data in Model.storeAssigns.Where(x => x.store.Id == ViewBag.storeId))
+                    {
+                        <option value="@data.Id">@data.store.storeName</option>
+                    }
+                </select>
+            </div>
+        </div>*@
+                        <div class="form-group row">
+                            <label for="remarks" class="col-sm-3 col-form-label"> Remarks</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="remarks" value="" name="remarks">
+                                <input type="hidden" class="form-control" id="relSupplierCustomerResourseId" value="@Model.paymentInvoiceWithDues?.FirstOrDefault()?.salesInvoiceMaster?.relSupplierCustomerResourseId" name="relSupplierCustomerResourseId">
+                            </div>
+                        </div>
+
+                        <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;" title="Payment"><i class="fas fa-shopping-cart"></i></button>
+                        <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                colReorder: true
+            });
+            $("#inv").prop("checked", true);
+            if ($("input[name='custinv']:checked").val() == 1) {
+                $("#cust").prop("checked", true);
+                $("#inv").prop("checked", false);
+                $("#divinvoice").hide();
+                $("#divcust").show();
+
+            }
+            else {
+                $("#cust").prop("checked", false);
+                $("#inv").prop("checked", true);
+                $("#divinvoice").show();
+                $("#divcust").hide();
+            }
+            $("#inv").change(function () {
+                if ($("input[name='custinv']:checked").val() == 1) {
+                    $("#cust").prop("checked", true);
+                    $("#inv").prop("checked", false);
+                    $("#divinvoice").hide();
+                    $("#divcust").show();
+
+
+                }
+                else {
+                    $("#cust").prop("checked", false);
+                    $("#inv").prop("checked", true);
+                    $("#divinvoice").show();
+                    $("#divcust").hide();
+                }
+            });
+            $("#cust").change(function () {
+                if ($("input[name='custinv']:checked").val() == 1) {
+                    $("#cust").prop("checked", true);
+                    $("#inv").prop("checked", false);
+                    $("#divinvoice").hide();
+                    $("#divcust").show();
+
+                }
+                else {
+                    $("#cust").prop("checked", false);
+                    $("#inv").prop("checked", true);
+                    $("#divinvoice").show();
+                    $("#divcust").hide();
+                }
+            });
+            $('#date').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('#date1').flatpickr({ dateFormat: "m/d/Y", maxDate: "@DateTime.Now.ToString("MM/dd/yyyy")" });
+            $('.clsInvoiceDate').flatpickr({ dateFormat: "m/d/Y" });
+            $('#memberTable').DataTable({
+                colReorder: true
+            });
+            Common.Ajax('GET', '/global/api/getAllORelSupplierCustomerResourseByRoleId', [], 'json', ajaxAllCustomer);
+            Common.Ajax('GET', '/global/api/getAllSalesInvoiceMasterD', [], 'json', ajaxAllInvoice);
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+
+            $('#customFile').on('change', function (e) {
+                //get the file name
+                //var fileName = $(this).val();
+                var fileName = e.target.files[0].name;
+                //replace the "Choose a file" label
+                $(this).next('.custom-file-label').html(fileName);
+            })
+            $('#paymentModeId').on('change', function (e) {
+                var Svalue = $('#paymentModeId option:selected').text();
+              
+                if (Svalue == "Cheque") {
+                    $('#SbankName').show();
+                    $('#SchecqueNo').show();
+                    $('#StrxNo').hide();
+                  
+                }
+                
+                else
+                {
+                    $('#SbankName').hide();
+                    $('#SchecqueNo').hide();
+                    $('#StrxNo').show();
+                 }
+            })
+        });
+        function ajaxAllCustomer(response) {
+          //  console.log(response);
+            var GetInStockItemSpacificationList = [];
+
+            $.each(response, function (id, option) {
+
+                var obj = new Object();
+                obj.key = option.relId;
+                obj.value = option.customerName;
+                obj.bin = option.mobile;
+
+                obj.orgId = option.Id;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#customerName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#customerId").val(ui.item.key);
+                    $("#relSupplierCustomerResourseId").val(ui.item.key);
+                    $("#binNo").val(ui.item.bin);
+                    //Common.Ajax('GET', '/global/api/customer/GetAddressListByResourceId/' + ui.item.orgId, [], 'json', ajaxAddress);
+                }
+            });
+        }
+        function ajaxAllInvoice(response) {
+            console.log(response);
+            var GetInStockItemSpacificationList = [];
+
+            $.each(response, function (id, option) {
+
+                var obj = new Object();
+                obj.key = option.salesInvoiceMaster.Id;
+                obj.value = option.salesInvoiceMaster.invoiceNumber;
+                obj.bin = option.salesInvoiceMaster.relSupplierCustomerResourseId;
+
+                obj.amount = option.salesInvoiceMaster.NetTotal;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#invoiceNo').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#invoicemasterId").val(ui.item.key);
+                    $("#customerId").val(ui.item.bin);
+                    $("#relSupplierCustomerResourseId").val(ui.item.bin);
+              
+                    $("#Amount").val(ui.item.amount);
+                    //Common.Ajax('GET', '/global/api/customer/GetAddressListByResourceId/' + ui.item.orgId, [], 'json', ajaxAddress);
+                }
+            });
+        }
+        function Refresh() {
+            location.reload();
+        }
+
+        function Payment(employeeId) {
+            $('#employeeId').val(employeeId);
+        }
+
+        function AddQuantity(id) {
+            if ($("#select-" + id).prop("checked") == true) {
+                var x = $("#paymentDue-" + id).val();
+                $("#paymentAmount-" + id).val($("#paymentDue-" + id).val());
+                $("#paymentAmount-" + id).removeAttr("readonly");
+                $("#select-" + id).attr("name","selectPaymentHeadIds[]");
+                $("#paymentAmount-" + id).attr("name","selectPaymentHeadAmounts[]");
+                $("#paymentDue-" + id).attr("name","selectPaymentHeadDues[]");
+            } else {
+                $("#paymentAmount-" + id).val("");
+                $("#paymentAmount-" + id).attr("readonly", true);
+                $("#select-" + id).removeAttr("name");
+                $("#paymentAmount-" + id).removeAttr("name");
+                $("#paymentDue-" + id).removeAttr("name");
+            }
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+            var total = $("#total").val();
+            $('#cashAmount').val(total);
+            $('#bankAmount').val(total);
+        }
+
+        function TotalCalculation() {
+            var sum = 0;
+            $('.paymentAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+            var total = $("#total").val();
+            $('#cashAmount').val(total);
+            $('#bankAmount').val(total);
+        }
+
+        function SelectAll() {
+            if ($("#selectAll").prop('checked') == true) {
+                var trCount = $("#salesCollectionList tbody tr").length;
+                for (var i = 1; i <= trCount; i++) {
+                    $("#select-" + i).prop('checked', true);
+                    AddQuantity(i);
+                }
+            }
+            else {
+                var trCount = $("#salesCollectionList tbody tr").length;
+                for (var i = 1; i <= trCount; i++) {
+                    $("#select-" + i).prop('checked', false);
+                    AddQuantity(i);
+                }
+            }
+        }
+    </script>
+}

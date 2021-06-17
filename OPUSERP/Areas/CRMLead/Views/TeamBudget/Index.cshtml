@@ -1,0 +1,188 @@
+﻿@model TeamBudgetViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/CRMMasterData/Views/Shared/_CRMMasterDataForm.cshtml";
+}
+
+
+
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        @*<hr>*@
+        <div class="container">
+            <form asp-area="CRMLead" asp-controller="TeamBudget" asp-action="Index" method="post" id="formTeamBudget" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="row">
+                    <label>Company Budget</label>
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <input type="hidden" id="teamBudegtId" name="teamBudegtId" value="0">
+                                <input type="hidden" id="companyBudgetsId" name="companyBudgetsId" value="0">
+
+
+                                <div class="form-group row">
+                                    <div class="col-6 row">
+                                        <label for="ratingYearId" class="col-sm-6 col-form-label">Budget Year</label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="yearId" name="yearId">
+                                                <option value="">-Select-</option>
+
+                                                @foreach (var data in Model.years)
+                                                {
+                                                    <option value="@data.Id">@data.year</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-6 row">
+                                        <label for="initialAmount" class="col-sm-6 col-form-label">Company Initial Budget</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" name="initialAmount" id="initialAmount" data-parsley-required="true" readonly />
+
+                                        </div>
+                                    </div>
+                                    <div class="col-6 row">
+                                        <label for="surveillanceAmount" class="col-sm-6 col-form-label">Company Surveillance Budget</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-control" id="surveillanceAmount" name="surveillanceAmount" data-parsley-required="true" readonly />
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group row">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label>Team Budget</label>
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                               
+
+
+                                <div class="form-group row">
+                                    <div class="col-12">
+                                        <table class="table table-bordered table-striped" id="tblteamlead" data-parsley-required="true">
+                                            <thead style="width:100%;background-color:lightgray;">
+                                                <tr>
+                                                    <th style="width:33%">Team Leader Name</th>
+                                                    <th style="width:34%">Initial Budget</th>
+                                                    <th style="width:33%">Surveillance Budget</th>
+                                                   
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                               
+
+                               
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section ScriptsMD{
+    <script>
+
+        $(document).ready(function () {
+            $("#BankList").addClass("active");
+
+
+            $("#yearId").change(function () {
+                var bankId = $("#yearId").val();
+                Common.Ajax('GET', '/CRMLead/TeamBudget/GetYearWiseBudget/?yearId=' + bankId, [], 'json', ajaxGetyearwisebudget);
+                Common.Ajax('GET', '/CRMLead/TeamBudget/GetTealList/', [], 'json', ajaxGetteamlist);
+            });
+            
+        });
+        function ajaxGetteamlist(response) {
+            var dtTable = $("#tblteamlead");
+            var tableBody = dtTable.find('tbody');
+            tableBody.empty();
+            $.each(response, function (key, value) {
+                var trHtml = '<tr>' +
+                    '<td><input type="hidden"  class="form-control" id="teamIds" name="teamIds" value="' + value.Id + '"><input type="text"  class="form-control" id="teamId"  value="' + value.memberName + '" readonly></td>' +
+                    '<td><input type="number"  class="form-control" id="initialAmount" name="initialAmounts" value=""></td>' +
+                    '<td><input type="number"  class="form-control" id="surveillence" name="surveillences" value=""></td>' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            });
+            //$('#bankBranchDetailsId').empty();
+            //$('#bankBranchDetailsId').append(options);
+        }
+        function ajaxGetyearwisebudget(response) {
+           
+            //$.each(response, function (i, item) {
+            //    options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            //});
+            //$('#bankBranchDetailsId').empty();
+            //$('#bankBranchDetailsId').append(options);
+            $('#initialAmount').val(response.initialAmount);
+            $('#surveillanceAmount').val(response.surveillanceAmount);
+
+        }
+        var bankBranchDetailsId = 0;
+        function ajaxGeLeadsBankInfoById(response) {
+            $("#Id").val(response.Id);
+            $("#leadsId").val(response.leadsId);
+            $("#bankId").val(response.bankBranchDetails.bankId);
+            $("#bankType").val(response.bankType);
+            bankBranchDetailsId = response.bankBranchDetailsId;
+            Common.Ajax('GET', '/CRMLead/LeadManagement/GetBranchByBankId/?bankId=' + response.bankBranchDetails.bankId, [], 'json', ajaxGetBranchByBankIdEdit);
+
+        }
+        function ajaxGetBranchByBankIdEdit(response) {
+            var options = '<option value="">Select</option>';
+            $.each(response, function (i, item) {
+                options += '<option value="' + item.Id + '">' + item.bankBranch.branchName + '</option>';
+            });
+            $('#bankBranchDetailsId').empty();
+            $('#bankBranchDetailsId').append(options);
+            $("#bankBranchDetailsId").val(bankBranchDetailsId);
+        }
+
+
+
+    </script>
+}
+
+
+

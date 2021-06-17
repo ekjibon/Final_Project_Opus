@@ -1,0 +1,215 @@
+﻿@model ERPCompanyViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp;Company Information</label>
+        </div>
+        <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+            <form asp-area="ERPSettings" asp-controller="ERPCompany" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Company Name <span style="color:red;">*</span></span></div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="companyName" name="companyName" data-parsley-required="true" />
+                                <input type="hidden" id="companyId" name="companyId" value="0" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4 p-0"><span class="col-form-label">Trade License Number</span></div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="tradeLicense" name="tradeLicense" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">eTin Number</span></div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="tinNo" name="tinNo" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">VAT Number</span></div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="vatNo" name="vatNo" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4 p-0"><span class="col-form-label">Contact Person Name</span></div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="ownerName" name="ownerName" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Contact Number</span></div>
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="officeTelephone" name="officeTelephone" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Company Email<span style="color:red;">*</span></span></div>
+                            <div class="col-8">
+                                <input type="email" class="form-control" id="companyEmail" name="companyEmail" data-parsley-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Alternative Email </span></div>
+                            <div class="col-8">
+                                <input type="email" class="form-control" id="alternetEmail" name="alternetEmail" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Admin User<span style="color:red;">*</span></span></div>
+                            <div class="col-8">
+                                <input type="email" class="form-control" id="loginId" name="loginId" data-parsley-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Password <span style="color:red;">*</span></span></div>
+                            <div class="col-8">
+                                <input type="password" class="form-control" id="password" name="password" data-parsley-required="true" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Logo</span></div>
+                            <div class="col-8">
+                                <img id="logo_img" style="width:200px;height:100px" src="~/images/upload.jpg" alt="" class="img-thumbnail float-left">
+                                <input type="file" title="Logo Upload" id="logo" name="logo" class="img-thumbnail float-left" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-4"><span class="col-form-label">Company Address<span style="color:red;">*</span></span></div>
+                            <div class="col-8">
+                                <textarea class="form-control" id="addressLine" name="addressLine"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div style="height:16px;"></div>
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp;Company List</label>
+        </div>
+        <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+            <table class="table table-striped table-bordered" id="companyTable">
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Email</th>
+                        <th>Owner</th>
+                        <th>Phone</th>
+                        <th>Logo</th>
+                        <th>Action</th>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.companies)
+                    {
+                        <tr>
+                            <td>@data.companyName</td>
+                            <td>@data.companyEmail</td>
+                            <td>@data.ownerName</td>
+                            <td>@data.officeTelephone</td>
+                            <td><img src="@data.filePath" height="20" width="60" /> </td>
+                            <td>
+                                <a href="javascript:void(0)" style="color:white" onclick="Edit(@data.Id,'@data.companyName','@data.tradeLicense','@data.tinNo','@data.vatNo','@data.alternetEmail','@data.companyEmail','@data.ownerName','@data.officeTelephone','@data.filePath')" class="btn btn-info"><i class="fa fa-edit"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        function readURLChallan(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#logo_img').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function Edit(id, companyName, tlicence, tin, vat, alterNetEmail, email, owner, phone, filepath)
+        {
+            $('#companyId').val(id);
+            $('#companyName').val(companyName);
+            $('#tradeLicense').val(tlicence);
+            $('#tinNo').val(tin);
+            $('#vatNo').val(vat);
+            $('#ownerName').val(owner);
+            $('#officeTelephone').val(phone);
+            $('#companyEmail').val(email);
+            $('#alternetEmail').val(alterNetEmail);
+            $('#logo').val(filepath);
+        }
+
+        $(document).ready(function () {
+            $("#logo").change(function () {
+                readURLChallan(this);
+            });
+
+            $('#companyTable').dataTable();
+
+        });
+    </script>
+}
+

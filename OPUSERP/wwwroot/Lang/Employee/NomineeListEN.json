@@ -1,0 +1,11 @@
+﻿{
+  "title": "Nominee List",
+  "name": "Name",
+  "sl": "SL",
+  "relation": "Relation",
+  "contact": "Contact",
+  "fundType": "Fund Type",
+  "value": "Value(Percent)",
+  "address": "Address"
+
+}

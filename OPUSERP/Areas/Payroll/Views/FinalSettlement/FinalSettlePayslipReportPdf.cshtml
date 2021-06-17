@@ -1,0 +1,218 @@
+﻿@model FinalSettlementViewModel
+@{
+    ViewData["Title"] = "Final Settlement Report";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<div style="width:100%;overflow:hidden;">
+    <div style="width:100%;overflow:hidden;">
+        <div style="width:20%;float:left;">
+            <img src="@Model.companies.FirstOrDefault().filePath" alt="OPUS ERP" style="height:50px;" />
+        </div>
+        <div style="width:60%;float:left;">
+            <h3 style="text-align:center;color:black;"><b>@Model.companies.FirstOrDefault()?.companyName</b></h3>
+            <h5 style="text-align:center;color:black;background-color:white;"><i>CONFIDENTIAL</i></h5>
+            <h6 style="text-align:center;color:black;font-size:larger;">Final Settlement for the month of @Model.payslipReportViewModels.FirstOrDefault().periodName</h6>
+        </div>
+        <div style="width:20%;float:right;">
+
+        </div>
+    </div>
+
+    <div style="color:black;font-size:larger;background-color:darkgrey;border:solid 1px;padding-left:5px;">
+        <label><b>Employee's Information</b></label>
+    </div>
+    <br />
+    <div>
+        <table style="border:solid 1px;width:100%;">
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Employee Name: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().nameEnglish</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Designation: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().designation</td>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.visualEmpCodeName: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().employeeCode</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Division/Department: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().department</td>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Date of Joining: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().joiningDatePresentWorkstation</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">SBU Name: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().branchUnitName</td>
+            </tr>
+
+        </table>
+    </div>
+    <br />
+    <div style="color:black;font-size:larger;background-color:darkgrey;border:solid 1px;padding-left:5px;">
+        <label><b>Service Information</b></label>
+    </div>
+    <br />
+    <div>
+        <table style="border:solid 1px;width:100%;">
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Separation Status: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.seperationStatus</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Last Working Day: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.lastWorkingDay</td>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Notice Period-Employment: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.noticePeriod_Emt</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Notice Period-Served: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.noticePeriod_Served</td>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Length of Service (LOS): </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.lenghtOfService</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">LOS Consider for Gratuity: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.lofSvsCG</td>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Salary Disbursed Upto: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.salaryDisbUpto</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Working Day After Salary: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.finalSettlementData.salDue</td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div style="color:black;font-size:larger;background-color:darkgrey;border:solid 1px;padding-left:5px;">
+        <label><b>Salary Details</b></label>
+    </div>
+    <div style="width:100%;overflow:hidden;">
+        <div style="width:50%;float:left;">
+            <div style="color:black;font-size:larger;border:solid 1px;text-align:center;">
+                <label>Earnings</label>
+            </div>
+            <div>
+                <table style="border:solid 1px;width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:black;">Component</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:black;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.payslipAdditionViewModels)
+                        {
+                            <tr>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@data.salaryHeadName</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.amount?.ToString("0,0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td style="text-align:left;border:1px solid;border-color:grey;font-weight:bold;">Total Earnings: </td>
+                            <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.payslipAdditionViewModels.FirstOrDefault().totalAmount?.ToString("0,0")</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left;border:1px solid;border-color:grey;font-weight:bold;">Net Payable: </td>
+                            <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.payslipReportViewModels.FirstOrDefault().netPayable?.ToString("0,0")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div style="width:50%;float:right;">
+            <div style="color:black;font-size:larger;border:solid 1px;text-align:center;">
+                <label>Deductions</label>
+            </div>
+            <div>
+                <table style="border:solid 1px;width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:black;">Component</th>
+                            <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:black;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.payslipDeductionViewModels)
+                        {
+                            <tr>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;">@data.salaryHeadName</td>
+                                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:black;text-align:right;">@data.amount?.ToString("0,0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td style="text-align:left;border:1px solid;border-color:grey;font-weight:bold;">Total Deductions: </td>
+                            <td style="text-align:right;border:1px solid;border-color:grey;font-weight:bold;">@Model.payslipDeductionViewModels.Sum(x => x.amount)?.ToString("0,0")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div style="color:black;font-size:larger;background-color:darkgrey;border:solid 1px;padding-left:5px;">
+        <label><b>Payment Methods</b></label>
+    </div>
+    <br />
+    <div>
+        <table style="border:solid 1px;width:100%;">
+            <tr>
+                <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Payment Type </th>
+                <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Amount (BDT)</th>
+                <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Account / Wallet No.</th>
+                <th style="border:solid 1px;padding-left:3px;font-size:large;border-color:lightgray;">Bank / Wallet Name</th>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Bank Transfer: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;text-align:right;">@Model.payslipReportViewModels.FirstOrDefault().bankPayable?.ToString("0,0")</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().bankAccountNo </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().bankName</td>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Wallet Transfer: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;text-align:right;">@Model.payslipReportViewModels.FirstOrDefault().walletPayable?.ToString("0,0")</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().walletNo </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">@Model.payslipReportViewModels.FirstOrDefault().walletType</td>
+            </tr>
+            <tr>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Cash: </td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;text-align:right;">@Model.payslipReportViewModels.FirstOrDefault().cashPayable?.ToString("0,0")</td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;"></td>
+                <td style="border:solid 1px;padding-left:3px;font-size:small;border-color:lightgray;">Cash</td>
+            </tr>
+        </table>
+    </div>
+    @*<br /><br />
+    <div style="text-align:center;color:black;">       
+        <label>For any query please contact Payroll Team, Human Resources</label>
+    </div>*@
+
+</div>
+
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+<style>
+
+    /*label {
+        font-size: large;
+    }*/
+
+    /*tr, td div, th div, table {
+        page-break-inside: auto !important;
+        font-size: large;
+    }*/
+</style>
+
+
+
+
+

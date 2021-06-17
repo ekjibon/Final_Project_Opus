@@ -1,0 +1,71 @@
+﻿@model BudgetBranchViewModel
+@{
+    ViewData["TitleMD"] = "Budget Branch";
+    Layout = "~/Areas/HRPMSMasterData/Views/Shared/_MasterDataForm.cshtml";
+}
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Budget Branch</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Budget" asp-controller="BudgetBranch" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="code" class="col-sm-2 col-form-label">Code <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="code" id="code">
+                        <input type="hidden" name="branchId" id="branchId" value="0" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">Branch Name <span style="float:right;" class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="name" id="name">
+                    </div>
+                </div>
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br /><hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">List of Budget Branch</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="budgetBranchTable">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Branch Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $('#budgetBranchTable').DataTable();
+        });
+        function Edit(Id, code, name) {
+            $("#branchId").val(Id);
+            $("#code").val(code);
+            $("#name").val(name);
+        }
+    </script>
+}

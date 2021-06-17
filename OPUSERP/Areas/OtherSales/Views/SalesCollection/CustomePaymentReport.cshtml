@@ -1,0 +1,130 @@
+﻿@model SalesCollectionViewModel
+
+@{
+    ViewData["Title"] = " Customer Collection Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">Customer Collection Report</label>
+            </div>
+            <div class="card-body">
+
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label for="customerId" class="col-sm-3 col-form-label">Select Customer <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="customerId" name="customerId" required>
+                                <option value="">Select One</option>
+                                @foreach (var data in Model.relSupplierCustomerResourses)
+                                {
+                                    <option value="@data.Id">@data.resource.nameEnglish</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="fromDate" class="col-sm-3 col-form-label text-left">From Date <span class="redStar">*</span></label>
+                        <div class="col-sm-3 input-group">
+                            <input id="fromDate" class="form-control input-group-sm" readonly />
+                            @*<div class="input-group-prepend">
+                                <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                            </div>*@
+                        </div>
+
+                        <label for="toDate" class="col-sm-2 col-form-label text-left">To Date <span class="redStar">*</span></label>
+                        <div class="col-sm-4 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" readonly />
+                            @*<div class="input-group-prepend">
+                                <i class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></i>
+                            </div>*@
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-10"></label>
+                        <div class="col-sm-2">
+                            <br />
+                            <button type="button" onclick="Refresh()" title="Refresh" class="btn btn-danger btn-lg"><i class="fas fa-sync"></i></button>&nbsp;
+                            <button id="SubmitButton"  class="btn btn-success btn-lg" title="Preview"><i class="fas fa-print"></i></button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+            
+            $('#toDate').flatpickr({ dateFormat: "m/d/Y" });
+            $('#fromDate').flatpickr({ dateFormat: "m/d/Y" });
+
+            $("#SubmitButton").click(function (e) {
+                let id = $('#customerId').val();
+                let name = $('#customerId option:selected').text();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+
+                if (id == 0) {
+                    swal('Warning', 'Select Customer', 'warning');
+                    return false;
+                } else if (fromDate == '') {
+                    swal('Warning', 'Select From Date', 'warning');
+                    return false;
+                } else if (toDate == '') {
+                    swal('Warning', 'Select To Date', 'warning');
+                    return false;
+                }
+                window.open('/Sales/SalesCollection/CustomerPaymentpdf?id=' + id + '&name=' + name + '&fromDate=' + fromDate + '&toDate=' + toDate, '_blank');
+                
+                
+            });
+
+        });
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function CustomerCollectionReportView() {
+            let id = $('#customerId').val();
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+            //window.location.href='/Sales/SalesCollection/CustomerCollectionpdf/id=' + id + '&fromDate=' + fromDate + '&toDate=' + toDate , '_blank';
+            window.open('/Sales/SalesCollection/CustomerCollectionpdf?id=' + id + '&fromDate=' + fromDate + '&toDate=' + toDate, '_blank');
+        }
+       
+
+        
+    </script>
+}

@@ -1,0 +1,161 @@
+﻿
+@model IOUViewModel
+@{
+    ViewData["Title"] = "IOUReport";
+}
+
+<br />
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-6">
+                <h6 class="m-0 font-weight-bold text-primary">APPROVE LIST</h6>
+            </div>
+            @*<div class="col-6">
+                <button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("Index", "IOU")'">Create IOU</button>
+            </div>*@
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table class="table table-striped table-bordered" id="approvedListTable">
+            <thead>
+                <tr>
+                    <th>IOU Date</th>
+                    <th>IOU No</th>
+                    <th>Delivery Date</th>
+                    <th>IOU Value</th>
+                    @*<th>PR. No.</th>*@
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.iOUMasters)
+                {
+                    <tr>
+                        <td>@data.iouDate?.ToString("dd-MMM-yyyy")</td>
+                        <td>@data.iouNo</td>
+                        <td>@data.expectedDeliveryDate?.ToString("dd-MMM-yyyy")</td>
+                        <td>@data.iouValue?.ToString("0.00")</td>
+                        @*<td>@data.requisition.reqNo</td>*@
+                        <td>@data.iouCurrentStatus</td>
+                        <td>
+                            @if (data.iouStatus == 3)
+                            {
+                                <a class="btn btn-info" target="_blank" onclick="reload()" href="/SCMReport/ReportMaster/IOUViewPdf?iouId=@data.Id"><i class="fa fa-print"></i></a>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<br />
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-6">
+                <h6 class="m-0 font-weight-bold text-primary">PRINTED LIST</h6>
+            </div>
+            @*<div class="col-6">
+                    <button type="button" class="btn btn-default btn-sm" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("Index", "IOU")'">Create IOU</button>
+                </div>*@
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped table-bordered" id="printedListTable">
+            <thead>
+                <tr>
+                    <th>IOU Date</th>
+                    <th>IOU No</th>
+                    <th>Delivery Date</th>
+                    <th>IOU Value</th>
+                    @*<th>PR. No.</th>*@
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.issuedIOUMasters)
+                {
+                    <tr>
+                        <td>@data.iouDate?.ToString("dd-MMM-yyyy")</td>
+                        <td>@data.iouNo</td>
+                        <td>@data.expectedDeliveryDate?.ToString("dd-MMM-yyyy")</td>
+                        <td>@data.iouValue?.ToString("0.00")</td>
+                        @*<td>@data.requisition.reqNo</td>*@
+                        <td>@data.iouCurrentStatus</td>
+                        <td>
+                            @if (data.iouStatus == 3)
+                            {
+                                <a class="btn btn-info" target="_blank" href="/SCMReport/ReportMaster/IOUViewPdf?iouId=@data.Id"><i class="fa fa-print"></i></a>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @*<div class="card-body">
+            <table class="table table-striped table-bordered" id="printedListTable">
+                <thead>
+                    <tr>
+                        <th>IOU Date</th>
+                        <th>IOU No</th>
+                        <th>Delivery Date</th>
+                        <th>IOU Value</th>
+                        <th>PR. No.</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.iOUMasters)
+                    {
+                        <tr>
+                            <td>@data.iouDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.iouNo</td>
+                            <td>@data.expectedDeliveryDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.iouValue?.ToString("0.00")</td>
+                            <td>@data.requisition.reqNo</td>
+                            <td>@data.iouCurrentStatus</td>
+                            <td>
+                                @if (data.iouStatus == 3)
+                                {
+                                    <a class="btn btn-info" target="_blank" href="/SCMReport/ReportMaster/IOUViewPdf?iouId=@data.Id"><i class="fa fa-print"></i></a>
+                                }
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>*@
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#approvedListTable').DataTable();
+            $('#printedListTable').DataTable();
+        });
+
+        function reload() {           
+            setTimeout(function () {
+                window.location.reload();                
+            }, 600);
+        }
+    </script>
+}
+
+
+
+
+

@@ -1,0 +1,147 @@
+﻿@model PackagingViewModel
+@{
+    ViewData["Title"] = "Package";
+    Layout = "~/Views/Shared/_PrintView.cshtml";
+}
+
+<style>
+    .table-bordered {
+        border-collapse: collapse !important;
+    }
+
+    .table-bordered th {
+        border: 1px solid gray !important;
+    }
+
+    .table-bordered td {
+        border: 1px solid gray !important;
+    }
+</style>
+
+<div>
+    <div>
+        <div>
+            <div>
+                <div>
+                    <div style="float:left">
+                        <img src="@Model.company.filePath" style="margin:0px 0px 0px 0px;" height="100" width="180" />
+                    </div>
+                    <div style="color:black">
+                        <p style="font-weight:900;padding-left:410px">@Model.company.companyName</p>
+                        <p style="width:650px;padding-left:300px;text-align:center">@Model.company.addressLine</p>
+                        @*<p style="width:650px;padding-left:300px;text-align:center">@Model.company.phone</p>*@
+                        <p style="width:650px;padding-left:300px;text-align:center">Package</p>
+                    </div>
+                </div>
+            </div>
+
+            <br /><br />
+
+                  <div style="margin-bottom:30px;color:black">
+                      <span style="float:left;font-weight:600;">Invoice No : @Model.packageMaster.packageNo</span>
+                      <span style="float:left;font-weight:600;">Invoice No : @Model.packageMaster.packageName</span>
+                      <span style="text-align:right;float:right;font-weight:600;">Package Date : @Model.packageMaster.packageDate?.ToString("dd-MMM-yyyy")</span>
+                      <br />
+                      <span style="float:left;font-weight:600;">Start Date : @Model.startDate?.ToString("dd-MMM-yyyy")</span>
+                      <br />
+                      <span style="float:left;font-weight:600;">End Date : @Model.endDate?.ToString("dd-MMM-yyyy")</span>
+                  </div>
+        </div>
+
+        <div>
+            <table class="table table-striped table-bordered" id="voucherList" >
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Item Spac.</th>
+                        @*<th>Price</th>*@
+                        <th>Qty</th>
+                        <th>Discount</th>
+                        <th>Is Free</th>
+                        @*<th>Vat</th>
+        <th>Tax</th>
+
+        <th>Total</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.packageDetails)
+                    {
+                        //decimal lineTot = 0; decimal lineDisc = 0;
+
+                        //lineTot = (Convert.ToDecimal(@item.itemPriceFixing.price) * Convert.ToDecimal(@item.quantity));
+                        //if (@item.itemPriceFixing.discountPersent != null)
+                        //{
+                        //    lineDisc = (Convert.ToDecimal(@item.itemPriceFixing.price) * Convert.ToDecimal(@item.quantity) * Convert.ToDecimal(@item.itemPriceFixing.discountPersent) / 100);
+                        //}
+                        //decimal lineTotal = lineTot - lineDisc;
+                        string isfree = "False";
+                        if (item.isfree == 1)
+                        {
+                            isfree = "True";
+
+                        }
+                    <tr>
+                        <td>@item.itemSpecification.Item.itemName</td>
+                        <td>@item.itemSpecification.specificationName</td>
+                        @*<td>@item.rate?.ToString("0.00")</td>*@
+                        <td>@item.quantity?.ToString("0.00")</td>
+                        <td>@item.discountPersent?.ToString("0.00")</td>
+                        <td>@isfree</td>
+                        @*<td>@item.vatAmount?.ToString("0.00")</td>
+        <td>@item.taxAmount?.ToString("0.00")</td>
+        <td style="text-align:right;">@item.lineTotal?.ToString("0.00")</td>*@
+                    </tr>
+                    }
+                </tbody>
+                <tfoot>
+                   
+                    @*<tr>
+                        <th colspan="2" style="text-align:right;">Total</th>
+                        <td style="text-align:right;">@Model.requisitionDetails.Sum(x=>x.quantity)</td>
+                    </tr>*@
+                </tfoot>
+            </table>
+        </div>
+
+        @*<div>
+            <div style="text-align:left;width:100%;">
+                <span style="color:black"><span style="font-weight:600">Amount In Word:</span>&nbsp; &nbsp;@ViewBag.InWord</span>
+            </div>
+        </div>*@
+
+        <br /><br /><br /><br /><br /><br />
+
+        <div>
+            <div>
+                <div style="float:left">
+                    <span style="color:black"></span>
+                    <br />
+                    <span style="color:black">-----------------</span>
+                    <br />
+                    <span style="color:black;padding-left:20px">Approved By</span>
+                </div>
+
+                <div style="float:right">
+                    <span style="color:black;text-align:center;">@Model.packageMaster.createdBy</span>
+                    <br />
+                    <span style="color:black">------------------</span>
+                    <br />
+                    <span style="color:black;padding-left:20px">Create By</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

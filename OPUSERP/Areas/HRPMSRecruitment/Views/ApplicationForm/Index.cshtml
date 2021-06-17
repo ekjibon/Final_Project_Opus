@@ -1,0 +1,493 @@
+﻿
+@{
+    ViewData["Title"] = "Application Form";
+}
+<br />
+<h4 class="text text-center" style="color:black">Application Form</h4><br />
+
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Application Form</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSRecruitment" asp-controller="ApplicationForm" asp-action="Index" method="post">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+
+                <h5 style="margin-left: -25px;color: black;">General Information : </h5>
+
+                <div class="form-group row">
+                    <label for="applicantsNo" class="col-sm-2 col-form-label">Applicants No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="applicantsNo" value="" name="applicantsNo">
+                    </div>
+
+                    <label for="date" class="col-sm-2 col-form-label">Date</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="date" value="" name="date" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="nameBn" class="col-sm-2 col-form-label">Name (in Bangla)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="nameBn" value="" name="nameBn">
+                    </div>
+
+                    <label for="nameEn" class="col-sm-2 col-form-label">Name (in English)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="nameEn" value="" name="nameEn" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="nid" class="col-sm-2 col-form-label">NID No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="nid" value="" name="nid">
+                    </div>
+
+                    <label for="bin" class="col-sm-2 col-form-label">BIN No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="bin" value="" name="bin">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dateOfBirth" class="col-sm-2 col-form-label">Date of Birth</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="dateOfBirth" value="" name="dateOfBirth" required>
+                    </div>
+
+                    <label for="locationOfBirth" class="col-sm-2 col-form-label">Location of Birth</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="locationOfBirth" value="" name="locationOfBirth" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="paymentRefno" class="col-sm-2 col-form-label">Payment Reference No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="paymentRefno" value="" name="paymentRefno">
+                    </div>
+
+                    <label for="paymentDoc" class="col-sm-2 col-form-label">Payment Docs</label>
+                    <div class="col-sm-4">
+                        <input type="file" class="form-control" id="paymentDoc" value="" name="paymentDoc">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="fnameBn" class="col-sm-2 col-form-label">Father's Name(in Bangla)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="fnameBn" value="" name="fnameBn">
+                    </div>
+
+                    <label for="fnameEn" class="col-sm-2 col-form-label">Father's Name(in English)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="fnameEn" value="" name="fnameEn">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="mnameBn" class="col-sm-2 col-form-label">Mother's Name(in Bangla)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="mnameBn" value="" name="mnameBn">
+                    </div>
+
+                    <label for="mnameEn" class="col-sm-2 col-form-label">Mother's Name(in English)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="mnameEn" value="" name="mnameEn">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="spouseNameBn" class="col-sm-2 col-form-label">spouse Name(in Bangla)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="spouseNameBn" value="" name="spouseNameBn">
+                    </div>
+
+                    <label for="spouseNameEn" class="col-sm-2 col-form-label">spouse Name(in English)</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="spouseNameEn" value="" name="spouseNameEn">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="photo" class="col-sm-2 col-form-label">Applicant's Photo</label>
+                    <div class="col-sm-4">
+                        <input type="file" class="form-control" id="photo" value="" name="photo">
+                    </div>
+
+                    <label for="sign" class="col-sm-2 col-form-label">Applicant's Signature</label>
+                    <div class="col-sm-4">
+                        <input type="file" class="form-control" id="sign" value="" name="sign">
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5 style="margin-left: -25px;color: black;">Present Address : </h5>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <h5 style="margin-left: -25px;color: black;">Permanent Address : </h5>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="presentDivision" class="col-sm-2 col-form-label">Division/District</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="presentDivision" value="" name="presentDivision">
+                    </div>
+
+                    <label for="PermanentDivision" class="col-sm-2 col-form-label">Division/District</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="PermanentDivision" value="" name="PermanentDivision">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="PermanentPostOffice" class="col-sm-2 col-form-label">Upazilla/Post Office</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="presentPostOffice" value="" name="presentPostOffice">
+                    </div>
+
+                    <label for="Permanentdivision" class="col-sm-2 col-form-label">Upazilla/Post Office</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="PermanentPostOffice" value="" name="PermanentPostOffice">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="presentHouseNo" class="col-sm-2 col-form-label">Road Block/House No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="presentHouseNo" value="" name="presentHouseNo">
+                    </div>
+
+                    <label for="PermanentHouseNo" class="col-sm-2 col-form-label">Road Block/House No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="PermanentHouseNo" value="" name="PermanentHouseNo">
+                    </div>
+                </div>
+
+                <h5 style="margin-left: -25px;color: black;">Communication : </h5>
+
+                <div class="form-group row">
+                    <label for="mobile" class="col-sm-2 col-form-label">Mobile No</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="mobile" value="" name="mobile">
+                    </div>
+
+                    <label for="PermanentHouseNo" class="col-sm-2 col-form-label">E-Mail</label>
+                    <div class="col-sm-4">
+                        <input type="email" class="form-control" id="email" value="" name="email">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="nationality" class="col-sm-2 col-form-label">Nationality</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="nationality" value="" name="nationality">
+                    </div>
+
+                    <label for="Gender" class="col-sm-2 col-form-label">Gender</label>
+                    <div class="col-sm-4">
+                        Male <input type="radio" id="Gender" value="male" name="Gender">
+                        Female <input type="radio" id="Gender" value="female" name="Gender">
+                        Other <input type="radio" id="Gender" value="other" name="Gender">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="religion" class="col-sm-2 col-form-label">Religion</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="religion" value="" name="religion">
+                    </div>
+
+                    <label for="occupation" class="col-sm-2 col-form-label">Occupation</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="occupation" value="" name="occupation">
+                    </div>
+                </div>
+
+                <h5 style="margin-left: -25px;color: black;">Educational Qualification : </h5>
+                <div class="form-group row">
+                    <table class="table table-bordered table-responsive" id="eduTable">
+                        <tr>
+                            <th id="spanRow">Description of Educational Qualification</th>
+                            <th>Degree</th>
+                            <th>Institution</th>
+                            <th>Board/Versity</th>
+                            <th>Roll No</th>
+                            <th>Country</th>
+                            <th>Year of Certification</th>
+                            <th>Main Subject</th>
+                            <th>GPA/Division</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr id="mainrow">
+                            <td>
+                                <select type="text" class="clstype form-control" id="type" value="" name="type">
+                                    <option value="">Select Here</option>
+                                    <option value="SSC">SSC</option>
+                                    <option value="HSC">HSSC</option>
+                                    <option value="Honors">Honors</option>
+                                    <option value="Masters">Masters</option>
+                                </select>
+                                <span class="error">required</span>
+                            </td>
+                            <td><input type="text" class="clsdegree form-control" id="degree" name="degree" /><span class="error">required</span></td>
+                            <td><input type="text" class="clsInst form-control" id="institution" value="" name="institution"><span class="error">required</span></td>
+                            <td><input type="text" class="clsBoard form-control" id="board" value="" name="board"><span class="error">required</span></td>
+                            <td><input type="text" class="clsRoll form-control" id="roll" value="" name="roll"><span class="error">required</span></td>
+                            <td><input type="text" class="clsCountry form-control" id="country" value="" name="country"><span class="error">required</span></td>
+                            <td><input type="text" class="clsCertification form-control" id="certifiationYear" value="" name="certifiationYear"><span class="error">required</span></td>
+                            <td><input type="text" class="clsSub form-control" id="Subject" value="" name="Subject"><span class="error">required</span></td>
+                            <td><input type="text" class="clsGpa form-control" id="gpa" value="" name="gpa"><span class="error">required</span></td>
+                            <td>
+                                <input type="button" id="add" value="Add" style="width:50px" class="btn btn-success" />
+                            </td>
+                        </tr>
+
+                    </table>
+                    <div id="orderItems">
+                        <table class="table table-responsive" id="educationDetails"></table>
+                        <span id="orderItemError" style="color:red"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <table>
+                            <tr>
+                                <td>Others (if any) </td>
+                                <td colspan="8" width="100%"><input type="text" class="form-control" id="others" value="" name="others"> </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h5 style="margin-left: -25px;color: black;">Experience : </h5>
+
+                <div class="form-group row">
+                    <label for="nameOfOffice" class="col-sm-2 col-form-label">Name of Office</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="nameOfOffice" value="" name="nameOfOffice">
+                    </div>
+
+                    <label for="position" class="col-sm-2 col-form-label">Position</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="position" value="" name="position">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="joinDate" class="col-sm-2 col-form-label">Joining Date</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="joinDate" value="" name="joinDate">
+                    </div>
+
+                    <label for="resignDate" class="col-sm-2 col-form-label">Resigning Date</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="resignDate" value="" name="resignDate">
+                    </div>
+                </div>
+                <a style="float:right" href="#" class="btn btn-success">Add</a><br />
+
+                <h5 style="margin-left: -25px;color: black;">Quota : </h5>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Under Freedom Fighter Quata?</td>
+                        <td>
+                            Yes <input type="radio" id="ffighter" value="Yes" name="ffighter">
+                            No <input type="radio" id="ffighter" value="No" name="ffighter">
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Relation With Freedom Fighter</td>
+                        <td><input type="text" class="form-control" id="relation" value="" name="relation"></td>
+                        <td>Document of Freedom Fighter</td>
+                        <td><input type="file" class="form-control" id="docsOfFF" value="" name="docsOfFF"></td>
+                    </tr>
+                    <tr>
+                        <td>Disable/Orphan</td>
+                        <td>
+                            Yes <input type="radio" id="Disable" value="Yes" name="Disable">
+                            No <input type="radio" id="Disable" value="No" name="Disable">
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Is Trible People ?</td>
+                        <td>
+                            Yes <input type="radio" id="trible" value="Yes" name="trible">
+                            No <input type="radio" id="trible" value="No" name="trible">
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Is Anser ? </td>
+                        <td>
+                            Yes <input type="radio" id="anser" value="Yes" name="anser">
+                            No <input type="radio" id="anser" value="No" name="anser">
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Under Other Quota</td>
+                        <td>
+                            Yes <input type="radio" id="other" value="Yes" name="other">
+                            No <input type="radio" id="other" value="No" name="other">
+                        </td>
+                        <td>Which Quata?</td>
+                        <td><input type="text" class="form-control" id="otherQuotaName" value="" name="otherQuotaName"></td>
+                    </tr>
+                </table>
+
+                <hr />
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-plus-square"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#language").addClass("active");
+            $('#date').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#dateOfBirth').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#resignDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#joinDate').datepicker({ uiLibrary: 'bootstrap4' });
+            $('#spanRow').rowSpan = 2;
+
+            $('#add').click(function () {
+                //validation and add order items
+                var isAllValid = true;
+                if ($('#type').val() == "") {
+                    isAllValid = false;
+                    $('#type').siblings('span.error').css('visibility', 'visible');
+                }
+                else {
+                    $('#type').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#degree').val() == "") {
+                    isAllValid = false;
+                    $('#degree').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#degree').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#institution').val() == "") {
+                    isAllValid = false;
+                    $('#institution').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#institution').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#board').val() == "") {
+                    isAllValid = false;
+                    $('#board').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#board').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#country').val() == "") {
+                    isAllValid = false;
+                    $('#country').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#country').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#certifiationYear').val() == "") {
+                    isAllValid = false;
+                    $('#certifiationYear').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#certifiationYear').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#roll').val() == "") {
+                    isAllValid = false;
+                    $('#roll').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#roll').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#Subject').val() == "") {
+                    isAllValid = false;
+                    $('#Subject').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#Subject').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#gpa').val() == "") {
+                    isAllValid = false;
+                    $('#gpa').siblings('span.error').css('visibility', 'visible');
+                } else {
+                    $('#gpa').siblings('span.error').css('visibility', 'hidden');
+                }
+
+                if (isAllValid) {
+                    var $newRow = $('#mainrow').clone().removeAttr('id');
+                    $('.clstype', $newRow).val($('#type').val());
+                    $('.clsdegree', $newRow).val($('#degree').val());
+
+                    //Replace add button with remove button
+                    $('#add', $newRow).addClass('remove').val('Remove').removeClass('btn-success').addClass('btn-danger');
+
+                    //remove id attribute from new clone row
+                    $('#type,#degree,#institution,#board,#roll,#country,#certifiationYear,#Subject,#gpa,#add', $newRow).removeAttr('id');
+                    $('span.error', $newRow).remove();
+                    //append clone row
+                    $('#educationDetails').append($newRow);
+
+                    //clear select data
+                    Refresh();
+                }
+
+            })
+
+            //remove button click event
+            $('#educationDetails').on('click', '.remove', function () {
+                $(this).parents('tr').remove();
+            });
+        });
+
+        function Refresh() {
+            $('#type').val('');
+            $('#degree').val('');
+            $('#institution').val('');
+            $('#board').val('');
+            $('#roll').val('');
+            $('#country').val('');
+            $('#certifiationYear').val('');
+            $('#Subject').val('');
+            $('#gpa').val('');
+            $('#orderItemError').empty();
+        }
+
+        //function AddRow() {
+        //    var row = "<tr id ='newRow'>< td ><select type='text' class='form-control' id='degree' value=''name='degree'>" +
+        //        "<option value=''>Select Here</option><option value=''>Ex 1</option><option value=''>Ex 2</option></select></td >" +
+        //        "< td ><input type='text' class='form-control' id='institution' value=''name='institution'></td>" +
+        //        "<td><input type='text' class='form-control' id='board' value='' name='board'></td>" +
+        //        "<td><input type='text' class='form-control' id='roll' value='' name='board'></td>" +
+        //        "<td><input type='text' class='form-control' id='country' value=''name='board'></td>" +
+        //        "<td><input type='text' class='form-control' id='certifiationYear' value='' name='board'></td>" +
+        //        "<td><input type='text' class='form-control' id='Subject' value='' name='board'></td>" +
+        //        "<td><input type='text' class='form-control' id='gpa' value='' name='board'></td>" +
+        //        "<td><a class='btn btn-default' id='add' onclick='AddRow()'><i class='fas fa-plus-circle'></i></a><a class='btn btn-default' id='remove' onclick='RemoveRow()'><i class='fas fa-minus-circle'></i></a></td></tr>";
+        //    $('#spanRow').rowSpan = 5;
+        //    $('#appendRow').append(row);
+        //}
+        //function RemoveRow(){
+        //    $('#newRow').remove();
+        //}
+
+    </script>
+}
+
+<style>
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+        width:80px;
+    }
+
+    tr.error {
+        background-color: rgba(255,0,0,0.35);
+    }
+</style>

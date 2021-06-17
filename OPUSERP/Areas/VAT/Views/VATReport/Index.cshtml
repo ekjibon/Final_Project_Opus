@@ -1,0 +1,482 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black;text-align:center;">VAT Report</h5>
+        <hr>
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="form-group row" id="forReportType">
+                        <label for="reportTypeId" class="col-sm-3 col-form-label">Report Type<span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="reportTypeId" id="reportTypeId">
+                                <option class="form-control" value="">Please Select</option>
+                                <option class="form-control" value="M6.1">মূসক ৬.১(ক্রয় হিসাব পুস্তক)</option>
+                                <option class="form-control" value="M6.2">মূসক ৬.২(বিক্রয় হিসাব পুস্তক)</option>
+                                <option class="form-control" value="M6.3">মূসক ৬.৩(কর চালানপত্র)</option>
+                                <option class="form-control" value="M6.2.1">মূসক ৬.২.১(ক্রয়-বিক্রয় হিসাব)</option>
+                                <option class="form-control" value="M6.4">মূসক ৬.৪(চুক্তিভিত্তিক উৎপাদনের চালানপত্র)</option>
+                                <option class="form-control" value="M6.5">মূসক ৬.৫(কেন্দ্রিয় নিবন্ধিত প্রতিষ্ঠানের পণ্য স্থানান্তর চালানপত্র)</option>
+                                <option class="form-control" value="M6.6">মূসক ৬.৬(উৎসে কর কর্তন সনদপত্র)</option>
+                                <option class="form-control" value="M6.7">মূসক ৬.৭(ক্রেডিট নোট)</option>
+                                <option class="form-control" value="M6.8">মূসক ৬.৮(ডেবিট নোট)</option>
+                                <option class="form-control" value="M6.10">মূসক ৬.১০(২ লক্ষ টাকার অধিক মূল্যমানের ক্রয়-বিক্রয় চালানপত্রের তথ্য)</option>
+                                <option class="form-control" value="M4.3">মূসক ৪.৩(উপকরণ-উৎপাদ সহগ)</option>
+                                <option class="form-control" value="M9.1">মূসক ৯.১(মূল্য সংযোজন কর দাখিলপত্র)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="forTransfer">
+                        <label for="forTransferId" class="col-sm-3 col-form-label">Transfer No <span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="forTransferId" id="forTransferId">
+                                <option class="form-control" value="">Please Select</option>
+                                @*@foreach (var data in Model.transferMasters)
+                                {
+                                    <option class="form-control" value="@data.Id">@data.transferNO</option>
+                                }*@
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forMonth">
+                        <label for="month" class="col-sm-3 col-form-label">Month<span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="month" id="month">
+                                <option class="form-control" value="">Please Select</option>
+                                <option class="form-control" value="01">January</option>
+                                <option class="form-control" value="02">February</option>
+                                <option class="form-control" value="03">March</option>
+                                <option class="form-control" value="04">April</option>
+                                <option class="form-control" value="05">May</option>
+                                <option class="form-control" value="06">June</option>
+                                <option class="form-control" value="07">July</option>
+                                <option class="form-control" value="08">August</option>
+                                <option class="form-control" value="09">September</option>
+                                <option class="form-control" value="10">October</option>
+                                <option class="form-control" value="11">November</option>
+                                <option class="form-control" value="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forYear">
+                        <label for="year" class="col-sm-3 col-form-label">Year<span style="color:red">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="year" id="year">
+                                <option class="form-control" value="">Please Select</option>
+                                @*@foreach (var data in Model.fiscalYears)
+                                {
+                                    <option class="form-control" value="@data.yearCaption">@data.yearCaption</option>
+                                }*@
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forItem">
+                        <label for="itemName" class="col-sm-3 col-form-label">Product</label>
+                        <div class="col-sm-9">
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemName" id="itemName">
+                            <input type="hidden" name="itemsId" id="itemsId" value="0" />
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forItemSpecification">
+                        <label for="itemSpecification" class="col-sm-3  col-form-label">Product Spec.</label>
+                        <div class="col-sm-9">
+                            <input type="hidden" id="itemSpecificationId" name="itemSpecificationId" />
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemSpecificationName" id="itemSpecificationName">
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forfromDate">
+                        <label for="fromDate" class="col-sm-3  col-form-label">From Date<span style="color:red">*</span></label>
+                        <div class="col-sm-8 input-group">
+                            <input name="fromDate" id="fromDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="fromDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="fortoDate">
+                        <label for="toDate" class="col-sm-3  col-form-label">To Date<span style="color:red">*</span></label>
+                        <div class="col-sm-8 input-group">
+                            <input name="toDate" id="toDate" class="form-control input-group-sm" />
+                            <div class="input-group-prepend">
+                                <label for="toDate" class="fas fa-calendar-alt form-control input-group-sm input-group-text bg-white"></label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="forInvoiceNumber">
+                        <label for="invoiceNo" class="col-sm-3  col-form-label">Invoice No</label>
+                        <div class="col-sm-9">
+                            <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="invoiceNo" id="invoiceNo">
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="forButton">
+                        <label class="col-sm-3 col-form-label"></label>
+                        <div class="col-sm-9">
+                            <input type="button" value="Export To PDF" id="btnPrint" class="btn btn-success btn-sm" style="width:120px;" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" value="Export To Excel" id="btnExcel" class="btn btn-success btn-sm" style="width:120px;display:none" />
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="button" id="btnRefresh" value="Refresh" class="btn btn-info btn-sm" style="width:80px;" />
+                            @*&nbsp;&nbsp;&nbsp;
+                                <input type="button" value="Export To Excel" id="btnExcel" class="btn btn-success btn-sm" tyle="width: 80px;" />*@
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            //Common.Ajax('GET', '/global/api/GetAllItemForRequisition', [], 'json', ajaxGetAllItem);
+            //Common.Ajax('GET', '/global/api/getAllSalesInvoiceMaster', [], 'json', ajaxGetAllInvoice);
+            $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#forTransfer").hide();
+            $("#forMonth").hide();
+            $("#forYear").hide();
+            $("#forItem").hide();
+            $("#forItemSpecification").hide();
+            $("#forfromDate").hide();
+            $("#fortoDate").hide();
+            $("#forInvoiceNumber").hide();
+
+            $("#reportTypeId").change(function () {
+                let rptType = $('#reportTypeId').val();
+                if (rptType == 'M6.1' || rptType == 'M6.2' || rptType == 'M6.2.1') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").show();
+                    $("#forYear").show();
+
+                    $("#forItem").show();
+                    $("#forItemSpecification").show();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+                else if (rptType == 'M6.3') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").show();
+                }
+                else if (rptType == 'M6.5') {
+                    $("#forTransfer").show();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+                else if (rptType == 'M6.6') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").show();
+                    $("#fortoDate").show();
+                    $("#forInvoiceNumber").hide();
+                }
+                else if (rptType == 'M6.7') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+                else if (rptType == 'M6.8') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+                else if (rptType == 'M6.10') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+                else if (rptType == 'M4.3') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").show();
+                    $("#forItemSpecification").show();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+                else if (rptType == 'M9.1') {
+                    $("#forTransfer").hide();
+                    $("#forMonth").show();
+                    $("#forYear").show();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+                else {
+                    $("#forTransfer").hide();
+                    $("#forMonth").hide();
+                    $("#forYear").hide();
+                    $("#forItem").hide();
+                    $("#forItemSpecification").hide();
+                    $("#forfromDate").hide();
+                    $("#fortoDate").hide();
+                    $("#forInvoiceNumber").hide();
+                }
+            });
+
+            $("#btnPrint").click(function (e) {
+
+                let rptType = $('#reportTypeId').val();
+                let month = $('#month').val();
+                let year = $('#year').val();
+                let itemSpecificationId = $('#itemSpecificationId').val();
+                let fromDate = $('#fromDate').val();
+                let toDate = $('#toDate').val();
+                let invoiceNo = $('#invoiceNo').val();
+
+                if (rptType == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }
+
+                if (rptType == 'M6.1') {
+                    alert('M6.1');
+                    console.log('M6.1');
+                    window.open('/VAT/VATReport/PurchaseBookletpdf', '_blank');
+                    //if (year == "") {
+                    //    swal('Warning', 'Select Year', 'warning');
+                    //    return false;
+                    //}
+                    //if (month == "") {
+                    //    swal('Warning', 'Select Month', 'warning');
+                    //    return false;
+                    //}
+                    //if (itemSpecificationId == "") {
+                    //    swal('Warning', 'Select Item Specification', 'warning');
+                    //    return false;
+                    //}
+                    //window.open('/VAT/VATReport/PurchaseBookletpdf?month=' + month + '&year=' + year + '&itemSpecificationId=' + itemSpecificationId, '_blank');
+                }
+                else if (rptType == 'M6.2') {
+                    alert('M6.2');
+                    console.log('M6.1');
+
+            //        if (year == "") {
+            //            swal('Warning', 'Select Year', 'warning');
+            //            return false;
+            //        }
+            //        if (month == "") {
+            //            swal('Warning', 'Select Month', 'warning');
+            //            return false;
+            //        }
+            //        if (itemSpecificationId == "") {
+            //            swal('Warning', 'Select Item Specification', 'warning');
+            //            return false;
+            //        }
+            //        window.open('/Report/VATReport/SalesBookletpdf?month=' + month + '&year=' + year + '&itemSpecificationId=' + itemSpecificationId, '_blank');
+                    window.open('/VAT/VATReport/SalesBookletpdf', '_blank');
+                }
+                else if (rptType == 'M6.4') {
+                    alert('M6.4');
+                    console.log('M6.1');
+                    window.open('/VAT/VATReport/ContractualProductChalanpdf', '_blank');
+                }
+                else if (rptType == 'M6.3') {
+                    alert('M6.3');
+                    console.log('M6.1');
+            //        if (invoiceNo == "") {
+            //            swal('Warning', 'Select Invoice No', 'warning');
+            //            return false;
+            //        }
+            //        window.open('/Report/VATReport/TaxChalanPDF?invoiceNo=' + invoiceNo, '_blank');
+                    window.open('/VAT/VATReport/TaxChalanPDF', '_blank');
+                }
+                else if (rptType == 'M6.5') {
+                    alert('M6.5');
+                    console.log('M6.1');
+            //        var id = $("#forTransferId").val();
+            //        if (id == "") {
+            //            swal('Warning', 'Select Transfer No', 'warning');
+            //            return false;
+            //        }
+            //        window.open('/Report/VATReport/RegisteredEntityChalanpdf/' + id, '_blank');
+                    window.open('/VAT/VATReport/RegisteredEntityChalanpdf' , '_blank');
+                }
+                else if (rptType == 'M6.6') {
+                    alert('M6.6');
+                    console.log('M6.1');
+            //        if (fromDate == "") {
+            //            swal('Warning', 'Select From Date', 'warning');
+            //            return false;
+            //        }
+            //        if (toDate == "") {
+            //            swal('Warning', 'Select To Date', 'warning');
+            //            return false;
+            //        }
+            //        window.open('/VAT/VATReport/CertificateTaxDeductAtSourcePDF?fromDate=' + fromDate + '&toDate=' + toDate, '_blank');
+                    window.open('/VAT/VATReport/CertificateTaxDeductAtSourcePDF' , '_blank');
+                }
+                else if (rptType == 'M6.7') {
+                    alert('M6.7');
+                    console.log('M6.1');
+            //        window.open('/VAT/VATReport/CreditNotePDF', '_blank');
+                    window.open('/VAT/VATReport/CreditNotePDF', '_blank');
+                }
+                else if (rptType == 'M6.8') {
+                    alert('M6.8');
+                    console.log('M6.1');
+            //        window.open('/VAT/VATReport/DebitNotePDF', '_blank');
+                    window.open('/VAT/VATReport/DebitNotePDF', '_blank');
+                }
+                else if (rptType == 'M6.2.1') {
+                    alert('M6.2.1');
+            //      window.open('/VAT/VATReport/PurchaseSalesAccountpdf?month=' + month + '&year=' + year + '&itemSpecificationId=' + itemSpecificationId, '_blank');
+                    window.open('/VAT/VATReport/PurchaseSalesAccountpdf' , '_blank');
+               }
+                else if (rptType == 'M6.10') {
+                    alert('M6.10');
+                    console.log('M6.1');
+            //      window.open('/VAT/VATReport/PurchaseSalesChalanpdf', '_blank');
+                    window.open('/VAT/VATReport/PurchaseSalesChalanpdf', '_blank');
+                }
+                else if (rptType == 'M4.3') {
+                    alert('M4.3');
+                    console.log('M6.1');
+            //        var id = $("#itemSpecificationId").val();
+            //        if (id == "") {
+            //            swal('Warning', 'Select Item Specification', 'warning');
+            //            return false;
+            //        }
+            //        window.open('/VAT/VATReport/InputOutputCoefficientDeclarationpdf/' + id, '_blank');
+                    window.open('/VAT/VATReport/InputOutputCoefficientDeclarationpdf' , '_blank');
+                }
+                else if (rptType == 'M9.1') {
+                    alert('M9.1');
+                    console.log('M6.1');
+            //        if (year == "") {
+            //            swal('Warning', 'Select Year', 'warning');
+            //            return false;
+            //        }
+            //        if (month == "") {
+            //            swal('Warning', 'Select Month', 'warning');
+            //            return false;
+            //        }
+            //        window.open('/VAT/VATReport/VATSubmissionNewPDF?year=' + year + '&month=' + month, '_blank');
+                    window.open('/VAT/VATReport/VATSubmissionNewPDF' , '_blank');
+                }
+
+            });
+
+        });
+
+        //function ajaxGetAllItem(response) {
+        //    var GetInStockItemList = [];
+        //    $.each(response, function (id, option) {
+        //        var obj = new Object();
+        //        obj.key = option.Id;
+        //        obj.value = option.itemName;
+        //        obj.unitName = option.unit.unitName;
+        //        GetInStockItemList[GetInStockItemList.length] = obj;
+        //    });
+        //    $('#itemName').autocomplete({
+        //        source: GetInStockItemList,
+        //        select: function (event, ui) {
+        //            $("#itemsId").val(ui.item.key);
+        //            $("#itemSpecificationId").val('');
+        //            $("#itemSpecificationName").val('');
+        //            Common.Ajax('GET', '/global/api/ItemSpec/' + ui.item.key, [], 'json', ajaxGetItemSpacification);
+        //        }
+        //    });
+        //}
+
+        //function ajaxGetAllInvoice(response) {
+        //    console.log(response);
+        //    var GetInStockItemList = [];
+        //    $.each(response, function (id, option) {
+        //        var obj = new Object();
+        //        obj.key = option.Id;
+        //        obj.value = option.invoiceNumber;
+        //        GetInStockItemList[GetInStockItemList.length] = obj;
+        //    });
+        //    $('#invoiceNo').autocomplete({
+        //        source: GetInStockItemList,
+        //        select: function (event, ui) {
+        //            $("#invoiceNo").val(ui.item.value);
+        //        }
+        //    });
+        //}
+
+        //function ajaxGetItemSpacification(response) {
+
+        //    var GetInStockItemSpacificationList = [];
+        //    $.each(response, function (id, option) {
+        //        console.log(option);
+        //        var obj = new Object();
+        //        obj.key = option.Id;
+        //        obj.value = option.specificationName;
+        //        GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+        //    });
+        //    $('#itemSpecificationName').autocomplete({
+        //        source: GetInStockItemSpacificationList,
+        //        select: function (event, ui) {
+        //            $("#itemSpecificationId").val(ui.item.key);
+
+        //        }
+        //    });
+        //}
+    </script>
+}
+
+
+
+

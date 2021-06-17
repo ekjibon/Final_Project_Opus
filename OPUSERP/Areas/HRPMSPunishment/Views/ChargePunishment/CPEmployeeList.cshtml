@@ -1,0 +1,58 @@
+﻿@model EmployeeInfoViewModel
+@{
+    ViewData["Title"] = "Employee List";
+    Layout = "~/Areas/HRPMSPunishment/Views/Shared/_CPLayout.cshtml";
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">@Model.fLang3.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="allEmployeeListTable">
+                    <thead>
+                        <tr>
+                            <th>@Model.fLang3.name</th>
+                            <th>@Model.fLang3.mobileNoOffice</th>
+                            <th>@Model.fLang3.dateOfBirth</th>
+                            <th>@Model.fLang3.fatherName</th>
+                            <th>@Model.fLang3.motherName</th>
+                            <th>@Model.fLang3.action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.allEmployeeInfos)
+                        {
+                            <tr>
+                                <td>@data.nameEnglish</td>
+                                <td>@data.mobileNumberOffice</td>
+                                <td>@data.dateOfBirth</td>
+                                <td>@data.fatherNameEnglish</td>
+                                <td>@data.motherNameEnglish</td>
+                                <td style="width:100px;">
+                                    <a class="btn btn-success" href="@Url.Action("Index", "ChargePunishment", new { id = data.Id})"><i class="fa fa-edit"></i></a>
+                                    @*<a class="btn btn-outline-primary" href="@Url.Action("Index", "InfoView", new { id = data.Id })"><i class="fa fa-eye"></i></a>*@
+                                    @*<a class="btn btn-info" href="#"><i class="fa fa-print"></i></a>*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptCP{
+    <script>
+        $(document).ready(function () {
+
+            $('#allEmployeeListTable').DataTable();
+        });
+    </script>
+}
+

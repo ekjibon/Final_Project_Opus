@@ -1,0 +1,273 @@
+﻿@model ClaimRegisterViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<br />
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Primary Investigation </label>
+        </div>
+        <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+            <table class="table table-striped table-bordered" id="assaignListTable">
+                <thead>
+                    <tr>
+                        <th>Assaign Date</th>
+                        <th>Problem Description</th>
+                        <th>Claim Description</th>
+                        <th>Claim Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.claimAssignViewModels)
+                    {
+                        <tr>
+                            <td>@data.assignDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.problemDescription</td>
+                            <td>@data.claimDescription</td>
+                            <td>@data.claimDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.statusInfoName</td>
+                            <td>
+                                <a href="javascript:void(0)" onclick="AddClaimPrimaryCheck(0, @data.userId, @data.claimId, @data.assetRegistrationId, '@data.problemDescription')" title="Edit" style="color:white" class="btn btn-success"><i class="fas fa-arrow-down"></i></a>
+                                <a href="javascript:void(0)" onclick="LoadClaimLogInfo(@data.claimId)" title="Details" style="color:white" class="btn btn-info"><i class="fa fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <form asp-area="REMS" asp-controller="PrimaryInvestigation" asp-action="Index" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="problemDescription" class="col-sm-4 col-form-label">Problem Description <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <textarea rows="5" class="form-control" id="problemDescription" name="ProblemDescription" required readonly></textarea>
+                                    <input type="hidden" id="claimAssaigneId" name="claimAssaigneId" />
+                                    <input type="hidden" id="assetId" name="assetId" />
+                                    <input type="hidden" id="claimId" name="claimId" />
+                                    <input type="hidden" id="AssignToId" name="AssignToId" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="assignToVendor" class="col-sm-4 col-form-label">Status<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="isObsolete" name="isObsolete" required>
+                                        <option value="">Select Status</option>
+                                        <option value="3">Repair Required</option>
+                                        <option value="12">Solved</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <label for="AssignDate" class="col-sm-4 col-form-label">Assign Date <span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="AssignDate" name="AssignDate" required />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea rows="5" class="form-control" id="remarks" name="remarks"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="" class="col-sm-8 col-form-label"></label>
+                                <div class="col-sm-4">
+                                    <input type="submit" class="btn btn-success btn-block" value="Save">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div style="height:20px;"></div>
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header" style="padding:6px 0px 5px 3px;">
+            <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Primary Investigation Result List</label>
+        </div>
+        <div class="card-body p-3 m-0" style="padding-bottom:0px;">
+            <table class="table table-striped table-bordered" id="assaignListTable">
+                <thead>
+                    <tr>
+                        <th>Assaign Date</th>
+                        <th>Problem Description</th>
+                        <th>Claim Description</th>
+                        <th>Claim Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.claimAssignViews)
+                    {
+                        <tr>
+                            <td>@data.assignDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.problemDescription</td>
+                            <td>@data.claimDescription</td>
+                            <td>@data.claimDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.statusInfoName</td>
+                            <td>
+                                @*<a href="javascript:void(0)" onclick="EditClaimPrimaryCheck(@data.id, 7, @data.claimId, @data.assetRegistrationId, '@data.problemDescription', @data.statusId, '@data.assignDate','@data.remarks')" title="Edit" style="color:white" class="btn btn-success"><i class="fas fa-edit"></i></a>*@
+                                <a href="javascript:void(0)" onclick="LoadClaimLogInfo(@data.claimId)" title="Details" style="color:white" class="btn btn-info"><i class="fa fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var data in Model.claimAssignViewModelsNew)
+                    {
+                        <tr>
+                            <td>@data.assignDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.problemDescription</td>
+                            <td>@data.claimDescription</td>
+                            <td>@data.claimDate?.ToString("dd-MMM-yyyy")</td>
+                            <td>@data.statusInfoName</td>
+                            <td>
+                                @*<a href="javascript:void(0)" onclick="EditClaimPrimaryCheck(@data.id, 7, @data.claimId, @data.assetRegistrationId, '@data.problemDescription', @data.statusId, '@data.assignDate','@data.remarks')" title="Edit" style="color:white" class="btn btn-success"><i class="fas fa-edit"></i></a>*@
+                                <a href="javascript:void(0)" onclick="LoadClaimLogInfo(@data.claimId)" title="Details" style="color:white" class="btn btn-info"><i class="fa fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="modalClaimLog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Claim Log</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <table class="table table-striped table-bordered" id="tblClaimLog" width="750">
+                    <thead>
+                        <tr>
+                            <th>Claim No</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#assaignListTable').DataTable();
+            $('#AssignDate').flatpickr({ dateFormat: "d-M-Y" });
+
+            Common.Ajax('GET', '/global/api/supplier/GetAllSupplier', [], 'json', supplierDetails, false);
+        });
+
+        function supplierDetails(response) {
+            console.log(response);
+            var GetuserInfoList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.organizationName;
+                GetuserInfoList[GetuserInfoList.length] = obj;
+            });
+            $('#assignToVendor').autocomplete({
+                source: GetuserInfoList,
+                select: function (event, ui) {
+                    $("#assignToVendorId").val(ui.item.key);
+                }
+            });
+        }
+
+        function AddClaimPrimaryCheck(claimAssaigneId, userId, claimId, assetId, problemDescription) {
+            $("#claimAssaigneId").val(claimAssaigneId);
+            $("#AssignToId").val(userId);
+            $("#assetId").val(assetId);
+            $("#claimId").val(claimId);
+            $("#problemDescription").val(problemDescription);
+            
+        }
+
+        function EditClaimPrimaryCheck(claimAssaigneId, userId, claimId, assetId, problemDescription, status, assignDate,remarks) {
+            $("#claimAssaigneId").val(claimAssaigneId);
+            $("#AssignToId").val(userId);
+            $("#assetId").val(assetId);
+            $("#claimId").val(claimId);
+            $("#problemDescription").val(problemDescription);
+            $("#isObsolete").val(status);
+            $("#AssignDate").val(assignDate);
+            $("#remarks").val(remarks);
+        }
+
+        function assetWarrentyDetails(response) {
+            //console.log(response);
+            if (response != null) {
+                //$("#assignToVendor").attr('readonly', true);
+                if ($("#assignToVendor").val() != '') {
+                    $("#assignToVendor").attr('readonly', true);
+                }
+                else {
+                    $("#assignToVendor").attr('readonly', false);
+                }
+            }
+            else {
+                $("#assignToVendor").attr('readonly', false);
+            }
+        }
+
+        function LoadClaimLogInfo(calimId) {
+            $('#tblClaimLog').DataTable().destroy();
+            $('#modalClaimLog').modal('show');
+            $('#tblClaimLog').DataTable({
+                ajax: {
+                    url: "/global/api/GetTransactionLog/" + calimId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                columns: [
+                    { data: "claim.claimNumber" },
+                    { data: "statusInfo.statusName" },
+                    { data: "description" }
+                ],
+                stateSave: false
+            });
+        }
+    </script>
+}
+
+
+

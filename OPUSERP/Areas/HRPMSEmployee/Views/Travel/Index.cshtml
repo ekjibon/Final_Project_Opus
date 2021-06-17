@@ -1,0 +1,321 @@
+﻿@model TraveInfoViewModel
+@{
+    ViewData["Title"] = "Travel Information";
+    Layout = "~/Areas/HRPMSEmployee/Views/Shared/_EmployeeForm.cshtml";
+}
+
+@section StyleEmp{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h6 style="background-color:red;color:white;border-radius:5px 5px 0px 0px;text-align:left;margin-left:-12px;margin-right:-12px;" class="identity-box">@Model.employeeNameCode</h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2" style="border:1px solid gray;">
+                <img id="user_img_current" style="width: 120px;height: 95px;border-radius: 120px;" src="~/@Model.photograph?.url" alt="" class="img-thumbnail float-left">
+            </div>
+            <div class="col-10" style="border:1px solid gray;color: black; font-size: 15px; padding-top: 12px;">
+                <div class="form-group row">
+                    <div class="col-7">
+                        <span>Employee Name :</span> <span style="margin-left:10px">@Model.employeeInfo?.nameEnglish</span><br />
+                        <span>Designation :</span> <span style="margin-left:10px">@Model.employeeInfo?.designation</span><br />
+                        <span>Department :</span> <span style="margin-left:10px">@Model.employeeInfo?.department.deptName</span>
+                    </div>
+                    <div class="col-5">
+                        <span>Joining Date :</span><span style="margin-left:10px">@Model.employeeInfo?.joiningDateGovtService</span><br />
+                        <span>Job Nature :</span><span style="margin-left:10px">@Model.employeeInfo?.employeeType?.empType</span><br />
+                        <span>Job Status :</span><span style="margin-left:10px">@(Model.employeeInfo?.activityStatus)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div>
+                <h5><u style="">@Model.fLang.title</u></h5>
+            </div>
+        </div>
+        <hr>
+        <div class="container">
+            <form asp-area="HRPMSEmployee" asp-controller="Travel" asp-action="Index" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group row">
+                    <label for="type" class="col-sm-2 col-form-label">@Model.fLang.type<span style="color:red">*</span></label>
+                    <div class="col-sm-10">
+                        <select type="text" class="form-control" id="type" value="" name="type" data-parsley-required="true">
+                            <option value=""> Select One</option>
+                            @foreach (var data in Model.travelPurposes)
+                            {
+                                <option value="@data.Id"> @data.purposeName</option>
+                            }
+                        </select>
+                        <input type="hidden" name="employeeID" id="employeeID" value="@Model.employeeID" />
+                        <input type="hidden" name="travelId" id="travelId" value="0" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="titleName" class="col-sm-2 col-form-label">@Model.fLang.purpose<span style="color:red">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="titleName" value="" name="titleName" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="purpose" class="col-sm-2 col-form-label">Purpose</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="purpose" value="" name="purpose">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="accountCode" class="col-sm-2 col-form-label">Account Code</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="accountCode" value="" name="accountCode">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="hrProgramId" class="col-sm-4 col-form-label">Program<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="hrProgramId" name="hrProgramId" data-parsley-required="true">
+                                    <option value=""> Select Program</option>
+                                    @foreach (var data in Model.hrPrograms)
+                                    {
+                                        <option value="@data.Id"> @data.programName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="projectId" class="col-sm-4 col-form-label">Project <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <select type="text" class="form-control" id="projectId" name="projectId" data-parsley-required="true">
+                                    <option value=""> Select Project</option>
+                                    @foreach (var data in Model.projects)
+                                    {
+                                        <option value="@data.Id"> @data.projectName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="location" class="col-sm-2 col-form-label">@Model.fLang.location</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="location" value="" name="location">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="country" class="col-sm-2 col-form-label">@Model.fLang.country<span style="color:red">*</span></label>
+                    <div class="col-sm-10">
+                        <select type="text" class="form-control" id="country" value="" name="country" data-parsley-required="true">
+                            <option value=""> Select One</option>
+                            @foreach (var data in Model.countries)
+                            {
+                                <option value="@data.Id"> @data.countryName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="sponsoringAgency" class="col-sm-2 col-form-label">@Model.fLang.sponsoringAgency</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="sponsoringAgency" value="" name="sponsoringAgency">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="startDate" class="col-sm-4 col-form-label">@Model.fLang.startDate<span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="startDate" value="" name="startDate" data-parsley-required="true" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="endDate" class="col-sm-4 col-form-label">@Model.fLang.endDate <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="endDate" value="" name="endDate" data-parsley-required="true" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="leaveStartDate" class="col-sm-4 col-form-label">Leave Taken From <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="leaveStartDate" value="" name="leaveStartDate" data-parsley-required="true" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="leaveEndDate" class="col-sm-4 col-form-label">Leave Taken To <span style="color:red">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="leaveEndDate" value="" name="leaveEndDate" data-parsley-required="true" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="goNumber" class="col-sm-2 col-form-label">@Model.fLang.goNumber</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" data-parsley-type="number" data-parsley-trigger="keyup" id="goNumber" value="" name="goNumber">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="goDate" class="col-sm-2 col-form-label">@Model.fLang.goDate</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="goDate" value="" name="goDate">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="file" class="col-sm-4 col-form-label">@Model.fLang.file</label>
+                            <div class="col-sm-8">
+                                <input type="file" title="search image" id="file" name="file" class="btn btn-default btn-sm pull-right" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="titleOfFile" class="col-sm-4 col-form-label">@Model.fLang.titleOfFile</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="titleOfFile" value="" name="titleOfFile">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="remarks" class="col-sm-2 col-form-label">@Model.fLang.remarks</label>
+                    <div class="col-sm-10">
+                        <textarea name="remarks" id="remarks" class="form-control" rows="5" cols="5"></textarea>
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold">@Model.fLang.title</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="travelTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>@Model.fLang.location</th>
+                            <th>@Model.fLang.purpose</th>
+                            <th>@Model.fLang.sponsoringAgency</th>
+                            <th>@Model.fLang.goDate</th>
+                            <th>@Model.fLang.action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.traveInfos)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.location</td>
+                                    <td>@data.titleName</td>
+                                    <td>@data.sponsoringAgency</td>
+                                    <td>@data.goDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>
+                                        <a class="btn btn-success" href="#" onclick="Edit(@data.Id, @data.travelPurposeId, '@data.titleName', '@data.location','@data.countryId','@data.sponsoringAgency','@data.startDate?.ToString("dd-MMM-yyyy")','@data.endDate?.ToString("dd-MMM-yyyy")','@data.goNumber','@data.goDate?.ToString("dd-MMM-yyyy")','@data.remarks','@data.titleName','@data.accountCode','@data.hrProgramId','@data.projectId','@data.leaveStartDate?.ToString("dd-MMM-yyyy")','@data.leaveEndDate?.ToString("dd-MMM-yyyy")','@data.purpose','@data.file','@data.titleOfFile')"><i class="fa fa-edit"></i></a>
+                                        <a class="btn btn-danger" onclick="Remove(@data.Id,@data.employeeId)" href="#"><i class="fa fa-trash-alt"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }                            
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsEmp{
+    <script>
+        $(document).ready(function () {
+
+            $("#travel").addClass("active");
+            $('#startDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#endDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#leaveStartDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#leaveEndDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#goDate').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1940:2030" });
+            $('#travelTable').DataTable();
+        });
+
+        function Edit(Id, travelPurposeId, titleName, location, countryId, sponsoringAgency, startDate, endDate, goNumber, goDate, remarks, titleName, accountCode, hrProgramId, projectId, leaveStartDate, leaveEndDate, purpose, file, titleOfFile) {
+            $('#travelId').val(Id);
+            $('#type').val(travelPurposeId);
+            $('#titleName').val(titleName);
+            $('#location').val(location);
+            $('#country').val(countryId);
+            $('#sponsoringAgency').val(sponsoringAgency);
+            $('#startDate').val(startDate);
+            $('#endDate').val(endDate);
+            $('#goNumber').val(goNumber);
+            $('#goDate').val(goDate);            
+            $('#remarks').val(remarks);
+            $('#accountCode').val(accountCode);
+            $('#titleName').val(titleName);
+            $('#hrProgramId').val(hrProgramId);
+            $('#projectId').val(projectId);
+            $('#leaveStartDate').val(leaveStartDate);
+            $('#leaveEndDate').val(leaveEndDate);
+            $('#purpose').val(purpose);
+            $('#file').val(file);
+            $('#titleOfFile').val(titleOfFile);
+        }
+
+        function Remove(Id, employeeId) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                //return true;
+                location.replace("/HRPMSEmployee/Travel/Delete/" + Id + "?empId=" + employeeId);
+            } else {
+                return false;
+            }
+        }
+    </script>
+}
+
+

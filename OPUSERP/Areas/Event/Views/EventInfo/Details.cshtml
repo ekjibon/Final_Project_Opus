@@ -1,0 +1,338 @@
+﻿@using OPUSERP.CLUB.Services.Auth.Interfaces
+@using System
+@inject ILoggedinUser loggedinUser
+@{
+    string orgType = await loggedinUser.usersOrganization(User.Identity.Name);
+    List<string> userRoles = await loggedinUser.UsersRoles(User.Identity.Name);
+    int myEmpId = await loggedinUser.UserEmpId(User.Identity.Name);
+}
+
+
+@model EventViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+@section Style{
+    <style>
+        p {
+            color: black;
+            font-size: 15px;
+        }
+
+        h6 {
+            color: black;
+        }
+
+        h4 {
+            color: black;
+        }
+
+        h5 {
+            padding: 20px;
+            color: black;
+        }
+
+        b {
+            color: black;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="col-12">
+        <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        </div>
+        <div class="row">
+            <!-- Blog Post -->
+            <div class="col-12" style="padding:20px">
+                <div class="card ">
+                    <h5 class="card-title">@Model.eventData.eventInformation.title</h5>
+                    <br />
+                    <center>
+                        <img class="card-img-top" src="~/@Model.eventData.eventInformation.url" alt="Card image cap" style="height:350px;width:800px;">
+                    </center>
+                    <br />
+                    <div class="card-body">
+                        <p class="card-title">@Model.eventData.eventInformation.description</p>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h4>@Model.fLang.date : @Model.eventData.eventInformation.date?.ToString("dd-MMMM-yyyy")</h4>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4>
+                                    @Model.fLang.time :
+
+                                    @if (@Model.eventData.eventInformation.startTime != "Day Long")
+                                    {
+                                        @Model.eventData.eventInformation.startTime <span> To </span> @Model.eventData.eventInformation.endTime
+                                    }
+                                    else
+                                    {
+                                        @Model.eventData.eventInformation.startTime
+                                    }
+                                </h4>
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <b>@Model.fLang.deadline :  @Model.eventData.eventInformation.deadline?.ToString("dd-MMMM-yyyy")</b>
+                            </div>
+                            <div class="col-sm-6">
+                                <b> <i class="fas fa-map-marker-alt"></i>  @Model.fLang.venue : @Model.eventData.eventInformation.venue</b>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <b>@Model.fLang.type :  @Model.eventData.eventInformation.type </b>
+                            </div>
+                            <div class="col-sm-6">
+                                <b>Register Price</b>
+                                <table class="table table-bordered table-striped">
+                                    <tr>
+                                        <th>participant Type</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    @if (Model.eventPerticipantHeads.Count() > 0)
+                                    {
+                                        @foreach (var data in Model.eventPerticipantHeads)
+                                        {
+                                            <tr>
+                                                <td>@data.participantHead.name</td>
+                                                <td>@data.price?.ToString("0.00")</td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+
+                        @if (@Model.eventData.isRegistered == true)
+                        {
+                            <button class="btn btn-block btn-info" disabled>Registerd</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-block btn-info" onclick="TransferId(@Model.eventData.eventInformation.Id)" href="#" data-toggle="modal" data-target="#registerModal">@Model.fLang.register</a>
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row clearfix">
+            <div class="col-12">
+                <div class="card">
+                    <div class="row card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <div class="col-10">
+                            <h6 class="m-0 font-weight-bold text-primary">@Model.fLang.regMemerList</h6>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <table class="table table-striped table-bordered" id="memberTable">
+                            <thead>
+                                <tr>
+                                    <th>@Model.fLang.sl</th>
+                                    <th>participant Type</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var i = 1;
+
+                                    @foreach (var data in Model.eventRegisters)
+                                    {
+                                        <tr>
+                                            <td>@i</td>
+                                            @if (@data.eventPerticipantHead!=null)
+                                            {
+                                            <td>@data.eventPerticipantHead.participantHead.name</td>
+                                            <td>@data.count</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                                <td></td>
+                                            }
+
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row" style="width:100%;">
+                    <div class="col-3">
+                        <img src="~/images/Key-Club-International-Logo.jpg" style="height:80px; width:100px;" />
+                    </div>
+                    <div class="col-8">
+                        <h3 class="modal-title text-center" id="exampleModalLabel" style="font-size: 20px;padding-top: 14px; color:black">@Model.fLang.modalHead</h3>
+                    </div>
+                    <div class="col-1">
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form asp- method="post" asp-area="Event" asp-controller="EventInfo" asp-action="Register" id="logoutForm" class="navbar-right" data-parsley-validate="parsley">
+                <div class="modal-body">
+                    <h4 class="text-center text-success">@Model.fLang.evtReg</h4>
+                    <input type="hidden" name="eventId" id="eventId" value="" />
+                    @if (Model.eventData.eventInformation.type == "paid")
+                    {
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>participant Type</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                            @if (Model.eventPerticipantHeads.Count() > 0)
+                            {
+                                @foreach (var data in Model.eventPerticipantHeads)
+                                {
+                            <tr>
+                                <td>
+                                    @data.participantHead.name
+                                    <input type="hidden" name="heads[]" value="@data.Id" />
+                                </td>
+                                <td><input type="number" class="form-control" value="@data.price?.ToString("0.00")" id="price-@data.Id" readonly /></td>
+                                @if (data.participantHead.name == "Self")
+                                {
+                                    <td>
+                                <input type="number" id="qnt-@data.Id" name="qnt[]" class="form-control quantity" onkeyup="CalculateTotal(@data.Id);" value="1" required readonly/>
+                                    </td>
+
+                                    <td><input type="number" id="total-@data.Id" readonly class="form-control totalAmount" value="@data.price?.ToString("0.00")" /></td>
+                                }
+                                else
+                                {
+                                    <td><input type="number" id="qnt-@data.Id" name="qnt[]" class="form-control quantity" onkeyup="CalculateTotal(@data.Id);" required min="0" data-parsley-trigger="keyup"  onclick="CalculateTotal(@data.Id);" /></td>
+                                    <td><input type="number" id="total-@data.Id" readonly class="form-control totalAmount" /></td>
+                                }
+
+                            </tr>
+                                }
+                            }
+                            <tr>
+                                <th colspan="3" class="text-center">Total Amount to pay</th>
+                                <td><input type="number" id="total" name="invoiceAmount" readonly class="form-control" /></td>
+                            </tr>
+                        </table>
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">@Model.fLang.cancel</button>
+                    <button type="submit" class="btn btn-success">@Model.fLang.register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            var sum = 0;
+            $('.totalAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+
+            $('#memberTable').DataTable({
+                colReorder: true,
+                stateSave: false,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" +
+                    "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: '@Model.eventData.eventInformation.title',
+                        messageTop: '@Model.fLang.date : @Model.eventData.eventInformation.date?.ToString("dd-MMMM-yyyy") || @Model.fLang.venue : @Model.eventData.eventInformation.venue || @Model.fLang.deadline :  @Model.eventData.eventInformation.deadline?.ToString("dd-MMMM-yyyy")',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        title: '@Model.eventData.eventInformation.title',
+                        messageTop: '@Model.fLang.date : @Model.eventData.eventInformation.date?.ToString("dd-MMMM-yyyy") || @Model.fLang.venue : @Model.eventData.eventInformation.venue || @Model.fLang.deadline :  @Model.eventData.eventInformation.deadline?.ToString("dd-MMMM-yyyy")'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: '@Model.eventData.eventInformation.title',
+                        messageTop: '@Model.fLang.date : @Model.eventData.eventInformation.date?.ToString("dd-MMMM-yyyy") || @Model.fLang.venue : @Model.eventData.eventInformation.venue || @Model.fLang.deadline :  @Model.eventData.eventInformation.deadline?.ToString("dd-MMMM-yyyy")',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+            //$('#batchCreateDate').datepicker({ uiLibrary: 'bootstrap4' });
+        });
+
+        function TransferId(id) {
+            $('#eventId').val(id)
+        }
+
+        function CalculateTotal(id) {
+            var price = $("#price-" + id).val();
+            var quantity = $("#qnt-" + id).val();
+            var total = price * quantity;
+            $("#total-" + id).val(total);
+            var sum = 0;
+            $('.totalAmount').each(function () {
+                sum += Number($(this).val());
+            });
+            $("#total").val(sum);
+        }
+
+    </script>
+}
+
+

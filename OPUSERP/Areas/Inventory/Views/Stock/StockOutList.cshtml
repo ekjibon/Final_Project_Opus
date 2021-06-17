@@ -1,0 +1,88 @@
+﻿@model StockInViewModel
+@{
+    ViewData["Title"] = "Stock Out";
+    //Layout = "~/Areas/Inventory/Views/shared/_InventoryLayout.cshtml";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-1 d-flex flex-row align-items-center justify-content-between">
+                <h4 class="m-0 font-weight-bold text-primary">List For Stock Out</h4>
+                @*<a href="/Inventory/Stock/RequisitionList" style="background-color:#024972;float:right;margin-left: 480px;" class="btn btn-info btn-sm">New Stock Out For Requsition</a>*@
+                <a href="/Inventory/Stock/InoviceList" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">New Stock Out For Sale</a>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="PurchaseList">
+                    <thead>
+                        <tr>
+                            <th width="45%">SR No</th>
+                            <th width="10%">Stock Out Date</th>
+                            <th width="35%">Remarks</th>
+
+                            <th width="10%">Action</th>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.stockMasters)
+                        {
+                            <tr>
+                                <td><span style="display:none">-@data.Id-</span>@data.MRNO</td>
+                                <td>@data.StockDate?.ToString("dd-MMM-yyyy")</td>
+
+                                <td>@data.remarks</td>
+                                <td>
+                                    <a href="/Inventory/Stock/StockOutDetails?Id=@data.Id"><i class="far fa-list-alt"></i></a>
+                                    &nbsp;&nbsp;<a target="_blank" href="/Inventory/Stock/StockOutPdfAction?MasterId=@data.Id"><i class="fas fa-print"></i></a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#PurchaseList').DataTable();
+            alert(HttpContextAccessor.HttpContext.Session.GetInt32("storeId"));
+            
+            var table = $('#PurchaseList').DataTable();
+
+            $('#PurchaseList tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[0];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var vid = parseInt(id.split('-')[1]);
+                window.location.href = "/Inventory/Stock/StockOutDetails/?id=" + vid;
+            });
+            $('#PurchaseList tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+
+        });
+    </script>
+}
+
+
+@section Style{
+    <style>
+        #PurchaseList tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}

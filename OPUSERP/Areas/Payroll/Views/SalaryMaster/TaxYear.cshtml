@@ -1,0 +1,160 @@
+﻿@model TaxYearViewModel
+@{
+    ViewData["Title"] = "TaxYear";
+    Layout = "~/Areas/Payroll/Views/Shared/_SalaryMasterForm.cshtml";
+}
+
+
+@section StyleMD{
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Tax Year</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Payroll" asp-controller="SalaryMaster" asp-action="TaxYear" method="post" data-parsley-validate="parsley">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="taxYearName" class="col-sm-3 col-form-label">Tax Year Name <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="taxYearName" value="" name="taxYearName" data-parsley-required="true">
+                                <input type="hidden" id="editId" name="editId" value=0>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="startDate" class="col-sm-3 col-form-label">Start Date <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="startDate" value="" name="startDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="endDate" class="col-sm-3 col-form-label">End Date <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="endDate" name="endDate" autocomplete="off" data-parsley-required="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group row">
+                            <label for="taxLimit" class="col-sm-3 col-form-label">Tax Limit <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="taxLimit" value="" name="taxLimit" data-parsley-required="true">                                
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="allowablePerquisite" class="col-sm-3 col-form-label">Allowable Perquisite <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="allowablePerquisite" value="" name="allowablePerquisite"  data-parsley-required="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="assessmentYear" class="col-sm-3 col-form-label">Assessment Year <span style="color:red;">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="assessmentYear" name="assessmentYear"  data-parsley-required="true">
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Tax Year List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="educationalTable">
+                    <thead>
+                        <tr>
+                            <th>Tax Year Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.taxYearsList)
+                        {
+                            <tr>
+                                <td>@data.taxYearName</td>
+                                <td>@data.startDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>@data.endDate?.ToString("dd-MMM-yyyy")</td>
+                                <td>
+                                    <a class="btn btn-success" onclick="Edit(@data.Id,'@data.taxYearName','@data.startDate','@data.endDate','@data.taxLimit','@data.allowablePerquisite','@data.assessmentYear')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+                                    @*<a class="btn btn-danger" onclick="Delete(@data.Id)" href="#"><i class="fa fa-trash-alt"></i></a>*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#taxYear").addClass("active");
+            $('#educationalTable').DataTable();
+            $("#startDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+            $("#endDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+        });
+
+        function getPurchaseDate(pdate) {
+            var formattedDate = new Date(pdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            var y = formattedDate.getFullYear();
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+
+        function Edit(Id, taxYearName, startDate, endDate, taxLimit, allowablePerquisite, assessmentYear) {
+            $('#editId').val(Id);
+            $('#taxYearName').val(taxYearName);
+            $('#startDate').val(getPurchaseDate(startDate));
+            $('#endDate').val(getPurchaseDate(endDate));
+            $('#taxLimit').val(taxLimit);
+            $('#allowablePerquisite').val(allowablePerquisite);
+            $('#assessmentYear').val(assessmentYear);
+        }
+
+        function Delete(Id) {
+
+        }
+
+    </script>
+}
+
+
+
+
+

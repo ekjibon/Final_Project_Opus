@@ -1,0 +1,108 @@
+﻿@model DocumentSettingViewModel
+@{
+    ViewData["TitleMD"] = "Document List";
+    Layout = "~/Areas/DMS/Views/Shared/_DMSForm.cshtml";
+}
+
+@section StyleDMS{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        #contactsTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Documents List</h6>
+                <a href="/DMS/DocumentUpload/Index?Id=0" class="btn btn-success btn-sm pull-right">Add New</a>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="contactsTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">SL#</th>
+                            <th>Document Name</th>
+                            <th>Document No</th>
+                            <th>Document Type</th>
+                            <th>Document Owner</th>
+                            <th>Client Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.documentMasters)
+                            {
+                        <tr>
+                            <td width="5%">@i</td>
+                            <td><span style="display:none">-@data.Id-</span>@data?.documentName</td>
+                            <td>@data?.documentNo</td>
+                            <td>@data?.documentCategory?.categoryName</td>
+                            <td>@data?.employeeInfo?.nameEnglish</td>
+                            <td>@data?.leads?.leadName</td>
+                            <td>
+                                <a class="btn btn-success" href="/DMS/DocumentUpload/Index?Id=@data.Id"><i class="fa fa-edit"></i></a>
+                                <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsDMS{
+    <script>
+        $(document).ready(function () {
+
+            $('#contactsTable').DataTable();
+
+            var table = $('#contactsTable').DataTable();
+            $('#contactsTable tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[1];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var lid = parseInt(id.split('-')[1]);
+                window.location.href = "/DMS/DocumentUpload/DocumentDetails/?Id=" + lid;
+            });
+            $('#contactsTable tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+            
+        });       
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteDocumentMasterById", "DocumentUpload")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/DMS/DocumentUpload/DocumentList";
+                    })
+                    .fail(function () {
+                        alert("Unable to Delete. Please Try Again");
+                    });
+            });
+        }
+       
+
+    </script>
+}

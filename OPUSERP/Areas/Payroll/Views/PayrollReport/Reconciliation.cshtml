@@ -1,0 +1,219 @@
+﻿@model PayrollReportViewModel
+@{
+    ViewData["Title"] = "Reconciliation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        ul.ui-autocomplete {
+            z-index: 99999999;
+        }
+        .right {
+            text-align: right;
+        }
+    </style>
+}
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black;text-align:center;">Salary Reconciliation</h5>
+        <hr>
+        <div class="container">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <input type="hidden" id="employeeInfoId" name="employeeInfoId">
+                    <div class="form-group row" id="forReportType">
+                        <label for="reportTypeId" class="col-sm-4 col-form-label">Reconciliation Type <span style="color:red">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="reportTypeId" id="reportTypeId">
+                                <option class="form-control" value="">Please Select</option>
+                                <option class="form-control" value="1">Type 1</option>
+                                <option class="form-control" value="2">Type 2</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="salaryPeriodId" class="col-sm-4 col-form-label">Current Period Name <span style="color:red">*</span></label>
+                        <div class="col-sm-8">
+                            <select name="salaryPeriodId" id="salaryPeriodId" class="form-control">
+                                <option value="">Select Current Salary Period</option>
+                                @foreach (var data in Model.salaryPeriods)
+                                {
+                                    <option value="@data.Id">@data.periodName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="presalaryPeriodId" class="col-sm-4 col-form-label">Previous Period Name <span style="color:red">*</span></label>
+                        <div class="col-sm-8">
+                            <select name="presalaryPeriodId" id="presalaryPeriodId" class="form-control">
+                                <option value="">Select Previous Salary Period</option>
+                                @foreach (var data in Model.salaryPeriods)
+                                {
+                                    <option value="@data.Id">@data.periodName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label"></label>
+                        <div class="col-sm-8">
+                            <input type="button" value="Load" id="btnLoad" class="btn btn-success btn-sm" style="width:120px;" />&nbsp;&nbsp;
+                            <input type="button" id="btnRefresh" value="Refresh" class="btn btn-info btn-sm" style="width:80px;" />
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblBank" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:10%;vertical-align:middle;">SL#</th>
+                            <th style="width:40%;vertical-align:middle;">Particulars</th>
+                            <th style="width:20%;vertical-align:middle;">Previous Month</th>
+                            <th style="width:20%;vertical-align:middle;">Current Month</th>
+                            <th style="width:10%;vertical-align:middle;">Variance</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    tr.cls-4 {
+        border-bottom: 4px solid black !important;
+        border-collapse: collapse !important;
+    }
+</style>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#BankTableShow').hide();
+
+            $("#btnLoad").click(function (e) {
+                let typeId = $('#reportTypeId').val();
+                let salaryPeriodId = $('#salaryPeriodId').val();
+                let presalaryPeriodId = $('#presalaryPeriodId').val();
+                
+                if (typeId == "") {
+                    swal('Warning', 'Select Report Type', 'warning');
+                    return false;
+                }
+                else if (salaryPeriodId == "") {
+                    swal('Warning', 'Select Current Period', 'warning');
+                    return false;
+                }
+                else if (presalaryPeriodId == "") {
+                    swal('Warning', 'Select Previous Period', 'warning');
+                    return false;
+                }
+                GetReconcilationStatement(salaryPeriodId, presalaryPeriodId, typeId);
+            });
+
+        });
+
+        function GetReconcilationStatement(salaryPeriodId, presalaryPeriodId, typeId) {
+            table = $('#tblBank').DataTable({
+                ajax: {
+                    url: "/global/api/GetReconcilationStatement/" + salaryPeriodId + "/" + presalaryPeriodId + "/" + typeId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [                                      
+                    { data: "rowSlNo" },
+                    { data: "salaryHeadName" },
+                    {
+                        data: "previousAmount",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol"
+                    },
+                    {
+                        data: "currentAmount",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol"
+                    },
+                    {
+                        data: "closingAmount",
+                        render: $.fn.dataTable.render.number(',', '.', 2, ''),
+                        sClass: "numericCol"                   
+                    }
+                ],               
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "Reconciliation Statement",
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: "Reconciliation Statement",
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Reconciliation Statement",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+       
+       
+
+    </script>
+}
+
+

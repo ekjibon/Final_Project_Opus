@@ -1,0 +1,470 @@
+﻿@model FRDApprovalViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .filepointer {
+            cursor: pointer;
+        }
+
+        #FTInstructionNo_M:hover {
+            width: 240px;
+        }
+
+        .chkbx {
+            width: 20px;
+            height: 16px;
+            padding: 0px 0px 0px 0px;
+            margin: 0px 0px 0px 0px;
+        }
+
+        #check-all {
+            width: 20px;
+            height: 16px;
+            padding: 0px 0px 0px 0px;
+            margin: 0px 0px 0px 0px;
+        }
+
+        div.content-Details {
+            display: none;
+        }
+
+        body span, label, input, select {
+            color: black;
+        }
+    </style>
+}
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">FT Instruction for Half yearly Bank Receive</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-responsive" id="ApprovalTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Ref No</th>
+                            <th>Date</th>
+                            <th>SOF</th>
+                            <th>Bank Name</th>
+                            <th>Account Number</th>
+                            <th>Amount</th>
+                            <th>Rate</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.fDRInvestmentALLViews)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@data.fDRInvesmentMaster?.FTInstructionNo</td>
+                                    <td>@data.fDRInvesmentMaster?.FTDate?.ToString("dd-MMM-yyyy")</td>
+                                    <td>@data.fDRInvesmentMaster?.SOF</td>
+                                    <td>@data.fDRInvesmentMaster?.bank?.bankName</td>
+                                    <td>@data.fDRInvesmentMaster?.bankAccountNo</td>
+                                    <td style="text-align:right;">@data.fDRInvestmentDetails?.Sum(x => x.Amount)</td>
+                                    <td>@data.fDRInvestmentDetails?.FirstOrDefault()?.Rate</td>
+                                    @if (@data.fDRInvesmentMaster?.FDRStatus == 0)
+                                    {
+                                        <td>FT pending</td>
+                                    }
+                                    else if (@data.fDRInvesmentMaster.FDRStatus == 2)
+                                    {
+                                        <td>Renew</td>
+                                    }
+                                    else if (@data.fDRInvesmentMaster.FDRStatus == 1)
+                                    {
+                                        <td>Approved</td>
+                                    }
+
+                                        <td>
+
+                                            @if (data.fDRInvesmentMaster.FDRStatus == 0)
+                                            {
+                                                <a class="btn btn-info" onclick="EditFundTransfer(@data.fDRInvesmentMaster.Id,'@data.fDRInvesmentMaster?.FTInstructionNo','@data.fDRInvesmentMaster?.FTDate?.ToString("dd-MMM-yyyy")','@data.fDRInvesmentMaster.FTSendTo','@data.fDRInvesmentMaster?.bank?.bankName','@data.fDRInvesmentMaster?.bankAccountNo','@data.fDRInvesmentMaster?.SOF','@data.fDRInvesmentMaster?.NOI','@data.fDRInvesmentMaster?.bankBranchName','@data.fDRInvesmentMaster?.FDRStatus','@data.fDRInvestmentDetails?.FirstOrDefault()?.RefNo','@data.fDRInvestmentDetails?.FirstOrDefault()?.Amount','@data.fDRInvestmentDetails?.FirstOrDefault()?.OpenDate?.ToString("dd-MMM-yyyy")','@data.fDRInvestmentDetails?.FirstOrDefault()?.FormulaType','@data.fDRInvestmentDetails?.FirstOrDefault()?.DestinationType','@data.fDRInvestmentDetails?.FirstOrDefault()?.Rate','@data.fDRInvestmentDetails?.FirstOrDefault()?.MaturityDate?.ToString("dd-MMM-yyyy")','@data.fDRInvestmentDetails?.FirstOrDefault()?.Tenure','@data.fDRInvestmentDetails?.FirstOrDefault()?.TenureType','@data.fDRInvestmentDetails?.FirstOrDefault()?.TotalInterest','@data.fDRInvestmentDetails?.FirstOrDefault()?.DestinationBranch','@data.fDRInvestmentDetails?.FirstOrDefault()?.bank?.bankName','@data.fDRInvestmentDetails?.FirstOrDefault()?.ChequeNo','@data.fDRInvestmentDetails?.FirstOrDefault()?.NPBAddress')" href="javascript:void(0)"><i class="fa fa-pen-alt"></i></a>
+                                                <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.fDRInvesmentMaster.Id,'@data.fDRInvestmentDetails?.FirstOrDefault()?.RefNo')"><i class="fa fa-trash-alt"></i></a>
+                                            }
+                                        </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="EditModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background-color: #f0f0f0;width:1040px;">
+            <div class="modal-header">
+                <label class="modal-title pull-left" id="myModalLabel" style="color:rgb(9, 7, 161);font-size:1em;">
+                    FDR & Govt.Securities Approve
+                </label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <br />
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="fDRInvesmentMasterId" name="fDRInvesmentMasterId" />
+                <div class="form-horizontal">
+
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="FTInstructionNo" class="col-sm-4 col-form-label">FT No<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="FTInstructionNo" name="FTInstructionNo" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row" hidden>
+                                <label for="FTSendTo" class="col-sm-4 col-form-label">FT Ins. Send To</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="FTSendTo" name="FTSendTo" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="bankId" class="col-sm-4 col-form-label">Debit Bank<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="bankId" name="bankId" readonly>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="bankBranchName" class="col-sm-4 col-form-label">Debit Branch</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="bankBranchName" name="bankBranchName" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="FTDate" class="col-sm-4 col-form-label">FT Date<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control dpdatepicker" id="FTDate" name="FTDate" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="NOI" class="col-sm-4 col-form-label">Nature of Invest</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="NOI" name="NOI" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="bankAccountNo" class="col-sm-4 col-form-label">Debit Bank A/C No <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="bankAccountNo" name="bankAccountNo" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="SOF" class="col-sm-4 col-form-label">Source Of Fund</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="SOF" name="SOF" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 style="margin-left:-20px;">FDR Details Information</h6>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="RefNo" class="col-sm-4 col-form-label">Investment No <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="RefNo" id="RefNo" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Amount" class="col-sm-4 col-form-label">Amount<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control interest money" style="text-align:right" id="Amount" name="Amount" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="OpenDate" class="col-sm-4 col-form-label">Open Date<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control dpdatepicker" id="OpenDate" name="OpenDate" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="FormulaType" class="col-sm-4 col-form-label">Calculation Method<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="FormulaType" name="FormulaType" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="DestinationType" class="col-sm-4 col-form-label">Investment To <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="DestinationType" name="DestinationType" readonly>
+
+                                </div>
+                            </div>
+
+                            <div class="clsdivdbank">
+                                <div class="form-group row">
+                                    <label for="detailsbankId" class="col-sm-4 col-form-label">Investment Bank <span style="color:red">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="detailsbankId" name="detailsbankId" readonly>
+
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="ChequeNo" class="col-sm-4 col-form-label">Cheque No</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="ChequeNo" name="ChequeNo" readonly />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="Rate" class="col-sm-4 col-form-label">Interest Rate(%)<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control money interest" id="Rate" name="Rate" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="MaturityDate" class="col-sm-4 col-form-label">Maturity Date<span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control interest dpdatepicker" id="MaturityDate" name="MaturityDate" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="Tenure" class="col-sm-4 col-form-label">Tenure<span style="color:red">*</span></label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="Tenure" name="Tenure" readonly>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="TenureType" name="TenureType" readonly>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="TotalInterest" class="col-sm-4 col-form-label">Interest</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="TotalInterest" name="TotalInterest" class="form-control money" readonly />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="DestinationBranch" class="col-sm-4 col-form-label">Investment Branch <span style="color:red">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="DestinationBranch" name="DestinationBranch" readonly>
+                                </div>
+                            </div>
+
+                            <div class="clsdivdbank">
+                                <div class="form-group row">
+                                    <label for="NPBAddress" class="col-sm-4 col-form-label">Address</label>
+                                    <div class="col-sm-8">
+                                        <textarea id="NPBAddress" name="NPBAddress" class="form-control" readonly></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                        <div class="modal-footer">
+                            <button type="button" name="process" class="btn-success" id="btnUpdate">Approve</button>
+                            <button type="button" name="process" class="btn-primary" id="btnReturn" onclick="ReturnFdr()">Return</button>
+                            <button type="button" onclick="ClearAll()" class="" data-dismiss="modal">Close</button>
+                        </div>
+                   
+                </div>
+            </div>
+        </div>
+        @*<div class="modal-footer">
+            <button class="btn btn-primary btn-sm" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Back</button>
+        </div>*@
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#ApprovalTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+
+            $(".datepicker").datepicker({ dateFormat: "dd M yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1950:2050" }).datepicker("setDate", new Date());
+
+            //resetNonPartner();
+            $('.clsdivdbank').hide();
+
+            $("#btnUpdate").on("click", function () {
+                let amount = $('#Amount').val();
+                let date = $('#OpenDate').val();
+                let fdrNo = $('#RefNo').val();
+                FDRApproveProcess(1, amount, date, fdrNo);
+            });
+        });
+
+        function ReturnFdr() {
+            var fdrMasterId = $("#fDRInvesmentMasterId").val();
+
+            swal({
+                title: 'Are you sure?', text: 'Do you want to return this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("ReturnToFdrFromApprove", "FDRApprove")',
+                    data: { fdrMasterId: fdrMasterId },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Returned Successfully!', 'success');
+                        window.location.href = "/Accounting/FDRApprove/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be returned. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+        function EditFundTransfer(...params) {
+            $("#EditModal").modal("show");
+
+            $("#fDRInvesmentMasterId").val(params[0]);
+
+            $('#FTInstructionNo').val(params[1]);
+            $('#FTDate').val(params[2]);
+            $('#FTSendTo').val(params[3]);
+            $('#bankId').val(params[4]);
+            $('#bankAccountNo').val(params[5]);
+            $("#SOF").val(params[6]);
+            $("#NOI").val(params[7]);
+            $('#bankBranchName').val(params[8]);
+
+            $('#RefNo').val(params[10]);
+            $('#Amount').val(params[11]);
+            $('#OpenDate').val(params[12]);
+            $('#FormulaType').val(params[13]);
+            $('#DestinationType').val(params[14]);
+
+            $('#Rate').val(params[15]);
+            $('#MaturityDate').val(params[16]);
+            $('#Tenure').val(params[17]);
+            $('#TenureType').val(params[18]);
+            $('#TotalInterest').val(params[19]);
+            $('#DestinationBranch').val(params[20]);
+
+            $('#detailsbankId').val(params[21]);
+            $('#ChequeNo').val(params[22]);
+            $('#NPBAddress').val(params[23]);
+
+            if ($('#DestinationType').val() == 'Same Bank') {
+                $('.clsdivdbank').hide();
+            }
+            else {
+                $('.clsdivdbank').show();
+            }
+            
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            date = new Date(date);
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+
+            return day + ' ' + monthNames[monthIndex] + ' ' + year;
+        }
+
+        function FDRApproveProcess(appType, amount, date, fdrNo) {
+
+            if (appType == -1) {
+                txtAppType = "Do you want to reject this record!";
+                conAppType = "Yes, reject it!";
+            }
+            else {
+                txtAppType = "Do you want to approve this record!";
+                conAppType = "Yes, approve it!";
+            }
+
+            var fdrMasterId = $("#fDRInvesmentMasterId").val();
+
+            if (fdrMasterId == 0 || fdrMasterId == null) {
+                alert('Invalid attemt!!');
+                return false;
+            }
+
+            swal({
+                title: 'Are you sure?', text: txtAppType, type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: conAppType
+            }).then(function () {                
+                window.location.href = "/Accounting/FDRApprove/ApproveFundTransferNew/?fdrMasterId=" + fdrMasterId + '&amount=' + amount + '&fdrDate=' + date + '&fdrNo=' + fdrNo;
+                swal({
+
+                    title: '', text: 'Successfully done!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                });
+            });
+        }
+
+        function DeleteMaster(Id, refNo) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteFDRByMasterId", "FDR")',
+                    data: { Id: Id, refNo: refNo },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Accounting/FDRApprove/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+
+    </script>
+}

@@ -1,0 +1,220 @@
+﻿@model GroupViewModel
+@{
+    ViewData["Title"] = "Group Member";
+}
+
+@section Style{
+    <style>
+        /* Styles for wrapping the search box */
+        /* Bootstrap 4 text input with search icon */
+
+        .has-search .form-control {
+            padding-left: 2.375rem;
+        }
+
+        .has-search .form-control-feedback {
+            position: absolute;
+            z-index: 2;
+            display: block;
+            width: 2rem;
+            height: 2rem;
+            line-height: 2rem;
+            text-align: center;
+            pointer-events: none;
+            color: #aaa;
+        }
+
+        .spanClass {
+            background: white;
+            padding: 6px;
+            border: 1px solid;
+            border-radius: 15px;
+            margin-right: 5px;
+        }
+
+        .crossButton {
+            margin-left: 5px;
+            padding: 3px;
+            border-radius: 10px;
+            background: maroon;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+
+}
+
+@if (@Model.rlnMemberGroups.Count()>0){
+
+<div class="row" style="margin-top:8px;">
+    <div class="col-6">
+        <div class="card" style="width: 100%;">
+            <div class="card-header" style="background: linear-gradient(to bottom, #990000 0%, #ff9999 100%);">
+                <h5 class="card-title" style="color:white;">@Model.rlnMemberGroups.FirstOrDefault().memberGroup.name  Members from List</h5>
+            </div>
+            <div class="card-body" style="background: linear-gradient(to bottom, #ff9999 0%, #ffffff 100%);">
+
+                <div class="container">
+                    <!-- Actual search box -->
+                    @*<div class="form-group has-search">
+                        <span class="fa fa-search form-control-feedback"></span>
+                        <input type="text" id="myInput" class="form-control" placeholder="Search" />
+                    </div>*@
+                    <hr />
+                    <div class="" style="max-height:400px;">
+                        <table id="mycontent" width="100%">
+                            @foreach (var data in Model.rlnMemberGroups)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="">
+                                            @*<input type="checkbox" class="custom-control-input" id="mem-@data.Id" name="@data.nameEnglish" onclick="AddMember(this,@data.Id);">*@
+                                            <label class="" for="mem-@data.Id" style="font-size:15px;">
+                                                @data.employee.employeeCode
+                                                <span>-</span>@data.employee.nameEnglish
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card" style="width: 100%;">
+            <div class="card-header" style="background: linear-gradient(to bottom, #990000 0%, #ff9999 100%);">
+                <h5 class="card-title" style="color:white;">Send Group SMS/Email</h5>
+            </div>
+            <div class="card-body" style="background: linear-gradient(to bottom, #ff9999 0%, #ffffff 100%); min-height:65vh;">
+                <div class="container">
+
+                    <form asp-area="Bulk" asp-controller="BulkSMSEmail" asp-action="GroupDetails" method="post" data-parsley-validate="parsley">
+                        <input type="hidden" id="groupId" name="groupId" value="@Model.rlnMemberGroups.FirstOrDefault().memberGroupId">
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div id="ApproversListView" class="row">
+                            @foreach (var data in Model.rlnMemberGroups)
+                            {
+                                <input type="hidden" id="id-@data.Id" name="ids[]" value="@data.employee.Id">
+                            }
+
+                        </div>
+                        <hr />
+
+                        <div class="form-group row">
+                            <label for="subject" class="col-sm-3 col-form-label">Subject<span id="requiredStar" style="color:red;"> *</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="subject" value="" name="subject" data-parsley-required="true">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <label for="description" class="col-sm-3 col-form-label">Description<span style="color:red;"> *</span></label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="10" id="description" value="" name="description" data-parsley-required="true"></textarea>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+
+                            <div class="col-3"></div>
+
+                            <div class="col-9">
+
+                                <div class="form-check-inline">
+                                    <div class="custom-control custom-checkbox mb-3">
+                                        <input type="checkbox" class="custom-control-input" id="SMS" name="SMS">
+                                        <label class="custom-control-label" for="SMS" style="font-size:16px;">SMS</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-check-inline pull-right">
+                                    <div class="custom-control custom-checkbox mb-3">
+                                        <input type="checkbox" class="custom-control-input" id="Email" name="Email">
+                                        <label class="custom-control-label" for="Email" style="font-size:16px;">Email</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <div class="col-sm-12">
+                                <input type="submit" class="btn btn-success btn-sm" name="send" value="Send" style="float:right;margin-top:20px;" />
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+}
+else
+{
+    <br />
+    <br />
+    <h3 class="text-center text-danger"> This group has no members </h3>
+}
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#mycontent tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+
+
+            $("#SMS").click(function () {
+
+                if (document.getElementById("SMS").checked == true) {
+                    if (document.getElementById("Email").checked) {
+                        $('#subject').attr("data-parsley-required", true);
+                        $('#requiredStar').show();
+                    } else {
+                        $('#subject').attr("data-parsley-required", false);
+                        $('#requiredStar').hide();
+                    }
+                }
+
+            });
+
+            $("#Email").click(function () {
+                if (document.getElementById("Email").checked == true) {
+                    $('#subject').attr("data-parsley-required", true);
+                    $('#requiredStar').show();
+                }
+
+            });
+        });
+
+            //function AddMember(arg, memberId) {
+            //    var id = arg.getAttribute('id');
+            //    var value = arg.getAttribute('name');
+            //    if (document.getElementById(id).checked == true) {
+            //        $('#ApproversListView').append('<input type="hidden" name="ids[]" id="txt' + memberId + '" value="' + memberId + '"><span class="spanClass" id="txt' + id + '" >' + value + '<a href="#"><span class="crossButton" onclick="Delete(' + "'" + id + "'" + ',' + "'" + memberId + "'" + ')">X</span></a></span>');
+            //    } else {
+            //        $('#txt' + id).remove();
+            //        $('#txt' + memberId).remove();
+            //    }
+            //}
+
+            //function Delete(id,memberId) {
+            //    $('#txt' + id).remove();
+            //    $('#txt' + memberId).remove();
+            //    $('#' + id).prop('checked', false);
+            //}
+
+    </script>
+}

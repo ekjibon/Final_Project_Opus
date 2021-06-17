@@ -1,0 +1,88 @@
+﻿@model AuthPersonInformationViewModel
+@{
+    ViewData["Title"] = "Auth. Person Info";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="card" style="margin: 0 80px 0 80px;">
+    <div class="card-header row">
+        <div class="col-md-10">
+            <h6 class="m-0 font-weight-bold text-primary">Authorized Person Information</h6>
+        </div>
+        <div class="col-md-2">
+            <a class="btn btn-sm btn-info" style="float:right;" href="/VEMSInformation/GeneralInformation/Index/@Model?.companyId">Back To List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-area="VEMSInformation" asp-controller="GeneralInformation" asp-action="AuthPersonInfo" method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-2"><span class="col-form-label">Name <span style="color:red;">*</span></span></div>
+                        <div class="col-10">
+                            <input type="text" class="form-control" id="name" name="name" value="@Model?.authorizedPerson?.name" data-parsley-required="true" />
+                            <input type="hidden" id="companyId" name="companyId" value="@Model?.companyId" />
+                            <input type="hidden" id="authPersonInfoId" name="authPersonInfoId" value="@Model?.authorizedPerson?.Id" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Designation </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="designation" name="designation" value="@Model?.authorizedPerson?.designation" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Department </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="department" name="department" value="@Model?.authorizedPerson?.department" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Contact Number </span></div>
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="contactNumber" name="contactNumber" value="@Model?.authorizedPerson?.contactNumber" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-4"><span class="col-form-label">Email </span></div>
+                        <div class="col-8">
+                            <input type="email" class="form-control" id="email" name="email" value="@Model?.authorizedPerson?.email" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-success" id="btnSubmit" style="float:right;margin-left:5px;"><i class="fa fa-save"></i> Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$('#dateofEstablishment').flatpickr({ dateFormat: "d-M-Y" });
+        });
+    </script>
+}

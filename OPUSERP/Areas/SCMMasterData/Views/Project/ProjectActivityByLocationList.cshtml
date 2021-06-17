@@ -1,0 +1,102 @@
+﻿@model ProjectLocationViewModel
+@{
+    ViewData["TitleMD"] = "Unit";
+    Layout = "~/Areas/Auth/Views/Shared/_MasterLayout.cshtml";
+}
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+    </style>
+}
+
+
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Project Location List</h6>
+                <a class="btn btn-info" href="~/SCMMasterData/Project/ProjectActivityByLocation">Add New</a>
+            </div>
+            
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="unitTable">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Project Name</th>
+                            <th>Level</th>
+                            <th>Grid</th>
+                            <th>Activity</th>
+                            <th>Unit</th>
+                            <th>QTY</th>
+                            <th>Total Item</th>
+                            <th>Action</th>
+</thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var data in Model.activityWiseProjectLocations)
+                            {
+                        <tr>
+                            <td>@i</td>
+                            <td>@data.projectShortName</td>
+                            <td>@data.locationPosition</td>
+                            <td>@data.gridLocation</td>
+                            <td>@data.activityName</td>
+                            <td>@data.unitName</td>
+                            <td>@data.qty</td>
+                            <td>@data.totalItem</td>
+                            <td>
+                                <a class="btn btn-success" onclick="Detalis(@data.projectLocationId)" href="#"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                <a class="btn btn-danger" href="javascript:void(0)" onclick="DeleteLocation(@data.projectLocationId)"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                                i++;
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#unitTable').DataTable();
+        });
+
+        function Edit(Id, name, description) {
+            $("#unitId").val(Id);
+            $("#unitName").val(name);
+            $("#description").val(description);
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteUnitById", "SCMUnit")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/SCMMasterData/SCMUnit/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+    </script>
+}

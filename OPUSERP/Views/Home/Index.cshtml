@@ -1,0 +1,441 @@
+﻿@*@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/shared/_Layout.cshtml";
+}
+
+<script src="~/js/echarts.min.js"></script>
+
+<div class="row card">
+    <div class="col-sm-5">
+        <span style="font-size:1.5em;font-weight:700;color:gray;">Dashboard</span>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-6">
+        <div class="form-group row">
+            <label for="fromDate" class="col-sm-3 col-form-label">Date From</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="fromDate" autocomplete="off">
+            </div>
+            <label for="toDate" class="col-sm-1 col-form-label">To</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="toDate" autocomplete="off">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label"></label>
+            <div class="col-sm-8">
+                <button type="button" id="btnLoadEmp" class="btn btn-success btn-sm">View</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+<br />
+<div class="row" style="overflow-y:hidden">
+    <div class="col-md-2">
+        <table class="table table-bordered table-striped" id="memberTable">
+            <thead style="width:100%;background-color:lightgray;">
+                <tr>
+                    <th>Zone</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style="padding-top:0px;">
+                        <span style="font-weight:bold;color:dimgrey">Zone Dhaka</span>
+                        <span style="color:deepskyblue;font-size:.8em;cursor:pointer;" class="fa-pull-right"></span>
+                    </li>
+                </ul>
+                <div id="barChartDhaka">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style="padding-top:0px;">
+                        <span style="font-weight:bold;color:dimgrey">Zone-Outside Dhaka</span>
+                        <span style="color:deepskyblue;font-size:.8em;cursor:pointer;" class="fa-pull-right"></span>
+                    </li>
+                </ul>
+                <div id="barChartOutSide">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row" style="overflow-y:hidden">
+    <div class="col-md-4">
+        <table class="table table-bordered table-striped" id="totalSalesTable">
+            <thead style="width:100%;background-color:lightgray;">
+                <tr>
+                    <th>Zone</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">                
+                <div id="barChartTotalSales">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    window.onload = function () {
+
+        $("#fromDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", "01-Jan-2020");
+        $("#toDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", "31-Dec-2020");
+
+        let frmDate = $("#fromDate").val();
+        let toDate = $("#toDate").val();
+
+        barChartDhaka();
+        barChartOutSide();
+        barChartTotalSales();
+
+        Common.Ajax('GET', '/Home/GetCollectionDashboardByDateArea/?frmDate=' + frmDate + '&toDate=' + toDate + '&areaId=' + 1, [], 'json', ajaxGetCollectionDashboardByDateArea);
+        Common.Ajax('GET', '/Home/GetCollectionDashboardByDateArea/?frmDate=' + frmDate + '&toDate=' + toDate + '&areaId=' + 2, [], 'json', ajaxGetCollectionDashboardByDateAreaTotalSales);
+
+        $('#btnLoadEmp').click(function () {
+            let frmDate = $("#fromDate").val();
+            let toDate = $("#toDate").val();
+
+            barChartDhaka();
+            barChartOutSide();
+            barChartTotalSales();
+
+            Common.Ajax('GET', '/Home/GetCollectionDashboardByDateArea/?frmDate=' + frmDate + '&toDate=' + toDate + '&areaId=' + 1, [], 'json', ajaxGetCollectionDashboardByDateArea);
+            Common.Ajax('GET', '/Home/GetCollectionDashboardByDateArea/?frmDate=' + frmDate + '&toDate=' + toDate + '&areaId=' + 2, [], 'json', ajaxGetCollectionDashboardByDateAreaTotalSales);
+        });
+    }
+
+    function addCommas(x) {
+        var parts = x.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    }
+
+    function ajaxGetCollectionDashboardByDateArea(response) {
+        var index = "1";
+        $("#memberTable tbody>tr").empty();
+        $.each(response, function (key, value) {
+            index = $("#memberTable tbody>tr").length;
+            index = index + 1;
+            var dtTable = $("#memberTable");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + value.label + '</td>' +
+                '<td style="text-align:right;">' + addCommas(value.value) + '</td>' +
+                '</tr>';
+
+            tableBody.append(trHtml);
+        })
+        //$('#memberTable').DataTable();
+    }
+
+    function ajaxGetCollectionDashboardByDateAreaTotalSales(response) {
+        var index = "1";
+        $("#totalSalesTable tbody>tr").empty();
+        $.each(response, function (key, value) {
+            index = $("#totalSalesTable tbody>tr").length;
+            index = index + 1;
+            var dtTable = $("#totalSalesTable");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + value.label + '</td>' +
+                '<td style="text-align:right;">' + addCommas(value.value) + '</td>' +
+                '</tr>';
+
+            tableBody.append(trHtml);
+        })
+        //$('#totalSalesTable').DataTable();
+    }
+
+    function barChartDhaka() {
+        $('#barChartDhaka').css({ "height": "300px", "width": "auto" });
+
+        var myChart = echarts.init(document.getElementById('barChartDhaka'));
+        myChart.setOption({
+
+            tooltip: {},
+            xAxis: [
+                {
+                    type: 'category',
+                    name: 'Team',
+                    data: [],
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLabel: {
+                        show: true,
+                        interval: '0',
+                        rotate: 20,
+                    },
+
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'Amount',
+                    min: 1,
+                    max: 10000000,
+                    position: 'left',
+
+                }
+            ],
+            series: [{
+                name: 'Collection',
+                type: 'bar',
+                barWidth: '50%',
+                data: []
+            }
+            ]
+        });
+
+        $.ajax({
+            url: '@Url.Action("GetCollectionDashboardByDateArea", "Home")',
+            type: "GET",
+            dataType: "json",
+            data: {
+                frmDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
+                areaId: 1
+            },
+            success: function (records) {
+                var label = [];
+                var y = [];
+                $.each(records, function (id, value) {
+                    y.push(value.value);
+                    label.push(value.label);
+                });
+                myChart.setOption({
+                    xAxis: {
+                        data: label
+                    },
+                    yAxis: {
+
+                    },
+                    series: [
+                    {
+                        data: y,
+                    }
+                    ]
+                });
+            },
+            failure: function () {
+                $.alert.open("error", "Failed!");
+            }
+        });
+    };
+
+    function barChartOutSide() {
+        $('#barChartOutSide').css({ "height": "300px", "width": "auto" });
+
+        var myChart = echarts.init(document.getElementById('barChartOutSide'));
+        myChart.setOption({
+
+            tooltip: {},
+            xAxis: [
+                {
+                    type: 'category',
+                    name: 'Team',
+                    data: [],
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLabel: {
+                        show: true,
+                        interval: '0',
+                        rotate: 20,
+                    },
+
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'Amount',
+                    min: 1,
+                    max: 10000000,
+                    position: 'left',
+
+                }
+            ],
+            series: [{
+                name: 'Collection',
+                type: 'bar',
+                barWidth: '50%',
+                itemStyle: {
+                    normal: {
+                        color: '#ffc107',
+                    }
+                },
+                data: []
+            }
+            ]
+        });
+
+        $.ajax({
+            url: '@Url.Action("GetCollectionDashboardByDateArea", "Home")',
+            type: "GET",
+            dataType: "json",
+            data: {
+                frmDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
+                areaId: 0
+            },
+            success: function (records) {
+                var label = [];
+                var y = [];
+                $.each(records, function (id, value) {
+                    y.push(value.value);
+                    label.push(value.label);
+                });
+                myChart.setOption({
+                    xAxis: {
+                        data: label
+                    },
+                    yAxis: {
+
+                    },
+                    series: [
+                    {
+                        data: y,
+                    }
+                    ]
+                });
+            },
+            failure: function () {
+                $.alert.open("error", "Failed!");
+            }
+        });
+    };
+
+    function barChartTotalSales() {
+        $('#barChartTotalSales').css({ "height": "300px", "width": "auto" });
+
+        var myChart = echarts.init(document.getElementById('barChartTotalSales'));
+        myChart.setOption({
+            title: {
+                text: 'Total Sales Team',
+                x: 'center'
+            },
+            tooltip: {},
+            xAxis: [
+                {
+                    type: 'category',
+                    name: 'Team',
+                    data: [],
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLabel: {
+                        show: true,
+                        interval: '0',
+                        rotate: 20,
+                    },
+
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'Amount',
+                    min: 1,
+                    max: 10000000,
+                    position: 'left',
+
+                }
+            ],
+            series: [{
+                name: 'Collection',
+                type: 'bar',
+                barWidth: '50%',
+                itemStyle: {
+                    normal: {
+                        color: '#007bff',                       
+                    }
+                },
+                data: [],
+                
+            }
+            ]
+        });
+
+        $.ajax({
+            url: '@Url.Action("GetCollectionDashboardByDateArea", "Home")',
+            type: "GET",
+            dataType: "json",
+            data: {
+                frmDate: $("#fromDate").val(),
+                toDate: $("#toDate").val(),
+                areaId: 2
+            },
+            success: function (records) {
+                var label = [];
+                var y = [];
+                $.each(records, function (id, value) {
+                    y.push(value.value);
+                    label.push(value.label);
+                });
+                myChart.setOption({
+                    xAxis: {
+                        data: label
+                    },
+                    yAxis: {
+
+                    },
+                    series: [
+                    {
+                        data: y,
+                    }
+                    ]
+                });
+            },
+            failure: function () {
+                $.alert.open("error", "Failed!");
+            }
+        });
+    };
+
+</script>
+
+<style>
+    .dot {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        text-align: center;
+        padding-top: 0px;
+    }
+</style>*@
+

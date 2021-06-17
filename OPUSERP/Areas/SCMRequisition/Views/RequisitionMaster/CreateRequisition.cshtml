@@ -1,0 +1,1730 @@
+﻿@model RequisitionViewModel
+@{
+    ViewData["Title"] = "Create Requisition";
+}
+
+
+<div class="card" style="width: 100%;">
+    <form method="post" enctype="multipart/form-data" data-parsley-validate="parsley">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-9">
+                    <h5 class="card-title" style="color: black">@Model.fLang.title</h5>
+                </div>
+                <div class="col-md-2 pull-right">
+                    <button type="button" class="btn btn-default btn-sm pull-right" style="width:100px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("Index", "RequisitionMaster")'">Back To List</button>
+                </div>
+            </div>
+            <hr />
+            <div class="container">
+
+                <div class="row">
+                    <input type="hidden" id="reqMasterId" name="reqMasterId" value="0" />
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="reqNo" class="col-sm-4 col-form-label">@Model.fLang.reqNo</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="reqNo" name="reqNo" value="" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="reqDate" class="col-sm-4 col-form-label">@Model.fLang.reqDate</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="reqDate" name="reqDate" disabled />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="reqDept" class="col-sm-4 col-form-label">@Model.fLang.reqDept</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="reqDept" name="reqDept" value="@ViewBag.DepartmentName" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="reqDept" class="col-sm-4 col-form-label">Review Remarks</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="revremarks" name="revremarks" value="@ViewBag.remarks" readonly />
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="subject" class="col-sm-4 col-form-label">@Model.fLang.bracsubject<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="subject" name="subject"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="projectId" class="col-sm-4 col-form-label">@Model.fLang.projectName<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="projectId" name="projectId" data-parsley-required="true">
+                                    @foreach (var data in Model.projects)
+                                    {
+                                        <option value="@data.Id">@data.projectName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isPostPR" class="col-sm-4 col-form-label">@Model.fLang.isPostPR</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="isPostPR" id="isPostPR">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="isPostPR" class="col-sm-4 col-form-label">Source of Fund</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="foundsourceId" id="foundsourceId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.fundSources)
+                                    {
+                                        <option value="@data.Id">@data.sourceName</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+            <div class="container">
+                <h6 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;">
+                    <u>
+                        @Model.fLang.approvalPanel
+                    </u>
+                </h6>
+                <div class="row" style="border:ridge" id="divPanel"></div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-10">
+                    <h6 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;"><u>@Model.fLang.attachment</u></h6>
+                </div>
+                <div class="col-sm-2">
+                    <label for="files" id="choseFile" class="custom-file-upload" style="width:150px;background-color:rgb(26,187,156);color:white">
+                        <i class="fa fa-cloud-upload">@Model.fLang.choosefile</i>
+                    </label>
+
+                    <input type="file" class="" name="files" id="files" multiple="multiple" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="dtAttachment" class="table table-bordered" style="width:100%;">
+                        <thead style="background-color:#e6e7ed"><tr><th style="width:50%">@Model.fLang.filename</th><th style="width:30%">@Model.fLang.file</th><th style="width:20%;display:none;">File Title</th><th style="width:20%;">@Model.fLang.action</th></tr></thead>
+                        <tbody id="tbodyAttachment"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <hr />
+            <div class="container">
+
+                <div class="row">
+                    <h6 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;"><u>@Model.fLang.itemDetails </u></h6>
+                    <input type="hidden" id="detailsId" name="detailsId" value="0" />
+                    <input type="hidden" id="itemId" name="itemId" value="0" />
+                    <input type="hidden" id="IsEdit" name="IsEdit" value="0" />
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="itemId" class="col-sm-4 col-form-label">@Model.fLang.itemId<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="itemName" name="itemName" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="reqQty" class="col-sm-4 col-form-label">@Model.fLang.reqQty<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="reqQty" name="reqQty" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group row">
+                            <label for="itemSpecification" class="col-sm-2  col-form-label">@Model.fLang.itemSpecificationId<span style="float:right;color:red;">*</span></label>
+                            <div class="col-sm-7">
+                                <input type="hidden" id="itemSpecificationId" name="itemSpecificationId" />
+                                <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="itemSpecificationName" id="itemSpecificationName">
+                            </div>
+
+                            <div class="col-sm-2">
+
+                                <label for="pfiles" id="choseFile" class="custom-file-upload" style="width:150px;background-color:rgb(26,187,156);color:white">
+                                    <i class="fa fa-cloud-upload">Choose Image</i>
+                                </label>
+
+                                <input type="file" class="" name="pfiles" id="pfiles" multiple="multiple" />
+                            </div>
+                            @*<div class="col-sm-1">
+                                    <a href="#" class="btn btn-info" data-toggle="modal" data-target="#addItemSpecificationModal" style="font-size:12px;width:100%;">
+                                        <span data-toggle="tooltip" title='Add Specification'>
+                                            <i class="fas fa-plus-square"></i>
+                                        </span>
+                                    </a>
+                                </div>*@
+                        </div>
+                        <div class="form-group row">
+                            <label for="cumulativeQty" class="col-sm-2  col-form-label">Cumulative Qty.</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control text-right" name="cumulativeQty" id="cumulativeQty" readonly>
+                            </div>
+                            <div class="col-sm-2">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="col-sm-12">
+                            <table id="dtAttachmentp" class="table table-bordered" style="width:100%;">
+
+                                <tbody id="tbodyAttachmentp"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="reqDept" class="col-sm-4 col-form-label">Delivery Address</label>
+                            <div class="col-sm-8">
+                                <textarea type="text" class="form-control" id="deliveryaddress" name="deliveryaddress"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="justification" class="col-sm-4 col-form-label">@Model.fLang.bracjustification</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="justification" name="justification"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="targetDate" class="col-sm-4 col-form-label">@Model.fLang.targetDate<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="targetDate" name="targetDate" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-1">
+                                <input type="checkbox" id="chkCompititionWaiver" onclick="ShowtxtSupplier()" style="width: 20px;height: 19px;" />
+                            </div>
+                            <label for="chkCompititionWaiver" class="col-sm-11 col-form-label">@Model.fLang.preferableVendor</label>
+                        </div>
+
+                        <div class="form-group row" id="divSupplier">
+                            <input type="hidden" id="hdnSupplier" value="0" />
+                            <label for="unit" class="col-sm-4 col-form-label">@Model.fLang.supplier</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control input-sm" id="supplier" name="supplier" />
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="javascript:void(0)" class="btn  btn-default" onclick="AddSupplier()" style="float:right;"><i class="fas fa-plus"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="form-group row" id="divtblSupplier">
+                            <input type="hidden" id="PreferableVendorsId" name="PreferableVendorsId" value="0" />
+                            <table class="table table-responsive" id="tblSupplier">
+                                <thead style="width:100%">
+                                    <tr>
+                                        <th width="20%">@Model.fLang.itemId</th>
+                                        <th width="20%">@Model.fLang.itemSpecificationId</th>
+                                        <th width="25%">@Model.fLang.supplier</th>
+                                        <th width="14%"><span>@Model.fLang.action</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group row">
+                            <label for="isPostPR" class="col-sm-4 col-form-label">Delivery Contact</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="employeeId" id="employeeId">
+                                    <option value="">Select</option>
+                                    @foreach (var data in Model.employeeInfos)
+                                    {
+                                        <option value="@data.Id">@data.nameEnglish-@data.designation</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="reqRate" class="col-sm-4 col-form-label">Estimated Cost<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="reqRate" name="reqRate" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="reqRate" class="col-sm-4 col-form-label">Budget Code</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="budgetCode" name="budgetCode" />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="totalAmount" class="col-sm-4 col-form-label">@Model.fLang.totalAmount</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="totalAmount" name="totalAmount" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="lastPrice" class="col-sm-4 col-form-label">@Model.fLang.lastPrice</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="lastPrice" name="lastPrice" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="unit" class="col-sm-4 col-form-label">Unit of measurement(UOM)</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="unit" name="unit" readonly />
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="AdditemDetails()" value="Add" title="Add" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-plus fa-w-1"></i></button>&nbsp;&nbsp;
+                        <button type="button" onclick="Refresh()" value="Refresh" title="Refresh" class="btn btn-success btn-lg ml-1" style="float:right; margin-top:5px;"><i class="fas fa-circle-notch"></i></button>
+                    </div>
+                </div>
+                <div style="height:10px"></div>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <h6 style="color: black;margin-left:0px;padding-left:0px;"><u><b>@Model.fLang.itemDetailsList</b></u></h6>
+                        <table class="table table-responsive" id="tblitemDetails">
+                            <thead style="width:100%">
+                                <tr>
+                                    <th width="20%">@Model.fLang.itemId</th>
+                                    <th width="20%">@Model.fLang.itemSpecificationId</th>
+                                    <th width="10%">Budget Code</th>
+                                    <th width="10%">@Model.fLang.targetDate</th>
+                                    <th width="10%">@Model.fLang.bracjustification</th>
+                                    <th width="10%">@Model.fLang.reqQty</th>
+                                    <th width="10%">Unit of measurement(UOM)</th>
+                                    <th width="10%">@Model.fLang.reqRate</th>
+                                    <th width="16%">@Model.fLang.totalAmount</th>
+                                    <th width="14%"><span>@Model.fLang.action</span></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr><td colspan="7" style="text-align:right">Grand Total :</td><td colspan="2"><span class="pull-right" id="grandTotal"></span></td></tr>
+                            </tfoot>
+                        </table>
+                        <hr />
+                        <div class="form-group row">
+                            <div class="col-sm-7">
+                                <div id="progress" style="display:none; align-content:center;">
+                                    <span class="text-success"> <b>Please wait while data is Processing ......    </b></span><img src="~/images/spinner.gif" />
+                                </div>
+                            </div>
+                            <label for="reqType" class="col-sm-2 col-form-label">@Model.fLang.reqType<span style="color:red;">*</span></label>
+                            <div class="col-sm-2">
+                                <select class="form-control" name="reqType" id="reqType" data-parsley-required="true">
+                                    <option value="">Select</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="Final">Final</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" id="btnSave" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </form>
+</div>
+
+<!-- New Item Specification -Modal-->
+<div class="modal fade" id="addItemSpecificationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Item Specification</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form id="frmaddItemSpecification" autocomplete="off" style="width:100%">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <input type="hidden" id="itemIdspec" name="itemIdspec" />
+                                <label for="itemDescription" class="col-sm-2 col-form-label">@Model.fLang.itemId</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="itemNamespec" name="itemNamespec" readonly>
+                                    <input type="hidden" id="itemIdspec" name="itemIdspec" value="0" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="itemDescription" class="col-sm-2 col-form-label">@Model.fLang.itemSpecificationId</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="itemspecification" name="itemspecification">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="accountLedgerId" class="col-sm-4 col-form-label">Spec Category</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" name="specCategory" id="specCategory">
+                                                <option value="">Select Category</option>
+                                                @foreach (var data in Model.specificationCategories)
+                                                {
+                                                    <option value="@data.Id">@data.specificationCategoryName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="catValue" class="col-sm-4 col-form-label">Value</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="catValue" name="catValue">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-11">
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <button type="button" onclick="AdditemDetailsSpec()" value="Add" title="Add" class="btn btn-success" style="float:right;"><i class="fas fa-plus fa-w-1"></i></button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+
+                                <input type="hidden" id="detailsIdSpec" name="detailsIdSpec" value="0" />
+                                <input type="hidden" id="IsEditSpec" name="IsEditSpec" value="0" />
+                                <div class="col-12">
+                                    <table class="table table-bordered table-striped" id="tblitemDetailsSpec" data-parsley-required="true">
+                                        <thead style="width:100%;background-color:lightgray;">
+                                            <tr>
+                                                <th style="width:40%">Specification Name</th>
+                                                <th style="width:20%">Category</th>
+                                                <th style="width:20%">Value</th>
+                                                <th style="width:20%">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-sm-10">
+                    <a href="javascript:void(0)" style="color:deepskyblue;" data-dismiss="modal">Cancel</a>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" id="btnSaveItemSpec" class="btn-primary btn-sm">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js" type="text/javascript"></script>
+    @*<script src="~/js/jquery.autocomplete.js" type="text/javascript"></script>
+        <script src="~/js/jquery.autocomplete.min.js" type="text/javascript"></script>*@
+    <script type="text/javascript">
+        var formdata = new FormData();
+        var pIndexattach = 0;
+        var Indexattach = 0;
+        function GetApproverPanelList(response) {
+            $("#divPanel").empty();
+            var divPanel = $("#divPanel");
+            var inputPanel;
+            var index = 0;
+            $.each(response, function (id, option) {
+                var source = option.imagePath;
+
+                if (source == '')
+                {
+
+                        source = "images/user.png";
+                }
+                var empName = option.EmpName.substr(option.EmpName, 100);
+                empName = empName.substr(0, Math.min(empName.length, empName.lastIndexOf(" ")))
+                if (option.isActive == 0)
+                {
+                    inputPanel = '<div class="col-md-3" style="padding-left:0px;padding-right:0px;">' +
+                        '<a href="javascript:void(0)" class="btn btn-success div' + index + ' boxDesign" id="btnTotalLead" role="button" style="width:100%;float:left;color:black;background-color:#fff">' +
+                        '<div class="row">' +
+                        '<div class="col-md-4">' +
+                        '<span style="padding:0px 0px 0px 0px;">' +
+                        '<img src="/' + source + '" style="width:60px;height:60px;"/>' +
+                        '<input type="button" class="btn btn-primary btn-sm pull-left cls' + index + ' clsSequenceNo" style="padding:0px 5px 0px 5px;" value="' + option.sequenceNo + '" />' +
+                        '</span>' +
+
+                        '</div>' +
+                        '<div class="col-md-8">' +
+                        '<span class="pull-left" style="font-weight:bold">' + empName + '</span><br />' +
+                        '<span class="pull-left" style="font-size:.7em">' + option.DesignationName + '</span>' +
+                        '</div>' +
+
+                        '</div>' +
+                        '<div class="col-md-12" style="margin-top: -32px;">' +
+                        ' <input type="text" class="form-control" id="" name="" style="margin-left: 62px;'+
+                    'width: 101px;'+
+                    'background: #f9a7a7" value="On Leave">' +
+
+                        '</div>' +
+                        '</a>' +
+                        '<input type="hidden" class="clsUserId" value="' + option.nextApproverId + '" />'
+                    '</div>';
+
+                    divPanel.append(inputPanel);
+                }
+                else
+                {
+                    inputPanel = '<div class="col-md-3" style="padding-left:0px;padding-right:0px;" id="divChieldPanel">' +
+                        '<a href="javascript:void(0)" class="btn btn-success div' + index + ' boxDesign" id="btnTotalLead" role="button" style="width:100%;float:left;color:black;background-color:#fff">' +
+                        '<div class="row">' +
+                        '<div class="col-md-4">' +
+                        '<span style="padding:0px 0px 0px 0px;">' +
+                        '<img src="/' + source + '" style="width:60px;height:60px;"/>' +
+                        '<input type="button" class="btn btn-primary btn-sm pull-left cls' + index + ' clsSequenceNo" style="padding:0px 5px 0px 5px;" value="' + option.sequenceNo + '" />' +
+                        '</span>' +
+
+                        '</div>' +
+                        '<div class="col-md-8">' +
+                        '<span class="pull-left" style="font-weight:bold">' + empName + '</span><br />' +
+                        '<span class="pull-left" style="font-size:.7em">' + option.DesignationName + '</span>' +
+                        '</div>' +
+
+                        '</div>' +
+                        '</a>' +
+                        '<input type="hidden" class="clsUserId" value="' + option.nextApproverId + '" />'
+                    '</div>';
+
+                    divPanel.append(inputPanel);
+                }
+                index++;
+            });
+        }
+
+        function GetReqNo(response) {
+            //$('#reqNo').val(response.AutoNumber);
+            $('#reqNo').val(response);
+        }
+        var attid = 0;
+        $(document).ready(function () {
+
+            $("#reqDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+            $("#targetDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker("setDate", new Date());
+
+            $('#reqQty').keyup(function () {
+                CalculateAmount();
+            });
+            $('#reqRate').keyup(function () {
+                CalculateAmount();
+            });
+            Common.Ajax('GET', '/api/RequisitionMaster/GetRequisitionNo/' + 1, [], 'json', GetReqNo);
+            Common.Ajax('GET', '/global/api/GetAllItemForRequisition', [], 'json', ajaxGetAllItemForRequisition);
+
+            Common.Ajax('GET', '/api/matrix/ApproverPanelList/' + 1 + '/' + $('#projectId').val(), [], 'json', GetApproverPanelList);
+            $('#projectId').change(function () {
+                Common.Ajax('GET', '/api/matrix/ApproverPanelList/' + 1 + '/' + $('#projectId').val(), [], 'json', GetApproverPanelList);
+                Common.Ajax('GET', '/api/RequisitionMaster/GetRequisitionNo/' + $(this).val(), [], 'json', GetReqNo);
+            });
+
+            $('#reqDate').change(function () {
+                Common.Ajax('GET', '/api/RequisitionMaster/GetRequisitionNo/' + $(this).val(), [], 'json', GetReqNo);
+            });
+
+            $("#btnSave").click(function () {
+                SaveMasterDetails();
+            })
+            if (window.File && window.FileList && window.FileReader) {
+                var filesInput = document.getElementById("pfiles");
+
+                //$("#tbodyAttachment").empty();
+
+                filesInput.addEventListener("change", function (event) {
+
+                    var files = event.target.files; //FileList object
+                    var output = document.getElementById("result");
+
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        pIndexattach = pIndexattach + 1;
+                        var attach_id = "pfiles";
+                        var FileSize = $('#' + attach_id)[0].files[0].size;
+                        var fileName = $('#' + attach_id)[0].files[0].name;
+                        var path = URL.createObjectURL(event.target.files[0]);
+                        $('#btnSave').prop('disabled', false);
+                        var specid = $('#itemSpecificationId').val();
+                        var filesizekb = (parseFloat(FileSize) / 1024).toFixed(0);
+
+                        var dtTable = $("#dtAttachmentp");
+                        var tableBody = dtTable.find('tbody');
+                        var trow = tableBody.find()
+
+                        if (!file.type.match('image')) //file
+                        {
+                            var ext = this.value.match(/\.(.+)$/)[1];
+                            var picReader = new FileReader();
+                            picReader.addEventListener("load", function (event) {
+                                var attach_id = "files";
+                                var picFile = event.target;
+                                '<tr>' +
+                                tableBody.append(
+
+                                    '<td class="cls' + specid+'" id="1' + pIndexattach + '">' + fileName + '</td>' +
+                                    //'<td>' + subject + '<input type="text" id="txtTACType' + subject + '" class ="clsTACType" style="display:none" value="' + subject + '"/></td>' +
+                                    '<td class="cls' + specid +'" id="2' + pIndexattach + '"><i class="fa fa-file" style="font-size:40px;color:lightgray"> </i></td>' +
+                                    '<td class="cls' + specid +'" id="3' + pIndexattach + '" style="display:none"><input type="text"   name="pSubjects" value="' + pIndexattach + 'A" /><input class="clsFileTitlep" type="text" value="' + path + '" name="pFiles" style="display:none"/><input type="text" value="' + specid + '" name="pspecid" class="clsFileTitleps" style="display:none"/></td>' +
+                                    '<td class="cls' + specid +'" id="4' + pIndexattach + '">' +  '<a href="javascript:void(0)" class="btn btn-danger btn-sm" title="Delete" onclick="DeleteImageP(' + pIndexattach + ',' + "'" + fileName + "'" + ')">Delete</a></td>')
+                                    +
+                                    '</tr>'
+                            });
+                        }
+                        else {
+                            var picReader = new FileReader();
+                            picReader.addEventListener("load", function (event) {
+                                var attach_id = "files";
+                                var picFile = event.target;
+                                '<tr >' +
+                                tableBody.append(
+
+                                    '<td class="cls' + specid +'" id="1' + pIndexattach + '" style="height:50px;width: 45px; background - color:lightgray"><img src=' + "'" + path + "'" + ' height=50 width=45 /></td>' +
+                                    '<td class="cls' + specid +'" id="2' + pIndexattach + '" style="display:none"><input type="text" name="Subjects"   value="' + pIndexattach + 'A" /><input class="clsFileTitlep" type="text" value="' + path + '" name="pFiles" style="display:none"/><input type="text" value="' + specid + '" name="pspecid" class="clsFileTitleps" style="display:none"/></td>' +
+                                    '<td  id="3' + pIndexattach + '">' + '<a href="javascript:void(0)" class="btn btn-danger btn-sm cls' + specid +'" title="Delete" onclick="DeleteImageP(' + pIndexattach + ',' + "'" + fileName + "'" + ')">Delete</a></td>')
+                                    +
+                                    '</tr>'
+                            });
+                        }
+                        picReader.readAsDataURL(file);
+                    }
+                    var fileInput = document.getElementById('pfiles');
+                    for (i = 0; i < fileInput.files.length; i++) {
+                        formdata.append(fileInput.files[i].name, fileInput.files[i]);
+                    }
+                });
+
+            }
+
+            else {
+                console.log("Your browser does not support File API");
+            }
+            if (window.File && window.FileList && window.FileReader) {
+                var filesInput = document.getElementById("files");
+
+                //$("#tbodyAttachment").empty();
+
+                    filesInput.addEventListener("change", function (event) {
+
+                        var files = event.target.files; //FileList object
+                        var output = document.getElementById("result");
+
+                        for (var i = 0; i < files.length; i++) {
+                            var file = files[i];
+                            Indexattach = Indexattach + 1;
+                            var attach_id = "files";
+                            var FileSize = $('#' + attach_id)[0].files[0].size;
+                            var fileName = $('#' + attach_id)[0].files[0].name;
+                            var path = URL.createObjectURL(event.target.files[0]);
+                            $('#btnSave').prop('disabled', false);
+
+                            var filesizekb = (parseFloat(FileSize) / 1024).toFixed(0);
+
+                            var dtTable = $("#dtAttachment");
+                            var tableBody = dtTable.find('tbody');
+
+                            if (!file.type.match('image')) //file
+                            {
+                                var ext = this.value.match(/\.(.+)$/)[1];
+                                var picReader = new FileReader();
+                                picReader.addEventListener("load", function (event) {
+                                    var attach_id = "files";
+                                    var picFile = event.target;
+
+                                    tableBody.append(
+                                        '<tr id=' + Indexattach + '>' +
+                                        '<td>' + fileName + '</td>' +
+
+                                        '<td><i class="fa fa-file" style="font-size:40px;color:lightgray"> </i></td>' +
+                                        '<td style="display:none"><input type="text" class="clsFileTitle"  name="Subjects" value="' + Indexattach + 'A" /><input type="text" value="' + path + '" name="Files" style="display:none"/></td>' +
+                                        '<td><a href=' + "'" + path + "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>' + '&nbsp;&nbsp;' + '<a href="javascript:void(0)" class="btn btn-danger btn-sm" title="Delete" onclick="DeleteImage(' + Indexattach + ',' + "'" + fileName + "'" + ')">Delete</a></td>' +
+                                        '</tr>')
+                                });
+                            }
+                            else {
+                                var picReader = new FileReader();
+                                picReader.addEventListener("load", function (event) {
+                                    var attach_id = "files";
+                                    var picFile = event.target;
+                                    tableBody.append(
+                                        '<tr id=' + Indexattach + '>' +
+                                        '<td>' + fileName + '</td>' +
+                                        '<td style="height:50px;width: 45px; background - color:lightgray"><img src=' + "'" + path + "'" + ' height=50 width=45 /></td>' +
+                                        '<td style="display:none"><input type="text" name="Subjects"  class="clsFileTitle" value="' + Indexattach + 'A" /><input type="text" value="' + path + '" name="Files" style="display:none"/></td>' +
+                                        '<td><a href=' + "'" + path + "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>' + '&nbsp;&nbsp;' + '<a href="javascript:void(0)" class="btn btn-danger btn-sm" title="Delete" onclick="DeleteImage(' + Indexattach + ',' + "'" + fileName + "'" + ')">Delete</a></td>' +
+                                        '</tr>')
+                                });
+                            }
+                            picReader.readAsDataURL(file);
+                        }
+                        var fileInput = document.getElementById('files');
+                        for (i = 0; i < fileInput.files.length; i++) {
+                            formdata.append(fileInput.files[i].name, fileInput.files[i]);
+                        }
+                    });
+
+            }
+
+            else {
+                console.log("Your browser does not support File API");
+            }
+            $("#divSupplier").hide();
+            $("#divtblSupplier").hide();
+            $('#chkCompititionWaiver').val(0);
+            $('#chkCompititionWaiver').on("click", function () {
+                if ($('#chkCompititionWaiver').prop('checked') == true) {
+                    $('#chkCompititionWaiver').val(1);
+                } else {
+                    $('#chkCompititionWaiver').val(0);
+                }
+            });
+            Common.Ajax('GET', '/global/api/supplier/GetAllSupplier/', [], 'json', ajaxGetAllSupplier);
+
+            if (@ViewBag.masterId> 0) {
+                Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetRequisitionMasterByReqId/?reqId=' + @ViewBag.masterId, [], 'json', ajaxGetRequisitionMasterByReqId);
+                Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetItemListByRequisitionId/?reqId=' + @ViewBag.masterId, [], 'json', ajaxGetItemListByRequisitionId);
+                LoadAttachment(@ViewBag.masterId);
+                Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetPreferableVendorList/?reqId=' + @ViewBag.masterId, [], 'json', ajaxGetPreferableVendorList);
+            }
+        })
+
+        function AdditemDetailsSpec() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetailsSpec tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetailsSpec tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsspecificationCategoryId").val();
+            }
+
+            
+
+            if ($("#itemspecification").val() == "") {
+                alert("Plaese Enter Specification Name.");
+                return false
+            }
+
+            if ($("#specCategory").val() == "") {
+                alert("Plaese Enter Specification Category.");
+                return false
+            }
+            if ($("#catValue").val() == "") {
+                alert("Plaese Enter Category Value.");
+                return false
+            }
+
+            let id = parseInt($("#detailsIdSpec").val()) ? parseInt($("#detailsIdSpec").val()) : 0;
+            var itemSpecificationName = $("#itemspecification").val();
+            var itemSpecificationNameShow = $("#itemspecification").val();
+            var specificationCategoryId = $("#specCategory").val();
+            var specificationCategoryName = $("#specCategory option:selected").text();
+            var catValue = $("#catValue").val();
+
+
+            var RowCount = $("#tblitemDetailsSpec tbody>tr").length;
+            var editOption = parseInt($('#IsEditSpec').val()) ? parseInt($('#IsEditSpec').val()) : 0;
+
+            for (i = 0; i <= RowCount; i++) {
+                var _itemSpecificationName = $("#itemSpecificationNameVD" + i).val();
+                var _specificationCategoryId = $("#specificationCategoryId" + i).val();
+                if (_itemSpecificationName == itemSpecificationName && _specificationCategoryId == specificationCategoryId && editOption == 0) {
+                    alert('You have already added this Specification Category!');
+                    return false
+                }
+                if (_itemSpecificationName == itemSpecificationName) {
+                    itemSpecificationNameShow = "";
+                }
+            }
+
+            var dtTable = $("#tblitemDetailsSpec");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + itemSpecificationNameShow + '<input type="hidden" id="itemSpecificationName' + index + '" name="itemSpecificationName" class="clsitemSpecificationName" value="' + itemSpecificationNameShow + '"/><input type="hidden" id="itemSpecificationNameVD' + index + '" name="itemSpecificationNameVD" class="clsitemSpecificationNameVD" value="' + itemSpecificationName + '"/></td>' +
+                '<td>' + specificationCategoryName + '<input type="hidden" name="id"class="clsId" value="' + id + '"><input type="hidden" id="specificationCategoryId' + index + '" name="specificationCategoryId" class="clsspecificationCategoryId" value="' + specificationCategoryId + '"/></td>' +
+                '<td>' + catValue + '<input type="hidden" id="CategoryValue' + index + '" name="CategoryValue" class="clsCategoryValue" value="' + catValue + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteSpec(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                '<a onclick="EditTblSpec(' + index + "," + specificationCategoryId + ", '" + itemSpecificationName + "',  '" + catValue + "'," + id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                '</tr>';
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetailsSpec tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            RefreshSpec();
+        }
+
+        function EditTblSpec(index, specificationCategoryId, itemSpecificationName, catValue, Id) {
+            var rightIndex = index;
+            $("#IsEditSpec").val(1);
+            $('#detailsIdSpec').val(Id);
+            $('#itemspecification').val(itemSpecificationName);
+            $('#specCategory').val(specificationCategoryId);
+            $('#catValue').val(catValue);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+        function RefreshSpec() {
+            $('#detailsIdSpec').val('');
+            $("#IsEditSpec").val(0);
+
+            $('#specCategory').val('');
+            $('#catValue').val('');
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        function DeleteSpec(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#tblitemDetailsSpec #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success');
+            });
+
+        }
+
+        function EditTbl(index, itemsId, quantity, itemName, itemSpecification, unit, price, Id) {
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+            $('#detailsId').val(Id);
+
+            $('#Qty').val(quantity);
+            $('#price').val(price);
+            $('#itemName').val(itemName);
+            $('#itemsId').val(itemsId);
+            $('#itemSpecificationName').val(itemSpecification);
+            $('#unit').val(unit);
+
+            $('#itemNamespec').val(itemName);
+            $('#itemIdspec').val(itemsId);
+            Common.Ajax('GET', '/SCMMasterData/Item/GetAllSpecificationDetailByitemId/?itemId=' + $("#itemIdspec").val(), [], 'json', ajaxGetAllSpecificationDetailByitemId);
+
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+        function ajaxGetAllSpecificationDetailByitemId(response) {
+            console.log(response);
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetailsSpec tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetailsSpec tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsspecificationCategoryId").val();
+            }
+            $("#tblitemDetailsSpec tbody>tr").empty();
+            $.each(response, function (key, value) {
+                var itemSpecificationName = value.specificationName;
+                var itemSpecificationNameShow = value.specificationName;
+                var RowCount = $("#tblitemDetailsSpec tbody>tr").length;
+                for (i = 0; i <= RowCount; i++) {
+                    var _itemSpecificationName = $("#itemSpecificationNameVD" + i).val();
+
+                    if (_itemSpecificationName == itemSpecificationName) {
+                        itemSpecificationNameShow = "";
+                    }
+                }
+
+                index = $("#tblitemDetailsSpec tbody>tr").length;
+                var dtTable = $("#tblitemDetailsSpec");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + itemSpecificationNameShow + '<input type="hidden" id="itemSpecificationName' + index + '" name="itemSpecificationName" class="clsitemSpecificationName" value="' + itemSpecificationNameShow + '"/><input type="hidden" id="itemSpecificationNameVD' + index + '" name="itemSpecificationNameVD" class="clsitemSpecificationNameVD" value="' + itemSpecificationName + '"/></td>' +
+                    '<td>' + value.specificationCategoryName + '<input type="hidden" name="id"class="clsId" value="' + value.Id + '"><input type="hidden" id="specificationCategoryId' + index + '" name="specificationCategoryId" class="clsspecificationCategoryId" value="' + value.specificationCategoryId + '"/></td>' +
+                    '<td>' + value.value + '<input type="hidden" id="CategoryValue' + index + '" name="CategoryValue" class="clsCategoryValue" value="' + value.value + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="DeleteSpec(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTblSpec(' + index + "," + value.specificationCategoryId + ", '" + value.specificationName + "',  '" + value.value + "'," + value.Id + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+
+                    '</tr>';
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetailsSpec tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+
+            index = index + 1;
+        }
+
+        $("#btnSaveItemSpec").click(function (e) {
+            let rowCount = $("#tblitemDetailsSpec tbody>tr").length;
+            if (rowCount < 1) {
+                alert("Invalid attempt!!!");
+                return false;
+            }
+            e.preventDefault();
+            var form = $("#frmaddItemSpecification");
+            $.ajax({
+                url: '/SCMMasterData/Item/SaveItemSpecification',
+                data: form.serialize(),
+                type: 'POST',
+                success: function (records) {
+                    swal({
+                        title: '', text: 'Save Successfully!', type: 'success', showCancelButton: false, confirmButtonColor: '#3085d6', confirmButtonText: 'Ok!',
+                    }).then(function () {
+
+                        $('#addItemSpecificationModal').modal('hide');
+                        Common.Ajax('GET', '/global/api/ItemSpec/' + records, [], 'json', ajaxGetItemSpacification);
+                    });
+                }
+            });
+        });
+
+        function ajaxGetItemSpacification(response) {
+            var GetInStockItemSpacificationList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                GetInStockItemSpacificationList[GetInStockItemSpacificationList.length] = obj;
+            });
+            $('#itemSpecificationName').autocomplete({
+                source: GetInStockItemSpacificationList,
+                select: function (event, ui) {
+                    $("#itemSpecificationId").val(ui.item.key);
+                }
+            });
+        }
+
+        function ajaxGetRequisitionMasterByReqId(response) {
+            $.each(response, function (i, item) {
+                $("#reqMasterId").val(item.Id);
+                $("#reqNo").val(item.reqNo);
+                $("#reqDate").val(item.reqDate);
+                $("#subject").val(item.subject);
+                $("#reqType").val(item.reqType);
+                $("#isPostPR").val(item.isPostPR);
+                $("#reqDept").val(item.reqDept);
+                $("#reqDept").val(item.reqDept);
+                $("#projectId").val(item.projectId);
+                $("#foundsourceId").val(item.fundSourceId);
+                $("#deliveryaddress").val(item.deliveryaddress);
+                $("#employeeId").val(item.employeeinfoId);
+                Common.Ajax('GET', '/api/matrix/ApproverPanelList/' + 1 + '/' + item.projectId, [], 'json', GetApproverPanelList);
+            });
+
+        }
+
+        function ShowtxtSupplier() {
+            var CompititionResult = $("#chkCompititionWaiver").is(":checked");
+            if (CompititionResult == true) {
+                $("#divSupplier").show();
+                $("#divtblSupplier").show();
+            }
+            else {
+                $("#divtblSupplier").hide();
+                $("#divSupplier").hide();
+                $("#supplier").val("");
+                $("#hdnSupplier").val("0");
+            }
+        }
+        function DeleteImage(Indexattach, fileName) {
+            formdata.delete(fileName);
+            $("#" + Indexattach).remove();
+            Indexattach = Indexattach - 1;
+            return false;
+        }
+        function DeleteImageP(Indexattach, fileName) {
+            formdata.delete(fileName);
+            $("#1" + Indexattach).remove();
+            $("#2" + Indexattach).remove();
+            $("#3" + Indexattach).remove();
+            $("#4" + Indexattach).remove();
+            pIndexattach = pIndexattach - 1;
+            return false;
+        }
+
+        function ajaxGetItemSpecification(response) {
+
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.specificationName;
+                GetList[GetList.length] = obj;
+            });
+            $('#itemSpecificationName').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#itemSpecificationName").val(ui.item.value);
+                    $("#itemSpecificationId").val(ui.item.key);
+                    Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetCumulativeGRQtyBySpecId/?itemspecId=' + ui.item.key, [], 'json', ajaxGetCumulativeGRQtyBySpecId);
+                }
+            });
+
+        }
+
+        function ajaxGetCumulativeGRQtyBySpecId(response) {
+            $("#cumulativeQty").val(response.grQty);
+        }
+
+        function ajaxGetAllSupplier(response) {
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.orgCode + '-' + option.organizationName;
+                GetList[GetList.length] = obj;
+            });
+            $('#supplier').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#supplier").val(ui.item.value);
+                    $("#hdnSupplier").val(ui.item.key);
+                }
+            });
+        }
+
+        function ajaxGetAllItemForRequisition(response) {
+            var GetList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.itemName;
+                obj.value2 = option.unit.unitName;
+                GetList[GetList.length] = obj;
+            });
+            $('#itemName').autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $("#itemName").val(ui.item.value);
+                    $("#itemNamespec").val(ui.item.value);
+                    $("#itemId").val(ui.item.key);
+                    $("#itemIdspec").val(ui.item.key);
+                    $("#unit").val(ui.item.value2);
+                    var ItemId = ui.item.key;
+                    Common.Ajax('GET', '/SCMRequisition/RequisitionMaster/GetAllItemSpecificationByitemId/?ItemId=' + ItemId, [], 'json', ajaxGetItemSpecification);
+                    $("#IsEdit").val(0);
+                    Common.Ajax('GET', '/SCMMasterData/Item/GetAllSpecificationDetailByitemId/?itemId=' + ui.item.key, [], 'json', ajaxGetAllSpecificationDetailByitemId);
+                }
+            });
+        }
+
+        function CalculateAmount() {
+            var Qty = 0;
+            var Rate = 0;
+            var Total = 0;
+            if ($('#reqQty').val()!="") {
+                Qty = $('#reqQty').val();
+            }
+            if ($('#reqRate').val() != "") {
+                Rate = $('#reqRate').val();
+            }
+            Total = Qty * Rate;
+            $('#totalAmount').val(Total);
+        }
+
+        function LoadAttachment(MasterId) {
+            var rowno = 0
+            $.ajax({
+                type: 'GET',
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("GetMasterWiseRequisitionAttachment", "RequisitionMaster", "http")',
+                data: { MasterId: MasterId },
+                dataType: 'json',
+                async: true,
+                success: function (attachments) {
+                    //console.log(attachments);
+                    var index = 1;
+                    var dtTable = $("#dtAttachment");
+                    var tableBody = dtTable.find('tbody');
+                    tableBody.empty();
+                    $.each(attachments, function (index, E) {
+                        rowno = rowno + 1;
+                        var filePath = '/Upload/' + E.fileName
+
+                        if (E.FilePath != "") {
+                            if (E.MimeType == "application/msword" || E.MimeType == "application/pdf" || E.MimeType == "application/x-msexcel" || E.MimeType == "application/octet-stream" || E.MimeType == "text/plain" || E.MimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || E.MimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                                tableBody.append(
+                                    '<tr id=' + rowno + '>' +
+                                    '<td>' + E.fileName + '</td>' +
+                                    '<td style="height:50px;width: 45px; background - color:lightgray"><img src=' + "'" + filePath + "'" + ' height=50 width=45 /></td>' +
+                                    '<td style="display:none"><input type="text" name="Subjects"  class="clsFileTitle" value="' + rowno + 'A" /><input type="text" value="' + filePath + '" name="Files" style="display:none"/></td>' +
+                                    '<td><a href=' + "'" + filePath + "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>' + '&nbsp;&nbsp;' + '<a href="javascript:void(0)" class="btn btn-danger btn-sm" title="Delete" onclick="DeleteImage(' + rowno + ',' + "'" + E.fileName + "'" + ')">Delete</a></td>' +
+                                    '</tr>')
+                            }
+                            else {
+                                tableBody.append(
+                                    '<tr id=' + rowno + '>' +
+                                    '<td>' + E.fileName + '</td>' +
+                                    '<td style="height:50px;width: 45px; background - color:lightgray"><img src=' + "'" + filePath + "'" + ' height=50 width=45 /></td>' +
+                                    '<td style="display:none"><input type="text" name="Subjects"  class="clsFileTitle" value="' + rowno + 'A" /><input type="text" value="' + filePath + '" name="Files" style="display:none"/></td>' +
+                                    '<td><a href=' + "'" + filePath + "'" + '  target="_blank"  title="Preview"  class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>' + '&nbsp;&nbsp;' + '<a href="javascript:void(0)" class="btn btn-danger btn-sm" title="Delete" onclick="DeleteImage(' + rowno + ',' + "'" + E.fileName + "'" + ')">Delete</a></td>' +
+                                    '</tr>')
+                            }
+
+                        }
+                        index = index + 1;
+                    });
+                    $('#AjaxLoader').hide()
+                },
+                error: function (request, status, error) {
+                    alert(request.statusText + "/" + request.statusText + "/" + error);
+                }
+            });
+        }
+
+        function ajaxGetItemListByRequisitionId(response) {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsItemId").val();
+            }
+            $("#tblitemDetails tbody>tr").empty();
+
+            var itemtotalAmount = 0;
+            $.each(response, function (key, value) {
+                itemtotalAmount = value.reqQty * value.reqRate;
+                index = $("#tblitemDetails tbody>tr").length;
+                var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + value.itemSpecification.Item.itemName + '<input type="hidden" name="id"class="clsId" value="' + value.Id + '"><input type="hidden" name="ItemId"  id="txItemId" class="clsItemId"value="' + value.itemSpecification.itemId + '"/></td>' +
+                    '<td>' + value.itemSpecification.specificationName + '<input type="hidden"name="itemSpecificationId" id="txitemSpecificationId" class="clsitemSpecificationId"value="' + value.itemSpecification.specificationName + '"/><input type="hidden"name="itemSpecificationName" id="txitemSpecificationName" class="clsitemSpecificationName"value="' + value.itemSpecification.specificationName + '"/></td>' +
+                    '<td>' + value.budgetCode + '<input type="hidden"name="budgetCode" class="clsbudgetCode"value="' + value.budgetCode + '"/></td>' +
+
+                    '<td>' + value.targetDate + '<input type="hidden"name="targetDate" class="clstargetDate"value="' + value.targetDate + '"/></td>' +
+                    '<td>' + value.justification + '<input type="hidden"name="justification" class="clsjustification"value="' + value.justification + '"/></td>' +
+                    '<td>' + value.reqQty + '<input type="hidden"name="reqQty" class="clsreqQty"value="' + value.reqQty + '"/></td>' +
+                    '<td>' + value.itemSpecification.Item.unit.unitName + '<input type="hidden"name="unit" class="clsunit"value="' + value.itemSpecification.Item.unit.unitName + '"/></td>' +
+                    '<td>' + value.reqRate + '<input type="hidden"name="reqRate" class="clsreqRate"value="' + value.reqRate + '"/></td>' +
+                    '<td>' + itemtotalAmount + '<input type="hidden"name="totalAmount" class="clstotalAmount"value="' + itemtotalAmount + '"/></td>' +
+                    '<td>' + '<input type="hidden" name="location" class="clslocation" value="' + value.deliveryLocation + '"/></td>' +
+                    '<td>' + '<input type="hidden" name="employeeId" class="clsemployeeId" value="' + value.employeeId + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTblWithId(' + index + ',' + value.itemSpecification.itemId + ', `' + "'" + value.itemSpecification.specificationName.replace(/'/g, "&#39").replace(/"/g, "&#34") + "'" + '`, ' + "'" + value.itemSpecification.Item.unit.unitName + "'" + ', ' + "'" + value.targetDate + "'" + ',`' + "'" + value.justification.replace(/'/g, "&#39").replace(/"/g, "&#34") + "'" + '`,' + value.reqQty + ', ' + value.reqRate + ', ' + itemtotalAmount + ', ' + "`'" + value.itemSpecification.Item.itemName.replace(/'/g, "&#39").replace(/"/g, "&#34") + "'`" + ',' + value.Id + ',' + value.itemSpecificationId + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+            })
+            SumCal();
+            index = index + 1;
+        }
+
+        function AdditemDetails() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var index = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                index = $("#tblitemDetails tbody>tr").length;
+            }
+            else {
+                index = ifExistIndex;
+                tdRID = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsItemId").val();
+            }
+
+            let id = parseInt($("#detailsId").val()) ? parseInt($("#detailsId").val()) : 0;
+            let ItemId = $('#itemId').val();
+            let ItemName = $('#itemName').val();
+            //let itemSpecificationId = $('#itemSpecificationId').val();
+            var itemSpecificationId = parseInt($('#itemSpecificationId').val()) ? parseInt($('#itemSpecificationId').val()) : 0;
+            let itemSpecificationName = $('#itemSpecificationName').val();
+            var targetDate = $("#targetDate").val();
+            var budgetCode = $("#budgetCode").val();
+            var justification = $("#justification").val();
+
+            var location = $("#deliveryaddress").val();
+            var employeeId = $("#employeeId").val();
+
+            let unit = $('#unit').val();
+            let reqQty = $('#reqQty').val();
+            let reqRate = $('#reqRate').val();
+            let totalAmount = $('#totalAmount').val();
+
+
+            if (ItemId == 0) {
+                    alert("Please select Item");
+                    return false;
+            }
+
+            if (reqQty == '') {
+                alert("Please insert Quantity");
+                return false;
+            }
+            if (reqRate == '') {
+                alert("Please insert Approx. Price");
+                return false;
+            }
+            if (targetDate == '') {
+                alert("Please enter Delivery Target Date")
+                return false;
+            }
+            //if (justification == '') {
+            //    alert("Please enter Justification")
+            //    return false;
+            //}
+            if (itemSpecificationName == '') {
+                alert("Please enter item Specification")
+                return false;
+            } else if (itemSpecificationId == 0) {
+                alert("Please select valid Specification Name")
+                return false;
+            }
+
+            var editOption = parseInt($('#IsEdit').val()) ? parseInt($('#IsEdit').val()) : 0;
+            var RowCount = $("#tblitemDetails tbody>tr").length;
+
+            for (i = 1; i <= RowCount; i++) {
+                var _ItemId = $("#txItemId").val();
+                var spec = $("#txitemSpecificationId").val();
+                var specname = $("#txitemSpecificationName").val();
+
+                if (editOption == 1) {
+
+                } else {
+                    if (_ItemId == ItemId && specname == itemSpecificationName) {
+
+                        alert('You have already added this item specification');
+                        return false
+                    }
+                }
+            }
+
+            var dtTable = $("#tblitemDetails");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + ItemName + '<input type="hidden" name="id"class="clsId" value="' + id + '"><input type="hidden" name="ItemId"  id="txItemId" class="clsItemId"value="' + ItemId + '"/></td>' +
+                    '<td>' + itemSpecificationName + '<input type="hidden"name="itemSpecificationId" id="txitemSpecificationId" class="clsitemSpecificationId"value="' + itemSpecificationId + '"/><input type="hidden"name="itemSpecificationName" id="txitemSpecificationName" class="clsitemSpecificationName"value="' + itemSpecificationName + '"/></td>' +
+                    '<td>' + budgetCode + '<input type="hidden"name="budgetCode" class="clsbudgetCode"value="' + budgetCode + '"/></td>' +
+
+                    '<td>' + targetDate + '<input type="hidden"name="targetDate" class="clstargetDate"value="' + targetDate + '"/></td>' +
+                    '<td>' + justification + '<input type="hidden"name="justification" class="clsjustification"value="' + justification + '"/></td>' +
+                    '<td>' + reqQty + '<input type="hidden"name="reqQty" class="clsreqQty"value="' + reqQty + '"/></td>' +
+                    '<td>' + unit + '<input type="hidden"name="unit" class="clsunit"value="' + unit + '"/></td>' +
+                    '<td>' + reqRate + '<input type="hidden"name="reqRate" class="clsreqRate"value="' + reqRate + '"/></td>' +
+                    '<td>' + totalAmount + '<input type="hidden"name="totalAmount" class="clstotalAmount" value="' + totalAmount + '"/></td>' +
+                    '<td>' + '<input type="hidden" name="location" class="clslocation" value="' + location + '"/></td>' +
+                    '<td>' + '<input type="hidden" name="employeeId" class="clsemployeeId" value="' + employeeId + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Delete(' + index + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+                    '<a onclick="EditTblWithId(' + index + ',' + ItemId + ', `' + "'" + itemSpecificationName.replace(/'/g, "&#39").replace(/"/g, "&#34") + "'" + '`, ' + "'" + unit + "'" + ', ' + "'" + targetDate + "'" + ', `' + "'" + justification.replace(/'/g, "&#39").replace(/"/g, "&#34") + "'" + '`,' + reqQty + ', ' + reqRate + ', ' + totalAmount + ',' + "`'" + ItemName.replace(/'/g, "&#39").replace(/"/g, "&#34") + "'`" + ',' + id + ',' + itemSpecificationId + ')" href="javascript:void(0)" title="Edit" class="btn btn-success btn-xs" > <i class="fa fa-edit"></i></a >' +
+
+                    '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblitemDetails tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+            SumCal();
+            Refresh();
+        }
+
+        function SumCal() {
+
+            var sum = 0;
+            $(".clstotalAmount").each(function () {
+                sum += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            });
+            $("#grandTotal").html(sum).number(true, 0);
+
+        }
+
+        function EditTblWithId(index, ItemId, itemSpecificationName, unit, targetDate, justification, reqQty, reqRate, totalAmount, ItemName, Id, itemSpecificationId) {
+            var rightIndex = index;
+            $("#IsEdit").val(1);
+            $('#detailsId').val(Id);
+            $('#itemId').val(ItemId)
+            $('#itemName').val(ItemName.slice(1, -1))
+            $('#itemSpecificationId').val(itemSpecificationId);
+            $('#itemSpecificationName').val(itemSpecificationName.slice(1, -1));
+            $('#unit').val(unit);
+            $('#targetDate').val(targetDate);
+            $('#justification').val(justification.slice(1, -1));
+            $('#reqQty').val(reqQty);
+            $('#reqRate').val(reqRate);
+            $('#totalAmount').val(totalAmount);
+            Common.Ajax('GET', '/SCMMasterData/Item/GetAllSpecificationDetailByitemId/?itemId=' + ItemId, [], 'json', ajaxGetAllSpecificationDetailByitemId);
+            window.localStorage.setItem('holdIndex', null);
+            if (rightIndex != null) {
+                window.localStorage.setItem('holdIndex', rightIndex);
+            }
+        }
+
+        function Refresh() {
+            $(".cls" + $('#itemSpecificationId').val()).hide();
+            $('#detailsId').val('');
+            $('#itemId').val('')
+            $('#itemName').val('')
+            $('#itemSpecificationId').val('');
+            $('#itemSpecificationName').val('');
+            $('#unit').val('');
+            $('#justification').val('');
+            $('#reqQty').val('');
+            $('#reqRate').val('');
+            $('#totalAmount').val('');
+            $("#IsEdit").val(0);
+
+            $('#deliveryaddress').val('');
+            $('#employeeId').val('');
+
+            window.localStorage.setItem("holdIndex", null);
+            ifExistIndex = null;
+        }
+
+        function Delete(index) {
+            $("#tblitemDetails #" + index).remove();
+            SumCal();
+            return false;
+        }
+        function ajaxGetPreferableVendorList(response) {
+            //console.log(response);
+
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var indexSupplier = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                indexSupplier = $("#tblSupplier tbody>tr").length;
+            }
+            else {
+                indexSupplier = ifExistIndex;
+                tdRID = $("#tblSupplier tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsItemIdSupplier").val();
+            }
+
+            $("#tblSupplier tbody>tr").empty();
+            $.each(response, function (key, value) {
+                var dtTable = $("#tblSupplier");
+                var tableBody = dtTable.find('tbody');
+                var trHtml = '<tr id=' + indexSupplier + '>' +
+                    '<td>' + value.requisitionDetail.item.itemName + '<input type="hidden" name="id"class="clsIdSupplier" value="' + value.Id + '"><input type="hidden" name="ItemId"  id="txItemIdSupplier" class="clsItemIdSupplier"value="' + value.requisitionDetail.itemId + '"/></td>' +
+                    '<td>' + value.requisitionDetail.itemSpecification.specificationName + '<input type="hidden"name="itemSpecificationIdSupplier" id="txitemSpecificationIdSupplier" class="clsitemSpecificationIdSupplier"value="' + value.requisitionDetail.itemSpecification.specificationName + '"/></td>' +
+                    '<td>' + value.supplier.supplierName + '<input type="hidden"name="supplier" id="txsupplierId" class="clssupplier"value="' + value.supplierId + '"/></td>' +
+                    '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Deletesupplier(' + indexSupplier + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+
+                    '</tr>';
+
+                if (ifExistIndex == null || ifExistIndex == "null") {
+                    tableBody.append(trHtml);
+                }
+                else {
+                    var rowUpdate = $("#tblSupplier tbody >tr:eq(" + ifExistIndex + ")");
+                    rowUpdate.replaceWith(trHtml);
+                    window.localStorage.setItem("holdIndex", null);
+                    ifExistIndex = null;
+                }
+                indexSupplier = indexSupplier + 1;
+
+            })
+
+            indexSupplier = $("#tblSupplier tbody>tr").length;
+            if (indexSupplier > 0) {
+                $("#divSupplier").show();
+                $("#divtblSupplier").show();
+                $("#chkCompititionWaiver").attr('checked', true);
+
+            }
+        }
+        function AddSupplier() {
+            var ifExistIndex = window.localStorage.getItem("holdIndex");
+            var indexSupplier = "0";
+            if (ifExistIndex == "null" || ifExistIndex == null) {
+                indexSupplier = $("#tblSupplier tbody>tr").length;
+            }
+            else {
+                indexSupplier = ifExistIndex;
+                tdRID = $("#tblSupplier tbody >tr:eq(" + ifExistIndex + ") td:eq(0) .clsItemIdSupplier").val();
+            }
+
+            let id = parseInt($("#PreferableVendorsId").val()) ? parseInt($("#PreferableVendorsId").val()) : 0;
+            let ItemId = $('#itemId').val();
+            let ItemName = $('#itemName').val();
+            let itemSpecificationId = $('#itemSpecificationId').val();
+            let itemSpecificationName = $('#itemSpecificationName').val();
+            let supplierId = $("#hdnSupplier").val();
+            let supplier = $("#supplier").val();
+
+            if (ItemId == 0) {
+                alert("Please select Item");
+                return false;
+            }
+            if (itemSpecificationId == '') {
+                alert("Please enter item Specification")
+                return false;
+            }
+            if (supplier == '') {
+                alert("Please insert Supplier");
+                return false;
+            }
+
+
+            var RowCount = $("#tblSupplier tbody>tr").length;
+
+            for (i = 1; i <= RowCount; i++) {
+                var _ItemId = $("#txItemIdSupplier").val();
+                var spec = $("#txitemSpecificationIdSupplier").val();
+                var Supp = $("#txsupplierId").val();
+
+
+                if (_ItemId == ItemId && spec == itemSpecificationId && Supp == supplierId) {
+
+                    alert('You have already added this supplier');
+                        return false
+                    }
+
+            }
+
+            var dtTable = $("#tblSupplier");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + indexSupplier + '>' +
+                '<td>' + ItemName + '<input type="hidden" name="id"class="clsIdSupplier" value="' + id + '"><input type="hidden" name="ItemId"  id="txItemIdSupplier" class="clsItemIdSupplier"value="' + ItemId + '"/></td>' +
+                '<td>' + itemSpecificationName + '<input type="hidden"name="itemSpecificationIdSupplier" id="txitemSpecificationIdSupplier" class="clsitemSpecificationIdSupplier"value="' + itemSpecificationId + '"/></td>' +
+                '<td>' + supplier + '<input type="hidden"name="supplier" id="txsupplierId" class="clssupplier"value="' + supplierId + '"/></td>' +
+                '<td><a href="javascript:void(0)"style="background-color:red;border-color:red" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-xs" onclick="Deletesupplier(' + indexSupplier + ')"><i class="fa fa-trash"></i></a>&nbsp;&nbsp;' +
+
+                '</tr>';
+
+            if (ifExistIndex == null || ifExistIndex == "null") {
+                tableBody.append(trHtml);
+            }
+            else {
+                var rowUpdate = $("#tblSupplier tbody >tr:eq(" + ifExistIndex + ")");
+                rowUpdate.replaceWith(trHtml);
+                window.localStorage.setItem("holdIndex", null);
+                ifExistIndex = null;
+            }
+
+            $('#hdnSupplier').val('')
+            $('#supplier').val('')
+        }
+        function Deletesupplier(indexSupplier) {
+            $("#tblSupplier #" + indexSupplier).remove();
+            return false;
+        }
+
+
+        function SaveMasterDetails() {
+            $('#btnSave').prop('disabled', true);
+            var tablelength = $("#tblitemDetails tbody>tr").length;
+            var reqMasterId = $("#reqMasterId").val();
+            var reqNo = $("#reqNo").val();
+            var reqDate = $("#reqDate").val();
+            var subject = $("#subject").val();
+            var reqType = $("#reqType").val();
+            var isPostPR = $("#isPostPR").val();
+            var reqDept = $("#reqDept").val();
+            var fundsourceId = $("#foundsourceId").val();
+            var deliveryaddress = $("#deliveryaddress").val();
+            var employeeId = $("#employeeId").val();
+
+            var id = parseInt($("#id").val()) ? parseInt($("#id").val()):0;
+
+            if (reqDate == '') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Requisition Date")
+                return false;
+            } else if (reqNo=='') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Requisition No")
+                return false;
+            }else if (subject == '') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Subject")
+                return false;
+            } else if (reqType == '') {
+                $('#btnSave').prop('disabled', false);
+                alert("Please enter Requisition Status")
+                return false;
+            }else if (tablelength < 1) {
+                $('#btnSave').prop('disabled', false);
+                alert("there is no data in the table")
+                return false;
+            }
+
+            var itemDetails = [];
+            $("#tblitemDetails tbody>tr").each(function () {
+                itemDetails.push({
+                    detailsId: $(this).find(".clsId").val(),
+                    itemId: $(this).find(".clsItemId").val(),
+                    itemSpecificationId: $(this).find(".clsitemSpecificationId").val(),
+                    itemSpecificationName: $(this).find(".clsitemSpecificationName").val(),
+                    reqQty: $(this).find(".clsreqQty").val(),
+                    reqRate: $(this).find(".clsreqRate").val(),
+                    targetDate: $(this).find(".clstargetDate").val(),
+                    justification: $(this).find(".clsjustification").val(),
+                    budgetCode: $(this).find(".clsbudgetCode").val(),
+                    deliveryLocation: $(this).find(".clslocation").val(),
+                    employeeId: $(this).find(".clsemployeeId").val(),
+                });
+            });
+
+            var appPanel = [];
+            $("#divPanel > #divChieldPanel").each(function () {
+                appPanel.push({
+                    sequenceNo: $(this).find(".clsSequenceNo").val(),
+                    userId: $(this).find(".clsUserId").val(),
+                });
+            });
+
+            var supplierDetails = [];
+            $("#tblSupplier tbody>tr").each(function () {
+                supplierDetails.push({
+                    Id: $(this).find(".clsIdSupplier").val(),
+                    itemId: $(this).find(".clsItemIdSupplier").val(),
+                    itemSpecificationId: $(this).find(".clsitemSpecificationIdSupplier").val(),
+                    supplierId: $(this).find(".clssupplier").val(),
+                });
+            });
+
+            var allTrx = new Object();
+            allTrx.reqMasterId = reqMasterId;
+            allTrx.projectId = $('#projectId').val();
+            allTrx.reqNo = reqNo;
+            allTrx.reqDate = reqDate;
+            allTrx.subject = subject;
+            allTrx.reqType = reqType;
+            allTrx.isPostPR = isPostPR;
+            allTrx.foundsourceId = fundsourceId;
+            allTrx.deliveryaddress = deliveryaddress;
+            allTrx.employeeId = employeeId;
+            allTrx.reqDept = reqDept;
+            allTrx.Details = itemDetails;
+            allTrx.panels = appPanel;
+            allTrx.preferableVendors = supplierDetails;
+
+            $('#progress').show();
+            $.ajax({
+                url: '@Url.Action("SaveMasterDetails", "RequisitionMaster")',
+                type: 'Post',
+                data: allTrx
+            })
+                .done(function (data) {
+                    var Attachment = 0;
+                    Attachment = $("#dtAttachment tbody>tr").length;
+                    if (Attachment>0) {
+                        UploadAttachment(data);
+                    }
+                    else {
+                      //  alert("Save Successfully");
+                        $('#btnSave').prop('disabled', false);
+                        $('#progress').hide();
+                     var link = '@Url.Action("CreateRequisition", "RequisitionMaster", "http")'
+                        window.location.href = link;
+                    }
+                    var Attachmentp = 0;
+                    Attachmentp = $("#dtAttachmentp tbody").length;
+
+                    if (Attachmentp > 0) {
+
+                        UploadAttachmentp(data);
+                    }
+                    else {
+                        //alert("Save Successfully");
+                        $('#btnSave').prop('disabled', false);
+                        $('#progress').hide();
+                     var link = '@Url.Action("CreateRequisition", "RequisitionMaster", "http")'
+                        window.location.href = link;
+                    }
+                    alert("Save Successfully");
+                })
+                .fail(function () {
+                    $('#btnSave').prop('disabled', false);
+                    $('#progress').hide();
+                    alert("Unable to Save. Please Try Again");
+                });
+        }
+         function UploadAttachment(id) {
+
+            if (window.FormData !== undefined) {
+                var arrayFileAtach = [];
+                var indexFileAtach = 1;
+                var $FileAtach = $('.clsFileTitle');
+                $FileAtach.each(function () {
+                    arrayFileAtach.push($(this).val());
+                    formdata.append("id", id);
+                    formdata.append("arrayFileAtach", arrayFileAtach);
+                    arrayFileAtach = [];
+                });
+
+                $.ajax({
+                    url: '@Url.Action("UploadAttachment", "RequisitionMaster", "http")',
+                    type: "POST",
+                    contentType: false,
+                    data: formdata,
+                    dataType: "json",
+                    //cache: false,
+                    processData: false,
+                    //async: false,
+
+                })
+                    .done(function (data) {
+                       // alert("Save Successfully");
+                         $('#btnSave').prop('disabled', false);
+                        $('#progress').hide();
+                     var link = '@Url.Action("CreateRequisition", "RequisitionMaster", "http")'
+                     window.location.href = link;
+                    })
+                    .fail(function () {
+                        $('#btnSave').prop('disabled', false);
+                        $('#progress').hide();
+                        alert("Uploading failed");
+                    })
+            } else {
+                alert("FormData is not supported.");
+            }
+        }
+        function UploadAttachmentp(id) {
+
+            if (window.FormData !== undefined) {
+                var arrayFileAtach = [];
+                var arrayFileAtachs = [];
+                var indexFileAtach = 1;
+                var $FileAtach = $('.clsFileTitlep');
+                var $FileAtachs = $('.clsFileTitleps');
+                $FileAtach.each(function () {
+                    arrayFileAtach.push($(this).val());
+                    formdata.append("id", id);
+                    formdata.append("arrayFileAtach", arrayFileAtach);
+                    arrayFileAtach = [];
+                });
+                $FileAtachs.each(function () {
+                    arrayFileAtachs.push($(this).val());
+
+                    formdata.append("arrayFileAtachs", arrayFileAtachs);
+                    arrayFileAtachs = [];
+                });
+
+                $.ajax({
+                    url: '@Url.Action("UploadAttachmentp", "RequisitionMaster", "http")',
+                    type: "POST",
+                    contentType: false,
+                    data: formdata,
+                    dataType: "json",
+                    //cache: false,
+                    processData: false,
+                    //async: false,
+
+                })
+                    .done(function (data) {
+                      //  alert("Save Successfully");
+                         $('#btnSave').prop('disabled', false);
+                        $('#progress').hide();
+                     var link = '@Url.Action("CreateRequisition", "RequisitionMaster", "http")'
+                     window.location.href = link;
+                    })
+                    .fail(function () {
+                        $('#btnSave').prop('disabled', false);
+                        $('#progress').hide();
+                        alert("Uploading failed");
+                    })
+            } else {
+                alert("FormData is not supported.");
+            }
+        }
+
+    </script>
+
+}
+<style>
+    .cls0 {
+        background-color: red;
+    }
+
+    btn-success .div0 {
+        border-color: red
+    }
+
+    .ui-autocomplete {
+        cursor: pointer;
+        height: 400px;
+        width: 300px;
+        overflow-y: scroll;
+        background-color: white;
+        color: rgb(0,188,212);
+        z-index: 1050;
+        /*outline-style:outset;*/
+    }
+
+    .custom-file-upload {
+        border: 1px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+</style>
+

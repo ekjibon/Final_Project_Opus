@@ -1,0 +1,104 @@
+﻿@model SalesInvoiceViewModel
+@{
+    ViewData["Title"] = "InvoiceList";
+}
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@section Style{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        #tblInvoiceList tbody tr {
+            cursor: pointer;
+        }
+      
+    </style>
+}
+  
+
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="card-title" style="color: black">Rent Invoice List</h5>
+            </div>
+            <div class="col-6">
+                <a href="/OtherSales/SalesInvoice/RentIndex?id=0" style="background-color:#024972;float:right;" class="btn btn-info btn-sm">Add New</a>
+            </div>
+        </div>
+        <hr />        
+        <div class="row">
+            <input type="hidden" id="rowCount" name="rowCount" value="0" />
+            <div class="col-12">
+                <table class="table table-bordered table-striped table-responsive" id="tblInvoiceList" data-parsley-required="true">
+                    <thead style="width:100%;background-color:lightgray;">
+                        <tr>
+                            <th width="10%">Action</th>
+                            <th width="5%">SL#</th>
+                            <th width="15%">Invoice No</th>
+                            <th width="10%">Invoice Date</th>
+                            <th width="15%">Customer</th>
+                            <th width="10%">Mobile</th>
+                            <th width="15%">Address</th>
+                            <th width="10%">Gross Total</th>
+                            <th width="10%">Net Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            @foreach (var item in Model.salesInvoiceMasters.Where(x => x.invoiceNumber.Contains("RENTINV")))
+                            {
+                                var resid = Model.Contacts.Where(x => x.leadsId == item.relSupplierCustomerResourse.LeadsId)?.FirstOrDefault()?.resourceId;
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-success" href="/OtherSales/SalesInvoice/RentIndex?id=@item.Id" title="Invoice Edit"><i class="fa fa-edit"></i></a>
+                                        <a class="btn btn-facebook" href="/OtherSales/SalesInvoice/RentInvoicePDFAction?id=@item.Id" target="_blank" title="Invoice Report"><i class="fa fa-print"></i></a>
+                                    </td>
+                                    <td>@i</td>
+                                    <td><span style="display:none">-@item.Id-</span>@item.invoiceNumber</td>
+                                    <td>@item.invoiceDate?.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.relSupplierCustomerResourse?.Leads?.leadName</td>
+                                    <td>@Model.Resources.Where(x => x.Id == resid).FirstOrDefault()?.mobile</td>
+                                    <td>@Model.GetAddresses.Where(x => x.leadsId == item.relSupplierCustomerResourse.LeadsId).FirstOrDefault().maillingAddress</td>
+                                    <td style="text-align:right">@item.totalAmount?.ToString("0,0.00")</td>  
+                                    <td style="text-align:right">@item.NetTotal?.ToString("0,0.00")</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#tblInvoiceList').DataTable({
+                processing: true,
+            });
+            $("#shippingDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2030" }).datepicker();
+
+            var table = $('#tblInvoiceList').DataTable();
+            $('#tblInvoiceList tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[2];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var vid = parseInt(id.split('-')[1]);
+                window.location.href = "/OtherSales/SalesInvoice/RentInvoiceDetails/?id=" + vid;
+            });
+            $('#tblInvoiceList tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+
+            
+        });
+
+    </script>
+}

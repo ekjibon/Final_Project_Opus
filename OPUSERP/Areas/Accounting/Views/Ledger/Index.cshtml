@@ -1,0 +1,315 @@
+﻿@model LedgerViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Accounting/Views/Shared/_AccountingMasterForm.cshtml";
+}
+@section StyleMD{
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        #departmentTable tbody tr {
+            cursor: pointer;
+        }
+    </style>
+}
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <h5 class="card-title" style="color: black">Ledger Entry</h5>
+        <hr>
+        <div class="container">
+            <form asp-area="Accounting" asp-controller="Ledger" asp-action="Index" method="post" data-parsley-validate="parsley">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label for="specialBranchUnitId" class="col-sm-2 col-form-label">SBU <span class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <select type="text" class="form-control" name="specialBranchUnitId" id="specialBranchUnitId" required>
+                            <option value="">Select One</option>
+                            @if (ViewBag.branchid > 0)
+                            {
+                                @foreach (var data in Model.specialBranchUnits.Where(x => x.Id == ViewBag.branchid))
+                                {
+                                    <option value="@data?.Id">@data?.branchUnitName</option>
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var data in Model?.specialBranchUnits)
+                                {
+                                    <option value="@data?.Id">@data?.branchUnitName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <input type="hidden" name="ledgerId" id="ledgerId" value="0" />
+                    <input type="hidden" name="groupCode" id="groupCode" />
+                    <label for="accountName" class="col-sm-2 col-form-label">Ledger Name <span class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" data-parsley-trigger="keyup" class="form-control" name="accountName" id="accountName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name" class="col-sm-2 col-form-label">Alias Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="aliasName" id="aliasName">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="groupId" class="col-sm-2 col-form-label">Group Name <span class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="groupName" id="groupName" required>
+                        <input type="hidden" id="groupId" name="groupId" />
+                        @*<select  name="groupId" id="groupId" class="form-control customSelect" >
+                                <option value="">Select One</option>
+                                @foreach (var data in Model.accountGroups)
+                                {
+                                    <option value="@data.Id">@data.groupName (@data.groupCode)</option>
+                                }
+                            </select>*@
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="accountCode" class="col-sm-2 col-form-label">Ledger Code<span class="redStar">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" data-parsley-required="true" class="form-control" name="accountCode" id="accountCode" value="">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="effectiveDate" class="col-sm-2 col-form-label">Effective Date</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" name="effectiveDate" id="effectiveDate" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Ledger Properties</label>
+                    <div class="col-sm-10">
+                        <input type="radio" class="form-horizontal" name="ledgerType" id="Cash" value="Cash">&nbsp;
+                        <span style="font-weight:normal;color:#606066;color:black;">Cash</span>&nbsp;&nbsp;
+                        <input type="radio" class="form-horizontal" name="ledgerType" id="Bank" value="Bank">&nbsp;
+                        <span style="font-weight:normal;color:#606066;color:black;">Bank</span>&nbsp;&nbsp;
+                        <input type="radio" class="form-horizontal" name="ledgerType" id="General" value="General" checked>&nbsp;
+                        <span style="font-weight:normal;color:#606066;color:black;">General</span>
+                    </div>
+                </div>
+                <div class="form-group row" id="divHaveSubLedger">
+                    <label for="haveSubLedger" class="col-sm-2 col-form-label">Have Sub-Ledger ?</label>
+                    <div class="col-sm-1">
+                        <input type="checkbox" style="margin-left: -12px;" class="form-control" id="haveSubLedger" value="1" name="haveSubLedger">
+                    </div>
+                    <div class="col-sm-9"></div>
+                </div>
+                <hr>
+                <button type="submit" value="Submit" class="btn btn-success btn-lg" style="float:right; margin-top:5px;"><i class="fas fa-save"></i></button>
+                <button type="button" onclick="Refresh()" class="btn btn-danger btn-lg" style="float:right; margin-top:5px;margin-right:5px;"><i class="fas fa-sync"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<div class="row clearfix">
+    <div class="col-12">
+        <div class="card mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Ledger List</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-striped table-bordered" id="departmentTable">
+                    <thead>
+                        <tr>
+                            <th>Ledger Account Name</th>
+                            <th>Ledger Account Code</th>
+                            <th>Ledger Alias Name</th>
+                            <th>LedgerType</th>
+                            <th>SBU Name</th>
+                            <th>Action</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model.ledgers)
+                        {
+                            <tr>
+                                <td><span style="display:none">-@data.Id-</span>@data.accountName</td>
+                                <td>@data.accountCode</td>
+                                <td>@data.aliasName</td>
+                                <td>@data.ledgerType</td>
+                                <td>@data?.specialBranchUnit?.branchUnitName</td>
+                                <td>
+                                    <a class="btn btn-info" title="Edit/Update" onclick="Edit(@data.Id, '@data.accountName','@data.accountCode','@data.aliasName',@data.haveSubLedger,'@data.groupId','@data.group?.groupName','@data.ledgerType',@data.specialBranchUnitId,'@data.group?.groupCode','@data.group?.nature?.natureName','@data.effectiveDate?.ToString("dd-MMM-yyyy")')" href="javascript:void(0)"><i class="fa fa-edit"></i></a>&nbsp;&nbsp;
+                                    <a class="btn btn-danger" title="Delete" href="javascript:void(0)" onclick="DeleteMaster(@data.Id)"><i class="fa fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsMD{
+    <script>
+        $(document).ready(function () {
+            $("#effectiveDate").datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "2010:2050" }).datepicker("setDate", new Date());
+            $("#Ledger").addClass("active");
+            $('#departmentTable').DataTable();
+            //$('#divHaveSubLedger').hide();
+
+            $(document).on('change', 'input[type=radio][name=ledgerType]', function (event) {
+                switch ($(this).val()) {
+                    case 'Cash':
+                        $('#divHaveSubLedger').hide();
+                        break;
+                    case 'Bank':
+                        $('#divHaveSubLedger').hide();
+                        break;
+                    case 'General':
+                        $('#divHaveSubLedger').show();
+                        break;
+                }
+            });
+
+            //$("#groupId").change(function () {
+            //    var grpId = $("#groupId").val();
+
+            //    var sdsds = $("#groupId option:selected").text().split('(')[1].replace(/\)/g, '');
+            //    $("#groupCode").val(sdsds);
+
+            //    Common.Ajax('GET', '/global/api/LedgerCode/' + grpId, [], 'json', ajaxCode, false);
+            //});
+
+            Common.Ajax('GET', '/global/api/GetaccountGroupLedger', [], 'json', ajaxGetaccountGroupLedger, false);
+
+            if (@ViewBag.masterId>0) {
+                Common.Ajax('GET', '/Accounting/Ledger/GetLedgerDetailsById/?ledgerId=' + @ViewBag.masterId, [], 'json', ajaxGetLedgerDetailsById);
+            }
+
+            var table = $('#departmentTable').DataTable();
+            $('#departmentTable tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+                var iddata = data[0];
+                let id = iddata.replace('<span style="display:none">', "").replace("</span>", "");
+                var vid = parseInt(id.split('-')[1]);
+                window.location.href = "/Accounting/Ledger/LedgerDetails/?id=" + vid;
+            });
+            $('#departmentTable tbody').on('click', 'td:last-child', function (e) {
+                e.stopPropagation();
+            });
+        });
+
+        function ajaxGetaccountGroupLedger(response) {
+            var GeEmployeesList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.groupName + "(" + option.groupCode + ")-" + option.nature.natureName;
+                GeEmployeesList[GeEmployeesList.length] = obj;
+            });
+            $('#groupName').autocomplete({
+                source: GeEmployeesList,
+                select: function (event, ui) {
+                    $("#groupName").val(ui.item.value);
+                    $("#groupId").val(ui.item.key);
+                }
+            });
+        }
+        function Remove(Id) {
+            chk = confirm('Do you want to delete this?');
+            if (chk) {
+                location.replace("/Accounting/Ledger/Delete/" + Id);
+            } else {
+                return false;
+            }
+        }
+
+        function Refresh() {
+            location.reload();
+        }
+
+        function ajaxGetLedgerDetailsById(response) {
+            $("#ledgerId").val(response.Id);
+            $("#accountName").val(response.accountName);
+            $("#accountCode").val(response.accountCode);
+            $("#aliasName").val(response.aliasName);
+            $("#groupId").val(response.groupId);
+            $("#groupName").val(response.group.groupName);
+            if (response.haveSubLedger == 1 || response.haveSubLedger == 2) {
+                $("#haveSubLedger").prop('checked', true);
+
+            } else {
+                $("#haveSubLedger").prop('checked', false);
+            }
+        }
+
+        function Edit(Id, name, code, alias, have, group, groupName, ledgerType, specialBranchUnitId, groupcode, nature, effectiveDate) {
+            $("#ledgerId").val(Id);
+            $("#accountName").val(name);
+            $("#accountCode").val(code);
+            $("#aliasName").val(alias);
+            $("#groupId").val(group);
+            $("#groupName").val(groupName + "(" + groupcode + ")-" + nature);
+            $("#specialBranchUnitId").val(specialBranchUnitId);
+            $("#effectiveDate").val(effectiveDate);
+            //if (have == 1 || have == 2) {
+            //    $("#haveSubLedger").prop('checked', true);
+            //    $('#divHaveSubLedger').show();
+            //}
+            //else {
+            //    $("#haveSubLedger").prop('checked', false);
+            //    $('#divHaveSubLedger').show();
+            //}
+            if (ledgerType == 'Cash') {
+                $("#Cash").prop('checked', true);
+                $('#divHaveSubLedger').hide();
+            }
+            else if (ledgerType == 'Bank') {
+                $("#Bank").prop('checked', true);
+                $('#divHaveSubLedger').hide();
+            }
+            else {
+                $("#General").prop('checked', true);
+                if (have == 1 || have == 2) {
+                    $("#haveSubLedger").prop('checked', true);
+                    $('#divHaveSubLedger').show();
+                }
+                else {
+                    $("#haveSubLedger").prop('checked', false);
+                    $('#divHaveSubLedger').show();
+                }
+            }
+        }
+
+        function ajaxCode(response) {
+            if (response != null) {
+                $('#accountCode').val(parseInt(response.accountCode) + 1);
+            } else {
+                $('#accountCode').val(parseInt($("#groupCode").val()) + 1);
+            }
+        }
+
+        function DeleteMaster(Id) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteLedger", "Ledger")',
+                    data: { Id: Id },
+                    type: 'POST',
+                })
+                    .done(function () {
+                        swal('', 'Deleted Successfully!', 'success');
+                        window.location.href = "/Accounting/Ledger/Index";
+                    })
+                    .fail(function () {
+                        swal('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                    });
+            });
+        }
+
+    </script>
+}

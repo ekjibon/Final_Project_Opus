@@ -1,0 +1,500 @@
+﻿@model BudgetRequisitionViewModel
+@{
+    ViewData["Title"] = "Budget Requisition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row card">
+    <div class="card-header row">
+        <div class="col-md-8 col-sm-8">
+            <h5 style="color: black; font-weight:bold">@Model.flang.title1</h5>
+        </div>
+        <div class="col-md-4 col-sm-4">
+            <a class="btn btn-success btn-sm ml-1" id="backBtn" style="float:right; color:white">&nbsp; &nbsp; Back &nbsp; &nbsp;</a>
+            <button type="button" class="btn btn-default btn-sm pull-right ml-2" style="width:150px;background-color:#024972;color:white;float:right;" onclick="location.href='@Url.Action("BudgetRequisitionList", "ReviseRequisition")'">@Model.flang.back</button>
+        </div>
+    </div>
+</div>
+
+<form id="myForm"  data-parsley-validate="parsley" autocomplete="off">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1 m-0 p-0"></div>
+            <div class="card col-md-12">
+                <div class="card-header p-0 m-0">
+                    <h6 class="card-title">@Model.flang.title1</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="Number" class="col-sm-4 col-form-label">@Model.flang.reqNo<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="Number" name="Number" value="@Model.Number" class="form-control input-group-sm" data-parsley-required="true" readonly />
+                                    <input type="hidden" id="reqId" name="reqId" value="@Model.reqId" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="year" class="col-sm-4 col-form-label text-left">@Model.flang.fiscalYear<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <select name="year" id="year" class="form-control input-group-sm" data-parsley-required="true">
+                                        <option value="">Select One</option>
+                                        @foreach (var data in Model.fiscalYears)
+                                        {
+                                            if (Model.reqId>0 && data.Id == Model.year)
+                                            {
+                                                <option selected="selected" value="@data.Id">@data.yearName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@data.Id">@data.yearName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group row">
+                                <label for="Date" class="col-sm-4 col-form-label text-left">@Model.flang.date<span style="color:red;">*</span></label>
+                                <div class="col-sm-8">
+                                    <input name="Date" id="Date" value="@Model.Date?.ToString("dd-MMM-yyyy")" class="form-control input-group-sm" data-parsley-required="true" />
+                                </div>
+                            </div>
+                            <div class="container">
+                                <h6 class="card-title pull-left col-md-12" style="color: black;margin-left:0px;padding-left:0px;">
+                                    <u>
+                                        Approver Panel
+                                    </u>
+                                </h6>
+                                <div class="row" style="border:ridge" id="divPanel"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height:10px;"></div>
+        <div class="row">
+            <div class="col-md-1 m-0 p-0"></div>
+            <div class="card col-md-12">
+                <div class="card-header p-0 m-0">
+                    <h6 class="card-title">Budget Details</h6>
+                </div>
+                    <table class="table table-striped table-bordered table-responsive" id="budgetDetailsTable" >
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+            </div>
+        </div>
+        <div style="height:20px;"></div>
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6">
+                <input type="button" onclick="RefreshAll()" value="@Model.flang.refresh" class="btn btn-info btn-sm" style="width:100px;" />&nbsp;&nbsp;
+                <input type="submit" ondblclick="this.disabled=true;" value="@Model.flang.save" id="btnPSave" class="btn btn-success btn-sm" style="width:100px;" />
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts{
+    <script type="text/javascript">
+        var removeItem = 0;
+        function GetApproverPanelList(response) {
+            console.log(response);
+            $("#divPanel").empty();
+            var divPanel = $("#divPanel");
+            var inputPanel;
+            var index = 0;
+            $.each(response, function (id, option) {                
+                var empName = option.EmpName;//.substr(option.EmpName, 100);
+                inputPanel = '<div class="col-md-3" style="padding-left:0px;padding-right:0px;" id="divChieldPanel">' +
+                    '<a href="javascript:void(0)" class="btn btn-success div' + index + ' boxDesign" id="btnTotalLead" role="button" style="width:100%;float:left;color:black;background-color:#fff">' +
+                    '<div class="row">' +
+                    '<div class="col-md-4">' +
+                    '<span style="padding:0px 0px 0px 0px;">' +
+                    '<img src="/images/user.png" style="width:40px;height:40px;"/>' +
+                    '<input type="button" class="btn btn-primary btn-sm pull-left cls' + index + ' clsSequenceNo" style="padding:0px 5px 0px 5px;" value="' + option.sequenceNo + '" />' +
+                    '</span>' +
+                    '</div>' +
+                    '<div class="col-md-8">' +
+                    '<span class="pull-left" style="font-size:12px;">' + empName + '</span><br />' +
+                    '</div>' +
+                    '</div>' +
+                    '</a>' +
+                    '<input type="hidden" class="clsUserId" value="' + option.nextApproverId + '" />'
+                '</div>';
+                divPanel.append(inputPanel);
+                index++;
+            });
+        }
+
+        function fnLoadBOMDetails() {
+            let head = $('#head').val();
+            let headId = $('#headId').val();
+            let amount = parseFloat($('#amount').val()) ? parseFloat($('#amount').val()) : 0;
+            if (head == '') {
+                swal('Attention', 'Please select Budget Head', 'warning');
+                return false;
+            } else if (amount == 0) {
+                swal('Attention', 'Please Enter Budget Amount', 'warning');
+                return false;
+            }
+            index = $("#budgetDetailsTable tbody>tr").length;
+            var dtTable = $("#budgetDetailsTable");
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr id=' + index + '>' +
+                '<td>' + head + '<input type="hidden" name="heads" value="' + headId + '" /></td>' +
+                '<td>' + amount + '<input type="hidden" name="amounts" value="' + amount + '" /></td>' +
+                '<td><a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="DeleteBOM(' + index + ')"><i class="fa fa-trash"></i></a>' +
+                '</tr>';
+            tableBody.append(trHtml);
+        }
+
+        function GetBOMDetailList(response) {
+            $("#budgetDetailsTable tbody>tr").empty();
+            $.each(response, function (key, value) {
+                index = $("#budgetDetailsTable tbody>tr").length;
+                var dtTable = $("#budgetDetailsTable");
+                var tableBody = dtTable.find('tbody');
+                let budgetSubHead = value.budgetSubHead.name;
+                let budgetSubHeadId = value.budgetSubHeadId;
+                let amount = value.amount;
+                var trHtml = '<tr id=' + index + '>' +
+                    '<td>' + budgetSubHead + '<input type="hidden" name="heads" value="' + budgetSubHeadId + '" /></td>' +
+                    '<td>' + addCommas(amount) + '<input type="hidden" name="amounts" value="' + amount + '" /></td>' +
+                    '<td><a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="DeleteBOM(' + index + ')"><i class="fa fa-trash"></i></a>' +
+                    '</tr>';
+                tableBody.append(trHtml);
+            })
+        }
+
+        function DeleteHead(index) {
+            swal({
+                title: 'Are you sure?', text: 'Do you want to delete this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+                $("#budgetDetailsTable #" + index).remove();
+                swal('', 'Deleted Successfully!', 'success')
+            });
+            return false;
+        }
+
+        function RefreshAll() {
+            $("#budgetDetailsTable tbody>tr").empty();
+            $('#bomQty').val('');
+            $('#productionDate').val('');
+            $('#bOMId').val('');
+            $('#bomItem').val('');
+            $('#productionId').val(0);
+            $('#productionNo').val('');
+            location.reload();
+        }
+
+        function fnSubTotal(id) {            
+            var sum = 0;
+            $(".col" + id).each(function () {
+                sum += +parseFloat($(this).val().replace(/,/g, '')) ? parseFloat($(this).val().replace(/,/g, '')) : 0;
+            });
+            $(".subCol" + id).val(sum).number(true, 0);
+            return false;
+        }
+
+        $(document).ready(function () {
+            var modelId = window.localStorage.getItem('modelId');
+            var parentId = window.localStorage.getItem('parentId');
+            if (modelId != null) {
+                $("#backBtn").prop('href', '/Home/GridMenuPage?moduleId=' + modelId + '&perentId=' + parentId);
+            } else {
+                $("#backBtn").prop('href', '/');
+            }
+            $('#Date').datepicker({ dateFormat: "dd-M-yy", showAnim: "scale", changeMonth: true, changeYear: true, yearRange: "1900:2100" });
+            let prdcId = parseInt(@Model.reqId) ? parseInt(@Model.reqId) : 0;
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+
+            today = mm + '/' + dd + '/' + yyyy;
+            if (prdcId == 0) {
+                $('#productionDate').val(today);
+            }
+            if (prdcId > 0) {
+                $("#bOMMasterId").val(@Model.reqId);
+                $('#productionDate').val('@Model.Date?.ToString("dd-MMM-yyyy")');
+                $('#Number').val('@Model.Number');
+                $('#year option:selected').val(@Model.year);
+                EditBudgetDetails();
+            }
+            Common.Ajax('GET', '/api/matrix/ApproverPanelList/' + 1 + '/' + 1, [], 'json', GetApproverPanelList);
+            $("#year").change(function () {
+                var id = $("#year").val()
+                Common.Ajax('GET', '/global/api/GetFiscalYearById/' + id , [], 'json', GetDetails);
+            });
+            $("#btnPSave").click(function () {
+                var data = $("#myForm").serialize();
+                let Number = $('#Number').val();
+                let year = $('#year').val();
+                let Date = $('#Date').val();                
+                if (Number == "") {
+                    swal('Warning', 'Number can not be null', 'warning');
+                    return false;
+                }
+                if (year == "") {
+                    swal('Warning', 'Year can not be null', 'warning');
+                    return false;
+                }
+                if (Date == "") {
+                    swal('Warning', 'Date can not be null', 'warning');
+                    return false;
+                }             
+                swal({
+                    title: 'Are you sure?', text: 'Do you want to Save this record!', type: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Yes, Save it!'
+                }).then(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Budget/ReviseRequisition/Index",
+                        data: data,
+                        success: function (response) {
+                            swal('', 'Saved Successfully!', 'success')
+                            location.reload(true);
+                            window.location.href="/Budget/ReviseRequisition/BudgetRequisitionList";
+                        }
+                    });
+                });
+                return false;
+            });            
+        });
+
+        function dateRange(startDate, endDate) {
+            var monthNames = [
+                "January", "February", "March",
+                "April", "May", "June", "July",
+                "August", "September", "October",
+                "November", "December"
+            ];
+            var start = startDate.split('-');
+            var end = endDate.split('-');
+            var startYear = parseInt(start[0]);
+            var endYear = parseInt(end[0]);
+            var dates = [];
+            for (var i = startYear; i <= endYear; i++) {
+                var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+                var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
+                for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
+                    var month = j;
+                    var displayMonth = month < 10 ? '0' + month : month;
+                    dates.push(monthNames[parseInt(displayMonth)]);
+                }
+            }
+            return dates;
+        }
+
+        function GetDetails(response) {
+            var monthInfo = dateRange(response.yearStartFrom, response.yearEndOn);
+            $("#budgetDetailsTable thead>tr").empty();
+            $("#budgetDetailsTable tbody>tr").empty();
+            index = $("#budgetDetailsTable tbody>tr").length;
+            var dtTable = $("#budgetDetailsTable");
+            var tableHead = dtTable.find('thead');
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr>' +
+                '<td >Action</td>' +
+                '<td >Budget Head</td>' +
+                '<td >' + monthInfo[0]+'</td>' +
+                '<td >' + monthInfo[1] +'</td>' +
+                '<td >' + monthInfo[2] +'</td>' +
+                '<td >' + monthInfo[3] +'</td>' +
+                '<td >' + monthInfo[4] +'</td>' +
+                '<td >' + monthInfo[5] +'</td>' +
+                '<td>' + monthInfo[6] +'</td>' +
+                '<td>' + monthInfo[7] +'</td>' +
+                '<td>' + monthInfo[8] +'</td>' +
+                '<td>' + monthInfo[9] +'</td>' +
+                '<td>' + monthInfo[10] +'</td>' +
+                '<td>' + monthInfo[11] +'</td>' +
+                '<td>Total</td>' +
+                '</tr>';
+            tableHead.append(trHtml);
+            var trHtml = '<tr id="0">' +
+                '<td style="padding-left:0px;padding-right:0px"><a href="javascript:void(0)"  title="Delete" class="btn btn-info btn-xs addBtn" onclick="AddHead(this)"><i class="fa fa-plus"></i></a>&nbsp;<a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="RemoveHead(0)"><i class="fa fa-trash"></i></a></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input  class="heads" id="head0" /> <input type="hidden" name="heads" class="heads" id="headId0" /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col1"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col2"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col3"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col4"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col5"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col6"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col7"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col8"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col9"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col10" class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col11"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col12"  class="TableInput col0" value="0" onKeyUp="fnSubTotal(0);" required/></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="amounts"class="TableInput subCol0" value="0" required readonly/></td>' +
+                '</tr>';
+            tableBody.append(trHtml);
+            GetBudgetHead(0);
+        }
+
+        function AddHead(arg) {
+            index = $("#budgetDetailsTable tbody>tr").length;
+            let rowNumber = $("#budgetDetailsTable tbody>tr").length + removeItem;
+            $(arg).closest('tbody').find('tr:last').before($(".addBtn").hide());
+            $(arg).closest('tbody').find('tr:last').after('<tr id=' + rowNumber + ' >' +
+                '<td style="padding-left:0px;padding-right:0px"><a href="javascript:void(0)"  title="Delete" class="btn btn-info btn-xs addBtn" onclick="AddHead(this)"><i class="fa fa-plus"></i></a>&nbsp;<a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="RemoveHead(' + rowNumber + ')"><i class="fa fa-trash"></i></a></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input class="heads" id="head' + rowNumber+'" /><input type="hidden" name="heads" id="headId' + rowNumber +'" /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col1"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col2"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col3"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col4"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col5"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col6"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col7"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col8"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col9"    class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col10"   class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col11"   class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="col12"   class="TableInput col' + rowNumber +'" value="0" onKeyUp="fnSubTotal(' + rowNumber +');" required /></td>' +
+                '<td style="padding-left:0px;padding-right:0px"> <input name="amounts" class="TableInput subCol' + rowNumber +'" value="0" required readonly /></td>' +
+                '</tr>');
+            GetBudgetHead(rowNumber);
+        }
+
+        function RemoveHead(rowNumber) {
+            $("#" + rowNumber).remove();
+            removeItem = removeItem+1;
+        }
+
+        function EditBudgetDetails() {
+            var monthInfo = dateRange('@Model.fiscalYear.yearStartFrom', '@Model.fiscalYear.yearEndOn');
+            $("#budgetDetailsTable thead>tr").empty();
+            $("#budgetDetailsTable tbody>tr").empty();
+            index = $("#budgetDetailsTable tbody>tr").length;
+            var dtTable = $("#budgetDetailsTable");
+            var tableHead = dtTable.find('thead');
+            var tableBody = dtTable.find('tbody');
+            var trHtml = '<tr>' +
+                '<td>Action</td>' +
+                '<td>Budget Head</td>' +
+                '<td>' + monthInfo[0] + '</td>' +
+                '<td>' + monthInfo[1] + '</td>' +
+                '<td>' + monthInfo[2] + '</td>' +
+                '<td>' + monthInfo[3] + '</td>' +
+                '<td>' + monthInfo[4] + '</td>' +
+                '<td>' + monthInfo[5] + '</td>' +
+                '<td>' + monthInfo[6] + '</td>' +
+                '<td>' + monthInfo[7] + '</td>' +
+                '<td>' + monthInfo[8] + '</td>' +
+                '<td>' + monthInfo[9] + '</td>' +
+                '<td>' + monthInfo[10] + '</td>' +
+                '<td>' + monthInfo[11] + '</td>' +
+                '<td>Total</td>' +
+                '</tr>';
+            tableHead.append(trHtml);
+            $.each(@Html.Raw(Json.Serialize(Model.budgetRequsitionDetails)), function (id, option) {                
+                var trHtml = '<tr id="0">' +
+                    '<td style="padding-left:0px;padding-right:0px"><a href="javascript:void(0)"  title="Add" id="btnAdds' + id + '" class="btn btn-info btn-xs addBtn" onclick="AddHead(this)"><i class="fa fa-plus"></i></a>&nbsp;<a href="javascript:void(0)"  title="Delete" class="btn btn-danger btn-xs" onclick="RemoveHead(0)"><i class="fa fa-trash"></i></a></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input  class="heads" id="head0" value="' + option.budgetHead.name + '" /> <input type="hidden" name="heads" value="' + option.budgetHead.Id + '" class="heads" id="headId0" /></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col1"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.firstMonth + '" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col2"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.secondMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col3"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.thirdMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col4"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.fourthMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col5"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.fifthMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col6"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.sixthMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col7"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.seventhMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col8"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.eighthMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col9"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.ninethMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col10" class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.tenthMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col11"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.eleventhMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="col12"  class="TableInput col' + id + '" onKeyUp="fnSubTotal(' + id + ');" value="' + option.twelvethMonth +'" required/></td>' +
+                    '<td style="padding-left:0px;padding-right:0px"> <input name="amounts"class="TableInput subCol' + id + '" value="' + option.subTotal +'" required readonly /></td>' +
+                    '</tr>';                
+                tableBody.append(trHtml);
+                $('#btnAdds' + id).hide();
+                if (@Model.budgetRequsitionDetails.Count()-1 == id) {
+                    $('#btnAdds' + id).show();
+                }
+            })    
+            GetBudgetHead(0);
+        }
+
+        function GetBudgetHead(rowNumber) {
+            var GetList = [];
+            $.ajax({
+                url: '/api/BudgetSubHead/GetBudgetHead',
+                type: 'GET',
+                dataType: 'json',
+                async: true,
+                success: function (response) {
+                    $.each(response, function (id, option) {
+                        var obj = new Object();
+                        obj.key = option.Id;
+                        obj.value = option.code + ' - ' + option.name;
+                        GetList[GetList.length] = obj;
+                    })
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve Data.' + ex);
+                }
+            })
+            $('#head' + rowNumber).autocomplete({
+                source: GetList,
+                select: function (event, ui) {
+                    $('#headId' + rowNumber).val(ui.item.key);
+                }
+            });
+        }
+
+        function formatDate(date) {
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+            var date = new Date(date);
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+            return day + '-' + monthNames[monthIndex] + '-' + year;
+        }
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        function ajaxEmployeeList(response) {
+            var GetEmployeeList = [];
+            $.each(response, function (id, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.code + ' - ' + option.name;
+                GetEmployeeList[GetEmployeeList.length] = obj;
+            });
+            $('#head').autocomplete({
+                source: GetEmployeeList,
+                select: function (event, ui) {
+                    $("#headId").val(ui.item.key);
+                }
+            });
+        }
+
+    </script>
+}
+
+@section Style{
+    <style>
+        .TableInput {
+            width: 100px;
+            padding: 0px 0px 0px 0px;
+            margin: 0px 0px 0px 0px;
+            text-align:right;
+        }
+        .tableTd {
+            padding: 0px 0px 0px 0px;
+            margin: 0px 0px 0px 0px;
+        }
+    </style>
+}

@@ -1,0 +1,153 @@
+﻿@model MemberInfoViewModel
+@{
+    ViewData["Title"] = "Index";
+
+}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
+<style type="text/css">
+    #mainContent {
+        background-color: #AAB8B5;
+        border-radius: 20px 0 20px;
+        min-height: 400px;
+        padding-top: 62px;
+        color:black;
+    }
+
+    #mainContent {
+        position: relative;
+    }
+
+        #mainContent:before, .effect2:after {
+            z-index: -1;
+            position: absolute;
+            content: "";
+            bottom: 15px;
+            left: 10px;
+            width: 50%;
+            top: 80%;
+            max-width: 300px;
+            background: #777;
+            -webkit-box-shadow: 0 15px 10px #777;
+            -moz-box-shadow: 0 15px 10px #777;
+            box-shadow: 0 15px 10px #777;
+            -webkit-transform: rotate(-3deg);
+            -moz-transform: rotate(-3deg);
+            -o-transform: rotate(-3deg);
+            -ms-transform: rotate(-3deg);
+            transform: rotate(-3deg);
+        }
+
+    #mainContent:after {
+        -webkit-transform: rotate(3deg);
+        -moz-transform: rotate(3deg);
+        -o-transform: rotate(3deg);
+        -ms-transform: rotate(3deg);
+        transform: rotate(3deg);
+        right: 10px;
+        left: auto;
+    }
+
+
+
+
+    #header {
+        font-family: 'Droid Serif',sans-serif;
+        font-size: 30px;
+        letter-spacing: 5px;
+        text-decoration: none;
+        line-height: 1;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12" style="padding-right:5px;">
+        <div style="height:10px;"></div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header" style="padding:6px 0px 5px 3px;">
+                        <label style="padding:0px 0px 0px 10px;font-size:16px;font-weight:600" class="col-sm-10 pull-left"><i class="fa fa-th-list fa-sm"></i>&nbsp;&nbsp; Member Report</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div id="mainContent" class="col-sm-8 offset-2">
+            <label class="col text-center" id="header">Report Type</label>
+            <div class="row">
+
+                <div class="col-12 row">
+                    <label class="col-sm-2"></label>
+                    <label class="col-sm-2 ">Report Type</label>
+                    <select class="col-sm-6 form-control" id="reportTypeId">
+                        <option value="0">Select</option>
+                        <option value="1">Organization wise</option>
+                        @*<option value="2">Member wise</option>*@
+                    </select>
+                    <label class="col-sm-2"></label>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-12 row">
+                    <label class="col-sm-2"></label>
+                    <label class="col-sm-2 ">Member Type</label>
+                    <select class="col-sm-6 form-control" id="memberTypeId" name="memberTypeId">
+                        <option value="0">Select</option>
+                        @foreach (var item in Model.memberTypes)
+                        {
+                            <option value="@item.Id">@item.memberType</option>
+                        }
+                    </select>
+
+                    <label class="col-sm-2"></label>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-12 row">
+                    <label class="col-sm-2"></label>
+                    <label class="col-sm-2 ">Organization Name</label>
+                    <select class="col-sm-6 form-control" id="organationId" name="organationId">
+                        <option value="0">Select</option>
+                        @foreach (var item in Model.memberTransferLogs)
+                        {
+                            <option value="@item.Id">@item.workStation</option>
+                        }
+                    </select>
+
+                    <label class="col-sm-2"></label>
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-6" style="-webkit-box-flex: 0;-ms-flex: 0 0 50%; flex: 26 10 57%;max-width: 65%;">
+                    <button type="button" onclick="ProcessReport()" class="btn btn-outline-info" style="float:right;margin-left:10px;">Preview</button>
+                    <button type="button" onclick="ReloadPage()" class="btn btn-outline-success" style="float:right;">Refresh</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts{
+
+    <script>
+        function ProcessReport() {
+            var memberTypeId = $('#memberTypeId').val();
+            var organationId = $('#organationId').val();
+
+            if ($('#reportTypeId').val() == 1) {
+                window.open('/MemberInfo/MemberReport/MemberReportpdf/?memberTypeId=' + memberTypeId + '&&organationId=' + organationId, '_blank');
+            }
+                  
+        }
+
+        function ReloadPage() {
+            location.reload();
+        }
+    </script>
+}
+

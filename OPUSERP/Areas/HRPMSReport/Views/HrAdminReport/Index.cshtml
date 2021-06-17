@@ -1,0 +1,1548 @@
+﻿@model AllHrReportViewModel
+@{
+    ViewData["Title"] = "HR Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .redStar {
+            color: red;
+        }
+
+        .active {
+            background: beige;
+            padding: 3px;
+        }
+    </style>
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left">HR Report</label>
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label for="report" class="col-sm-3 col-form-label">Report By <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="report" name="report" required>
+                                <option value="">Please Select Report Type</option>
+                                <option value="1">Department Wise Employee List</option>
+                                <option value="2">Designation Wise Employee List</option>
+                                <option value="3">Blood Group Wise Employee List</option>
+                                <option value="4">SBU Wise Employee List</option>
+                                <option value="5">Education Major Subject Wise Employee List</option>
+                                <option value="6">University Wise Employee List</option>
+                                <option value="7">LoE Wise Employee List</option>
+                                <option value="8">Training List</option>
+                                <option value="9">Belonging Item List</option>
+                                <option value="10">Designation Wise Summary List</option>
+                                <option value="11">Department Wise Summary List</option>
+                                <option value="12">Age Wise Summary List</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="DepartmentSelect">
+                        <label for="ledgerId" class="col-sm-3 col-form-label">Department <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="deptName" name="deptName" />
+                            <input type="hidden" class="form-control" id="deptId" name="deptId" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="DesignationSelect">
+                        <label for="subLedgerId" class="col-sm-3 col-form-label">Designation <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="desigName" name="desigName" />
+                            <input type="hidden" class="form-control" id="desigId" name="desigId" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="BloodSelect">
+                        <label for="voucherType" class="col-sm-3 col-form-label">Blood Group <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="bloodGroup" name="bloodGroup">
+                                <option value="0">All Group</option>
+                                <option value="O-">O-</option>
+                                <option value="O+">O+</option>
+                                <option value="A-">A-</option>
+                                <option value="A+">A+</option>
+                                <option value="B-">B-</option>
+                                <option value="B+">B+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="AB+">AB+</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" id="SbuSelect">
+                        <label for="sbu" class="col-sm-3 col-form-label">SBU <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="sbu" name="sbu">
+                                <option value="0">All Sbu</option>
+                                @foreach (var data in Model.specialBranchUnits)
+                                {
+                                    <option value="@data.Id">@data.branchUnitName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="SubjectSelect">
+                        <label for="subjectId" class="col-sm-3 col-form-label">Subject <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="subjectId" name="subjectId">
+                                <option value="0">All Subject</option>
+                                @foreach (var data in Model.subjects)
+                                {
+                                    <option value="@data.Id">@data.subjectName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="UniversitySelect">
+                        <label for="universityId" class="col-sm-3 col-form-label">Board/University <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="universityId" name="universityId">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.organizations)
+                                {
+                                    <option value="@data.Id">@data.organizationName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="LoeSelect">
+                        <label for="loeId" class="col-sm-3 col-form-label">Level of Education <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="loeId" name="loeId">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.levelofEducations)
+                                {
+                                    <option value="@data.Id">@data.levelofeducationName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="TrainingSelect">
+                        <label for="courseId" class="col-sm-3 col-form-label">Training Course <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="courseId" name="courseId">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.courseTitles)
+                                {
+                                    <option value="@data.Id">@data.nameEN</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="BelongingSelect">
+                        <label for="belongingId" class="col-sm-3 col-form-label">Belonging Item <span class="redStar">*</span></label>
+                        <div class="col-sm-9">
+                            <select type="text" class="form-control" id="belongingId" name="belongingId">
+                                <option value="0">All</option>
+                                @foreach (var data in Model.belongingItems)
+                                {
+                                    <option value="@data.Id">@data.ItemName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-8"></label>
+                        <div class="col-sm-4">
+                            <br />
+                            <button type="button" onclick="Excel()" title="Load" style="float:right" class="btn btn-info btn-xs">Excel</button>&nbsp;&nbsp;&nbsp;
+                            <button id="SubmitButton" style="margin-left: 160px;" class="btn btn-success btn-xs" title="Preview">Print</button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+
+<div class="row" id="DeptTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblDept">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Branch</th>
+                            <th>DOJ</th>
+                            <th>DOB</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="BloodTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblBlood">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Branch</th>
+                            <th>DOJ</th>
+                            <th>DOB</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Blood Group</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="SbuTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblSbu">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>DOJ</th>
+                            <th>Status</th>
+                            <th>NID</th>
+                            <th>Mobile</th>
+                            <th>DOB</th>
+                            <th>Blood Group</th>
+                            <th>District</th>
+                            <th>Branch</th>
+                            <th>Last Promo. Date</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="SubTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblSubject">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Gender</th>
+                            <th>Major Subject</th>
+                            <th>Result</th>
+                            <th>University</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="OrgTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblOrg" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Gender</th>
+                            <th>Major Subject</th>
+                            <th>University</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row" id="LoeTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblLoe" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Gender</th>
+                            <th>LoE</th>
+                            <th>Result</th>
+                            <th>University</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="TrainingTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblTraining">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Training Name</th>
+                            <th>Duration</th>
+                            <th>Year</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="BelongingTable">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header" style="padding:6px 0px 0px 3px;">
+                <label id="levelName" style="padding:0px 0px 0px 0px;font-size:18px;font-weight:600" class="col-sm-10 pull-left"></label>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="tblBelonging" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>SL#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Belonging Item</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        $(document).ready(function () {
+
+            Common.Ajax('GET', '/global/api/GetDepartment', [], 'json', ajaxGetDepartment);
+            Common.Ajax('GET', '/global/api/GetAllHrDesignations', [], 'json', ajaxGetAllHrDesignations);
+
+            $('#DeptSelect').hide();
+            $('#DesigSelect').hide();
+            $('#DesignationSelect').hide();
+            $('#DepartmentSelect').hide();
+            $('#BloodSelect').hide();
+            $('#SbuSelect').hide();
+            $('#SubjectSelect').hide();
+            $('#UniversitySelect').hide();
+            $('#LoeSelect').hide();
+            $('#TrainingSelect').hide();
+            $('#BelongingSelect').hide();
+
+            $('#BloodTable').hide();
+            $('#DeptTable').hide();
+            $('#SbuTable').hide();
+            $('#SubTable').hide();
+            $('#OrgTable').hide();
+            $('#LoeTable').hide();
+            $('#TrainingTable').hide();
+            $('#BelongingTable').hide();
+
+            $('#report').change(function () {
+                let report = $('#report').val();
+                if (report == 1) {
+                    $('#levelName').html('  Department Wise');
+                    $('#DepartmentSelect').show();
+                    //$('#DeptTable').show();
+
+                    $('#DesignationSelect').hide();
+                    $('#BloodSelect').hide();
+                    $('#SubjectSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#TrainingSelect').hide();
+                    $('#BloodTable').hide();
+                    $('#SbuTable').hide();
+                    $('#OrgTable').hide();
+                    $('#TrainingTable').hide();
+                    $('#BelongingTable').hide();
+                    $('#BelongingSelect').hide();
+
+                    $('#deptId').val(0);
+                    $('#subjectId').val(0);
+                    $('#deptName').val('');
+                    $('#sbu').val(0);
+                    $('#bloodGroup').val(0);
+
+                }
+                else if (report == 2) {
+                    $('#levelName').html('  Designation Wise');
+
+                    $('#DesignationSelect').show();
+                    //$('#DeptTable').show();
+                    $('#DepartmentSelect').hide();
+                    $('#BloodSelect').hide();
+                    $('#SubjectSelect').hide();
+                    $('#DeptSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#TrainingSelect').hide();
+                    $('#BloodTable').hide();
+                    $('#SbuTable').hide();
+                    $('#TrainingTable').hide();
+                    $('#BelongingSelect').hide();
+                    $('#OrgTable').hide();
+                    $('#BelongingTable').hide();
+
+                    $('#deptId').val(0);
+                    $('#subjectId').val(0);
+                    $('#deptName').val('');
+                    $('#sbu').val(0);
+                    $('#bloodGroup').val(0);
+
+                }
+                else if (report == 3) {
+                    $('#levelName').html('  Blood Group Wise');
+                    $('#BloodSelect').show();
+                    //$('#BloodTable').show();
+
+                    $('#DepartmentSelect').hide();
+                    $('#DeptTable').hide();
+
+                    $('#DesignationSelect').hide();
+                    $('#SubjectSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#TrainingSelect').hide();
+                    $('#SbuTable').hide();
+                    $('#TrainingTable').hide();
+                    $('#BelongingSelect').hide();
+                    $('#OrgTable').hide();
+                    $('#BelongingTable').hide();
+
+                    $('#deptId').val(0);
+                    $('#subjectId').val(0);
+                    $('#deptName').val('');
+                    $('#sbu').val(0);
+                    $('#bloodGroup').val('0');
+                }
+                else if (report == 4) {
+                    $('#levelName').html('  SBU Wise');
+                    $('#SbuSelect').show();
+                    //$('#SbuTable').show();
+
+                    $('#BloodSelect').hide();
+                    $('#SubjectSelect').hide();
+                    $('#BloodTable').hide();
+
+                    $('#DeptSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#DesigSelect').hide();
+                    $('#TrainingSelect').hide();
+                    $('#TrainingTable').hide();
+                    $('#OrgTable').hide();
+                    $('#SubTable').hide();
+                    $('#BelongingTable').hide();
+
+                    $('#desigId').val(0);
+                    $('#desigName').val('');
+                    $('#deptId').val(0);
+                    $('#subjectId').val(0);
+                    $('#deptName').val('');
+                }
+                else if (report == 5) {
+                    $('#levelName').html('  Subject Wise');
+                    $('#SubjectSelect').show();
+                    //$('#SubTable').show();
+
+                    $('#DesignationSelect').hide();
+                    $('#DepartmentSelect').hide();
+                    $('#DeptSelect').hide();
+                    $('#DesigSelect').hide();
+                    $('#BloodSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#TrainingSelect').hide();
+                    $('#BelongingSelect').hide();
+                   
+                    $('#SbuSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#BloodTable').hide();
+                    $('#SbuTable').hide();
+                    $('#OrgTable').hide();
+                    $('#LoeTable').hide();
+                    $('#TrainingSelect').hide();
+                    $('#TrainingTable').hide();
+                    $('#DeptTable').hide();
+                    $('#BelongingSelect').hide();
+                    $('#BelongingTable').hide();
+
+                    $('#subjectId').val(0);
+                    $('#universityId').val(0);
+                    $('#loeId').val(0);
+                }
+                else if (report == 6) {
+                    $('#levelName').html('  University Wise');
+
+                    $('#UniversitySelect').show();
+                    //$('#OrgTable').show();
+
+                    $('#DeptSelect').hide();
+                    $('#DesigSelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#BloodSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#SubjectSelect').hide();
+
+                    $('#BloodTable').hide();
+                    $('#SubTable').hide();   
+                    $('#SbuTable').hide();
+                    $('#LoeTable').hide();
+                    $('#TrainingSelect').hide();
+                    $('#TrainingTable').hide();
+                    $('#BelongingTable').hide();
+
+                    $('#subjectId').val(0);
+                    $('#universityId').val(0);
+                    $('#loeId').val(0);
+                }
+                else if (report == 7) {
+                    $('#levelName').html('  Level of Education Wise');
+                    $('#LoeSelect').show();
+                    //$('#LoeTable').show();
+
+                    $('#DeptSelect').hide();
+                    $('#DesigSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#SubjectSelect').hide();
+
+                    $('#BloodSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#TrainingSelect').hide();
+                    $('#TrainingTable').hide();
+
+                    $('#BloodTable').hide();
+                    $('#SubTable').hide();
+                    $('#SbuTable').hide();
+                    $('#OrgTable').hide();
+                    $('#BelongingTable').hide();
+
+                    $('#subjectId').val(0);
+                    $('#universityId').val(0);
+                    $('#loeId').val(0);
+                }
+                else if (report == 8) {
+                    $('#levelName').html('  Training Course Wise');
+                    $('#TrainingSelect').show();
+                    //$('#TrainingTable').show();
+
+                    $('#DeptSelect').hide();
+                    $('#DesigSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#SubjectSelect').hide();
+
+                    $('#BloodSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#LoeTable').hide();
+
+                    $('#BloodTable').hide();
+                    $('#SubTable').hide();
+                    $('#SbuTable').hide();
+                    $('#OrgTable').hide();
+
+                    $('#courseId').val(0);
+                    $('#BelongingSelect').hide();
+                    $('#BelongingTable').hide();
+                }
+                else if (report == 9) {
+                    $('#levelName').html('  Belonging Item Wise');
+                    $('#BelongingSelect').show();
+                    //$('#BelongingTable').show();
+                   
+                    $('#DesignationSelect').hide();
+                    $('#DeptTable').hide();
+                    $('#DepartmentSelect').hide();
+                    $('#DeptSelect').hide();
+                    $('#DesigSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#SubjectSelect').hide();
+
+                    $('#BloodSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#LoeTable').hide();
+
+                    $('#BloodTable').hide();
+                    $('#SubTable').hide();
+                    $('#SbuTable').hide();
+                    $('#OrgTable').hide();
+
+                    $('#belongingId').val(0);
+                    $('#TrainingSelect').hide();
+                    $('#TrainingTable').hide();
+                }
+                else if (report == 10) {
+                    $('#levelName').html('  Designation Wise Summary');
+
+                    $('#DesignationSelect').hide();
+                    //$('#DeptTable').show();
+                    $('#DepartmentSelect').hide();
+                    $('#BloodSelect').hide();
+                    $('#SubjectSelect').hide();
+                    $('#DeptSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#TrainingSelect').hide();
+
+                    $('#BelongingTable').hide();
+                    $('#BloodTable').hide();
+                    $('#SbuTable').hide();
+                    $('#TrainingTable').hide();
+                    $('#BelongingSelect').hide();
+                    $('#OrgTable').hide();
+                    $('#deptId').val(0);
+                    $('#subjectId').val(0);
+                    $('#deptName').val('');
+                    $('#sbu').val(0);
+                    $('#bloodGroup').val(0);
+
+                }
+                else if (report == 11) {
+                    $('#levelName').html('  Department Wise Summary');
+                    $('#DepartmentSelect').hide();
+                    //$('#DeptTable').show();
+                    $('#DesignationSelect').hide();
+                    $('#DesigSelect').hide();
+                    $('#BloodSelect').hide();
+                    $('#BelongingSelect').hide();
+                    $('#SubjectSelect').hide();
+                    $('#SbuSelect').hide();
+                    $('#UniversitySelect').hide();
+                    $('#LoeSelect').hide();
+                    $('#TrainingSelect').hide();
+                    $('#BloodTable').hide();
+                    $('#OrgTable').hide();
+                    $('#SbuTable').hide();
+                    $('#SubTable').hide();
+                    $('#TrainingTable').hide();
+                    $('#BelongingTable').hide();
+
+
+                    $('#desigId').val(0);
+                    $('#subjectId').val(0);
+                    $('#desigName').val('');
+                    $('#sbu').val(0);
+                    $('#bloodGroup').val(0);
+
+                }
+                else {
+                    $('#DeptSelect').hide();
+                    $('#SubSelect').hide();
+                    $('#DesigSelect').hide();
+                    //$('#BloodTable').hide();
+                    //$('#SubTable').hide();
+                    //$('#SbuTable').hide();
+
+                    $('#desigId').val(0);
+                    $('#desigName').val('');
+                    $('#deptId').val(0);
+                    $('#subjectId').val(0);
+                    $('#deptName').val('');
+                    $('#sbu').val(0);
+                    $('#bloodGroup').val(0);
+                }
+            });
+           
+            $("#SubmitButton").click(function (e) {
+                let report = $('#report').val();
+
+                let deptId = parseInt($('#deptId').val()) ? parseInt($('#deptId').val()) : 0;
+                let desigId = $('#desigId').val();
+                let bloodGroup = $('#bloodGroup').val();
+                let sbuId = parseInt($('#sbu').val()) ? parseInt($('#sbu').val()) : 0;
+                let subjectId = parseInt($('#subjectId').val()) ? parseInt($('#subjectId').val()) : 0;
+                let universityId = parseInt($('#universityId').val()) ? parseInt($('#universityId').val()) : 0;
+                let loeId = parseInt($('#loeId').val()) ? parseInt($('#loeId').val()) : 0;
+                let courseId = parseInt($('#courseId').val()) ? parseInt($('#courseId').val()) : 0;
+                let belongingId = parseInt($('#belongingId').val()) ? parseInt($('#belongingId').val()) : 0;
+                //let deptName = $('#deptName').val();
+                //let desigName = $('#desigName').val();
+                let callName;
+                if (report == 10) {
+                    callName = 'Desig';
+                }
+                else if (report == 11) {
+                   
+                    callName = 'Dept';
+                }
+                else
+                {
+                    callName = "Age";
+                }
+
+                if (report == 1 || report == 2 || report == 3 || report == 4) {
+
+                    window.open('/HRPMSReport/HrAdminReport/HrReportDataByDesig?rptType=' + report + "&desigId=" + desigId + "&deptId=" + deptId + "&bloodGroup=" + bloodGroup + "&sbuId=" + sbuId, '_blank');
+
+                }
+                else if (report == 5 || report == 6 || report == 7) {
+
+                    window.open('/HRPMSReport/HrAdminReport/HrReportDataByEducation?rptType=' + report + "&subjectId=" + subjectId + "&universityId=" + universityId + "&loeId=" + loeId, '_blank');
+                }
+                else if (report == 8) {
+                    window.open('/HRPMSReport/HrAdminReport/HrReportDataByTrainingCourse?rptType=' + report + "&courseId=" + courseId, '_blank');
+                }
+                else if (report == 9) {
+                    window.open('/HRPMSReport/HrAdminReport/HrReportDataByBelongingItem?rptType=' + report + "&belongingId=" + belongingId, '_blank');
+                }
+                else if (report == 10) {
+                    window.open('/HRPMSReport/HrAdminReport/HrReportDataBySummary?rptType=' + report + "&callName=" + callName, '_blank');
+                }
+                else if (report == 11) {
+
+                    window.open('/HRPMSReport/HrAdminReport/HrReportDataBySummary?rptType=' + report + "&callName=" + callName, '_blank');
+                }
+                else if (report == 12) {
+
+                    window.open('/HRPMSReport/HrAdminReport/HrReportDataBySummary?rptType=' + report + "&callName=" + callName, '_blank');
+                }
+
+                //else {
+                //    window.open('/HRPMSReport/HrAdminReport/HrReportDataByDesig?rptType=' + report + "&desigId=" + desigId + "&deptId=" + deptId + "&bloodGroup=" + bloodGroup + "&sbuId=" + sbuId, '_blank');
+
+                //}
+            });
+        });
+        function Excel() {
+            let report = $('#report').val();
+
+            let deptId = parseInt($('#deptId').val()) ? parseInt($('#deptId').val()) : 0;
+            let desigId = $('#desigId').val();
+            let bloodGroup = $('#bloodGroup').val();
+            let sbuId = parseInt($('#sbu').val()) ? parseInt($('#sbu').val()) : 0;
+            let subjectId = parseInt($('#subjectId').val()) ? parseInt($('#subjectId').val()) : 0;
+            let universityId = parseInt($('#universityId').val()) ? parseInt($('#universityId').val()) : 0;
+            let loeId = parseInt($('#loeId').val()) ? parseInt($('#loeId').val()) : 0;
+            let courseId = parseInt($('#courseId').val()) ? parseInt($('#courseId').val()) : 0;
+            let belongingId = parseInt($('#belongingId').val()) ? parseInt($('#belongingId').val()) : 0;
+            //let deptName = $('#deptName').val();
+            //let desigName = $('#desigName').val();
+            let callName;
+            if (report == 10) {
+                callName = 'Desig';
+            }
+            else if (report == 11) {
+
+                callName = 'Dept';
+            }
+            else if (report == 12){
+                callName = "Age";
+            }
+
+            if (report == 1 || report == 2 || report == 3 || report == 4) {
+                Common.Ajax('GET', '/HRPMSReport/HrAdminReport/HrReportDataByDesigExcel?rptType=' + report + "&desigId=" + desigId + "&deptId=" + deptId + "&bloodGroup=" + bloodGroup + "&sbuId=" + sbuId, [], 'json', normalword);
+                //window.open('/HRPMSReport/HrAdminReport/HrReportDataByDesig?rptType=' + report + "&desigId=" + desigId + "&deptId=" + deptId + "&bloodGroup=" + bloodGroup + "&sbuId=" + sbuId, '_blank');
+
+            }
+            else if (report == 5 || report == 6 || report == 7) {
+
+                Common.Ajax('GET','/HRPMSReport/HrAdminReport/HrReportDataByEducationExcel?rptType=' + report + "&subjectId=" + subjectId + "&universityId=" + universityId + "&loeId=" + loeId,[], 'json', normalword);
+            }
+            else if (report == 8) {
+                 Common.Ajax('GET','/HRPMSReport/HrAdminReport/HrReportDataByTrainingCourseExcel?rptType=' + report + "&courseId=" + courseId, [], 'json', normalword);
+            }
+            else if (report == 9) {
+                 Common.Ajax('GET','/HRPMSReport/HrAdminReport/HrReportDataByBelongingItemExcel?rptType=' + report + "&belongingId=" + belongingId, [], 'json', normalword);
+            }
+            else if (report == 10) {
+                 Common.Ajax('GET','/HRPMSReport/HrAdminReport/HrReportDataBySummaryExcel?rptType=' + report + "&callName=" + callName, [], 'json', normalword);
+            }
+            else if (report == 11) {
+
+                 Common.Ajax('GET','/HRPMSReport/HrAdminReport/HrReportDataBySummaryExcel?rptType=' + report + "&callName=" + callName, [], 'json', normalword);
+            }
+            else if (report == 12) {
+
+                Common.Ajax('GET','/HRPMSReport/HrAdminReport/HrReportDataBySummaryExcel?rptType=' + report + "&callName=" + callName, [], 'json', normalword);
+            }
+
+            //else {
+            //     Common.Ajax('GET','/HRPMSReport/HrAdminReport/HrReportDataByDesigExcel?rptType=' + report + "&desigId=" + desigId + "&deptId=" + deptId + "&bloodGroup=" + bloodGroup + "&sbuId=" + sbuId, [], 'json', normalword);
+
+            //}
+
+        }
+        
+        function normalword(response) {
+            console.log(response);
+            //window.location.href = response;
+            //swal('', 'Review Successfully!', 'success');
+            // e.preventDefault();  //stop the browser from following
+            // window.location.href = response;
+            window.open('/pdf/' + response);
+            //window.location.reload();
+        }
+        function Refresh() {
+            let report = $('#report').val();
+
+            let deptId = parseInt($('#deptId').val()) ? parseInt($('#deptId').val()) : 0;
+            let desigId = $('#desigId').val();
+            let bloodGroup = $('#bloodGroup').val();
+            let sbuId = parseInt($('#sbu').val()) ? parseInt($('#sbu').val()) : 0;
+            let subjectId = parseInt($('#subjectId').val()) ? parseInt($('#subjectId').val()) : 0;
+            let universityId = parseInt($('#universityId').val()) ? parseInt($('#universityId').val()) : 0;
+            let loeId = parseInt($('#loeId').val()) ? parseInt($('#loeId').val()) : 0;
+            let courseId = parseInt($('#courseId').val()) ? parseInt($('#courseId').val()) : 0;
+            let belongingId = parseInt($('#belongingId').val()) ? parseInt($('#belongingId').val()) : 0;
+            let deptName = $('#deptName').val();
+            let desigName = $('#desigName').val();
+            let callName;
+            if (report == 10) {
+                callName = deptName
+            }
+            else if (report == 11) {
+                callName = desigName
+            }
+            else {
+                callName = ''
+            }
+
+            if (report == 1) {
+                $('#levelName').html('  Department Wise Hr Report');
+
+                GetHrReportData(desigId, deptId, bloodGroup, sbuId);
+            }
+            else if (report == 2) {
+                $('#levelName').html('  Designation Wise Hr Report');
+
+                GetHrReportData(desigId, deptId, bloodGroup, sbuId);
+            }
+            else if (report == 3) {
+                $('#levelName').html('  Blood Group Wise Hr Report ');
+
+                GetHrReportDataBlood(desigId, deptId, bloodGroup, sbuId);
+            }
+            else if (report == 4) {
+                $('#levelName').html('  SBU Wise Hr Report ');
+
+                GetHrReportDataSBu(desigId, deptId, bloodGroup, sbuId);
+            }
+            else if (report == 5) {
+                $('#levelName').html('  Education Wise Hr Report ');
+
+                GetHrReportDataEducation(subjectId, universityId, loeId);
+            }
+            else if (report == 6) {
+                $('#levelName').html('  Board/University Wise Hr Report ');
+
+                GetHrReportDataOrganization(subjectId, universityId, loeId);
+            }
+            else if (report == 7) {
+                $('#levelName').html('  Level of Education Wise Hr Report ');
+
+                GetHrReportDataLoE(subjectId, universityId, loeId);
+            }
+            else if (report == 8) {
+                $('#levelName').html('  Training Course Wise Hr Report ');
+
+                GetHrReportDataTrCourse(courseId);
+            }
+            else if (report == 9) {
+                $('#levelName').html('  Belonging Item Wise Hr Report ');
+
+                GetHrReportDataBelongingItem(belongingId);
+            }
+            else if (report == 10) {
+                $('#levelName').html('  Belonging Item Wise Hr Report ');
+
+                //GetHrReportDataBelongingItem(belongingId);
+            }
+            else if (report == 11) {
+                $('#levelName').html('  Belonging Item Wise Hr Report ');
+
+                //GetHrReportDataBelongingItem(belongingId);
+            }
+            else if (report == 12) {
+                $('#levelName').html('  Belonging Item Wise Hr Report ');
+
+                //GetHrReportDataBelongingItem(belongingId);
+            }
+            else {
+                $('#DeptTable').show();
+                GetHrReportData(desigId, deptId, bloodGroup, sbuId);
+            }
+
+        }
+
+        function GetHrReportDataBelongingItem(belongingId) {
+            table = $('#tblBelonging').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByBelongingItem/" + belongingId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "emailAddress" },
+                    { data: "mobileNumberOffice" },
+                    { data: "ItemName" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        } 
+
+        function GetHrReportDataTrCourse(courseId) {
+            table = $('#tblTraining').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByTrCourse/" + courseId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "course" },
+                    { data: "days" },
+                    { data: "year" },
+                    { data: "completionStatus" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }             
+
+        function GetHrReportDataOrganization(subjectId, universityId, loeId) {
+            table = $('#tblOrg').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByEducation/" + subjectId + "/" + universityId + "/" + loeId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "gender" },
+                    { data: "subjectName" },
+                    { data: "organizationName" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }             
+
+        function GetHrReportDataLoE(subjectId, universityId, loeId) {
+            table = $('#tblLoe').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByEducation/" + subjectId + "/" + universityId + "/" + loeId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "gender" },
+                    { data: "levelofeducationName" },
+                    { data: "resultMaxValue" },
+                    { data: "organizationName" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetHrReportDataEducation(subjectId, universityId, loeId) {
+            table = $('#tblSubject').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByEducation/" + subjectId + "/" + universityId + "/" + loeId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "gender" },
+                    { data: "subjectName" },
+                    { data: "resultMaxValue" },
+                    { data: "organizationName" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetHrReportDataSBu(desigId, deptId, bloodGroup, sbuId) {
+            table = $('#tblSbu').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByDesig/" + desigId + "/" + deptId + "/" + bloodGroup + "/" + sbuId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "joiningDate" },
+                    { data: "activityStatus" },
+                    { data: "nationalID" },
+                    { data: "mobileNumberOffice" },
+                    { data: "dateOfBirth" },
+                    { data: "bloodGroup" },
+                    { data: "homeDistrict" },
+                    { data: "branchUnitName" },
+                    { data: "lastPromotionDate" }
+
+
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "SBU Wise HR Report",
+                        messageTop: 'SBU Wise HR Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetHrReportDataBlood(desigId, deptId, bloodGroup, sbuId) {
+            table = $('#tblBlood').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByDesig/" + desigId + "/" + deptId + "/" + bloodGroup + "/" + sbuId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "branchUnitName" },
+                    { data: "joiningDate" },
+                    { data: "dateOfBirth" },
+                    { data: "emailAddress" },
+                    { data: "mobileNumberOffice" },
+                    { data: "bloodGroup" }
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        },
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        },
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Daily Bill Receive",
+                        messageTop: 'Daily Bill Receive Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+        function GetHrReportData(desigId, deptId, bloodGroup, sbuId) {
+            table = $('#tblDept').DataTable({
+                ajax: {
+                    url: "/global/api/GetHrDataByDesig/" + desigId + "/" + deptId + "/" + bloodGroup + "/" + sbuId,
+                    dataSrc: ""
+                },
+                scrollX: true,
+                destroy: true,
+                columns: [
+                    { data: "rowSlNo" },
+                    { data: "employeeCode" },
+                    { data: "nameEnglish" },
+                    { data: "designation" },
+                    { data: "deptName" },
+                    { data: "branchUnitName" },
+                    { data: "joiningDate" },
+                    { data: "dateOfBirth" },
+                    { data: "emailAddress" },
+                    { data: "mobileNumberOffice" }
+
+
+                ],
+                stateSave: true,
+                dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-3'B><'col-sm-12 col-md-7'f>>" +
+                    "<'row'<'col-sm-12't>>" + "<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'pr>>",
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        },
+                        title: "Day Book",
+                        messageTop: 'Day Book Report',
+                        class: 'btn btn-info'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fa fa-file-excel"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        },
+                        title: "Day Book",
+                        messageTop: 'Day Book Report'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        title: "Day Book",
+                        messageTop: 'Day Book Report',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        },
+                        customize: function (doc) {
+                            $(doc.document.body).find('h1').css('font-size', '20pt');
+                            $(doc.document.body).find('h1').css('font-family', "'Times New Roman', Times, serif");
+                            $(doc.document.body).find('h1').css('text-align', 'center');
+                        }
+                    }
+                ]
+            });
+        }
+
+
+
+        function ajaxGetDepartment(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.deptName;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#deptName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#deptId').val(ui.item.key);
+                    $("#deptName").val(ui.item.value);
+                }
+            });
+        }
+
+        function ajaxGetAllHrDesignations(response) {
+            var lstParticular = [];
+            $.each(response, function (i, option) {
+                var obj = new Object();
+                obj.key = option.Id;
+                obj.value = option.designationName;
+                lstParticular[lstParticular.length] = obj;
+            });
+            $('#desigName').autocomplete({
+                source: lstParticular,
+                select: function (event, ui) {
+                    $('#desigId').val(ui.item.value);
+                    $("#desigName").val(ui.item.value);
+                }
+            });
+        }
+
+                            //function ajaxGetDuesCustomerList(response) {
+
+                            //    var options = '<option value="">Select</option>';
+                            //    $.each(response, function (i, item) {
+                            //        options += '<option value="' + item.Id + '">' + item.voucherTypeName + '</option>';
+                            //    });
+                            //    $('#bloodGroup').empty();
+                            //    $('#bloodGroup').append(options);
+
+
+                            //}
+
+
+    </script>
+}
+
+
+
